@@ -506,29 +506,57 @@ const Style = () => {
         display: none;
       }
 
-      /* CategoryBar styles */
+      /* CategoryBar 容器：磨砂玻璃质感与圆角 */
       #theme-heo #category-bar {
-        background: var(--heo-surface) !important;
-        border: 1px solid var(--heo-border-subtle) !important;
-        box-shadow: var(--heo-shadow-sm);
+        background: rgba(255, 255, 255, 0.72) !important;
+        -webkit-backdrop-filter: saturate(180%) blur(16px);
+        backdrop-filter: saturate(180%) blur(16px);
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        border-radius: 24px !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 26px rgba(0, 0, 0, 0.06);
         transition: all var(--heo-dur) var(--heo-ease);
       }
 
       html.dark #theme-heo #category-bar {
-        background: var(--heo-surface-dark) !important;
-        border-color: var(--heo-border-subtle-dark) !important;
+        background: rgba(27, 28, 32, 0.75) !important;
+        -webkit-backdrop-filter: saturate(140%) blur(18px);
+        backdrop-filter: saturate(140%) blur(18px);
+        border-color: rgba(255, 255, 255, 0.08) !important;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      /* 分类项：同步发光胶囊样式 */
+      #theme-heo #category-bar .category-bar-item {
+        border-radius: 16px !important;
+        transition: all 0.25s var(--heo-ease) !important;
+        padding: 4px 12px !important;
+        margin: 0 4px !important;
+      }
+
+      #theme-heo #category-bar .category-bar-item:hover,
+      #theme-heo #category-bar .category-bar-item.selected {
+        background: rgba(37, 99, 235, 0.82) !important;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4), 0 0 1px rgba(37, 99, 235, 0.5);
+        color: #ffffff !important;
+        transform: translateY(-1px);
+      }
+
+      html.dark #theme-heo #category-bar .category-bar-item:hover,
+      html.dark #theme-heo #category-bar .category-bar-item.selected {
+        background: rgba(234, 179, 8, 0.85) !important;
+        box-shadow: 0 8px 20px rgba(234, 179, 8, 0.5), 0 0 1px rgba(234, 179, 8, 0.6);
+        color: #000000 !important;
+        transform: translateY(-1px);
       }
 
       @media (hover: hover) {
         #theme-heo #category-bar:hover {
-          border-color: rgba(79, 70, 229, 0.55) !important;
-          box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.18), var(--heo-shadow-lg);
-          transform: translateY(var(--heo-card-hover-translate));
+          border-color: rgba(37, 99, 235, 0.3) !important;
+          box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08), 0 12px 30px rgba(0, 0, 0, 0.08);
         }
         html.dark #theme-heo #category-bar:hover {
-          border-color: rgba(234, 179, 8, 0.55) !important;
-          box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.16), var(--heo-shadow-lg-dark);
+          border-color: rgba(234, 179, 8, 0.3) !important;
+          box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.08), 0 20px 48px rgba(0, 0, 0, 0.4);
         }
       }
 
