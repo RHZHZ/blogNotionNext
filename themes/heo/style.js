@@ -73,7 +73,7 @@ const Style = () => {
         background-color: #0f1115;
         /* 暗色：深邃极地夜景 */
         background-image: linear-gradient(to bottom, rgba(15, 17, 21, 0.75), rgba(15, 17, 21, 0.85)), 
-                          url('https://images.unsplash.com/photo-1509023464722-18d996393ca8?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
+                          url('https://images.unsplash.com/photo-1502759683299-cdcd6974244f?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
                           radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 0);
         background-size: cover, cover, 24px 24px;
       }
