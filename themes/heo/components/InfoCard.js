@@ -4,6 +4,7 @@ import { siteConfig } from '@/lib/config'
 import SmartLink from '@/components/SmartLink'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { useGlobal } from '@/lib/global'
 import CONFIG from '../config'
 import Announcement from './Announcement'
 import Card from './Card'
@@ -14,7 +15,8 @@ import Card from './Card'
  * @returns
  */
 export function InfoCard(props) {
-  const { siteInfo, notice, post, isDarkMode } = props
+  const { siteInfo, notice, post } = props
+  const { isDarkMode } = useGlobal()
   const router = useRouter()
   // 在文章详情页特殊处理
   const isSlugPage = router.pathname.indexOf('/[prefix]') === 0
