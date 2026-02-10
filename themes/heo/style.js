@@ -594,6 +594,119 @@ const Style = () => {
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
       }
 
+      /* 文章页目录（Catalog / TOC）适配 Heo Pro 风格 */
+      /* 1. 容器样式 (针对侧边栏目录卡片) */
+      #theme-heo #sideRight .px-3.py-1.dark\:text-white.text-black {
+        background: rgba(255, 255, 255, 0.72) !important;
+        backdrop-filter: blur(16px) saturate(180%) !important;
+        border-radius: 24px !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        padding: 1.25rem !important;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05) !important;
+      }
+
+      html.dark #theme-heo #sideRight .px-3.py-1.dark\:text-white.text-black {
+        background: rgba(27, 28, 32, 0.75) !important;
+        backdrop-filter: blur(18px) saturate(140%) !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3) !important;
+      }
+
+      /* 2. 目录项（链接）基础样式与动画 */
+      #theme-heo .notion-table-of-contents-item.catalog-item {
+        border-radius: 12px !important;
+        margin: 4px 0 !important;
+        padding: 6px 12px !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        display: block !important;
+        text-decoration: none !important;
+      }
+
+      /* 3. 亮色模式：当前选中项 (Active) 与 Hover */
+      #theme-heo .notion-table-of-contents-item.catalog-item:hover,
+      #theme-heo .notion-table-of-contents-item.catalog-item a span.font-bold.text-indigo-600,
+      #theme-heo .notion-table-of-contents-item.catalog-item:has(span.font-bold.text-indigo-600) {
+        background: rgba(37, 99, 235, 0.9) !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+        transform: translateX(4px) !important;
+      }
+
+      #theme-heo .notion-table-of-contents-item.catalog-item:hover span,
+      #theme-heo .notion-table-of-contents-item.catalog-item span.font-bold.text-indigo-600 {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+      }
+
+      /* 4. 暗色模式：当前选中项 (Active) 与 Hover */
+      html.dark #theme-heo .notion-table-of-contents-item.catalog-item:hover,
+      html.dark #theme-heo .notion-table-of-contents-item.catalog-item:has(span.font-bold.text-indigo-600) {
+        background: rgba(234, 179, 8, 0.95) !important;
+        box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4) !important;
+        transform: translateX(4px) !important;
+      }
+
+      html.dark #theme-heo .notion-table-of-contents-item.catalog-item:hover span,
+      html.dark #theme-heo .notion-table-of-contents-item.catalog-item span.font-bold.text-indigo-600 {
+        color: #000000 !important;
+        font-weight: 600 !important;
+      }
+
+      /* 文章页目录（TOC / Catalog）样式统一 */
+      #theme-heo #sideRight #toc-wrapper {
+        border-radius: 20px !important;
+        padding: 4px !important;
+      }
+
+      #theme-heo #toc-wrapper .toc-item {
+        border-radius: 12px !important;
+        padding: 4px 12px !important;
+        margin: 2px 0 !important;
+        transition: all 0.25s var(--heo-ease) !important;
+        border: none !important;
+      }
+
+      /* 亮色模式：当前章节高亮与 Hover */
+      #theme-heo #toc-wrapper .toc-item:hover,
+      #theme-heo #toc-wrapper .toc-item.active {
+        background: rgba(37, 99, 235, 0.9) !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        color: #ffffff !important;
+        transform: translateX(4px);
+      }
+
+      #theme-heo #toc-wrapper .toc-item:hover a,
+      #theme-heo #toc-wrapper .toc-item.active a {
+        color: #ffffff !important;
+      }
+
+      /* 暗色模式：当前章节高亮与 Hover */
+      html.dark #theme-heo #toc-wrapper .toc-item:hover,
+      html.dark #theme-heo #toc-wrapper .toc-item.active {
+        background: rgba(234, 179, 8, 0.95) !important;
+        box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+        color: #000000 !important;
+        transform: translateX(4px);
+      }
+
+      html.dark #theme-heo #toc-wrapper .toc-item:hover a,
+      html.dark #theme-heo #toc-wrapper .toc-item.active a {
+        color: #000000 !important;
+      }
+
+      /* TOC 容器本身同步侧边栏玻璃质感 */
+      #theme-heo #sideRight .toc-card {
+        background: rgba(255, 255, 255, 0.72) !important;
+        backdrop-filter: blur(16px) saturate(180%) !important;
+        border-radius: 24px !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
+      }
+
+      html.dark #theme-heo #sideRight .toc-card {
+        background: rgba(27, 28, 32, 0.75) !important;
+        backdrop-filter: blur(18px) saturate(140%) !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
       @media (hover: hover) {
         #theme-heo #category-bar:hover {
           border-color: rgba(37, 99, 235, 0.3) !important;
