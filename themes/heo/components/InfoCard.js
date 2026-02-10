@@ -24,7 +24,7 @@ export function InfoCard(props) {
   const icon2 = siteConfig('HEO_INFO_CARD_ICON2', null, CONFIG)
   const statusIcon = siteConfig('HEO_INFO_CARD_STATUS_ICON', null, CONFIG)
 
-  const fallbackColor = isDarkMode ? '#e67e22' : '#4f65f0'
+  const fallbackColor = isDarkMode ? '#CA8A04' : '#0060e0'
   const [cardColor, setCardColor] = useState(fallbackColor)
 
   useEffect(() => {
