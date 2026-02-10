@@ -1124,20 +1124,34 @@ const Style = () => {
         width: 100%;
         height: 100vh;
         z-index: 1001;
-        transition: opacity 0.5s ease;
       }
 
       #loading-box.loaded {
-        opacity: 0;
         pointer-events: none;
       }
 
-      #loading-box .loading-bg {
+      #loading-box.loaded .loading-bg,
+      #loading-box.loaded .loading-animation {
+        border-radius: 3rem;
+        transform: translateX(100%);
+        transition: 1.3s ease;
+      }
+
+      #loading-box.loaded .loading-bg {
+        transition-delay: 0.3s;
+      }
+
+      #loading-box .loading-bg,
+      #loading-box .loading-animation {
         position: absolute;
         width: 100%;
         height: 100%;
-        background: var(--heo-surface-strong);
-        z-index: -1;
+        will-change: transform;
+      }
+
+      #loading-box .loading-bg {
+        background: #4f65f0 url("/loadings.svg") repeat;
+        background-size: 30%;
       }
 
       #loading-box .loading-animation {
@@ -1145,6 +1159,7 @@ const Style = () => {
         justify-content: center;
         align-items: center;
         flex-direction: column;
+        background: var(--heo-surface-strong);
       }
 
       #loading-box .loading-animation .loading {
