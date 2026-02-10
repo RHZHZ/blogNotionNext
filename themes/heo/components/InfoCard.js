@@ -22,6 +22,7 @@ export function InfoCard(props) {
   const icon1 = siteConfig('HEO_INFO_CARD_ICON1', null, CONFIG)
   const url2 = siteConfig('HEO_INFO_CARD_URL2', null, CONFIG)
   const icon2 = siteConfig('HEO_INFO_CARD_ICON2', null, CONFIG)
+  const statusIcon = siteConfig('HEO_INFO_CARD_STATUS_ICON', null, CONFIG)
 
   return (
     <Card className='wow fadeInUp bg-[#4f65f0] dark:bg-yellow-600 text-white flex flex-col w-72 overflow-hidden relative heo-infocard-v2'>
@@ -40,7 +41,7 @@ export function InfoCard(props) {
               isSlugPage
                 ? 'absolute right-0 -mt-8 -mr-6 hover:opacity-0 hover:scale-150 blur'
                 : 'cursor-pointer'
-            } justify-center items-center flex dark:text-gray-100 transform transition-all duration-200`}>
+            } justify-center items-center flex dark:text-gray-100 transform transition-all duration-200 relative`}>
             <LazyImage
               src={siteInfo?.icon}
               className='rounded-full'
@@ -48,12 +49,26 @@ export function InfoCard(props) {
               height={400}
               alt={siteConfig('AUTHOR')}
             />
+            {/* 状态图标 */}
+            {statusIcon && (
+              <div className='author-status'>
+                <LazyImage
+                  src={statusIcon}
+                  width={32}
+                  height={32}
+                  alt="status"
+                />
+              </div>
+            )}
           </div>
         </div>
 
         {/* Hover显示的公告内容 */}
         <div className='heo-info-announcement-wrap'>
-         
+          <div className='heo-info-welcome-title'>
+            <span className='heo-info-emoji'>👋</span>
+            <span>欢迎来访!</span>
+          </div>
           <Announcement post={notice} style={{ color: 'white !important' }} />
         </div>
       </div>
@@ -74,9 +89,13 @@ export function InfoCard(props) {
                 </SmartLink>
               </div>
             )}
-           
-        
-          
+            {url2 && (
+              <div className='heo-info-social-btn'>
+                <SmartLink href={url2}>
+                  <i className={icon2} />
+                </SmartLink>
+              </div>
+            )}
           </div>
           <MoreButton />
         </div>
