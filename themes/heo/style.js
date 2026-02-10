@@ -73,12 +73,7 @@ const Style = () => {
         left: 0;
         width: 100%;
         height: 50vh;
-        background: 
-          /* 极淡的底部光晕 */
-          radial-gradient(circle at bottom, rgba(99, 102, 241, 0.06) 0%, rgba(247, 249, 254, 0) 80%),
-          /* 增加一些灵动的横向细线，打破平整感 */
-          linear-gradient(to bottom, transparent, rgba(99, 102, 241, 0.02) 50%, transparent);
-        background-size: 100% 100%, 100% 2px;
+        background: radial-gradient(circle at bottom, rgba(99, 102, 241, 0.045) 0%, rgba(247, 249, 254, 0) 82%);
         pointer-events: none;
         z-index: -1;
       }
@@ -1161,22 +1156,24 @@ const Style = () => {
       }
 
       #theme-heo footer #color-transition {
-        height: 48px;
-        background: linear-gradient(to bottom, #f7f9fe, rgba(247, 249, 254, 0)) !important;
+        height: 128px !important;
+        background: linear-gradient(to bottom, #f7f9fe 0%, rgba(247, 249, 254, 0.0) 100%) !important;
       }
 
       html.dark #theme-heo footer #color-transition {
-        background: linear-gradient(to bottom, rgba(15, 17, 21, 0), rgba(15, 17, 21, 0)) !important;
+        height: 128px !important;
+        background: transparent !important;
       }
 
       #theme-heo footer #footer-bottom {
         height: auto !important;
         padding-top: 1.5rem !important;
         padding-bottom: 2rem !important;
-        background: rgba(249, 250, 252, 0.8) !important;
-        -webkit-backdrop-filter: saturate(180%) blur(16px);
-        backdrop-filter: saturate(180%) blur(16px);
-        border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+        background: rgba(255, 255, 255, 0.45) !important;
+        -webkit-backdrop-filter: saturate(180%) blur(20px);
+        backdrop-filter: saturate(180%) blur(20px);
+        border-top: 1px solid rgba(0, 0, 0, 0.03) !important;
+        box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5), 0 -10px 30px rgba(0, 0, 0, 0.03);
         color: var(--heo-text-tertiary);
         display: flex;
         flex-direction: column;
