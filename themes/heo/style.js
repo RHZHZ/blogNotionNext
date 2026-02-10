@@ -891,7 +891,7 @@ const Style = () => {
 
       #theme-heo footer #color-transition {
         height: 48px;
-        background: linear-gradient(to bottom, #f5f5f7, transparent) !important;
+        background: linear-gradient(to bottom, #f7f9fe, transparent) !important;
       }
 
       html.dark #theme-heo footer #color-transition {
@@ -902,8 +902,11 @@ const Style = () => {
         height: auto !important;
         padding-top: 1.5rem !important;
         padding-bottom: 2rem !important;
-        background: transparent !important;
-        border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+        background: rgba(255, 255, 255, 0.72) !important;
+        -webkit-backdrop-filter: saturate(180%) blur(16px);
+        backdrop-filter: saturate(180%) blur(16px);
+        border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+        box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.6), 0 -10px 30px rgba(0, 0, 0, 0.06);
         color: var(--heo-text-tertiary);
         display: flex;
         flex-direction: column;
@@ -967,7 +970,11 @@ const Style = () => {
       }
 
       html.dark #theme-heo footer #footer-bottom {
+        background: rgba(27, 28, 32, 0.68) !important;
+        -webkit-backdrop-filter: saturate(140%) blur(18px);
+        backdrop-filter: saturate(140%) blur(18px);
         border-top-color: rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.06), 0 -14px 36px rgba(0, 0, 0, 0.45);
       }
 
       #theme-heo footer #footer-bottom a {
