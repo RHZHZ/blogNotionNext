@@ -214,6 +214,50 @@ const Style = () => {
         }
       }
 
+      /* 下拉菜单容器：大圆角胶囊感与玻璃质感优化 */
+      #theme-heo #nav-bar-swipe nav#nav-mobile ul {
+        border-radius: 28px !important;
+        padding: 8px !important;
+        border: 1px solid rgba(0, 0, 0, 0.05) !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
+        background: rgba(255, 255, 255, 0.85) !important;
+        backdrop-filter: blur(20px) saturate(180%) !important;
+      }
+
+      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile ul {
+        background: rgba(27, 28, 32, 0.85) !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+      }
+
+      /* 下拉菜单项：同步为大圆角胶囊发光样式 */
+      #theme-heo #nav-bar-swipe nav#nav-mobile ul li {
+        border-radius: 20px !important;
+        margin: 4px 0 !important;
+        padding: 6px 16px !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      }
+
+      #theme-heo #nav-bar-swipe nav#nav-mobile ul li:hover {
+        background: rgba(37, 99, 235, 1) !important;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3) !important;
+        color: #ffffff !important;
+      }
+
+      #theme-heo #nav-bar-swipe nav#nav-mobile ul li:hover a span {
+        color: #ffffff !important;
+      }
+
+      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile ul li:hover {
+        background: rgba(234, 179, 8, 1) !important;
+        box-shadow: 0 8px 20px rgba(234, 179, 8, 0.4) !important;
+        color: #000000 !important;
+      }
+
+      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile ul li:hover a span {
+        color: #000000 !important;
+      }
+
       #theme-heo nav#nav a:focus-visible,
       #theme-heo nav#nav button:focus-visible,
       #theme-heo #nav-bar-swipe nav#nav-mobile a:focus-visible,
