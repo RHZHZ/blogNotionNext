@@ -502,6 +502,58 @@ const Style = () => {
         background: white;
       }
 
+      /* 状态图标定位 (仿参考样式) */
+      .author-status {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        width: 36px;
+        height: 36px;
+        background: white;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: transform 0.3s var(--heo-ease);
+      }
+
+      .author-status .g-status {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .heo-infocard-v2:hover .author-status {
+        transform: scale(1.1) rotate(5deg);
+      }
+
+      /* 状态图标定位 */
+      .author-status {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 32px;
+        height: 32px;
+        background: white;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: transform 0.3s var(--heo-ease);
+      }
+
+      .heo-infocard-v2:hover .author-status {
+        transform: scale(1.1) rotate(5deg);
+      }
+
       .heo-info-announcement-wrap {
         position: absolute;
         top: 0;
@@ -561,20 +613,11 @@ const Style = () => {
       }
 
       .author-info__name {
-      
-        text-align: left;
-        font-weight: 700;
-        color: var(--heo-white);
-        font-size: 20px;
-        line-height: 1;
-        margin-bottom: 5px;
+        line-height: 1.2;
       }
 
       .author-info__desc {
-        font-size: 12px;
-        color: var(--heo-white);
-        opacity: .6;
-        line-height: 1;
+        opacity: 0.8;
       }
 
       /* 按钮专用样式 */
