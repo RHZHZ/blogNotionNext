@@ -156,11 +156,11 @@ const Style = () => {
       #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
         position: relative;
         border-radius: 999px;
-        background: rgba(37, 99, 235, 0.88);
+        background: rgba(37, 99, 235, 1) !important;
         box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.55),
-          0 0 26px rgba(37, 99, 235, 0.55),
-          0 0 52px rgba(59, 130, 246, 0.28);
-        color: rgba(255, 255, 255, 0.96);
+          0 0 26px rgba(37, 99, 235, 0.65),
+          0 0 52px rgba(59, 130, 246, 0.35);
+        color: #ffffff !important;
       }
 
       html.dark #theme-heo nav#nav a[aria-current='page'],
@@ -171,25 +171,29 @@ const Style = () => {
       html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'] > div,
       html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer[aria-current='page'],
       html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
-        background: rgba(234, 179, 8, 0.92);
+        background: rgba(234, 179, 8, 1) !important;
         box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.55),
-          0 0 26px rgba(234, 179, 8, 0.5),
-          0 0 52px rgba(250, 204, 21, 0.24);
-        color: rgba(17, 24, 39, 0.96);
+          0 0 26px rgba(234, 179, 8, 0.6),
+          0 0 52px rgba(250, 204, 21, 0.3);
+        color: #000000 !important;
       }
 
       @media (hover: hover) {
         #theme-heo #nav-bar-swipe nav#nav-mobile a:hover,
         #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover {
           border-radius: 999px;
-          box-shadow: 0 0 18px rgba(37, 99, 235, 0.45),
-            0 0 42px rgba(59, 130, 246, 0.22);
+          background-color: rgba(37, 99, 235, 1) !important;
+          box-shadow: 0 0 20px rgba(37, 99, 235, 0.6),
+            0 0 40px rgba(37, 99, 235, 0.3);
+          color: #ffffff !important;
         }
 
         html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a:hover,
         html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover {
-          box-shadow: 0 0 18px rgba(234, 179, 8, 0.42),
-            0 0 42px rgba(250, 204, 21, 0.2);
+          background-color: rgba(234, 179, 8, 1) !important;
+          box-shadow: 0 0 20px rgba(234, 179, 8, 0.6),
+            0 0 40px rgba(234, 179, 8, 0.3);
+          color: #000000 !important;
         }
       }
 
