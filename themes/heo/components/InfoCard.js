@@ -14,7 +14,7 @@ import Card from './Card'
  * @returns
  */
 export function InfoCard(props) {
-  const { siteInfo, notice, post } = props
+  const { siteInfo, notice, post, isDarkMode } = props
   const router = useRouter()
   // 在文章详情页特殊处理
   const isSlugPage = router.pathname.indexOf('/[prefix]') === 0
@@ -24,7 +24,7 @@ export function InfoCard(props) {
   const icon2 = siteConfig('HEO_INFO_CARD_ICON2', null, CONFIG)
   const statusIcon = siteConfig('HEO_INFO_CARD_STATUS_ICON', null, CONFIG)
 
-  const fallbackColor = '#4f65f0'
+  const fallbackColor = isDarkMode ? '#e67e22' : '#4f65f0'
   const [cardColor, setCardColor] = useState(fallbackColor)
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export function InfoCard(props) {
     return () => {
       cancelled = true
     }
-  }, [post?.pageCover, siteInfo?.icon])
+  }, [post?.pageCover, siteInfo?.icon, fallbackColor])
 
   return (
     <Card
