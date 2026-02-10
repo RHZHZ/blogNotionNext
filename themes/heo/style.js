@@ -355,6 +355,45 @@ const Style = () => {
         display: none;
       }
 
+      /* Sidebar cards: only affect right sidebar (C plan) */
+      #theme-heo #sideRight .wow.fadeInUp.border.bg-white,
+      #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\],
+      #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\].dark\:text-white,
+      #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl,
+      #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.lg\:p-6,
+      #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.p-4 {
+        background: var(--heo-surface) !important;
+        border: 1px solid var(--heo-border-subtle) !important;
+        border-radius: var(--heo-radius-lg) !important;
+        box-shadow: var(--heo-shadow-sm);
+        -webkit-backdrop-filter: saturate(180%) blur(14px);
+        backdrop-filter: saturate(180%) blur(14px);
+      }
+
+      html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white,
+      html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\],
+      html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\].dark\:text-white,
+      html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl,
+      html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.lg\:p-6,
+      html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.p-4 {
+        background: var(--heo-surface-dark) !important;
+        border-color: var(--heo-border-subtle-dark) !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      @media (hover: hover) {
+        #theme-heo #sideRight .wow.fadeInUp.border.bg-white:hover,
+        #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl:hover {
+          box-shadow: var(--heo-shadow-lg);
+          transform: translateY(var(--heo-card-hover-translate));
+        }
+
+        html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white:hover,
+        html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl:hover {
+          box-shadow: var(--heo-shadow-lg-dark);
+        }
+      }
+
       /* Search page (Apple-style) */
       #theme-heo .heo-search {
         max-width: 56rem;
