@@ -59,7 +59,7 @@ const Style = () => {
       }
 
       body {
-        background-color: #f7f9fe;
+        background-color: #f9fafc;
       }
 
       html.dark body {
@@ -935,7 +935,7 @@ const Style = () => {
 
       #theme-heo footer #color-transition {
         height: 48px;
-        background: linear-gradient(to bottom, #f7f9fe, transparent) !important;
+        background: linear-gradient(to bottom, transparent, #f9fafc) !important;
       }
 
       html.dark #theme-heo footer #color-transition {
@@ -946,11 +946,10 @@ const Style = () => {
         height: auto !important;
         padding-top: 1.5rem !important;
         padding-bottom: 2rem !important;
-        background: rgba(255, 255, 255, 0.72) !important;
+        background: rgba(249, 250, 252, 0.8) !important;
         -webkit-backdrop-filter: saturate(180%) blur(16px);
         backdrop-filter: saturate(180%) blur(16px);
-        border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
-        box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.6), 0 -10px 30px rgba(0, 0, 0, 0.06);
+        border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
         color: var(--heo-text-tertiary);
         display: flex;
         flex-direction: column;
