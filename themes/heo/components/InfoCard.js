@@ -53,10 +53,10 @@ export function InfoCard(props) {
 
         {/* Hover显示的公告内容 */}
         <div className='heo-info-announcement-wrap'>
-         /*  <div className='heo-info-welcome-title'>
-            <span className='heo-info-emoji'>👋</span>
-            <span>欢迎来访!</span>
-          </div> 
+         /**  <div className='heo-info-welcome-title'>
+          * <span className='heo-info-emoji'>👋</span>
+          *  <span>欢迎来访!</span>
+          * </div> 
           */
           <Announcement post={notice} style={{ color: 'white !important' }} />
         </div>
