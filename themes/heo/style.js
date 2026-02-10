@@ -439,73 +439,84 @@ const Style = () => {
         background: linear-gradient(135deg, #4f65f0 0%, #a252ff 100%) !important;
         border: none !important;
         padding: 1.5rem !important;
-        overflow: visible !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-end !important;
+        height: 20rem !important;
+        min-height: 20rem !important;
       }
 
       html.dark #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\].dark\:bg-yellow-600 {
         background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
       }
 
-      /* 头像放大与浮动 */
+      /* 布局调整：头像和问候语居中 */
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] > div.flex.justify-between {
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: absolute !important;
+        top: 3.5rem !important;
+        left: 0 !important;
+        right: 0 !important;
+        transition: opacity var(--heo-dur) var(--heo-ease), transform var(--heo-dur) var(--heo-ease);
+      }
+
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\]:hover > div.flex.justify-between {
+        opacity: 0;
+        transform: translateY(-20px);
+        pointer-events: none;
+      }
+
+      /* 头像放大与居中 */
       #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .rounded-full,
       #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\].dark\:bg-yellow-600 .rounded-full {
-        width: 64px !important;
-        height: 64px !important;
-        border: 3px solid rgba(255, 255, 255, 0.4);
+        width: 100px !important;
+        height: 100px !important;
+        border: 4px solid rgba(255, 255, 255, 0.4);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         transition: transform var(--heo-dur) var(--heo-ease) !important;
         background: white;
+        margin: 0 auto !important;
       }
 
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\]:hover .rounded-full {
-        transform: scale(1.1) rotate(5deg);
-      }
-
-      /* 问候语小标签 */
+      /* 问候语小标签：放在头像上方 */
       #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .cursor-pointer.py-1.px-2 {
         background: rgba(255, 255, 255, 0.2) !important;
         -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.3);
         color: white !important;
-        border-radius: 8px !important;
-      }
-
-      /* 社交按钮玻璃态 */
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .bg-indigo-400,
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .bg-indigo-400.dark\:bg-yellow-500 {
-        background: rgba(255, 255, 255, 0.15) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(5px);
-        transition: all var(--heo-dur-fast) var(--heo-ease) !important;
-      }
-
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .bg-indigo-400:hover {
-        background: white !important;
-        color: #4f65f0 !important;
-        transform: scale(1.1);
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-      }
-
-      /* 了解更多按钮 */
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .group.bg-indigo-400 {
-        background: white !important;
-        color: #4f65f0 !important;
         border-radius: 999px !important;
+        margin-bottom: 1rem !important;
+        padding: 4px 16px !important;
+        order: -1 !important;
       }
 
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .group.bg-indigo-400:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+      /* 作者名字与公告栏位置固定在底部 */
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] h2 {
+        margin-top: auto !important;
+        margin-bottom: 0.5rem !important;
+        font-size: 1.8rem !important;
+        z-index: 10;
       }
 
-      /* 公告栏：默认隐藏，聚焦/悬停卡片时显示（仿 zhheo） */
+      /* 公告栏：悬停显示在卡片中央 */
       #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] #announcement-content {
         opacity: 0;
-        transform: translateY(6px);
+        transform: translateY(20px);
         pointer-events: none;
-        transition: opacity var(--heo-dur) var(--heo-ease),
-          transform var(--heo-dur) var(--heo-ease);
+        transition: opacity var(--heo-dur) var(--heo-ease), transform var(--heo-dur) var(--heo-ease);
+        position: absolute !important;
+        top: 3.5rem !important;
+        left: 1.5rem !important;
+        right: 1.5rem !important;
+        color: rgba(255, 255, 255, 0.95) !important;
+        font-weight: 500;
+        font-size: 1.1rem !important;
+        line-height: 1.6 !important;
+        text-align: left !important;
       }
 
       #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\]:hover #announcement-content {
@@ -514,9 +525,38 @@ const Style = () => {
         pointer-events: auto;
       }
 
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] #announcement-content {
-        color: rgba(255, 255, 255, 0.9) !important;
-        font-weight: 500;
+      /* 底部按钮栏优化 */
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] > div.flex.justify-between:last-child {
+        width: 100% !important;
+        margin-top: 1rem !important;
+        align-items: center !important;
+      }
+
+      /* 社交按钮样式优化 */
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .bg-indigo-400,
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .bg-indigo-400.dark\:bg-yellow-500 {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border: none !important;
+        backdrop-filter: blur(5px);
+        width: 42px !important;
+        height: 42px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 1.2rem !important;
+      }
+
+      /* 了解更多按钮改成圆形图标风格 */
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .group.bg-indigo-400 {
+        background: rgba(255, 255, 255, 0.15) !important;
+        width: 42px !important;
+        height: 42px !important;
+        padding: 0 !important;
+        justify-content: center !important;
+      }
+
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .group.bg-indigo-400 .font-bold {
+        display: none !important; /* 隐藏“了解更多”文字，对齐 zhheo 纯图标风格 */
       }
 
       /* Sidebar cards: only affect right sidebar (C plan) */
