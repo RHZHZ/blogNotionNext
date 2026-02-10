@@ -62,31 +62,12 @@ const Style = () => {
         background-color: #f7f9fe;
         background-image: radial-gradient(rgba(60, 132, 246, 0.03) 1px, transparent 0);
         background-size: 24px 24px;
-        position: relative;
-      }
-
-      /* 页面底部氛围层 - 亮色 (优化：移除叠层感，改为克制的线状氛围) */
-      body::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 50vh;
-        background: radial-gradient(circle at bottom, rgba(99, 102, 241, 0.045) 0%, rgba(247, 249, 254, 0) 82%);
-        pointer-events: none;
-        z-index: -1;
       }
 
       html.dark body {
         background-color: #0f1115;
         background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 0);
         background-size: 24px 24px;
-      }
-
-      /* 页面底部氛围层 - 暗色 (保持琥珀色烘托) */
-      html.dark body::after {
-        background: radial-gradient(circle at bottom, rgba(234, 179, 8, 0.05) 0%, rgba(15, 17, 21, 0) 80%);
       }
 
       #theme-heo {
@@ -1156,24 +1137,22 @@ const Style = () => {
       }
 
       #theme-heo footer #color-transition {
-        height: 128px !important;
-        background: linear-gradient(to bottom, #f7f9fe 0%, rgba(247, 249, 254, 0.0) 100%) !important;
+        height: 48px;
+        background: linear-gradient(to bottom, transparent, #f9fafc) !important;
       }
 
       html.dark #theme-heo footer #color-transition {
-        height: 128px !important;
-        background: transparent !important;
+        background: linear-gradient(to bottom, #0f1115, #18171d) !important;
       }
 
       #theme-heo footer #footer-bottom {
         height: auto !important;
         padding-top: 1.5rem !important;
         padding-bottom: 2rem !important;
-        background: rgba(255, 255, 255, 0.45) !important;
-        -webkit-backdrop-filter: saturate(180%) blur(20px);
-        backdrop-filter: saturate(180%) blur(20px);
-        border-top: 1px solid rgba(0, 0, 0, 0.03) !important;
-        box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5), 0 -10px 30px rgba(0, 0, 0, 0.03);
+        background: rgba(249, 250, 252, 0.8) !important;
+        -webkit-backdrop-filter: saturate(180%) blur(16px);
+        backdrop-filter: saturate(180%) blur(16px);
+        border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
         color: var(--heo-text-tertiary);
         display: flex;
         flex-direction: column;
