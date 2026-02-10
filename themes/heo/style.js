@@ -380,7 +380,17 @@ const Style = () => {
       }
 
       /* Hero section styles */
-      #theme-heo #hero .recent-post-top,
+      #theme-heo #hero .recent-post-top {
+        background: transparent !important;
+        border: 1px solid var(--heo-border-subtle) !important;
+        box-shadow: none !important;
+        transition: all var(--heo-dur) var(--heo-ease);
+      }
+
+      html.dark #theme-heo #hero .recent-post-top {
+        border-color: var(--heo-border-subtle-dark) !important;
+      }
+
       #theme-heo #hero #banners,
       #theme-heo #hero-right-wrapper #top-group > a > div,
       #theme-heo #hero-right-wrapper #today-card #card-body {
@@ -390,7 +400,6 @@ const Style = () => {
         transition: all var(--heo-dur) var(--heo-ease);
       }
 
-      html.dark #theme-heo #hero .recent-post-top,
       html.dark #theme-heo #hero #banners,
       html.dark #theme-heo #hero-right-wrapper #top-group > a > div,
       html.dark #theme-heo #hero-right-wrapper #today-card #card-body {
