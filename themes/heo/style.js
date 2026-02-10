@@ -106,6 +106,7 @@ const Style = () => {
         background: rgba(235, 235, 245, 0.2);
       }
 
+
       html.dark ::-webkit-scrollbar-thumb:hover {
         background: rgba(235, 235, 245, 0.3);
       }
