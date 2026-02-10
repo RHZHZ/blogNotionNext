@@ -549,40 +549,49 @@ const Style = () => {
         transform: translateY(-1px);
       }
 
-      /* 侧边栏文章列表项（最新/最热文章）聚焦效果 */
-      #theme-heo #sideRight .aside-list-item {
-        padding: 8px 12px !important;
-        border-radius: 14px !important;
-        transition: all 0.25s var(--heo-ease) !important;
+      /* 侧边栏文章列表项（最新发布/随机文章等）聚焦效果适配真实 DOM */
+      #theme-heo #sideRight a.my-3.flex {
+        padding: 8px !important;
+        margin-top: 4px !important;
         margin-bottom: 4px !important;
-        cursor: pointer;
+        border-radius: 16px !important;
+        transition: all 0.25s var(--heo-ease) !important;
+        text-decoration: none !important;
       }
 
-      #theme-heo #sideRight .aside-list-item:hover {
-        background: rgba(37, 99, 235, 0.9) !important;
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+      /* 亮色模式悬停 */
+      #theme-heo #sideRight a.my-3.flex:hover {
+        background: rgba(37, 99, 235, 1) !important;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4), 
+                    0 0 0 1px rgba(37, 99, 235, 0.1);
         transform: translateY(-1px);
       }
 
-      #theme-heo #sideRight .aside-list-item:hover .content .title,
-      #theme-heo #sideRight .aside-list-item:hover .content .time {
+      /* 亮色模式文字反色 */
+      #theme-heo #sideRight a.my-3.flex:hover .text-sm,
+      #theme-heo #sideRight a.my-3.flex:hover .text-gray-400,
+      #theme-heo #sideRight a.my-3.flex:hover .menu-link {
         color: #ffffff !important;
       }
 
-      /* 针对图片中的带数字排行样式优化 */
-      #theme-heo #sideRight .aside-list-item:hover .thumbnail {
-        border-color: rgba(255, 255, 255, 0.3) !important;
-      }
-
-      html.dark #theme-heo #sideRight .aside-list-item:hover {
-        background: rgba(234, 179, 8, 0.95) !important;
-        box-shadow: 0 8px 20px rgba(234, 179, 8, 0.4);
+      /* 暗色模式悬停 */
+      html.dark #theme-heo #sideRight a.my-3.flex:hover {
+        background: rgba(234, 179, 8, 1) !important;
+        box-shadow: 0 8px 20px rgba(234, 179, 8, 0.5),
+                    0 0 0 1px rgba(234, 179, 8, 0.2);
         transform: translateY(-1px);
       }
 
-      html.dark #theme-heo #sideRight .aside-list-item:hover .content .title,
-      html.dark #theme-heo #sideRight .aside-list-item:hover .content .time {
+      /* 暗色模式文字反色 */
+      html.dark #theme-heo #sideRight a.my-3.flex:hover .text-sm,
+      html.dark #theme-heo #sideRight a.my-3.flex:hover .text-gray-400,
+      html.dark #theme-heo #sideRight a.my-3.flex:hover .menu-link {
         color: #000000 !important;
+      }
+
+      /* 缩略图圆角微调 */
+      #theme-heo #sideRight a.my-3.flex:hover img {
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
       }
 
       @media (hover: hover) {
