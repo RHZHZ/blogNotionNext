@@ -14,7 +14,7 @@ import Card from './Card'
  * @returns
  */
 export function InfoCard(props) {
-  const { siteInfo, notice } = props
+  const { siteInfo, notice, post } = props
   const router = useRouter()
   // 在文章详情页特殊处理
   const isSlugPage = router.pathname.indexOf('/[prefix]') === 0
@@ -30,10 +30,11 @@ export function InfoCard(props) {
   useEffect(() => {
     let cancelled = false
     async function run() {
-      // 优先从站点图标取色，作为个人资料卡背景
-      const color = await getDarkDominantColorFromImageUrl(siteInfo?.icon, {
+      // 优先从文章封面图取色，如果没有（比如在首页）则从站点图标取色
+      const coverImage = post?.pageCover || siteInfo?.icon
+      const color = await getDarkDominantColorFromImageUrl(coverImage, {
         fallback: fallbackColor,
-        darkenRatio: 0.1,
+        darkenRatio: 0.62, // 保持与文章顶部一致的压暗比例
         maxSize: 48
       })
       if (!cancelled) {
@@ -42,13 +43,13 @@ export function InfoCard(props) {
     }
     run()
     return () => {
-      cancelled = false
+      cancelled = true
     }
-  }, [siteInfo?.icon])
+  }, [post?.pageCover, siteInfo?.icon])
 
   return (
     <Card
-      style={{ background: cardColor }}
+      style={{ '--heo-infocard-bg': cardColor }}
       className='wow fadeInUp text-white flex flex-col w-72 overflow-hidden relative heo-infocard-v2'>
       
       {/* 1. Header 头部区域 - 固定问候语 */}
@@ -63,7 +64,7 @@ export function InfoCard(props) {
           <div
             className={`${
               isSlugPage
-                ? 'absolute right-0 -mt-8 -mr-6 hover:opacity-0 hover:scale-150 blur'
+                ? 'absolute right-0 -mt-8 -mr-6 hover:opacity-0 hover:scale-150'
                 : 'cursor-pointer'
             } justify-center items-center flex dark:text-gray-100 transform transition-all duration-200 relative`}>
             <LazyImage
