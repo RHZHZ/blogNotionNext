@@ -67,7 +67,7 @@ const Style = () => {
       }
 
       #theme-heo {
-        background-color: transparent!important;
+        background: transparent !important;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         font-family: var(--heo-font-sans);
@@ -126,7 +126,7 @@ const Style = () => {
       }
 
       #theme-heo nav#nav.bg-white,
-      #theme-heo nav#nav.dark\:\[\#18171d\] {
+      #theme-heo nav#nav.dark\:bg-\[\#18171d\] {
         box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 10px 30px rgba(0, 0, 0, 0.06);
       }
 
@@ -137,7 +137,7 @@ const Style = () => {
         border-bottom: 1px solid rgba(0, 0, 0, 0.06);
       }
 
-      html.dark #theme-heo nav#nav.dark\:\[\#18171d\] {
+      html.dark #theme-heo nav#nav.dark\:bg-\[\#18171d\] {
         background: rgba(27, 28, 32, 0.84) !important;
         -webkit-backdrop-filter: saturate(140%) blur(18px);
         backdrop-filter: saturate(140%) blur(18px);
@@ -145,7 +145,7 @@ const Style = () => {
         box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 14px 36px rgba(0, 0, 0, 0.45);
       }
 
-      /* 顶部导航栏：菜单项发光效果（类比侧边栏个人资料按钮） */
+      /* 顶部导航栏：菜单项与右侧按钮发光效果 */
       #theme-heo nav#nav a[aria-current='page'],
       #theme-heo nav#nav a.active,
       #theme-heo nav#nav button[aria-current='page'],
@@ -179,8 +179,11 @@ const Style = () => {
       }
 
       @media (hover: hover) {
+        /* 中间菜单项 hover */
         #theme-heo #nav-bar-swipe nav#nav-mobile a:hover,
-        #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover {
+        #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover,
+        /* 右侧图标按钮 hover (针对 SearchButton, DarkModeButton, RandomPostButton 等) */
+        #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover {
           border-radius: 999px;
           background-color: rgba(37, 99, 235, 1) !important;
           box-shadow: 0 0 20px rgba(37, 99, 235, 0.6),
@@ -188,43 +191,34 @@ const Style = () => {
           color: #ffffff !important;
         }
 
+        /* 右侧图标内部特殊处理 (针对某些被包裹的图标) */
+        #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover i,
+        #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover svg {
+           color: #ffffff !important;
+           fill: #ffffff !important;
+        }
+
         html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a:hover,
-        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover {
+        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover,
+        html.dark #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover {
           background-color: rgba(234, 179, 8, 1) !important;
           box-shadow: 0 0 20px rgba(234, 179, 8, 0.6),
             0 0 40px rgba(234, 179, 8, 0.3);
           color: #000000 !important;
         }
 
-        /* 顶部导航栏右侧按钮：纯白发光（灯泡点亮感） */
-        #theme-heo nav#nav > div > div:last-child > div.cursor-pointer:hover,
-        #theme-heo nav#nav > div > div:last-child > div[role='button']:hover,
-        #theme-heo nav#nav > div > div:last-child > div > #darkModeButton:hover,
-        #theme-heo nav#nav > div > div:last-child > div:hover {
-          background-color: rgba(255, 255, 255, 1) !important;
-          box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.85),
-            0 0 18px rgba(255, 255, 255, 0.85),
-            0 0 46px rgba(255, 255, 255, 0.4);
-          color: rgba(17, 24, 39, 0.95) !important;
-          filter: saturate(1.05);
-        }
-
-        html.dark #theme-heo nav#nav > div > div:last-child > div.cursor-pointer:hover,
-        html.dark #theme-heo nav#nav > div > div:last-child > div[role='button']:hover,
-        html.dark #theme-heo nav#nav > div > div:last-child > div > #darkModeButton:hover,
-        html.dark #theme-heo nav#nav > div > div:last-child > div:hover {
-          background-color: rgba(255, 255, 255, 0.98) !important;
-          box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.75),
-            0 0 18px rgba(255, 255, 255, 0.7),
-            0 0 54px rgba(255, 255, 255, 0.35);
-          color: rgba(17, 24, 39, 0.95) !important;
+        html.dark #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover i,
+        html.dark #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover svg {
+           color: #000000 !important;
+           fill: #000000 !important;
         }
       }
 
       #theme-heo nav#nav a:focus-visible,
       #theme-heo nav#nav button:focus-visible,
       #theme-heo #nav-bar-swipe nav#nav-mobile a:focus-visible,
-      #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:focus-visible {
+      #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:focus-visible,
+      #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:focus-visible {
         outline: none;
         border-radius: 999px;
         box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.8),
