@@ -145,108 +145,52 @@ const Style = () => {
         box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 14px 36px rgba(0, 0, 0, 0.45);
       }
 
-      /* 顶部导航栏：胶囊 Tab 风格（匹配截图） */
-      #theme-heo #nav-bar-swipe nav#nav-mobile {
-        gap: 10px;
-      }
-
-      /* 修复下拉菜单：缩短触发器到面板的距离，并允许“划过去”不消失 */
-      #theme-heo #nav-bar-swipe nav#nav-mobile > div {
+      /* 顶部导航栏：菜单项发光效果（类比侧边栏个人资料按钮） */
+      #theme-heo nav#nav a[aria-current='page'],
+      #theme-heo nav#nav a.active,
+      #theme-heo nav#nav button[aria-current='page'],
+      #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'],
+      #theme-heo #nav-bar-swipe nav#nav-mobile a.active,
+      #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'] > div,
+      #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer[aria-current='page'],
+      #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
         position: relative;
+        border-radius: 999px;
+        background: rgba(37, 99, 235, 0.88);
+        box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.55),
+          0 0 26px rgba(37, 99, 235, 0.55),
+          0 0 52px rgba(59, 130, 246, 0.28);
+        color: rgba(255, 255, 255, 0.96);
       }
 
-      #theme-heo #nav-bar-swipe nav#nav-mobile > div > ul {
-        top: calc(100% + 8px) !important;
-      }
-
-      #theme-heo #nav-bar-swipe nav#nav-mobile > div:hover > ul,
-      #theme-heo #nav-bar-swipe nav#nav-mobile > div:focus-within > ul {
-        visibility: visible !important;
-        opacity: 1 !important;
-        pointer-events: auto !important;
-        margin-top: 0 !important;
-        top: 100% !important;
-      }
-
-      #theme-heo #nav-bar-swipe nav#nav-mobile > div::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 100%;
-        height: 12px;
-      }
-
-      #theme-heo #nav-bar-swipe nav#nav-mobile > div {
-        display: flex;
-        align-items: center;
-      }
-
-      /* 统一顶级菜单项的胶囊外观（不影响下拉 ul/li） */
-      #theme-heo #nav-bar-swipe nav#nav-mobile > div > a,
-      #theme-heo #nav-bar-swipe nav#nav-mobile > div > .cursor-pointer {
-        border-radius: 999px !important;
-        padding: 6px 14px !important;
-        height: 34px;
-        line-height: 34px;
-        font-weight: 500;
-        letter-spacing: 0.12em;
-        color: rgba(17, 24, 39, 0.78);
-        background: transparent;
-      }
-
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile > div > a,
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile > div > .cursor-pointer {
-        color: rgba(249, 250, 251, 0.85);
+      html.dark #theme-heo nav#nav a[aria-current='page'],
+      html.dark #theme-heo nav#nav a.active,
+      html.dark #theme-heo nav#nav button[aria-current='page'],
+      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'],
+      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a.active,
+      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'] > div,
+      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer[aria-current='page'],
+      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
+        background: rgba(234, 179, 8, 0.92);
+        box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.55),
+          0 0 26px rgba(234, 179, 8, 0.5),
+          0 0 52px rgba(250, 204, 21, 0.24);
+        color: rgba(17, 24, 39, 0.96);
       }
 
       @media (hover: hover) {
-        #theme-heo #nav-bar-swipe nav#nav-mobile > div > a:hover,
-        #theme-heo #nav-bar-swipe nav#nav-mobile > div > .cursor-pointer:hover {
-          background: rgba(0, 0, 0, 0.06);
+        #theme-heo #nav-bar-swipe nav#nav-mobile a:hover,
+        #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover {
+          border-radius: 999px;
+          box-shadow: 0 0 18px rgba(37, 99, 235, 0.45),
+            0 0 42px rgba(59, 130, 246, 0.22);
         }
 
-        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile > div > a:hover,
-        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile > div > .cursor-pointer:hover {
-          background: rgba(255, 255, 255, 0.08);
+        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a:hover,
+        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover {
+          box-shadow: 0 0 18px rgba(234, 179, 8, 0.42),
+            0 0 42px rgba(250, 204, 21, 0.2);
         }
-      }
-
-      /* 选中态：浅色模式-蓝色胶囊 + 光晕 */
-      #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'],
-      #theme-heo #nav-bar-swipe nav#nav-mobile a.active,
-      #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer[aria-current='page'],
-      #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
-        background: rgba(59, 130, 246, 0.95) !important;
-        color: #ffffff !important;
-        box-shadow: 0 12px 26px rgba(59, 130, 246, 0.35),
-          0 0 0 6px rgba(59, 130, 246, 0.22),
-          0 0 20px rgba(59, 130, 246, 0.45);
-      }
-
-      /* 选中态：暗色模式-黄色胶囊 + 光晕 */
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'],
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a.active,
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer[aria-current='page'],
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
-        background: rgba(234, 179, 8, 0.95) !important;
-        color: #111827 !important;
-        box-shadow: 0 10px 22px rgba(234, 179, 8, 0.26),
-          0 0 0 5px rgba(234, 179, 8, 0.14);
-      }
-
-      /* 键盘聚焦：保留清晰焦点环 */
-      #theme-heo #nav-bar-swipe nav#nav-mobile > div > a:focus-visible,
-      #theme-heo #nav-bar-swipe nav#nav-mobile > div > .cursor-pointer:focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.75),
-          0 0 0 8px rgba(59, 130, 246, 0.16);
-      }
-
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile > div > a:focus-visible,
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile > div > .cursor-pointer:focus-visible {
-        box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.75),
-          0 0 0 8px rgba(234, 179, 8, 0.18);
       }
 
       #theme-heo nav#nav a:focus-visible,
