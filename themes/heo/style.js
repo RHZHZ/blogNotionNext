@@ -67,7 +67,7 @@ const Style = () => {
       }
 
       #theme-heo {
-        background-color: rgb(247 249 254 / var(--tw-bg-opacity, 1)) ;
+        background-color: rgb(247 249 254 / var(--tw-bg-opacity, 1)) !important;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         font-family: var(--heo-font-sans);
@@ -194,6 +194,30 @@ const Style = () => {
           box-shadow: 0 0 20px rgba(234, 179, 8, 0.6),
             0 0 40px rgba(234, 179, 8, 0.3);
           color: #000000 !important;
+        }
+
+        /* 顶部导航栏右侧按钮：纯白发光（灯泡点亮感） */
+        #theme-heo nav#nav > div > div:last-child > div.cursor-pointer:hover,
+        #theme-heo nav#nav > div > div:last-child > div[role='button']:hover,
+        #theme-heo nav#nav > div > div:last-child > div > #darkModeButton:hover,
+        #theme-heo nav#nav > div > div:last-child > div:hover {
+          background-color: rgba(255, 255, 255, 1) !important;
+          box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.85),
+            0 0 18px rgba(255, 255, 255, 0.85),
+            0 0 46px rgba(255, 255, 255, 0.4);
+          color: rgba(17, 24, 39, 0.95) !important;
+          filter: saturate(1.05);
+        }
+
+        html.dark #theme-heo nav#nav > div > div:last-child > div.cursor-pointer:hover,
+        html.dark #theme-heo nav#nav > div > div:last-child > div[role='button']:hover,
+        html.dark #theme-heo nav#nav > div > div:last-child > div > #darkModeButton:hover,
+        html.dark #theme-heo nav#nav > div > div:last-child > div:hover {
+          background-color: rgba(255, 255, 255, 0.98) !important;
+          box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.75),
+            0 0 18px rgba(255, 255, 255, 0.7),
+            0 0 54px rgba(255, 255, 255, 0.35);
+          color: rgba(17, 24, 39, 0.95) !important;
         }
       }
 
