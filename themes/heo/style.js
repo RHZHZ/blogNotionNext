@@ -594,7 +594,7 @@ const Style = () => {
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
       }
 
-      /* 文章页目录（Catalog / TOC）适配 Heo Pro 风格 - 修正双层问题 */
+      /* 文章页目录（Catalog / TOC）适配 Heo Pro 风格 - 修正版 */
       /* 1. 容器样式 (确保背景只在最外层，移除内层背景) */
       #theme-heo #sideRight .px-3.py-1.dark\:text-white.text-black {
         background: transparent !important;
@@ -606,12 +606,14 @@ const Style = () => {
 
       /* 2. 目录项（链接）基础样式与动画 */
       #theme-heo .notion-table-of-contents-item.catalog-item {
-        border-radius: 12px !important;
-        margin: 4px 0 !important;
-        padding: 6px 12px !important;
+        border-radius: 999px !important;
+        margin: 4px 8px 4px 0 !important; /* 增加右边距防止位移时被裁剪 */
+        padding: 6px 16px !important;
         transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
         display: block !important;
         text-decoration: none !important;
+        width: fit-content !important; /* 宽度适应文字，防止填满容器导致右侧顶死 */
+        max-width: calc(100% - 12px);
       }
 
       /* 3. 亮色模式：当前选中项 (Active) 与 Hover */
@@ -620,7 +622,7 @@ const Style = () => {
       #theme-heo .notion-table-of-contents-item.catalog-item:has(span.font-bold.text-indigo-600) {
         background: rgba(37, 99, 235, 0.9) !important;
         box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
-        transform: translateX(4px) !important;
+        transform: translateX(6px) !important; /* 保持灵动位移 */
       }
 
       #theme-heo .notion-table-of-contents-item.catalog-item:hover span,
@@ -634,36 +636,13 @@ const Style = () => {
       html.dark #theme-heo .notion-table-of-contents-item.catalog-item:has(span.font-bold.text-indigo-600) {
         background: rgba(234, 179, 8, 0.95) !important;
         box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4) !important;
-        transform: translateX(4px) !important;
+        transform: translateX(6px) !important;
       }
 
       html.dark #theme-heo .notion-table-of-contents-item.catalog-item:hover span,
       html.dark #theme-heo .notion-table-of-contents-item.catalog-item span.font-bold.text-indigo-600 {
         color: #000000 !important;
         font-weight: 600 !important;
-      }
-
-      /* 文章页目录（TOC / Catalog）样式统一 */
-      #theme-heo #sideRight #toc-wrapper {
-        border-radius: 20px !important;
-        padding: 4px !important;
-      }
-
-      #theme-heo #toc-wrapper .toc-item {
-        border-radius: 12px !important;
-        padding: 4px 12px !important;
-        margin: 2px 0 !important;
-        transition: all 0.25s var(--heo-ease) !important;
-        border: none !important;
-      }
-
-      /* 亮色模式：当前章节高亮与 Hover */
-      #theme-heo #toc-wrapper .toc-item:hover,
-      #theme-heo #toc-wrapper .toc-item.active {
-        background: rgba(37, 99, 235, 0.9) !important;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        color: #ffffff !important;
-        transform: translateX(4px);
       }
 
       #theme-heo #toc-wrapper .toc-item:hover a,
