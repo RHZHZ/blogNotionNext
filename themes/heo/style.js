@@ -434,129 +434,173 @@ const Style = () => {
       }
 
       /* InfoCard special style (仿 zhheo 质感) */
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\],
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\].dark\:bg-yellow-600 {
+      #theme-heo #sideRight .heo-infocard {
         background: linear-gradient(135deg, #4f65f0 0%, #a252ff 100%) !important;
         border: none !important;
-        padding: 1.5rem !important;
-        overflow: hidden !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: flex-end !important;
+        padding: 0 !important;
         height: 20rem !important;
         min-height: 20rem !important;
+        position: relative !important;
+        display: block !important;
       }
 
-      html.dark #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\].dark\:bg-yellow-600 {
+      html.dark #theme-heo #sideRight .heo-infocard {
         background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
       }
 
-      /* 布局调整：头像和问候语居中 */
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] > div.flex.justify-between {
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        position: absolute !important;
-        top: 3.5rem !important;
-        left: 0 !important;
-        right: 0 !important;
+      /* 核心图层样式 */
+      .heo-infocard-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
         transition: opacity var(--heo-dur) var(--heo-ease), transform var(--heo-dur) var(--heo-ease);
       }
 
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\]:hover > div.flex.justify-between {
+      /* 默认显示层 */
+      .heo-infocard-default {
+        opacity: 1;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #theme-heo #sideRight .heo-infocard:hover .heo-infocard-default {
         opacity: 0;
         transform: translateY(-20px);
         pointer-events: none;
       }
 
-      /* 头像放大与居中 */
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .rounded-full,
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\].dark\:bg-yellow-600 .rounded-full {
+      /* 悬停隐藏层 */
+      .heo-infocard-hover {
+        opacity: 0;
+        z-index: 1;
+        transform: translateY(20px);
+        background: inherit;
+      }
+
+      #theme-heo #sideRight .heo-infocard:hover .heo-infocard-hover {
+        opacity: 1;
+        transform: translateY(0);
+        z-index: 3;
+      }
+
+      /* 头像居中容器 */
+      .heo-infocard-avatar {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        margin-bottom: 2rem;
+      }
+
+      .heo-infocard-avatar .rounded-full {
         width: 100px !important;
         height: 100px !important;
         border: 4px solid rgba(255, 255, 255, 0.4);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        transition: transform var(--heo-dur) var(--heo-ease) !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         background: white;
-        margin: 0 auto !important;
+        transition: transform 0.5s var(--heo-ease);
       }
 
-      /* 问候语小标签：放在头像上方 */
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .cursor-pointer.py-1.px-2 {
+      /* 问候语顶部居中 */
+      .heo-infocard-top {
+        position: absolute;
+        top: 1.5rem;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+
+      .heo-infocard-top .py-1.px-2 {
         background: rgba(255, 255, 255, 0.2) !important;
-        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.3);
         color: white !important;
         border-radius: 999px !important;
-        margin-bottom: 1rem !important;
         padding: 4px 16px !important;
-        order: -1 !important;
       }
 
-      /* 作者名字与公告栏位置固定在底部 */
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] h2 {
-        margin-top: auto !important;
-        margin-bottom: 0.5rem !important;
-        font-size: 1.8rem !important;
-        z-index: 10;
+      /* 悬停内容布局 */
+      .heo-infocard-hover-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 0.5rem;
       }
 
-      /* 公告栏：悬停显示在卡片中央 */
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] #announcement-content {
-        opacity: 0;
-        transform: translateY(20px);
-        pointer-events: none;
-        transition: opacity var(--heo-dur) var(--heo-ease), transform var(--heo-dur) var(--heo-ease);
-        position: absolute !important;
-        top: 3.5rem !important;
-        left: 1.5rem !important;
-        right: 1.5rem !important;
-        color: rgba(255, 255, 255, 0.95) !important;
-        font-weight: 500;
-        font-size: 1.1rem !important;
-        line-height: 1.6 !important;
-        text-align: left !important;
+      .heo-infocard-hover-emoji {
+        animation: wave 2.5s infinite;
+        transform-origin: 70% 70%;
+        display: inline-block;
       }
 
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\]:hover #announcement-content {
-        opacity: 1;
-        transform: translateY(0);
-        pointer-events: auto;
+      @keyframes wave {
+        0% { transform: rotate(0deg); }
+        10% { transform: rotate(14deg); }
+        20% { transform: rotate(-8deg); }
+        30% { transform: rotate(14deg); }
+        40% { transform: rotate(-4deg); }
+        50% { transform: rotate(10deg); }
+        60% { transform: rotate(0deg); }
+        100% { transform: rotate(0deg); }
       }
 
-      /* 底部按钮栏优化 */
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] > div.flex.justify-between:last-child {
-        width: 100% !important;
-        margin-top: 1rem !important;
-        align-items: center !important;
+      .heo-infocard-hover-content {
+        flex: 1;
+        overflow-y: auto;
+        font-size: 1rem;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.9);
       }
 
-      /* 社交按钮样式优化 */
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .bg-indigo-400,
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .bg-indigo-400.dark\:bg-yellow-500 {
+      /* 底部固定区 */
+      .heo-infocard-bottom {
+        width: 100%;
+        margin-top: auto;
+      }
+
+      /* 按钮组 */
+      #theme-heo .heo-infocard .bg-indigo-400,
+      #theme-heo .heo-infocard .bg-indigo-400.dark\:bg-yellow-500,
+      #theme-heo .heo-infocard .group.bg-indigo-400 {
         background: rgba(255, 255, 255, 0.15) !important;
-        border: none !important;
-        backdrop-filter: blur(5px);
-        width: 42px !important;
-        height: 42px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-size: 1.2rem !important;
-      }
-
-      /* 了解更多按钮改成圆形图标风格 */
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .group.bg-indigo-400 {
-        background: rgba(255, 255, 255, 0.15) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
         width: 42px !important;
         height: 42px !important;
         padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
         justify-content: center !important;
+        border-radius: 50% !important;
+        transition: all var(--heo-dur-fast) var(--heo-ease) !important;
       }
 
-      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .group.bg-indigo-400 .font-bold {
-        display: none !important; /* 隐藏“了解更多”文字，对齐 zhheo 纯图标风格 */
+      #theme-heo .heo-infocard .bg-indigo-400:hover,
+      #theme-heo .heo-infocard .group.bg-indigo-400:hover {
+        background: white !important;
+        color: #4f65f0 !important;
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+      }
+
+      html.dark #theme-heo .heo-infocard .bg-indigo-400:hover {
+        color: #e67e22 !important;
+      }
+
+      #theme-heo .heo-infocard .group.bg-indigo-400 .font-bold {
+        display: none !important;
       }
 
       /* Sidebar cards: only affect right sidebar (C plan) */
