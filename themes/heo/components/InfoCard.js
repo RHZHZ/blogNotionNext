@@ -3,7 +3,7 @@ import LazyImage from '@/components/LazyImage'
 import { siteConfig } from '@/lib/config'
 import SmartLink from '@/components/SmartLink'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CONFIG from '../config'
 import Announcement from './Announcement'
 import Card from './Card'
@@ -24,8 +24,32 @@ export function InfoCard(props) {
   const icon2 = siteConfig('HEO_INFO_CARD_ICON2', null, CONFIG)
   const statusIcon = siteConfig('HEO_INFO_CARD_STATUS_ICON', null, CONFIG)
 
+  const fallbackColor = '#4f65f0'
+  const [cardColor, setCardColor] = useState(fallbackColor)
+
+  useEffect(() => {
+    let cancelled = false
+    async function run() {
+      // 优先从站点图标取色，作为个人资料卡背景
+      const color = await getDarkDominantColorFromImageUrl(siteInfo?.icon, {
+        fallback: fallbackColor,
+        darkenRatio: 0.1,
+        maxSize: 48
+      })
+      if (!cancelled) {
+        setCardColor(color)
+      }
+    }
+    run()
+    return () => {
+      cancelled = false
+    }
+  }, [siteInfo?.icon])
+
   return (
-    <Card className='wow fadeInUp bg-[#4f65f0] dark:bg-yellow-600 text-white flex flex-col w-72 overflow-hidden relative heo-infocard-v2'>
+    <Card
+      style={{ background: cardColor }}
+      className='wow fadeInUp text-white flex flex-col w-72 overflow-hidden relative heo-infocard-v2'>
       
       {/* 1. Header 头部区域 - 固定问候语 */}
       <div className='heo-info-header'>
@@ -65,7 +89,10 @@ export function InfoCard(props) {
 
         {/* Hover显示的公告内容 */}
         <div className='heo-info-announcement-wrap'>
-         
+          {/* <div className='heo-info-welcome-title'>
+            <span className='heo-info-emoji'>👋</span>
+            <span>欢迎来访!</span>
+          </div> */}
           <Announcement post={notice} style={{ color: 'white !important' }} />
         </div>
       </div>
@@ -94,7 +121,7 @@ export function InfoCard(props) {
               </div>
             )}
           </div>
-         
+          {/* <MoreButton /> */}
         </div>
       </div>
 
@@ -120,6 +147,107 @@ function MoreButton() {
       </div>
     </SmartLink>
   )
+}
+
+function clampInt(v, min, max) {
+  return Math.max(min, Math.min(max, Math.round(v)))
+}
+
+function parseHexColor(hex) {
+  const raw = String(hex || '').trim().replace('#', '')
+  if (raw.length === 3) {
+    const r = parseInt(raw[0] + raw[0], 16)
+    const g = parseInt(raw[1] + raw[1], 16)
+    const b = parseInt(raw[2] + raw[2], 16)
+    if ([r, g, b].some(Number.isNaN)) return null
+    return { r, g, b }
+  }
+  if (raw.length === 6) {
+    const r = parseInt(raw.slice(0, 2), 16)
+    const g = parseInt(raw.slice(2, 4), 16)
+    const b = parseInt(raw.slice(4, 6), 16)
+    if ([r, g, b].some(Number.isNaN)) return null
+    return { r, g, b }
+  }
+  return null
+}
+
+function rgbToHex({ r, g, b }) {
+  const to2 = n => clampInt(n, 0, 255).toString(16).padStart(2, '0')
+  return `#${to2(r)}${to2(g)}${to2(b)}`
+}
+
+function adjustColor(hex, { darkenRatio = 0, lightenRatio = 0 } = {}) {
+  const rgb = parseHexColor(hex)
+  if (!rgb) return hex
+  if (darkenRatio > 0) {
+    return rgbToHex({
+      r: rgb.r * (1 - darkenRatio),
+      g: rgb.g * (1 - darkenRatio),
+      b: rgb.b * (1 - darkenRatio)
+    })
+  }
+  if (lightenRatio > 0) {
+    return rgbToHex({
+      r: rgb.r + (255 - rgb.r) * lightenRatio,
+      g: rgb.g + (255 - rgb.g) * lightenRatio,
+      b: rgb.b + (255 - rgb.b) * lightenRatio
+    })
+  }
+  return hex
+}
+
+async function getDarkDominantColorFromImageUrl(
+  imageUrl,
+  { fallback = '#4f65f0', darkenRatio = 0.1, maxSize = 48 } = {}
+) {
+  try {
+    if (!imageUrl || typeof window === 'undefined') return fallback
+    const img = new window.Image()
+    img.crossOrigin = 'anonymous'
+    const loaded = await new Promise((resolve, reject) => {
+      img.onload = () => resolve(true)
+      img.onerror = reject
+      img.src = imageUrl
+    })
+    if (!loaded) return fallback
+    const w = img.naturalWidth || img.width
+    const h = img.naturalHeight || img.height
+    if (!w || !h) return fallback
+    const scale = Math.min(1, maxSize / Math.max(w, h))
+    const sw = Math.max(1, Math.floor(w * scale))
+    const sh = Math.max(1, Math.floor(h * scale))
+    const canvas = document.createElement('canvas')
+    canvas.width = sw
+    canvas.height = sh
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    if (!ctx) return fallback
+    ctx.drawImage(img, 0, 0, sw, sh)
+    const { data } = ctx.getImageData(0, 0, sw, sh)
+    let rSum = 0, gSum = 0, bSum = 0, count = 0
+    for (let i = 0; i < data.length; i += 4) {
+      const a = data[i + 3]
+      if (a < 180) continue
+      const r = data[i], g = data[i + 1], b = data[i + 2]
+      const max = Math.max(r, g, b), min = Math.min(r, g, b)
+      const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b
+      if (luma > 245 || luma < 10) continue
+      if (max - min < 8) continue
+      rSum += r; gSum += g; bSum += b; count++
+    }
+    if (count < 30) {
+      rSum = 0; gSum = 0; bSum = 0; count = 0
+      for (let i = 0; i < data.length; i += 16) {
+        if (data[i + 3] < 120) continue
+        rSum += data[i]; gSum += data[i + 1]; bSum += data[i + 2]; count++
+      }
+    }
+    if (!count) return fallback
+    const hex = rgbToHex({ r: rSum / count, g: gSum / count, b: bSum / count })
+    return adjustColor(hex, { darkenRatio }) || fallback
+  } catch (e) {
+    return fallback
+  }
 }
 
 /**
