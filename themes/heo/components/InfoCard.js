@@ -3,7 +3,7 @@ import LazyImage from '@/components/LazyImage'
 import { siteConfig } from '@/lib/config'
 import SmartLink from '@/components/SmartLink'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useState, useRef, useLayoutEffect } from 'react'
 import CONFIG from '../config'
 import Announcement from './Announcement'
 import Card from './Card'
@@ -23,13 +23,31 @@ export function InfoCard(props) {
   const url2 = siteConfig('HEO_INFO_CARD_URL2', null, CONFIG)
   const icon2 = siteConfig('HEO_INFO_CARD_ICON2', null, CONFIG)
 
-  return (
-    <Card className='wow fadeInUp bg-[#4f65f0] dark:bg-yellow-600 text-white flex flex-col w-72 overflow-hidden relative heo-infocard'>
-      <div className='heo-infocard-layer heo-infocard-default'>
-        <div className='heo-infocard-top'>
-          <GreetingsWords />
-        </div>
+  const [hoverHeight, setHoverHeight] = useState('20rem')
+  const announcementRef = useRef(null)
 
+  // 动态测量公告内容高度
+  useLayoutEffect(() => {
+    if (announcementRef.current) {
+      const contentHeight = announcementRef.current.scrollHeight
+      // 基础高度(底部作者+按钮约100px) + 公告高度 + 顶部欢迎标题高度(约60px) + padding
+      const totalHeight = contentHeight + 160 
+      setHoverHeight(`${Math.max(320, totalHeight)}px`)
+    }
+  }, [notice])
+
+  return (
+    <Card 
+      className='wow fadeInUp bg-[#4f65f0] dark:bg-yellow-600 text-white flex flex-col w-72 overflow-hidden relative heo-infocard'
+      style={{ '--heo-infocard-hover-height': hoverHeight }}
+    >
+      {/* 1. 独立问候语层：永远置顶且可点击 */}
+      <div className='heo-infocard-greetings-standalone'>
+        <GreetingsWords />
+      </div>
+
+      {/* 2. 默认展示层：头像 */}
+      <div className='heo-infocard-layer heo-infocard-default'>
         <div className='heo-infocard-avatar'>
           <div
             className={`${
@@ -40,69 +58,48 @@ export function InfoCard(props) {
             <LazyImage
               src={siteInfo?.icon}
               className='rounded-full'
-              width={isSlugPage ? 100 : 100}
+              width={100}
+              height={100}
               alt={siteConfig('AUTHOR')}
             />
           </div>
         </div>
-
-        <div className='heo-infocard-bottom'>
-          <h2 className='text-3xl font-extrabold'>{siteConfig('AUTHOR')}</h2>
-
-          <div className='flex justify-between items-center mt-4'>
-            <div className='flex space-x-3 hover:text-black dark:hover:text-white'>
-              {url1 && (
-                <div className='w-10 text-center bg-indigo-400 p-2 rounded-full transition-colors duration-200 dark:bg-yellow-500 dark:hover:bg-black hover:bg-white'>
-                  <SmartLink href={url1}>
-                    <i className={icon1} />
-                  </SmartLink>
-                </div>
-              )}
-              {url2 && (
-                <div className='bg-indigo-400 p-2 rounded-full w-10 items-center flex justify-center transition-colors duration-200 dark:bg-yellow-500 dark:hover:bg-black hover:bg-white'>
-                  <SmartLink href={url2}>
-                    <i className={icon2} />
-                  </SmartLink>
-                </div>
-              )}
-            </div>
-            <MoreButton />
-          </div>
-        </div>
       </div>
 
+      {/* 3. 悬停展示层：公告内容 */}
       <div className='heo-infocard-layer heo-infocard-hover'>
         <div className='heo-infocard-hover-title'>
           <span className='heo-infocard-hover-emoji'>👋</span>
           <span>欢迎来访!</span>
         </div>
 
-        <div className='heo-infocard-hover-content'>
+        <div className='heo-infocard-hover-content' ref={announcementRef}>
           <Announcement post={notice} style={{ color: 'white !important' }} />
         </div>
+      </div>
 
-        <div className='heo-infocard-bottom'>
-          <h2 className='text-3xl font-extrabold'>{siteConfig('AUTHOR')}</h2>
+      {/* 4. 公用底部层：作者名与按钮 (位置相对固定) */}
+      <div className='heo-infocard-bottom-fixed'>
+        <h2 className='text-3xl font-extrabold'>{siteConfig('AUTHOR')}</h2>
 
-          <div className='flex justify-between items-center mt-4'>
-            <div className='flex space-x-3 hover:text-black dark:hover:text-white'>
-              {url1 && (
-                <div className='w-10 text-center bg-indigo-400 p-2 rounded-full transition-colors duration-200 dark:bg-yellow-500 dark:hover:bg-black hover:bg-white'>
-                  <SmartLink href={url1}>
-                    <i className={icon1} />
-                  </SmartLink>
-                </div>
-              )}
-              {url2 && (
-                <div className='bg-indigo-400 p-2 rounded-full w-10 items-center flex justify-center transition-colors duration-200 dark:bg-yellow-500 dark:hover:bg-black hover:bg-white'>
-                  <SmartLink href={url2}>
-                    <i className={icon2} />
-                  </SmartLink>
-                </div>
-              )}
-            </div>
-            <MoreButton />
+        <div className='flex justify-between items-center mt-4'>
+          <div className='flex space-x-3 hover:text-black dark:hover:text-white'>
+            {url1 && (
+              <div className='w-10 text-center bg-indigo-400 p-2 rounded-full transition-colors duration-200 dark:bg-yellow-500 dark:hover:bg-black hover:bg-white'>
+                <SmartLink href={url1}>
+                  <i className={icon1} />
+                </SmartLink>
+              </div>
+            )}
+            {url2 && (
+              <div className='bg-indigo-400 p-2 rounded-full w-10 items-center flex justify-center transition-colors duration-200 dark:bg-yellow-500 dark:hover:bg-black hover:bg-white'>
+                <SmartLink href={url2}>
+                  <i className={icon2} />
+                </SmartLink>
+              </div>
+            )}
           </div>
+          <MoreButton />
         </div>
       </div>
     </Card>
