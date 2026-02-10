@@ -78,15 +78,9 @@ export function InfoCard(props) {
                 </SmartLink>
               </div>
             )}
-          /*   
-          {url2 && (
-              <div className='heo-info-social-btn'>
-                <SmartLink href={url2}>
-                  <i className={icon2} />
-                </SmartLink>
-              </div>
-            )}
-            */
+           
+        
+          
           </div>
           <MoreButton />
         </div>
