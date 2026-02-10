@@ -433,6 +433,78 @@ const Style = () => {
         }
       }
 
+      /* InfoCard special style (仿 zhheo 质感) */
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\],
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\].dark\:bg-yellow-600 {
+        background: linear-gradient(135deg, #4f65f0 0%, #a252ff 100%) !important;
+        border: none !important;
+        padding: 1.5rem !important;
+        overflow: visible !important;
+      }
+
+      html.dark #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\].dark\:bg-yellow-600 {
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
+      }
+
+      /* 头像放大与浮动 */
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .rounded-full,
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\].dark\:bg-yellow-600 .rounded-full {
+        width: 64px !important;
+        height: 64px !important;
+        border: 3px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        transition: transform var(--heo-dur) var(--heo-ease) !important;
+        background: white;
+      }
+
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\]:hover .rounded-full {
+        transform: scale(1.1) rotate(5deg);
+      }
+
+      /* 问候语小标签 */
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .cursor-pointer.py-1.px-2 {
+        background: rgba(255, 255, 255, 0.2) !important;
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white !important;
+        border-radius: 8px !important;
+      }
+
+      /* 社交按钮玻璃态 */
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .bg-indigo-400,
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .bg-indigo-400.dark\:bg-yellow-500 {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        transition: all var(--heo-dur-fast) var(--heo-ease) !important;
+      }
+
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .bg-indigo-400:hover {
+        background: white !important;
+        color: #4f65f0 !important;
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+      }
+
+      /* 了解更多按钮 */
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .group.bg-indigo-400 {
+        background: white !important;
+        color: #4f65f0 !important;
+        border-radius: 999px !important;
+      }
+
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] .group.bg-indigo-400:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+      }
+
+      /* 公告栏文字 */
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] #announcement-content {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-weight: 500;
+      }
+
       /* Sidebar cards: only affect right sidebar (C plan) */
       #theme-heo #sideRight .wow.fadeInUp.border.bg-white,
       #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\],
