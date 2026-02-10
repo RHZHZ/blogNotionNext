@@ -65,16 +65,20 @@ const Style = () => {
         position: relative;
       }
 
-      /* 页面底部氛围层 - 亮色 (改为 absolute，仅在页面最底部出现) */
+      /* 页面底部氛围层 - 亮色 (优化：移除叠层感，改为克制的线状氛围) */
       body::after {
         content: "";
         position: absolute;
         bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100vw;
-        height: 60vh;
-        background: radial-gradient(circle at bottom, rgba(99, 102, 241, 0.12) 0%, rgba(247, 249, 254, 0) 80%);
+        left: 0;
+        width: 100%;
+        height: 50vh;
+        background: 
+          /* 极淡的底部光晕 */
+          radial-gradient(circle at bottom, rgba(99, 102, 241, 0.06) 0%, rgba(247, 249, 254, 0) 80%),
+          /* 增加一些灵动的横向细线，打破平整感 */
+          linear-gradient(to bottom, transparent, rgba(99, 102, 241, 0.02) 50%, transparent);
+        background-size: 100% 100%, 100% 2px;
         pointer-events: none;
         z-index: -1;
       }
@@ -85,9 +89,9 @@ const Style = () => {
         background-size: 24px 24px;
       }
 
-      /* 页面底部氛围层 - 暗色 */
+      /* 页面底部氛围层 - 暗色 (保持琥珀色烘托) */
       html.dark body::after {
-        background: radial-gradient(circle at bottom, rgba(234, 179, 8, 0.08) 0%, rgba(15, 17, 21, 0) 80%);
+        background: radial-gradient(circle at bottom, rgba(234, 179, 8, 0.05) 0%, rgba(15, 17, 21, 0) 80%);
       }
 
       #theme-heo {
