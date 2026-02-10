@@ -442,11 +442,12 @@ const Style = () => {
         min-height: 20rem !important;
         position: relative !important;
         display: block !important;
-        transition: height var(--heo-dur) var(--heo-ease), background var(--heo-dur) var(--heo-ease);
+        transition: height 0.4s var(--heo-ease), min-height 0.4s var(--heo-ease), background 0.4s var(--heo-ease) !important;
       }
 
       #theme-heo #sideRight .heo-infocard:hover {
         height: var(--heo-infocard-hover-height, 20rem) !important;
+        min-height: var(--heo-infocard-hover-height, 20rem) !important;
       }
 
       html.dark #theme-heo #sideRight .heo-infocard {
@@ -461,7 +462,8 @@ const Style = () => {
         width: 100%;
         display: flex;
         justify-content: center;
-        z-index: 20;
+        align-items: center;
+        z-index: 30;
         pointer-events: auto;
       }
 
@@ -472,6 +474,11 @@ const Style = () => {
         color: white !important;
         border-radius: 999px !important;
         padding: 4px 16px !important;
+        white-space: nowrap !important;
+        width: auto !important; /* 恢复自适应宽度 */
+        height: auto !important;
+        display: flex !important;
+        flex-direction: row !important;
         transition: all var(--heo-dur-fast) var(--heo-ease);
       }
 
@@ -490,7 +497,7 @@ const Style = () => {
         padding: 1.5rem;
         display: flex;
         flex-direction: column;
-        transition: opacity var(--heo-dur) var(--heo-ease), transform var(--heo-dur) var(--heo-ease);
+        transition: opacity 0.4s var(--heo-ease), transform 0.4s var(--heo-ease);
       }
 
       /* 默认显示层 */
@@ -501,7 +508,7 @@ const Style = () => {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        pointer-events: none; /* 防止遮挡下方按钮 */
+        pointer-events: none;
       }
 
       #theme-heo #sideRight .heo-infocard:hover .heo-infocard-default {
@@ -521,7 +528,7 @@ const Style = () => {
       #theme-heo #sideRight .heo-infocard:hover .heo-infocard-hover {
         opacity: 1;
         transform: translateY(0);
-        z-index: 3;
+        z-index: 10;
         pointer-events: auto;
       }
 
@@ -553,7 +560,7 @@ const Style = () => {
         display: flex;
         align-items: center;
         gap: 8px;
-        margin-top: 2.5rem; /* 避开顶部的 GreetingsWords */
+        margin-top: 2.5rem;
       }
 
       .heo-infocard-hover-emoji {
@@ -562,23 +569,12 @@ const Style = () => {
         display: inline-block;
       }
 
-      @keyframes wave {
-        0% { transform: rotate(0deg); }
-        10% { transform: rotate(14deg); }
-        20% { transform: rotate(-8deg); }
-        30% { transform: rotate(14deg); }
-        40% { transform: rotate(-4deg); }
-        50% { transform: rotate(10deg); }
-        60% { transform: rotate(0deg); }
-        100% { transform: rotate(0deg); }
-      }
-
       .heo-infocard-hover-content {
         flex: 1;
         font-size: 1rem;
         line-height: 1.6;
         color: rgba(255, 255, 255, 0.9);
-        margin-bottom: 5rem; /* 为底部按钮留出空间 */
+        margin-bottom: 100px !important; /* 预留给底部按钮的空间 */
       }
 
       /* 底部固定区 */
@@ -588,17 +584,17 @@ const Style = () => {
         left: 0;
         width: 100%;
         padding: 1.5rem;
-        z-index: 10;
+        z-index: 25;
         pointer-events: auto;
       }
 
-      /* 按钮组 */
-      #theme-heo .heo-infocard .bg-indigo-400,
-      #theme-heo .heo-infocard .bg-indigo-400.dark\:bg-yellow-500,
-      #theme-heo .heo-infocard .group.bg-indigo-400 {
+      /* 按钮组 - 仅命中底部固定区的按钮 */
+      .heo-infocard-bottom-fixed .bg-indigo-400,
+      .heo-infocard-bottom-fixed .bg-indigo-400.dark\:bg-yellow-500,
+      .heo-infocard-bottom-fixed .group.bg-indigo-400 {
         background: rgba(255, 255, 255, 0.15) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(10px) !important;
         width: 42px !important;
         height: 42px !important;
         padding: 0 !important;
@@ -609,19 +605,15 @@ const Style = () => {
         transition: all var(--heo-dur-fast) var(--heo-ease) !important;
       }
 
-      #theme-heo .heo-infocard .bg-indigo-400:hover,
-      #theme-heo .heo-infocard .group.bg-indigo-400:hover {
+      .heo-infocard-bottom-fixed .bg-indigo-400:hover,
+      .heo-infocard-bottom-fixed .group.bg-indigo-400:hover {
         background: white !important;
         color: #4f65f0 !important;
         transform: scale(1.1);
         box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
       }
 
-      html.dark #theme-heo .heo-infocard .bg-indigo-400:hover {
-        color: #e67e22 !important;
-      }
-
-      #theme-heo .heo-infocard .group.bg-indigo-400 .font-bold {
+      .heo-infocard-bottom-fixed .group.bg-indigo-400 .font-bold {
         display: none !important;
       }
 
