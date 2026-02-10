@@ -499,7 +499,21 @@ const Style = () => {
         box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
       }
 
-      /* 公告栏文字 */
+      /* 公告栏：默认隐藏，聚焦/悬停卡片时显示（仿 zhheo） */
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] #announcement-content {
+        opacity: 0;
+        transform: translateY(6px);
+        pointer-events: none;
+        transition: opacity var(--heo-dur) var(--heo-ease),
+          transform var(--heo-dur) var(--heo-ease);
+      }
+
+      #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\]:hover #announcement-content {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
       #theme-heo #sideRight .wow.fadeInUp.bg-\[\#4f65f0\] #announcement-content {
         color: rgba(255, 255, 255, 0.9) !important;
         font-weight: 500;
