@@ -65,7 +65,7 @@ export function InfoCard(props) {
       <div className='heo-info-footer'>
         <div className='heo-info-footer-text'>
           <div className="author-info__name text-2xl font-bold">{siteConfig('AUTHOR')}</div>
-          <div className="author-info__desc text-xs opacity-80 mt-1">{siteConfig('HEO_HERO_TITLE_3', null, CONFIG)}</div>
+          <div className="author-info__desc text-xs opacity-80 mt-1">{siteConfig('BIO')}</div>
         </div>
 
         <div className='flex items-center space-x-2'>
