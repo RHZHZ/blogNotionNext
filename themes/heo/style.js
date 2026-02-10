@@ -126,7 +126,7 @@ const Style = () => {
       }
 
       #theme-heo nav#nav.bg-white,
-      #theme-heo nav#nav.dark\:bg-\[\#18171d\] {
+      #theme-heo nav#nav.dark\:\[\#18171d\] {
         box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 10px 30px rgba(0, 0, 0, 0.06);
       }
 
@@ -137,12 +137,41 @@ const Style = () => {
         border-bottom: 1px solid rgba(0, 0, 0, 0.06);
       }
 
-      html.dark #theme-heo nav#nav.dark\:bg-\[\#18171d\] {
+      html.dark #theme-heo nav#nav.dark\:\[\#18171d\] {
         background: rgba(27, 28, 32, 0.84) !important;
         -webkit-backdrop-filter: saturate(140%) blur(18px);
         backdrop-filter: saturate(140%) blur(18px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 14px 36px rgba(0, 0, 0, 0.45);
+      }
+
+      /* 顶部导航栏：当前/聚焦项发光效果（类比侧边栏个人资料按钮） */
+      #theme-heo nav#nav a[aria-current='page'],
+      #theme-heo nav#nav a.active,
+      #theme-heo nav#nav button[aria-current='page'] {
+        position: relative;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.32);
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.6),
+          0 0 18px rgba(255, 255, 255, 0.7);
+        color: #111827;
+      }
+
+      html.dark #theme-heo nav#nav a[aria-current='page'],
+      html.dark #theme-heo nav#nav a.active,
+      html.dark #theme-heo nav#nav button[aria-current='page'] {
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4),
+          0 0 18px rgba(248, 250, 252, 0.85);
+        color: #f9fafb;
+      }
+
+      #theme-heo nav#nav a:focus-visible,
+      #theme-heo nav#nav button:focus-visible {
+        outline: none;
+        border-radius: 999px;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.8),
+          0 0 20px rgba(59, 130, 246, 0.7);
       }
 
       #theme-heo #wrapper-outer .article {
