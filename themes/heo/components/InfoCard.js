@@ -28,20 +28,21 @@ export function InfoCard(props) {
   const [cardColor, setCardColor] = useState(fallbackColor)
 
   useEffect(() => {
-    // 主题切换时，先立即应用 fallback，避免因为取色/图片缓存导致颜色滞留
-    setCardColor(fallbackColor)
-  }, [fallbackColor])
-
-  useEffect(() => {
     let cancelled = false
     async function run() {
-      // 优先从文章封面图取色，如果没有（比如在首页）则从站点图标取色
-      const coverImage = post?.pageCover || siteInfo?.icon
-      const color = await getDarkDominantColorFromImageUrl(coverImage, {
+      // 仅在文章详情页（Slug页面）且有封面图时才启用动态取色
+      // 首页或其他页面强制使用默认色
+      if (!isSlugPage || !post?.pageCover) {
+        setCardColor(fallbackColor)
+        return
+      }
+
+      const color = await getDarkDominantColorFromImageUrl(post.pageCover, {
         fallback: fallbackColor,
-        darkenRatio: 0.62, // 保持与文章顶部一致的压暗比例
+        darkenRatio: 0.62,
         maxSize: 48
       })
+
       if (!cancelled) {
         setCardColor(color)
       }
@@ -50,7 +51,7 @@ export function InfoCard(props) {
     return () => {
       cancelled = true
     }
-  }, [post?.pageCover, siteInfo?.icon, fallbackColor])
+  }, [isSlugPage, post?.pageCover, fallbackColor])
 
   return (
     <Card
