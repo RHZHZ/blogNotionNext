@@ -60,14 +60,22 @@ const Style = () => {
 
       body {
         background-color: #f7f9fe;
-        background-image: radial-gradient(rgba(60, 132, 246, 0.03) 1px, transparent 0);
-        background-size: 24px 24px;
+        /* 亮色：清晨雪山 (Low Contrast) */
+        background-image: linear-gradient(to bottom, rgba(247, 249, 254, 0.7), rgba(247, 249, 254, 0.8)), 
+                          url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=2070'),
+                          radial-gradient(rgba(60, 132, 246, 0.03) 1px, transparent 0);
+        background-size: cover, cover, 24px 24px;
+        background-attachment: fixed;
+        background-position: center;
       }
 
       html.dark body {
         background-color: #0f1115;
-        background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 0);
-        background-size: 24px 24px;
+        /* 暗色：深邃极地夜景 */
+        background-image: linear-gradient(to bottom, rgba(15, 17, 21, 0.75), rgba(15, 17, 21, 0.85)), 
+                          url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=2070'),
+                          radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 0);
+        background-size: cover, cover, 24px 24px;
       }
 
       #theme-heo {
