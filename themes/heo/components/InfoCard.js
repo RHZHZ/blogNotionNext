@@ -63,10 +63,13 @@ export function InfoCard(props) {
 
       {/* 3. Footer 底部区域 - 固定作者名与按钮 */}
       <div className='heo-info-footer'>
-        <h2 className='text-3xl font-extrabold'>{siteConfig('AUTHOR')}</h2>
+        <div className='heo-info-footer-text'>
+          <div className="author-info__name text-2xl font-bold">{siteConfig('AUTHOR')}</div>
+          <div className="author-info__desc text-xs opacity-80 mt-1">{siteConfig('HEO_HERO_TITLE_3', null, CONFIG)}</div>
+        </div>
 
-        <div className='flex justify-between items-center mt-4'>
-          <div className='flex space-x-3'>
+        <div className='flex items-center space-x-2'>
+          <div className='flex space-x-2'>
             {url1 && (
               <div className='heo-info-social-btn'>
                 <SmartLink href={url1}>
