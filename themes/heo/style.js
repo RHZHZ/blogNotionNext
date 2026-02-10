@@ -549,6 +549,42 @@ const Style = () => {
         transform: translateY(-1px);
       }
 
+      /* 侧边栏文章列表项（最新/最热文章）聚焦效果 */
+      #theme-heo #sideRight .aside-list-item {
+        padding: 8px 12px !important;
+        border-radius: 14px !important;
+        transition: all 0.25s var(--heo-ease) !important;
+        margin-bottom: 4px !important;
+        cursor: pointer;
+      }
+
+      #theme-heo #sideRight .aside-list-item:hover {
+        background: rgba(37, 99, 235, 0.9) !important;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        transform: translateY(-1px);
+      }
+
+      #theme-heo #sideRight .aside-list-item:hover .content .title,
+      #theme-heo #sideRight .aside-list-item:hover .content .time {
+        color: #ffffff !important;
+      }
+
+      /* 针对图片中的带数字排行样式优化 */
+      #theme-heo #sideRight .aside-list-item:hover .thumbnail {
+        border-color: rgba(255, 255, 255, 0.3) !important;
+      }
+
+      html.dark #theme-heo #sideRight .aside-list-item:hover {
+        background: rgba(234, 179, 8, 0.95) !important;
+        box-shadow: 0 8px 20px rgba(234, 179, 8, 0.4);
+        transform: translateY(-1px);
+      }
+
+      html.dark #theme-heo #sideRight .aside-list-item:hover .content .title,
+      html.dark #theme-heo #sideRight .aside-list-item:hover .content .time {
+        color: #000000 !important;
+      }
+
       @media (hover: hover) {
         #theme-heo #category-bar:hover {
           border-color: rgba(37, 99, 235, 0.3) !important;
