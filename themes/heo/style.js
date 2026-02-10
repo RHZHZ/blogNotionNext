@@ -65,16 +65,16 @@ const Style = () => {
         position: relative;
       }
 
-      /* 页面底部氛围层 - 亮色 */
+      /* 页面底部氛围层 - 亮色 (改为 absolute，仅在页面最底部出现) */
       body::after {
         content: "";
-        position: fixed;
-        bottom: -150px;
+        position: absolute;
+        bottom: 0;
         left: 50%;
         transform: translateX(-50%);
         width: 100vw;
-        height: 45vh;
-        background: radial-gradient(circle at center, rgba(99, 102, 241, 0.08) 0%, rgba(247, 249, 254, 0) 70%);
+        height: 60vh;
+        background: radial-gradient(circle at bottom, rgba(99, 102, 241, 0.12) 0%, rgba(247, 249, 254, 0) 80%);
         pointer-events: none;
         z-index: -1;
       }
@@ -87,7 +87,7 @@ const Style = () => {
 
       /* 页面底部氛围层 - 暗色 */
       html.dark body::after {
-        background: radial-gradient(circle at center, rgba(234, 179, 8, 0.06) 0%, rgba(15, 17, 21, 0) 70%);
+        background: radial-gradient(circle at bottom, rgba(234, 179, 8, 0.08) 0%, rgba(15, 17, 21, 0) 80%);
       }
 
       #theme-heo {
