@@ -594,22 +594,14 @@ const Style = () => {
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
       }
 
-      /* 文章页目录（Catalog / TOC）适配 Heo Pro 风格 */
-      /* 1. 容器样式 (针对侧边栏目录卡片) */
+      /* 文章页目录（Catalog / TOC）适配 Heo Pro 风格 - 修正双层问题 */
+      /* 1. 容器样式 (确保背景只在最外层，移除内层背景) */
       #theme-heo #sideRight .px-3.py-1.dark\:text-white.text-black {
-        background: rgba(255, 255, 255, 0.72) !important;
-        backdrop-filter: blur(16px) saturate(180%) !important;
-        border-radius: 24px !important;
-        border: 1px solid rgba(0, 0, 0, 0.06) !important;
-        padding: 1.25rem !important;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05) !important;
-      }
-
-      html.dark #theme-heo #sideRight .px-3.py-1.dark\:text-white.text-black {
-        background: rgba(27, 28, 32, 0.75) !important;
-        backdrop-filter: blur(18px) saturate(140%) !important;
-        border-color: rgba(255, 255, 255, 0.08) !important;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3) !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
       }
 
       /* 2. 目录项（链接）基础样式与动画 */
