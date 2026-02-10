@@ -138,10 +138,16 @@ const LayoutBase = props => {
  * @returns
  */
 const LayoutIndex = props => {
+  const HEO_HOME_CATEGORY_BAR_ENABLE = siteConfig(
+    'HEO_HOME_CATEGORY_BAR_ENABLE',
+    true,
+    CONFIG
+  )
+
   return (
     <div id='post-outer-wrapper' className='px-5 md:px-0'>
       {/* 文章分类条 */}
-      <CategoryBar {...props} />
+      {HEO_HOME_CATEGORY_BAR_ENABLE && <CategoryBar {...props} />}
       {siteConfig('POST_LIST_STYLE') === 'page' ? (
         <BlogPostListPage {...props} />
       ) : (

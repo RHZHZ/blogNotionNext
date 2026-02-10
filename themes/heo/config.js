@@ -13,7 +13,10 @@ const CONFIG = {
   ],
 
   // 英雄区开关
-  HEO_HERO_ENABLE: false,
+  HEO_HERO_ENABLE: true,
+
+  // 首页文章分类栏（英雄区下方）开关
+  HEO_HOME_CATEGORY_BAR_ENABLE: true,
 
   // 英雄区左右侧组件颠倒位置
   HEO_HERO_REVERSE: false,
