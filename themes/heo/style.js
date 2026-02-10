@@ -1158,11 +1158,11 @@ const Style = () => {
 
       #theme-heo footer #color-transition {
         height: 48px;
-        background: linear-gradient(to bottom, transparent, #f9fafc) !important;
+        background: linear-gradient(to bottom, #f7f9fe, rgba(247, 249, 254, 0)) !important;
       }
 
       html.dark #theme-heo footer #color-transition {
-        background: linear-gradient(to bottom, #0f1115, #18171d) !important;
+        background: linear-gradient(to bottom, rgba(15, 17, 21, 0), rgba(15, 17, 21, 0)) !important;
       }
 
       #theme-heo footer #footer-bottom {
