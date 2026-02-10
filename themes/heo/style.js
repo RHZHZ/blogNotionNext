@@ -442,10 +442,42 @@ const Style = () => {
         min-height: 20rem !important;
         position: relative !important;
         display: block !important;
+        transition: height var(--heo-dur) var(--heo-ease), background var(--heo-dur) var(--heo-ease);
+      }
+
+      #theme-heo #sideRight .heo-infocard:hover {
+        height: var(--heo-infocard-hover-height, 20rem) !important;
       }
 
       html.dark #theme-heo #sideRight .heo-infocard {
         background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
+      }
+
+      /* 独立问候语层：始终置顶 */
+      .heo-infocard-greetings-standalone {
+        position: absolute;
+        top: 1.5rem;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        z-index: 20;
+        pointer-events: auto;
+      }
+
+      .heo-infocard-greetings-standalone .py-1.px-2 {
+        background: rgba(255, 255, 255, 0.2) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white !important;
+        border-radius: 999px !important;
+        padding: 4px 16px !important;
+        transition: all var(--heo-dur-fast) var(--heo-ease);
+      }
+
+      .heo-infocard-greetings-standalone .py-1.px-2:hover {
+        background: rgba(255, 255, 255, 0.4) !important;
+        transform: scale(1.05);
       }
 
       /* 核心图层样式 */
@@ -469,26 +501,28 @@ const Style = () => {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        pointer-events: none; /* 防止遮挡下方按钮 */
       }
 
       #theme-heo #sideRight .heo-infocard:hover .heo-infocard-default {
         opacity: 0;
         transform: translateY(-20px);
-        pointer-events: none;
       }
 
-      /* 悬停隐藏层 */
+      /* 悬停显示层 */
       .heo-infocard-hover {
         opacity: 0;
         z-index: 1;
         transform: translateY(20px);
         background: inherit;
+        pointer-events: none;
       }
 
       #theme-heo #sideRight .heo-infocard:hover .heo-infocard-hover {
         opacity: 1;
         transform: translateY(0);
         z-index: 3;
+        pointer-events: auto;
       }
 
       /* 头像居中容器 */
@@ -498,7 +532,7 @@ const Style = () => {
         align-items: center;
         justify-content: center;
         width: 100%;
-        margin-bottom: 2rem;
+        margin-top: 2rem;
       }
 
       .heo-infocard-avatar .rounded-full {
@@ -508,24 +542,7 @@ const Style = () => {
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         background: white;
         transition: transform 0.5s var(--heo-ease);
-      }
-
-      /* 问候语顶部居中 */
-      .heo-infocard-top {
-        position: absolute;
-        top: 1.5rem;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-      }
-
-      .heo-infocard-top .py-1.px-2 {
-        background: rgba(255, 255, 255, 0.2) !important;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: white !important;
-        border-radius: 999px !important;
-        padding: 4px 16px !important;
+        pointer-events: auto;
       }
 
       /* 悬停内容布局 */
@@ -536,7 +553,7 @@ const Style = () => {
         display: flex;
         align-items: center;
         gap: 8px;
-        margin-top: 0.5rem;
+        margin-top: 2.5rem; /* 避开顶部的 GreetingsWords */
       }
 
       .heo-infocard-hover-emoji {
@@ -558,16 +575,21 @@ const Style = () => {
 
       .heo-infocard-hover-content {
         flex: 1;
-        overflow-y: auto;
         font-size: 1rem;
         line-height: 1.6;
         color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 5rem; /* 为底部按钮留出空间 */
       }
 
       /* 底部固定区 */
-      .heo-infocard-bottom {
+      .heo-infocard-bottom-fixed {
+        position: absolute;
+        bottom: 0;
+        left: 0;
         width: 100%;
-        margin-top: auto;
+        padding: 1.5rem;
+        z-index: 10;
+        pointer-events: auto;
       }
 
       /* 按钮组 */
