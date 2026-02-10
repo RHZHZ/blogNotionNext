@@ -392,18 +392,27 @@ const Style = () => {
       }
 
       #theme-heo #hero #banners,
-      #theme-heo #hero-right-wrapper #top-group > a > div,
-      #theme-heo #hero-right-wrapper #today-card #card-body {
+      #theme-heo #hero-right-wrapper #top-group > a > div {
         background: var(--heo-surface) !important;
         border: 1px solid var(--heo-border-subtle) !important;
         box-shadow: var(--heo-shadow-sm);
         transition: all var(--heo-dur) var(--heo-ease);
       }
 
+      #theme-heo #hero-right-wrapper #today-card #card-body {
+        border: 1px solid var(--heo-border-subtle) !important;
+        box-shadow: var(--heo-shadow-sm);
+        transition: all var(--heo-dur) var(--heo-ease);
+      }
+
       html.dark #theme-heo #hero #banners,
-      html.dark #theme-heo #hero-right-wrapper #top-group > a > div,
-      html.dark #theme-heo #hero-right-wrapper #today-card #card-body {
+      html.dark #theme-heo #hero-right-wrapper #top-group > a > div {
         background: var(--heo-surface-dark) !important;
+        border-color: var(--heo-border-subtle-dark) !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      html.dark #theme-heo #hero-right-wrapper #today-card #card-body {
         border-color: var(--heo-border-subtle-dark) !important;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
       }
