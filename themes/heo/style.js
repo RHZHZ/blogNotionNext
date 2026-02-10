@@ -371,11 +371,13 @@ const Style = () => {
 
       @media (hover: hover) {
         #theme-heo #category-bar:hover {
-          box-shadow: var(--heo-shadow-lg);
+          border-color: rgba(79, 70, 229, 0.55) !important;
+          box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.18), var(--heo-shadow-lg);
           transform: translateY(var(--heo-card-hover-translate));
         }
         html.dark #theme-heo #category-bar:hover {
-          box-shadow: var(--heo-shadow-lg-dark);
+          border-color: rgba(234, 179, 8, 0.55) !important;
+          box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.16), var(--heo-shadow-lg-dark);
         }
       }
 
