@@ -1058,17 +1058,23 @@ const Style = () => {
         display: inline-flex;
         align-items: center;
         gap: 10px;
-        padding: 6px 10px;
+        padding: 6px 14px;
         margin: 6px 8px 0 0;
         border-radius: 999px;
         border: 1px solid rgba(0, 0, 0, 0.08);
-        background: rgba(0, 0, 0, 0.02);
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(8px);
         color: var(--heo-text-secondary);
+        transition: all 0.25s var(--heo-ease);
       }
 
-      #theme-heo .heo-search-category-item:hover {
-        background: rgba(0, 0, 0, 0.05);
-        color: var(--heo-text);
+      #theme-heo .heo-search-category-item:hover,
+      #theme-heo .heo-search-category-item.active {
+        background: rgba(37, 99, 235, 0.8) !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35), 0 0 0 1px rgba(37, 99, 235, 0.1);
+        color: #ffffff !important;
+        transform: translateY(-2px);
       }
 
       html.dark #theme-heo .heo-search-category-item {
@@ -1077,9 +1083,13 @@ const Style = () => {
         color: var(--heo-text-secondary);
       }
 
-      html.dark #theme-heo .heo-search-category-item:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: var(--heo-text);
+      html.dark #theme-heo .heo-search-category-item:hover,
+      html.dark #theme-heo .heo-search-category-item.active {
+        background: rgba(234, 179, 8, 0.85) !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 8px 20px rgba(234, 179, 8, 0.45), 0 0 0 1px rgba(234, 179, 8, 0.2);
+        color: #000000 !important;
+        transform: translateY(-2px);
       }
 
       /* Tags mini pills */
@@ -1087,9 +1097,12 @@ const Style = () => {
       #theme-heo #tags-list .tag-mini,
       #theme-heo .heo-search-tags-list a {
         border-radius: 999px;
+        padding: 4px 12px;
         border: 1px solid rgba(0, 0, 0, 0.08);
-        background: rgba(0, 0, 0, 0.02);
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(8px);
         color: var(--heo-text-secondary);
+        transition: all 0.25s var(--heo-ease);
       }
 
       html.dark #theme-heo #tags-list a,
@@ -1102,14 +1115,20 @@ const Style = () => {
 
       #theme-heo #tags-list a:hover,
       #theme-heo .heo-search-tags-list a:hover {
-        background: rgba(0, 0, 0, 0.05);
-        color: var(--heo-text);
+        background: rgba(37, 99, 235, 0.8) !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+        color: #ffffff !important;
+        transform: translateY(-2px);
       }
 
       html.dark #theme-heo #tags-list a:hover,
       html.dark #theme-heo .heo-search-tags-list a:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: var(--heo-text);
+        background: rgba(234, 179, 8, 0.85) !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 8px 20px rgba(234, 179, 8, 0.45);
+        color: #000000 !important;
+        transform: translateY(-2px);
       }
 
       /* Footer (Apple-style minimal) */
