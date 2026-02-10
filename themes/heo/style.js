@@ -1079,10 +1079,8 @@ const Style = () => {
 
       html.dark #theme-heo .heo-search-category-item {
         border-color: rgba(255, 255, 255, 0.14);
-        background: rgba(27, 28, 32, 0.55);
-        -webkit-backdrop-filter: blur(10px) saturate(140%);
-        backdrop-filter: blur(10px) saturate(140%);
-        color: rgba(235, 235, 245, 0.78);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--heo-text-secondary);
       }
 
       html.dark #theme-heo .heo-search-category-item:hover,
@@ -1090,45 +1088,6 @@ const Style = () => {
         background: rgba(234, 179, 8, 0.85) !important;
         border-color: rgba(255, 255, 255, 0.15) !important;
         box-shadow: 0 8px 20px rgba(234, 179, 8, 0.45), 0 0 0 1px rgba(234, 179, 8, 0.2);
-        color: #000000 !important;
-        transform: translateY(-2px);
-      }
-
-      /* 分类页（CategoryGroup）分类项：暗色模式可见性与 HeoPro 风格 */
-      #theme-heo #category-list a {
-        display: inline-flex;
-        align-items: center;
-        border-radius: 999px;
-        padding: 6px 14px;
-        margin: 6px 8px 0 0;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        background: rgba(255, 255, 255, 0.6);
-        -webkit-backdrop-filter: blur(8px);
-        backdrop-filter: blur(8px);
-        color: var(--heo-text-secondary);
-        transition: all 0.25s var(--heo-ease);
-      }
-
-      html.dark #theme-heo #category-list a {
-        border-color: rgba(255, 255, 255, 0.14);
-        background: rgba(27, 28, 32, 0.55);
-        -webkit-backdrop-filter: blur(10px) saturate(140%);
-        backdrop-filter: blur(10px) saturate(140%);
-        color: rgba(235, 235, 245, 0.78);
-      }
-
-      #theme-heo #category-list a:hover {
-        background: rgba(37, 99, 235, 0.8) !important;
-        border-color: rgba(255, 255, 255, 0.3) !important;
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
-        color: #ffffff !important;
-        transform: translateY(-2px);
-      }
-
-      html.dark #theme-heo #category-list a:hover {
-        background: rgba(234, 179, 8, 0.85) !important;
-        border-color: rgba(255, 255, 255, 0.15) !important;
-        box-shadow: 0 8px 20px rgba(234, 179, 8, 0.45);
         color: #000000 !important;
         transform: translateY(-2px);
       }
