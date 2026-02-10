@@ -482,7 +482,7 @@ const Style = () => {
         align-items: center;
         justify-content: center;
         width: 100%;
-        min-height: 160px;
+        min-height: 200px; /* 增大以适应 160px 头像 */
       }
 
       .heo-info-avatar-wrap {
@@ -495,10 +495,10 @@ const Style = () => {
       }
 
       .heo-info-avatar-wrap .rounded-full {
-        width: 100px !important;
-        height: 100px !important;
+        width: 160px !important;
+        height: 160px !important;
         border: 4px solid rgba(255, 255, 255, 0.4);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
         background: white;
       }
 
