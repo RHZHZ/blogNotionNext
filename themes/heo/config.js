@@ -4,13 +4,16 @@ const CONFIG = {
 
   HEO_HOME_BANNER_ENABLE: true,
 
-  HEO_SITE_CREATE_TIME: '2026-01-25', // 建站日期，用于计算网站运行的第几天
+  HEO_SITE_CREATE_TIME: '2022-09-21', // 建站日期，用于计算网站运行的第几天
 
   // 首页顶部通知条滚动内容，如不需要可以留空 []
   HEO_NOTICE_BAR: [
     { title: '欢迎来到我的博客', url: 'https://rhzhz.cn' },
-    { title: 'NotionNext项目', url: 'https://github.com/tangly1024/NotionNext' }
+    // { title: '访问文档中心获取更多帮助', url: 'https://docs.tangly1024.com' }
   ],
+
+  // 英雄区开关
+  HEO_HERO_ENABLE: true,
 
   // 英雄区左右侧组件颠倒位置
   HEO_HERO_REVERSE: false,
@@ -39,7 +42,7 @@ const CONFIG = {
 
   // 右侧个人资料卡牌欢迎语，点击可自动切换
   HEO_INFOCARD_GREETINGS: [
-    '你好！我是RHZ',
+    '你好！我是',
     '🔍 分享与热心帮助',
     '🏃 脚踏实地行动派',
     '🎸 指弹编曲爱好者',
