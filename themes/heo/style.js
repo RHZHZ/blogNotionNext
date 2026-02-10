@@ -435,7 +435,7 @@ const Style = () => {
 
       /* InfoCard v2 三段式结构优化 */
       #theme-heo #sideRight .heo-infocard-v2 {
-        background: linear-gradient(135deg, #4f65f0 0%, #a252ff 100%) !important;
+        background: var(--heo-infocard-bg, linear-gradient(135deg, #4f65f0 0%, #a252ff 100%)) !important;
         border: none !important;
         padding: 1.5rem !important;
         min-height: 20rem !important;
@@ -448,7 +448,7 @@ const Style = () => {
       }
 
       html.dark #theme-heo #sideRight .heo-infocard-v2 {
-        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
+        background: var(--heo-infocard-bg, linear-gradient(135deg, #f39c12 0%, #e67e22 100%)) !important;
       }
 
       /* 1. Header 样式 */
