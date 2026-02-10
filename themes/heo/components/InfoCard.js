@@ -30,8 +30,8 @@ export function InfoCard(props) {
   useLayoutEffect(() => {
     if (announcementRef.current) {
       const contentHeight = announcementRef.current.scrollHeight
-      // 基础高度(底部作者+按钮约100px) + 公告高度 + 顶部欢迎标题高度(约60px) + padding
-      const totalHeight = contentHeight + 160 
+      // 动态计算：顶部留白(80px) + 公告高度 + 底部固定区高度(100px)
+      const totalHeight = contentHeight + 180 
       setHoverHeight(`${Math.max(320, totalHeight)}px`)
     }
   }, [notice])
@@ -41,7 +41,7 @@ export function InfoCard(props) {
       className='wow fadeInUp bg-[#4f65f0] dark:bg-yellow-600 text-white flex flex-col w-72 overflow-hidden relative heo-infocard'
       style={{ '--heo-infocard-hover-height': hoverHeight }}
     >
-      {/* 1. 独立问候语层：永远置顶且可点击 */}
+      {/* 1. 独立问候语层：始终置顶且可点击 */}
       <div className='heo-infocard-greetings-standalone'>
         <GreetingsWords />
       </div>
@@ -78,7 +78,7 @@ export function InfoCard(props) {
         </div>
       </div>
 
-      {/* 4. 公用底部层：作者名与按钮 (位置相对固定) */}
+      {/* 4. 公用底部层：作者名与按钮 (位置绝对固定在底部) */}
       <div className='heo-infocard-bottom-fixed'>
         <h2 className='text-3xl font-extrabold'>{siteConfig('AUTHOR')}</h2>
 
