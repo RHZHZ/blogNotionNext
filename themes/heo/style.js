@@ -17,6 +17,13 @@ const Style = () => {
           0 6px 18px rgba(0, 0, 0, 0.06);
         --heo-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.08),
           0 18px 40px rgba(0, 0, 0, 0.08);
+        --heo-shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.12),
+          0 30px 80px rgba(0, 0, 0, 0.12);
+        --heo-shadow-lg-dark: 0 8px 26px rgba(0, 0, 0, 0.55),
+          0 40px 100px rgba(0, 0, 0, 0.6);
+        --heo-border-subtle: rgba(0, 0, 0, 0.06);
+        --heo-border-subtle-dark: rgba(255, 255, 255, 0.09);
+        --heo-card-hover-translate: -2px;
         --heo-radius-sm: 10px;
         --heo-radius-md: 14px;
         --heo-radius-lg: 18px;
@@ -140,7 +147,7 @@ const Style = () => {
 
       #theme-heo #wrapper-outer .article {
         background: var(--heo-surface) !important;
-        border: 1px solid var(--heo-border) !important;
+        border: 1px solid var(--heo-border-subtle) !important;
         border-radius: var(--heo-radius-lg) !important;
         box-shadow: var(--heo-shadow-sm);
         color: var(--heo-text);
@@ -257,222 +264,6 @@ const Style = () => {
         font-size: 0.92em;
       }
 
-      /* Code blocks (Mac window style) */
-      #theme-heo #article-wrapper #notion-article .code-toolbar {
-        position: relative;
-        width: 100%;
-        margin: 0 0 var(--heo-article-block-gap);
-        border-radius: 14px;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        background: rgba(27, 28, 32, 0.94);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12), 0 18px 44px rgba(0, 0, 0, 0.18);
-        overflow: hidden;
-      }
-
-      html.dark #theme-heo #article-wrapper #notion-article .code-toolbar {
-        border-color: rgba(255, 255, 255, 0.12);
-        background: rgba(27, 28, 32, 0.72);
-        -webkit-backdrop-filter: saturate(140%) blur(12px);
-        backdrop-filter: saturate(140%) blur(12px);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 18px 44px rgba(0, 0, 0, 0.45);
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar > .toolbar {
-        position: absolute;
-        top: 0;
-        right: 0;
-        height: 34px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 0 10px;
-        z-index: 12;
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .toolbar-item > button {
-        font-family: var(--heo-font-sans);
-        font-size: 12px;
-        line-height: 1;
-        padding: 6px 8px;
-        border-radius: 999px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        background: rgba(255, 255, 255, 0.1);
-        color: rgba(255, 255, 255, 0.82);
-      }
-
-      html.dark #theme-heo #article-wrapper #notion-article .code-toolbar .toolbar-item > button {
-        border-color: rgba(255, 255, 255, 0.14);
-        background: rgba(255, 255, 255, 0.06);
-        color: var(--heo-text-secondary);
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .pre-mac {
-        position: absolute;
-        left: 12px;
-        top: 11px;
-        z-index: 13;
-        display: flex;
-        gap: 7px;
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .pre-mac > span {
-        width: 10px;
-        height: 10px;
-        border-radius: 999px;
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .pre-mac > span:nth-child(1) {
-        background: #ff5f57;
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .pre-mac > span:nth-child(2) {
-        background: #febc2e;
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .pre-mac > span:nth-child(3) {
-        background: #28c840;
-      }
-
-      #theme-heo #article-wrapper #notion-article pre,
-      #theme-heo #article-wrapper #notion-article pre.notion-code {
-        font-family: var(--heo-font-mono);
-        font-size: 0.92em;
-        line-height: 1.6;
-        margin: 0;
-        padding: 46px 1.1rem 1rem;
-        border-radius: 0;
-        border: none;
-        background: transparent;
-        color: rgba(255, 255, 255, 0.9);
-        overflow: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      /* Prism tokens on dark code background */
-      #theme-heo #article-wrapper #notion-article .code-toolbar code[class*='language-'],
-      #theme-heo #article-wrapper #notion-article .code-toolbar pre[class*='language-'] {
-        color: rgba(255, 255, 255, 0.9);
-        text-shadow: none;
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.comment,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.prolog,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.doctype,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.cdata {
-        color: rgba(235, 235, 245, 0.46);
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.punctuation {
-        color: rgba(235, 235, 245, 0.6);
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.property,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.tag,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.boolean,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.number,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.constant,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.symbol,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.deleted {
-        color: #7ee787;
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.selector,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.attr-name,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.string,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.char,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.builtin,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.inserted {
-        color: #a5d6ff;
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.operator,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.entity,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.url,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.variable {
-        color: rgba(235, 235, 245, 0.75);
-        background: none;
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.atrule,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.attr-value,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.keyword {
-        color: #ff7ab2;
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.function,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.class-name {
-        color: #ffd479;
-      }
-
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.regex,
-      #theme-heo #article-wrapper #notion-article .code-toolbar .token.important {
-        color: #ffb86b;
-      }
-
-      /* Collapse (S1 minimal bar) */
-      #theme-heo #article-wrapper #notion-article .collapse-wrapper {
-        margin: 0 0 var(--heo-article-block-gap);
-      }
-
-      #theme-heo #article-wrapper #notion-article .collapse-panel-wrapper {
-        border-radius: 14px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        background: rgba(255, 255, 255, 0.55);
-        -webkit-backdrop-filter: saturate(160%) blur(10px);
-        backdrop-filter: saturate(160%) blur(10px);
-        overflow: hidden;
-      }
-
-      html.dark #theme-heo #article-wrapper #notion-article .collapse-panel-wrapper {
-        border-color: rgba(255, 255, 255, 0.12);
-        background: rgba(27, 28, 32, 0.6);
-      }
-
-      #theme-heo #article-wrapper #notion-article .collapse-header {
-        width: 100%;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 12px;
-        cursor: pointer;
-        user-select: none;
-        border: none;
-        background: transparent;
-        color: var(--heo-text-secondary);
-      }
-
-      #theme-heo #article-wrapper #notion-article .collapse-label {
-        font-family: var(--heo-font-sans);
-        font-size: 13px;
-        letter-spacing: 0.02em;
-      }
-
-      #theme-heo #article-wrapper #notion-article .collapse-chevron {
-        width: 18px;
-        height: 18px;
-        transition: transform var(--heo-dur) var(--heo-ease), opacity var(--heo-dur-fast) var(--heo-ease);
-        opacity: 0.85;
-      }
-
-      #theme-heo #article-wrapper #notion-article .collapse-panel-wrapper.is-expanded .collapse-chevron {
-        transform: rotate(180deg);
-      }
-
-      #theme-heo #article-wrapper #notion-article .collapse-panel {
-        max-height: 0;
-        overflow: hidden;
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
-        transition: max-height 320ms var(--heo-ease);
-      }
-
-      html.dark #theme-heo #article-wrapper #notion-article .collapse-panel {
-        border-top-color: rgba(255, 255, 255, 0.08);
-      }
-
-      #theme-heo #article-wrapper #notion-article .collapse-panel.is-expanded {
-        max-height: 2400px;
-      }
 
       /* Article Images (B-Plan: Apple-style frame) */
       #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image {
@@ -485,7 +276,7 @@ const Style = () => {
           box-shadow var(--heo-dur) var(--heo-ease);
         max-width: 100% !important;
         min-width: 0 !important;
-        
+        width: auto !important;
         display: block;
       }
 
@@ -532,14 +323,18 @@ const Style = () => {
 
       html.dark #theme-heo #wrapper-outer .article {
         background: var(--heo-surface-dark) !important;
-        border-color: rgba(255, 255, 255, 0.08) !important;
+        border-color: var(--heo-border-subtle-dark) !important;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
       }
 
       @media (hover: hover) {
         #theme-heo #wrapper-outer .article:hover {
-          box-shadow: var(--heo-shadow-md);
-          transform: translateY(-1px);
+          box-shadow: var(--heo-shadow-lg);
+          transform: translateY(var(--heo-card-hover-translate));
+        }
+
+        html.dark #theme-heo #wrapper-outer .article:hover {
+          box-shadow: var(--heo-shadow-lg-dark);
         }
       }
 
