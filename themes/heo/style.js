@@ -60,22 +60,34 @@ const Style = () => {
 
       body {
         background-color: #f7f9fe;
-        /* 亮色：清晨雪山 (Low Contrast) */
-        background-image: linear-gradient(to bottom, rgba(247, 249, 254, 0.7), rgba(247, 249, 254, 0.8)), 
-                          url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=2070'),
-                          radial-gradient(rgba(60, 132, 246, 0.03) 1px, transparent 0);
-        background-size: cover, cover, 24px 24px;
-        background-attachment: fixed;
-        background-position: center;
+        background-image: radial-gradient(rgba(60, 132, 246, 0.03) 1px, transparent 0);
+        background-size: 24px 24px;
+        position: relative;
+      }
+
+      /* 页面底部氛围层 - 亮色 */
+      body::after {
+        content: "";
+        position: fixed;
+        bottom: -150px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100vw;
+        height: 45vh;
+        background: radial-gradient(circle at center, rgba(99, 102, 241, 0.08) 0%, rgba(247, 249, 254, 0) 70%);
+        pointer-events: none;
+        z-index: -1;
       }
 
       html.dark body {
         background-color: #0f1115;
-        /* 暗色：深邃极地夜景 */
-        background-image: linear-gradient(to bottom, rgba(15, 17, 21, 0.75), rgba(15, 17, 21, 0.85)), 
-                          url('https://images.unsplash.com/photo-1502759683299-cdcd6974244f?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
-                          radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 0);
-        background-size: cover, cover, 24px 24px;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 0);
+        background-size: 24px 24px;
+      }
+
+      /* 页面底部氛围层 - 暗色 */
+      html.dark body::after {
+        background: radial-gradient(circle at center, rgba(234, 179, 8, 0.06) 0%, rgba(15, 17, 21, 0) 70%);
       }
 
       #theme-heo {
