@@ -145,10 +145,15 @@ const Style = () => {
         box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 14px 36px rgba(0, 0, 0, 0.45);
       }
 
-      /* 顶部导航栏：当前/聚焦项发光效果（类比侧边栏个人资料按钮） */
+      /* 顶部导航栏：菜单项发光效果（类比侧边栏个人资料按钮） */
       #theme-heo nav#nav a[aria-current='page'],
       #theme-heo nav#nav a.active,
-      #theme-heo nav#nav button[aria-current='page'] {
+      #theme-heo nav#nav button[aria-current='page'],
+      #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'],
+      #theme-heo #nav-bar-swipe nav#nav-mobile a.active,
+      #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'] > div,
+      #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer[aria-current='page'],
+      #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
         position: relative;
         border-radius: 999px;
         background: rgba(255, 255, 255, 0.32);
@@ -159,15 +164,35 @@ const Style = () => {
 
       html.dark #theme-heo nav#nav a[aria-current='page'],
       html.dark #theme-heo nav#nav a.active,
-      html.dark #theme-heo nav#nav button[aria-current='page'] {
+      html.dark #theme-heo nav#nav button[aria-current='page'],
+      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'],
+      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a.active,
+      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'] > div,
+      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer[aria-current='page'],
+      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
         background: rgba(255, 255, 255, 0.15);
         box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4),
           0 0 18px rgba(248, 250, 252, 0.85);
         color: #f9fafb;
       }
 
+      @media (hover: hover) {
+        #theme-heo #nav-bar-swipe nav#nav-mobile a:hover,
+        #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover {
+          border-radius: 999px;
+          box-shadow: 0 0 15px rgba(255, 255, 255, 0.45);
+        }
+
+        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a:hover,
+        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover {
+          box-shadow: 0 0 15px rgba(248, 250, 252, 0.55);
+        }
+      }
+
       #theme-heo nav#nav a:focus-visible,
-      #theme-heo nav#nav button:focus-visible {
+      #theme-heo nav#nav button:focus-visible,
+      #theme-heo #nav-bar-swipe nav#nav-mobile a:focus-visible,
+      #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:focus-visible {
         outline: none;
         border-radius: 999px;
         box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.8),
