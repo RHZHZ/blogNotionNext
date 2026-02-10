@@ -433,41 +433,34 @@ const Style = () => {
         }
       }
 
-      /* InfoCard special style (仿 zhheo 质感) */
-      #theme-heo #sideRight .heo-infocard {
+      /* InfoCard v2 三段式结构优化 */
+      #theme-heo #sideRight .heo-infocard-v2 {
         background: linear-gradient(135deg, #4f65f0 0%, #a252ff 100%) !important;
         border: none !important;
-        padding: 0 !important;
-        height: 20rem !important;
+        padding: 1.5rem !important;
         min-height: 20rem !important;
+        height: auto !important; /* 允许根据内容自动增长 */
+        display: flex !important;
+        flex-direction: column !important;
         position: relative !important;
-        display: block !important;
-        transition: height 0.4s var(--heo-ease), min-height 0.4s var(--heo-ease), background 0.4s var(--heo-ease) !important;
+        transition: all 0.4s var(--heo-ease) !important;
+        overflow: hidden !important;
       }
 
-      #theme-heo #sideRight .heo-infocard:hover {
-        height: var(--heo-infocard-hover-height, 20rem) !important;
-        min-height: var(--heo-infocard-hover-height, 20rem) !important;
-      }
-
-      html.dark #theme-heo #sideRight .heo-infocard {
+      html.dark #theme-heo #sideRight .heo-infocard-v2 {
         background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
       }
 
-      /* 独立问候语层：始终置顶 */
-      .heo-infocard-greetings-standalone {
-        position: absolute;
-        top: 1.5rem;
-        left: 0;
+      /* 1. Header 样式 */
+      .heo-info-header {
         width: 100%;
         display: flex;
         justify-content: center;
-        align-items: center;
-        z-index: 30;
-        pointer-events: auto;
+        margin-bottom: 1rem;
+        z-index: 10;
       }
 
-      .heo-infocard-greetings-standalone .py-1.px-2 {
+      .heo-info-greetings-pill {
         background: rgba(255, 255, 255, 0.2) !important;
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.3);
@@ -475,146 +468,117 @@ const Style = () => {
         border-radius: 999px !important;
         padding: 4px 16px !important;
         white-space: nowrap !important;
-        width: auto !important; /* 恢复自适应宽度 */
+        font-size: 0.875rem;
+        width: auto !important; /* 强制自适应宽度 */
         height: auto !important;
-        display: flex !important;
-        flex-direction: row !important;
-        transition: all var(--heo-dur-fast) var(--heo-ease);
+        transition: all 0.3s var(--heo-ease);
       }
 
-      .heo-infocard-greetings-standalone .py-1.px-2:hover {
-        background: rgba(255, 255, 255, 0.4) !important;
-        transform: scale(1.05);
-      }
-
-      /* 核心图层样式 */
-      .heo-infocard-layer {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        transition: opacity 0.4s var(--heo-ease), transform 0.4s var(--heo-ease);
-      }
-
-      /* 默认显示层 */
-      .heo-infocard-default {
-        opacity: 1;
-        z-index: 2;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        pointer-events: none;
-      }
-
-      #theme-heo #sideRight .heo-infocard:hover .heo-infocard-default {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-
-      /* 悬停显示层 */
-      .heo-infocard-hover {
-        opacity: 0;
-        z-index: 1;
-        transform: translateY(20px);
-        background: inherit;
-        pointer-events: none;
-      }
-
-      #theme-heo #sideRight .heo-infocard:hover .heo-infocard-hover {
-        opacity: 1;
-        transform: translateY(0);
-        z-index: 10;
-        pointer-events: auto;
-      }
-
-      /* 头像居中容器 */
-      .heo-infocard-avatar {
+      /* 2. Body 样式 - 核心内容切换 */
+      .heo-info-body {
         flex: 1;
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
         width: 100%;
-        margin-top: 2rem;
+        min-height: 120px;
       }
 
-      .heo-infocard-avatar .rounded-full {
+      /* 头像层 */
+      .heo-info-avatar-wrap {
+        opacity: 1;
+        transform: scale(1);
+        transition: all 0.4s var(--heo-ease);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .heo-info-avatar-wrap .rounded-full {
         width: 100px !important;
         height: 100px !important;
         border: 4px solid rgba(255, 255, 255, 0.4);
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         background: white;
-        transition: transform 0.5s var(--heo-ease);
-        pointer-events: auto;
       }
 
-      /* 悬停内容布局 */
-      .heo-infocard-hover-title {
-        font-size: 1.6rem;
+      /* 公告层 */
+      .heo-info-announcement-wrap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        opacity: 0;
+        transform: translateY(20px);
+        pointer-events: none;
+        transition: all 0.4s var(--heo-ease);
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Body Hover 切换逻辑 */
+      .heo-infocard-v2:hover .heo-info-avatar-wrap {
+        opacity: 0;
+        transform: scale(0.8) translateY(-20px);
+      }
+
+      .heo-infocard-v2:hover .heo-info-announcement-wrap {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+        position: relative; /* 悬停时回到文档流，撑开高度 */
+      }
+
+      .heo-infocard-v2:hover .heo-info-avatar-wrap {
+        position: absolute; /* 悬停时头像脱离文档流，不占空间 */
+      }
+
+      /* 公告标题 */
+      .heo-info-welcome-title {
+        font-size: 1.5rem;
         font-weight: 800;
-        margin-bottom: 0.8rem;
+        margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
         gap: 8px;
-        margin-top: 2.5rem;
       }
 
-      .heo-infocard-hover-emoji {
+      .heo-info-emoji {
         animation: wave 2.5s infinite;
         transform-origin: 70% 70%;
         display: inline-block;
       }
 
-      .heo-infocard-hover-content {
-        flex: 1;
-        font-size: 1rem;
-        line-height: 1.6;
-        color: rgba(255, 255, 255, 0.9);
-        margin-bottom: 100px !important; /* 预留给底部按钮的空间 */
-      }
-
-      /* 底部固定区 */
-      .heo-infocard-bottom-fixed {
-        position: absolute;
-        bottom: 0;
-        left: 0;
+      /* 3. Footer 样式 */
+      .heo-info-footer {
         width: 100%;
-        padding: 1.5rem;
-        z-index: 25;
-        pointer-events: auto;
+        margin-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 1rem;
       }
 
-      /* 按钮组 - 仅命中底部固定区的按钮 */
-      .heo-infocard-bottom-fixed .bg-indigo-400,
-      .heo-infocard-bottom-fixed .bg-indigo-400.dark\:bg-yellow-500,
-      .heo-infocard-bottom-fixed .group.bg-indigo-400 {
+      /* 按钮专用样式 */
+      .heo-info-social-btn, .heo-info-more-btn {
         background: rgba(255, 255, 255, 0.15) !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
         backdrop-filter: blur(10px) !important;
         width: 42px !important;
         height: 42px !important;
-        padding: 0 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         border-radius: 50% !important;
-        transition: all var(--heo-dur-fast) var(--heo-ease) !important;
+        transition: all 0.3s var(--heo-ease) !important;
+        cursor: pointer;
       }
 
-      .heo-infocard-bottom-fixed .bg-indigo-400:hover,
-      .heo-infocard-bottom-fixed .group.bg-indigo-400:hover {
+      .heo-info-social-btn:hover, .heo-info-more-btn:hover {
         background: white !important;
         color: #4f65f0 !important;
-        transform: scale(1.1);
+        transform: scale(1.1) translateY(-2px);
         box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-      }
-
-      .heo-infocard-bottom-fixed .group.bg-indigo-400 .font-bold {
-        display: none !important;
       }
 
       /* Sidebar cards: only affect right sidebar (C plan) */
