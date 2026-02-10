@@ -482,7 +482,7 @@ const Style = () => {
         align-items: center;
         justify-content: center;
         width: 100%;
-        min-height: 140px;
+        min-height: 160px;
       }
 
       .heo-info-avatar-wrap {
