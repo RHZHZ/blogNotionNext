@@ -439,11 +439,11 @@ const Style = () => {
         border: none !important;
         padding: 1.5rem !important;
         min-height: 20rem !important;
-        height: auto !important; /* 允许根据内容自动增长 */
+        height: auto !important;
         display: flex !important;
         flex-direction: column !important;
         position: relative !important;
-        transition: all 0.4s var(--heo-ease) !important;
+        transition: min-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.5s var(--heo-ease) !important;
         overflow: hidden !important;
       }
 
@@ -469,12 +469,12 @@ const Style = () => {
         padding: 4px 16px !important;
         white-space: nowrap !important;
         font-size: 0.875rem;
-        width: auto !important; /* 强制自适应宽度 */
+        width: auto !important;
         height: auto !important;
         transition: all 0.3s var(--heo-ease);
       }
 
-      /* 2. Body 样式 - 核心内容切换 */
+      /* 2. Body 样式 */
       .heo-info-body {
         flex: 1;
         position: relative;
@@ -482,10 +482,9 @@ const Style = () => {
         align-items: center;
         justify-content: center;
         width: 100%;
-        min-height: 120px;
+        min-height: 140px;
       }
 
-      /* 头像层 */
       .heo-info-avatar-wrap {
         opacity: 1;
         transform: scale(1);
@@ -503,7 +502,6 @@ const Style = () => {
         background: white;
       }
 
-      /* 公告层 */
       .heo-info-announcement-wrap {
         position: absolute;
         top: 0;
@@ -518,24 +516,19 @@ const Style = () => {
         flex-direction: column;
       }
 
-      /* Body Hover 切换逻辑 */
       .heo-infocard-v2:hover .heo-info-avatar-wrap {
         opacity: 0;
         transform: scale(0.8) translateY(-20px);
+        position: absolute;
       }
 
       .heo-infocard-v2:hover .heo-info-announcement-wrap {
         opacity: 1;
         transform: translateY(0);
         pointer-events: auto;
-        position: relative; /* 悬停时回到文档流，撑开高度 */
+        position: relative;
       }
 
-      .heo-infocard-v2:hover .heo-info-avatar-wrap {
-        position: absolute; /* 悬停时头像脱离文档流，不占空间 */
-      }
-
-      /* 公告标题 */
       .heo-info-welcome-title {
         font-size: 1.5rem;
         font-weight: 800;
@@ -551,12 +544,28 @@ const Style = () => {
         display: inline-block;
       }
 
-      /* 3. Footer 样式 */
+      /* 3. Footer 样式 - 对齐参考图 */
       .heo-info-footer {
         width: 100%;
-        margin-top: 1rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 1.5rem;
         padding-top: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+
+      .heo-info-footer-text {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+      }
+
+      .author-info__name {
+        line-height: 1.2;
+      }
+
+      .author-info__desc {
+        opacity: 0.8;
       }
 
       /* 按钮专用样式 */
@@ -572,6 +581,7 @@ const Style = () => {
         border-radius: 50% !important;
         transition: all 0.3s var(--heo-ease) !important;
         cursor: pointer;
+        color: white !important;
       }
 
       .heo-info-social-btn:hover, .heo-info-more-btn:hover {
