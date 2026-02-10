@@ -28,6 +28,11 @@ export function InfoCard(props) {
   const [cardColor, setCardColor] = useState(fallbackColor)
 
   useEffect(() => {
+    // 主题切换时，先立即应用 fallback，避免因为取色/图片缓存导致颜色滞留
+    setCardColor(fallbackColor)
+  }, [fallbackColor])
+
+  useEffect(() => {
     let cancelled = false
     async function run() {
       // 优先从文章封面图取色，如果没有（比如在首页）则从站点图标取色
