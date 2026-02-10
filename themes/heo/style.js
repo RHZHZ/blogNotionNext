@@ -150,6 +150,33 @@ const Style = () => {
         gap: 10px;
       }
 
+      /* 修复下拉菜单：缩短触发器到面板的距离，并允许“划过去”不消失 */
+      #theme-heo #nav-bar-swipe nav#nav-mobile > div {
+        position: relative;
+      }
+
+      #theme-heo #nav-bar-swipe nav#nav-mobile > div > ul {
+        top: calc(100% + 8px) !important;
+      }
+
+      #theme-heo #nav-bar-swipe nav#nav-mobile > div:hover > ul,
+      #theme-heo #nav-bar-swipe nav#nav-mobile > div:focus-within > ul {
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        margin-top: 0 !important;
+        top: 100% !important;
+      }
+
+      #theme-heo #nav-bar-swipe nav#nav-mobile > div::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        height: 12px;
+      }
+
       #theme-heo #nav-bar-swipe nav#nav-mobile > div {
         display: flex;
         align-items: center;
@@ -190,10 +217,11 @@ const Style = () => {
       #theme-heo #nav-bar-swipe nav#nav-mobile a.active,
       #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer[aria-current='page'],
       #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
-        background: rgba(59, 130, 246, 0.92) !important;
+        background: rgba(59, 130, 246, 0.95) !important;
         color: #ffffff !important;
-        box-shadow: 0 10px 22px rgba(59, 130, 246, 0.22),
-          0 0 0 5px rgba(59, 130, 246, 0.12);
+        box-shadow: 0 12px 26px rgba(59, 130, 246, 0.35),
+          0 0 0 6px rgba(59, 130, 246, 0.22),
+          0 0 20px rgba(59, 130, 246, 0.45);
       }
 
       /* 选中态：暗色模式-黄色胶囊 + 光晕 */
