@@ -67,7 +67,7 @@ const Style = () => {
       }
 
       #theme-heo {
-        background-color: rgb(247 249 254 / var(--tw-bg-opacity, 1)) !important;
+        background-color: transparent!important;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         font-family: var(--heo-font-sans);
