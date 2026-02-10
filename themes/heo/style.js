@@ -561,11 +561,20 @@ const Style = () => {
       }
 
       .author-info__name {
-        line-height: 1.2;
+      
+        text-align: left;
+        font-weight: 700;
+        color: var(--heo-white);
+        font-size: 20px;
+        line-height: 1;
+        margin-bottom: 5px;
       }
 
       .author-info__desc {
-        opacity: 0.8;
+        font-size: 12px;
+        color: var(--heo-white);
+        opacity: .6;
+        line-height: 1;
       }
 
       /* 按钮专用样式 */
