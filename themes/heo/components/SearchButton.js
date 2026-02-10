@@ -16,7 +16,7 @@ export default function SearchButton(props) {
   const searchModal = useRef(null)
 
   function handleSearch() {
-    if (siteConfig('ALGOLIA_APP_ID')) {
+    if (siteConfig('SEARCH_ENGINE') === 'algolia' && siteConfig('ALGOLIA_APP_ID')) {
       searchModal.current.openSearch()
     } else {
       router.push('/search')
