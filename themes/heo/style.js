@@ -59,11 +59,15 @@ const Style = () => {
       }
 
       body {
-        background-color: #f9fafc;
+        background-color: #f7f9fe;
+        background-image: radial-gradient(rgba(60, 132, 246, 0.03) 1px, transparent 0);
+        background-size: 24px 24px;
       }
 
       html.dark body {
         background-color: #0f1115;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 0);
+        background-size: 24px 24px;
       }
 
       #theme-heo {
@@ -156,11 +160,16 @@ const Style = () => {
       #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
         position: relative;
         border-radius: 999px;
-        background: rgba(37, 99, 235, 1) !important;
-        box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.55),
-          0 0 26px rgba(37, 99, 235, 0.65),
-          0 0 52px rgba(59, 130, 246, 0.35);
+        background: rgba(37, 99, 235, 0.78) !important;
+        -webkit-backdrop-filter: saturate(180%) blur(12px);
+        backdrop-filter: saturate(180%) blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.35) !important;
+        box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3),
+          0 0 26px rgba(37, 99, 235, 0.55),
+          0 0 52px rgba(59, 132, 246, 0.25);
         color: #ffffff !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.02em;
       }
 
       html.dark #theme-heo nav#nav a[aria-current='page'],
@@ -171,11 +180,15 @@ const Style = () => {
       html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'] > div,
       html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer[aria-current='page'],
       html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
-        background: rgba(234, 179, 8, 1) !important;
-        box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.55),
-          0 0 26px rgba(234, 179, 8, 0.6),
-          0 0 52px rgba(250, 204, 21, 0.3);
+        background: rgba(234, 179, 8, 0.72) !important;
+        -webkit-backdrop-filter: saturate(140%) blur(12px);
+        backdrop-filter: saturate(140%) blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.3),
+          0 0 26px rgba(234, 179, 8, 0.5),
+          0 0 52px rgba(250, 204, 21, 0.2);
         color: #000000 !important;
+        font-weight: 600 !important;
       }
 
       @media (hover: hover) {
@@ -185,10 +198,14 @@ const Style = () => {
         /* 右侧图标按钮 hover (针对 SearchButton, DarkModeButton, RandomPostButton 等) */
         #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover {
           border-radius: 999px;
-          background-color: rgba(37, 99, 235, 1) !important;
-          box-shadow: 0 0 20px rgba(37, 99, 235, 0.6),
-            0 0 40px rgba(37, 99, 235, 0.3);
+          background-color: rgba(37, 99, 235, 0.75) !important;
+          -webkit-backdrop-filter: saturate(180%) blur(10px);
+          backdrop-filter: saturate(180%) blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.3) !important;
+          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4),
+            0 0 40px rgba(37, 99, 235, 0.2);
           color: #ffffff !important;
+          transform: translateY(-1px);
         }
 
         /* 右侧图标内部特殊处理 (针对某些被包裹的图标) */
@@ -196,21 +213,28 @@ const Style = () => {
         #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover svg {
            color: #ffffff !important;
            fill: #ffffff !important;
+           transform: scale(1.05);
+           transition: transform 0.2s ease;
         }
 
         html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a:hover,
         html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover,
         html.dark #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover {
-          background-color: rgba(234, 179, 8, 1) !important;
-          box-shadow: 0 0 20px rgba(234, 179, 8, 0.6),
-            0 0 40px rgba(234, 179, 8, 0.3);
+          background-color: rgba(234, 179, 8, 0.75) !important;
+          -webkit-backdrop-filter: saturate(140%) blur(10px);
+          backdrop-filter: saturate(140%) blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.15) !important;
+          box-shadow: 0 8px 20px rgba(234, 179, 8, 0.4),
+            0 0 40px rgba(234, 179, 8, 0.2);
           color: #000000 !important;
+          transform: translateY(-1px);
         }
 
         html.dark #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover i,
         html.dark #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover svg {
            color: #000000 !important;
            fill: #000000 !important;
+           transform: scale(1.05);
         }
       }
 
@@ -220,14 +244,17 @@ const Style = () => {
         padding: 8px !important;
         border: 1px solid rgba(0, 0, 0, 0.05) !important;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
-        background: rgba(255, 255, 255, 0.85) !important;
-        backdrop-filter: blur(20px) saturate(180%) !important;
+        background: rgba(255, 255, 255, 0.82) !important;
+        -webkit-backdrop-filter: blur(22px) saturate(190%) !important;
+        backdrop-filter: blur(22px) saturate(190%) !important;
       }
 
       html.dark #theme-heo #nav-bar-swipe nav#nav-mobile ul {
-        background: rgba(27, 28, 32, 0.85) !important;
+        background: rgba(27, 28, 32, 0.78) !important;
         border-color: rgba(255, 255, 255, 0.08) !important;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+        -webkit-backdrop-filter: blur(22px) saturate(160%) !important;
+        backdrop-filter: blur(22px) saturate(160%) !important;
       }
 
       /* 下拉菜单项：同步为大圆角胶囊发光样式 */
