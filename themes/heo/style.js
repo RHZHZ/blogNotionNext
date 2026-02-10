@@ -59,7 +59,7 @@ const Style = () => {
       }
 
       body {
-        background-color: #f5f5f7;
+        background-color: #f7f9fe;
       }
 
       html.dark body {
