@@ -53,10 +53,11 @@ export function InfoCard(props) {
 
         {/* Hover显示的公告内容 */}
         <div className='heo-info-announcement-wrap'>
-          <div className='heo-info-welcome-title'>
+         /*  <div className='heo-info-welcome-title'>
             <span className='heo-info-emoji'>👋</span>
             <span>欢迎来访!</span>
-          </div>
+          </div> 
+          */
           <Announcement post={notice} style={{ color: 'white !important' }} />
         </div>
       </div>
@@ -77,13 +78,14 @@ export function InfoCard(props) {
                 </SmartLink>
               </div>
             )}
-            {url2 && (
+          /*   {url2 && (
               <div className='heo-info-social-btn'>
                 <SmartLink href={url2}>
                   <i className={icon2} />
                 </SmartLink>
               </div>
             )}
+            */
           </div>
           <MoreButton />
         </div>
