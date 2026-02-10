@@ -78,7 +78,8 @@ export function InfoCard(props) {
                 </SmartLink>
               </div>
             )}
-          /*   {url2 && (
+          /*   
+          {url2 && (
               <div className='heo-info-social-btn'>
                 <SmartLink href={url2}>
                   <i className={icon2} />
