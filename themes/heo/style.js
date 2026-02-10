@@ -355,6 +355,64 @@ const Style = () => {
         display: none;
       }
 
+      /* CategoryBar styles */
+      #theme-heo #category-bar {
+        background: var(--heo-surface) !important;
+        border: 1px solid var(--heo-border-subtle) !important;
+        box-shadow: var(--heo-shadow-sm);
+        transition: all var(--heo-dur) var(--heo-ease);
+      }
+
+      html.dark #theme-heo #category-bar {
+        background: var(--heo-surface-dark) !important;
+        border-color: var(--heo-border-subtle-dark) !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      @media (hover: hover) {
+        #theme-heo #category-bar:hover {
+          box-shadow: var(--heo-shadow-lg);
+          transform: translateY(var(--heo-card-hover-translate));
+        }
+        html.dark #theme-heo #category-bar:hover {
+          box-shadow: var(--heo-shadow-lg-dark);
+        }
+      }
+
+      /* Hero section styles */
+      #theme-heo #hero .recent-post-top,
+      #theme-heo #hero #banners,
+      #theme-heo #hero-right-wrapper #top-group > a > div,
+      #theme-heo #hero-right-wrapper #today-card #card-body {
+        background: var(--heo-surface) !important;
+        border: 1px solid var(--heo-border-subtle) !important;
+        box-shadow: var(--heo-shadow-sm);
+        transition: all var(--heo-dur) var(--heo-ease);
+      }
+
+      html.dark #theme-heo #hero .recent-post-top,
+      html.dark #theme-heo #hero #banners,
+      html.dark #theme-heo #hero-right-wrapper #top-group > a > div,
+      html.dark #theme-heo #hero-right-wrapper #today-card #card-body {
+        background: var(--heo-surface-dark) !important;
+        border-color: var(--heo-border-subtle-dark) !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      @media (hover: hover) {
+        #theme-heo #hero #banners:hover,
+        #theme-heo #hero-right-wrapper #top-group > a > div:hover,
+        #theme-heo #hero-right-wrapper #today-card #card-body:hover {
+          box-shadow: var(--heo-shadow-lg);
+          transform: translateY(var(--heo-card-hover-translate));
+        }
+        html.dark #theme-heo #hero #banners:hover,
+        html.dark #theme-heo #hero-right-wrapper #top-group > a > div:hover,
+        html.dark #theme-heo #hero-right-wrapper #today-card #card-body:hover {
+          box-shadow: var(--heo-shadow-lg-dark);
+        }
+      }
+
       /* Sidebar cards: only affect right sidebar (C plan) */
       #theme-heo #sideRight .wow.fadeInUp.border.bg-white,
       #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\],
