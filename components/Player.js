@@ -18,7 +18,8 @@ const Player = () => {
   const lrcType = JSON.parse(siteConfig('MUSIC_PLAYER_LRC_TYPE'))
 
   const musicPlayerEnable = siteConfig('MUSIC_PLAYER')
-  const musicPlayerCDN = siteConfig('MUSIC_PLAYER_CDN_URL')
+  const musicPlayerCDN = siteConfig('MUSIC_PLAYER_CDN_URL', 'https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js')
+  const musicPlayerStyleCDN = siteConfig('MUSIC_PLAYER_STYLE_CDN_URL', 'https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css')
   const metingEnable = JSON.parse(siteConfig('MUSIC_PLAYER_METING'))
   const metingApi = siteConfig('MUSIC_PLAYER_METING_API', '/api/meting?url=:id')
   const metingId = siteConfig('MUSIC_PLAYER_METING_ID')
@@ -92,7 +93,7 @@ const Player = () => {
       <link
         rel='stylesheet'
         type='text/css'
-        href='https://cdn.jsdelivr.net/npm/aplayer@1.10.0/dist/APlayer.min.css'
+        href={musicPlayerStyleCDN}
       />
       {/* APlayer 引擎容器：UI 已在 globals.css 中被隐藏 */}
       <div ref={ref} data-player={player} />
