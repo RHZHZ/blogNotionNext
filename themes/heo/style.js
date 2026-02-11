@@ -116,6 +116,91 @@ const Style = () => {
         }
       }
 
+      /* Hero: 梦幻层次与动效（不改组件结构，仅 CSS 增强） */
+      #theme-heo #hero.recent-post-top {
+        position: relative;
+        isolation: isolate;
+        border-radius: 18px !important;
+      }
+
+      #theme-heo #hero.recent-post-top::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: 20px;
+        pointer-events: none;
+        background:
+          radial-gradient(800px 420px at 10% 10%, rgba(79, 101, 240, 0.16), transparent 60%),
+          radial-gradient(720px 420px at 90% 30%, rgba(59, 130, 246, 0.14), transparent 62%),
+          radial-gradient(760px 520px at 60% 100%, rgba(162, 82, 255, 0.10), transparent 60%);
+        filter: blur(14px) saturate(140%);
+        opacity: 0.9;
+        z-index: -1;
+      }
+
+      html.dark #theme-heo #hero.recent-post-top::before {
+        background:
+          radial-gradient(900px 520px at 15% 5%, rgba(234, 179, 8, 0.16), transparent 60%),
+          radial-gradient(820px 520px at 95% 35%, rgba(249, 115, 22, 0.12), transparent 62%),
+          radial-gradient(900px 640px at 55% 105%, rgba(59, 130, 246, 0.10), transparent 60%);
+        filter: blur(16px) saturate(130%);
+        opacity: 0.85;
+      }
+
+      #theme-heo #hero #banners,
+      #theme-heo #hero-right-wrapper #top-group > a > div,
+      #theme-heo #hero-right-wrapper #today-card #card-body {
+        border: 1px solid rgba(255, 255, 255, 0.45) !important;
+        background: rgba(255, 255, 255, 0.62) !important;
+        -webkit-backdrop-filter: saturate(210%) blur(24px);
+        backdrop-filter: saturate(210%) blur(24px);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 22px 58px rgba(0, 0, 0, 0.10) !important;
+      }
+
+      html.dark #theme-heo #hero #banners,
+      html.dark #theme-heo #hero-right-wrapper #top-group > a > div,
+      html.dark #theme-heo #hero-right-wrapper #today-card #card-body {
+        border-color: rgba(255, 255, 255, 0.09) !important;
+        background: rgba(27, 28, 32, 0.56) !important;
+        -webkit-backdrop-filter: saturate(170%) blur(26px);
+        backdrop-filter: saturate(170%) blur(26px);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 26px 70px rgba(0, 0, 0, 0.34) !important;
+      }
+
+      @media (hover: hover) {
+        #theme-heo #hero #banners:hover,
+        #theme-heo #hero-right-wrapper #top-group > a > div:hover,
+        #theme-heo #hero-right-wrapper #today-card #card-body:hover {
+          transform: translateY(-2px) scale(1.01);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 30px 90px rgba(0, 0, 0, 0.12) !important;
+        }
+
+        html.dark #theme-heo #hero #banners:hover,
+        html.dark #theme-heo #hero-right-wrapper #top-group > a > div:hover,
+        html.dark #theme-heo #hero-right-wrapper #today-card #card-body:hover {
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.42), 0 34px 96px rgba(0, 0, 0, 0.38) !important;
+        }
+      }
+
+      @keyframes heoHeroFloat {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(-3px);
+        }
+      }
+
+      #theme-heo #hero #banners {
+        animation: heoHeroFloat 6s ease-in-out infinite alternate;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #theme-heo #hero #banners {
+          animation: none;
+        }
+      }
+
       #theme-heo {
         background: transparent !important;
         -webkit-font-smoothing: antialiased;
@@ -177,22 +262,26 @@ const Style = () => {
 
       #theme-heo nav#nav.bg-white,
       #theme-heo nav#nav.dark\:bg-\[\#18171d\] {
-        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 10px 30px rgba(0, 0, 0, 0.06);
-      }
-
-      #theme-heo nav#nav.bg-white {
-        background: rgba(255, 255, 255, 0.88) !important;
-        -webkit-backdrop-filter: saturate(180%) blur(16px);
-        backdrop-filter: saturate(180%) blur(16px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 22px 60px rgba(0, 0, 0, 0.08);
       }
 
       html.dark #theme-heo nav#nav.dark\:bg-\[\#18171d\] {
-        background: rgba(27, 28, 32, 0.84) !important;
-        -webkit-backdrop-filter: saturate(140%) blur(18px);
-        backdrop-filter: saturate(140%) blur(18px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 14px 36px rgba(0, 0, 0, 0.45);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 26px 70px rgba(0, 0, 0, 0.38);
+      }
+
+      #theme-heo nav#nav.bg-white {
+        background: rgba(255, 255, 255, 0.72) !important;
+        -webkit-backdrop-filter: saturate(210%) blur(24px);
+        backdrop-filter: saturate(210%) blur(24px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      html.dark #theme-heo nav#nav.dark\:bg-\[\#18171d\] {
+        background: rgba(27, 28, 32, 0.65) !important;
+        -webkit-backdrop-filter: saturate(170%) blur(26px);
+        backdrop-filter: saturate(170%) blur(26px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 14px 36px rgba(0, 0, 0, 0.35);
       }
 
       /* 顶部导航栏：菜单项与右侧按钮发光效果 */
@@ -245,8 +334,8 @@ const Style = () => {
         #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover {
           border-radius: 999px;
           background-color: rgba(37, 99, 235, 0.75) !important;
-          -webkit-backdrop-filter: saturate(180%) blur(10px);
-          backdrop-filter: saturate(180%) blur(10px);
+          -webkit-backdrop-filter: saturate(190%) blur(16px);
+          backdrop-filter: saturate(190%) blur(16px);
           border: 1px solid rgba(255, 255, 255, 0.3) !important;
           box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4),
             0 0 40px rgba(37, 99, 235, 0.2);
@@ -267,8 +356,8 @@ const Style = () => {
         html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover,
         html.dark #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover {
           background-color: rgba(234, 179, 8, 0.75) !important;
-          -webkit-backdrop-filter: saturate(140%) blur(10px);
-          backdrop-filter: saturate(140%) blur(10px);
+          -webkit-backdrop-filter: saturate(155%) blur(16px);
+          backdrop-filter: saturate(155%) blur(16px);
           border: 1px solid rgba(255, 255, 255, 0.15) !important;
           box-shadow: 0 8px 20px rgba(234, 179, 8, 0.4),
             0 0 40px rgba(234, 179, 8, 0.2);
@@ -288,19 +377,19 @@ const Style = () => {
       #theme-heo #nav-bar-swipe nav#nav-mobile ul {
         border-radius: 28px !important;
         padding: 8px !important;
-        border: 1px solid rgba(0, 0, 0, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
-        background: rgba(255, 255, 255, 0.82) !important;
-        -webkit-backdrop-filter: blur(22px) saturate(190%) !important;
-        backdrop-filter: blur(22px) saturate(190%) !important;
+        background: rgba(255, 255, 255, 0.65) !important;
+        -webkit-backdrop-filter: saturate(210%) blur(24px) !important;
+        backdrop-filter: saturate(210%) blur(24px) !important;
       }
 
       html.dark #theme-heo #nav-bar-swipe nav#nav-mobile ul {
-        background: rgba(27, 28, 32, 0.78) !important;
+        background: rgba(27, 28, 32, 0.55) !important;
         border-color: rgba(255, 255, 255, 0.08) !important;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
-        -webkit-backdrop-filter: blur(22px) saturate(160%) !important;
-        backdrop-filter: blur(22px) saturate(160%) !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+        -webkit-backdrop-filter: saturate(170%) blur(26px) !important;
+        backdrop-filter: saturate(170%) blur(26px) !important;
       }
 
       /* 下拉菜单项：同步为大圆角胶囊发光样式 */
@@ -554,21 +643,21 @@ const Style = () => {
 
       /* CategoryBar 容器：磨砂玻璃质感与圆角 */
       #theme-heo #category-bar {
-        background: rgba(255, 255, 255, 0.72) !important;
-        -webkit-backdrop-filter: saturate(180%) blur(16px);
-        backdrop-filter: saturate(180%) blur(16px);
-        border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        background: rgba(255, 255, 255, 0.6) !important;
+        -webkit-backdrop-filter: saturate(210%) blur(24px);
+        backdrop-filter: saturate(210%) blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
         border-radius: 24px !important;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 26px rgba(0, 0, 0, 0.06);
         transition: all var(--heo-dur) var(--heo-ease);
       }
 
       html.dark #theme-heo #category-bar {
-        background: rgba(27, 28, 32, 0.75) !important;
-        -webkit-backdrop-filter: saturate(140%) blur(18px);
-        backdrop-filter: saturate(140%) blur(18px);
+        background: rgba(27, 28, 32, 0.5) !important;
+        -webkit-backdrop-filter: saturate(170%) blur(26px);
+        backdrop-filter: saturate(170%) blur(26px);
         border-color: rgba(255, 255, 255, 0.08) !important;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.35);
       }
 
       /* 分类项：同步发光胶囊样式 */
@@ -997,19 +1086,19 @@ const Style = () => {
         box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
       }
 
-      /* Sidebar cards: only affect right sidebar (C plan) */
+      /* Sidebar cards: only affect right sidebar (B-plan dreamy glass) */
       #theme-heo #sideRight .wow.fadeInUp.border.bg-white,
       #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\],
       #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\].dark\:text-white,
       #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl,
       #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.lg\:p-6,
       #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.p-4 {
-        background: var(--heo-surface) !important;
-        border: 1px solid var(--heo-border-subtle) !important;
+        background: rgba(255, 255, 255, 0.62) !important;
+        border: 1px solid rgba(255, 255, 255, 0.45) !important;
         border-radius: var(--heo-radius-lg) !important;
-        box-shadow: var(--heo-shadow-sm);
-        -webkit-backdrop-filter: saturate(180%) blur(14px);
-        backdrop-filter: saturate(180%) blur(14px);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 18px 44px rgba(0, 0, 0, 0.08) !important;
+        -webkit-backdrop-filter: saturate(210%) blur(24px);
+        backdrop-filter: saturate(210%) blur(24px);
       }
 
       html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white,
@@ -1018,9 +1107,11 @@ const Style = () => {
       html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl,
       html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.lg\:p-6,
       html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.p-4 {
-        background: var(--heo-surface-dark) !important;
-        border-color: var(--heo-border-subtle-dark) !important;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
+        background: rgba(27, 28, 32, 0.56) !important;
+        border-color: rgba(255, 255, 255, 0.09) !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 22px 56px rgba(0, 0, 0, 0.35) !important;
+        -webkit-backdrop-filter: saturate(170%) blur(26px);
+        backdrop-filter: saturate(170%) blur(26px);
       }
 
       @media (hover: hover) {
@@ -1047,11 +1138,11 @@ const Style = () => {
         height: 44px;
         line-height: 44px;
         border-radius: 14px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        background: rgba(255, 255, 255, 0.85);
-        -webkit-backdrop-filter: saturate(180%) blur(16px);
-        backdrop-filter: saturate(180%) blur(16px);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 26px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.62);
+        -webkit-backdrop-filter: saturate(210%) blur(24px);
+        backdrop-filter: saturate(210%) blur(24px);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 18px 44px rgba(0, 0, 0, 0.08);
         font-size: 15px;
         color: var(--heo-text);
       }
@@ -1063,9 +1154,11 @@ const Style = () => {
       }
 
       html.dark #theme-heo .heo-search-input input {
-        border-color: rgba(255, 255, 255, 0.14);
-        background: rgba(27, 28, 32, 0.7);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 18px 44px rgba(0, 0, 0, 0.45);
+        border-color: rgba(255, 255, 255, 0.12);
+        background: rgba(27, 28, 32, 0.56);
+        -webkit-backdrop-filter: saturate(170%) blur(26px);
+        backdrop-filter: saturate(170%) blur(26px);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 22px 56px rgba(0, 0, 0, 0.35);
         color: var(--heo-text);
       }
 
@@ -1196,8 +1289,8 @@ const Style = () => {
         padding-top: 1.5rem !important;
         padding-bottom: 2rem !important;
         background: rgba(249, 250, 252, 0.8) !important;
-        -webkit-backdrop-filter: saturate(180%) blur(16px);
-        backdrop-filter: saturate(180%) blur(16px);
+        -webkit-backdrop-filter: saturate(190%) blur(20px);
+        backdrop-filter: saturate(190%) blur(20px);
         border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
         color: var(--heo-text-tertiary);
         display: flex;
@@ -1263,8 +1356,8 @@ const Style = () => {
 
       html.dark #theme-heo footer #footer-bottom {
         background: rgba(27, 28, 32, 0.68) !important;
-        -webkit-backdrop-filter: saturate(140%) blur(18px);
-        backdrop-filter: saturate(140%) blur(18px);
+        -webkit-backdrop-filter: saturate(155%) blur(22px);
+        backdrop-filter: saturate(155%) blur(22px);
         border-top-color: rgba(255, 255, 255, 0.08) !important;
         box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.06), 0 -14px 36px rgba(0, 0, 0, 0.45);
       }
