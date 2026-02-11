@@ -26,7 +26,7 @@ const BLOG = {
   CODE_COLLAPSE_MIN_LINES: 30,//“长代码”阈值
 
   // 图片代理（用于封面取色等场景绕过 CORS）
-  IMAGE_PROXY_ALLOW_HOSTS: (process.env.IMAGE_PROXY_ALLOW_HOSTS || 'www.notion.so,prod-files-secure.s3.us-west-2.amazonaws.com,s3.us-west-2.amazonaws.com,images.unsplash.com,s41.ax1x.com,'rhzhz.cn')
+  IMAGE_PROXY_ALLOW_HOSTS: (process.env.IMAGE_PROXY_ALLOW_HOSTS || 'www.notion.so,prod-files-secure.s3.us-west-2.amazonaws.com,s3.us-west-2.amazonaws.com,images.unsplash.com,s41.ax1x.com,rhzhz.cn')
     .split(',')
     .map(s => s.trim())
     .filter(Boolean),
