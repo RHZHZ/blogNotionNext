@@ -31,6 +31,7 @@ const BLOG = {
   MUSIC_PLAYER_ARTICLE_AUDIO_CONVERT: true,      // 自动转换文中音频
   MUSIC_PLAYER_ARTICLE_META_ENABLE: true,       // 开启封面/歌词自动补全
   MUSIC_PLAYER_ARTICLE_META_DB_ID: '3049daca95bb806889ffe623a8e74e5c', // AudioMeta 数据库ID
+  MUSIC_PLAYER_CDN_URL:'https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js',
   // 机器人key配置到环境变量中
 
   // 图片代理（用于封面取色等场景绕过 CORS）
