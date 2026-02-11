@@ -42,7 +42,7 @@ const BlogPostCard = ({ index, post, showSummary, siteInfo }) => {
             <div
               className={
                 (POST_TWO_COLS ? ' 2xl:w-full' : '') +
-                ' w-full md:w-5/12 overflow-hidden cursor-pointer select-none'
+                ' w-full md:w-5/12 aspect-[16/9] md:aspect-auto md:h-full overflow-hidden cursor-pointer select-none'
               }>
               <LazyImage
                 priority={index === 0}
