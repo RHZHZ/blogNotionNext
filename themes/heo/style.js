@@ -7,1734 +7,1658 @@
 const Style = () => {
   return (
     <style jsx global>{`
-      :root {
-        --heo-surface: rgba(255, 255, 255, 0.9);
-        --heo-surface-strong: #ffffff;
-        --heo-surface-dark: rgba(27, 28, 32, 0.92);
-        --heo-border: rgba(0, 0, 0, 0.08);
-        --heo-border-strong: rgba(0, 0, 0, 0.12);
-        --heo-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06),
-          0 6px 18px rgba(0, 0, 0, 0.06);
-        --heo-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.08),
-          0 18px 40px rgba(0, 0, 0, 0.08);
-        --heo-shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.12),
-          0 30px 80px rgba(0, 0, 0, 0.12);
-        --heo-shadow-lg-dark: 0 8px 26px rgba(0, 0, 0, 0.55),
-          0 40px 100px rgba(0, 0, 0, 0.6);
-        --heo-border-subtle: rgba(0, 0, 0, 0.06);
-        --heo-border-subtle-dark: rgba(255, 255, 255, 0.09);
-        --heo-card-hover-translate: -2px;
-        --heo-radius-sm: 10px;
-        --heo-radius-md: 14px;
-        --heo-radius-lg: 18px;
-        --heo-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-        --heo-dur-fast: 160ms;
-        --heo-dur: 240ms;
+        :root {
+            --heo-surface: rgba(255, 255, 255, 0.9);
+            --heo-surface-strong: #ffffff;
+            --heo-surface-dark: rgba(27, 28, 32, 0.92);
+            --heo-border: rgba(0, 0, 0, 0.08);
+            --heo-border-strong: rgba(0, 0, 0, 0.12);
+            --heo-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06),
+            0 6px 18px rgba(0, 0, 0, 0.06);
+            --heo-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.08),
+            0 18px 40px rgba(0, 0, 0, 0.08);
+            --heo-shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.12),
+            0 30px 80px rgba(0, 0, 0, 0.12);
+            --heo-shadow-lg-dark: 0 8px 26px rgba(0, 0, 0, 0.55),
+            0 40px 100px rgba(0, 0, 0, 0.6);
+            --heo-border-subtle: rgba(0, 0, 0, 0.06);
+            --heo-border-subtle-dark: rgba(255, 255, 255, 0.09);
+            --heo-card-hover-translate: -2px;
+            --heo-radius-sm: 10px;
+            --heo-radius-md: 14px;
+            --heo-radius-lg: 18px;
+            --heo-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+            --heo-dur-fast: 160ms;
+            --heo-dur: 240ms;
 
-        --heo-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text",
-          "SF Pro Display", "PingFang SC", "Hiragino Sans GB",
-          "Noto Sans CJK SC", system-ui, Segoe UI, Roboto, Helvetica, Arial,
-          sans-serif;
-        --heo-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
-          Consolas, "Liberation Mono", "Courier New", monospace;
+            --heo-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+            "SF Pro Display", "PingFang SC", "Hiragino Sans GB",
+            "Noto Sans CJK SC", system-ui, Segoe UI, Roboto, Helvetica, Arial,
+            sans-serif;
+            --heo-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
+            Consolas, "Liberation Mono", "Courier New", monospace;
 
-        --heo-text: rgba(0, 0, 0, 0.88);
-        --heo-text-secondary: rgba(0, 0, 0, 0.62);
-        --heo-text-tertiary: rgba(0, 0, 0, 0.46);
+            --heo-text: rgba(0, 0, 0, 0.88);
+            --heo-text-secondary: rgba(0, 0, 0, 0.62);
+            --heo-text-tertiary: rgba(0, 0, 0, 0.46);
 
-        --heo-article-font-size: 16px;
-        --heo-article-line-height: 1.78;
-        --heo-article-paragraph-gap: 0.9em;
-        --heo-article-block-gap: 1.25rem;
+            --heo-article-font-size: 16px;
+            --heo-article-line-height: 1.78;
+            --heo-article-paragraph-gap: 0.9em;
+            --heo-article-block-gap: 1.25rem;
 
-        --heo-h2-size: 1.45rem;
-        --heo-h3-size: 1.22rem;
-        --heo-h4-size: 1.06rem;
-      }
-
-      html.dark {
-        --heo-text: rgba(255, 255, 255, 0.88);
-        --heo-text-secondary: rgba(235, 235, 245, 0.68);
-        --heo-text-tertiary: rgba(235, 235, 245, 0.52);
-      }
-
-      body {
-        background-color: #f7f9fe;
-        background-image: radial-gradient(rgba(60, 132, 246, 0.03) 1px, transparent 0);
-        background-size: 24px 24px;
-      }
-
-      html.dark body {
-        background-color: #0f1115;
-        background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 0);
-        background-size: 24px 24px;
-      }
-
-      /* 动态环境光（Ambient Light） */
-      body::before {
-        content: '';
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        z-index: 0;
-        opacity: 0.65;
-        background:
-          radial-gradient(600px 380px at 15% 20%, rgba(79, 101, 240, 0.18), transparent 60%),
-          radial-gradient(520px 360px at 85% 25%, rgba(59, 130, 246, 0.14), transparent 62%),
-          radial-gradient(640px 420px at 60% 85%, rgba(162, 82, 255, 0.10), transparent 60%),
-          radial-gradient(520px 420px at 10% 85%, rgba(16, 185, 129, 0.08), transparent 62%);
-        filter: blur(14px) saturate(135%);
-        transform: translate3d(0, 0, 0);
-        animation: heoAmbientMove 18s ease-in-out infinite alternate;
-      }
-
-      html.dark body::before {
-        opacity: 0.55;
-        background:
-          radial-gradient(680px 420px at 20% 15%, rgba(234, 179, 8, 0.16), transparent 60%),
-          radial-gradient(620px 420px at 85% 25%, rgba(249, 115, 22, 0.12), transparent 62%),
-          radial-gradient(760px 520px at 60% 90%, rgba(59, 130, 246, 0.10), transparent 60%),
-          radial-gradient(520px 420px at 15% 85%, rgba(34, 197, 94, 0.06), transparent 62%);
-        filter: blur(16px) saturate(125%);
-      }
-
-      @keyframes heoAmbientMove {
-        0% {
-          transform: translate3d(0, 0, 0) scale(1);
+            --heo-h2-size: 1.45rem;
+            --heo-h3-size: 1.22rem;
+            --heo-h4-size: 1.06rem;
         }
-        50% {
-          transform: translate3d(-1.5%, 1%, 0) scale(1.02);
-        }
-        100% {
-          transform: translate3d(1.5%, -1%, 0) scale(1.03);
-        }
-      }
 
-      @media (prefers-reduced-motion: reduce) {
+        html.dark {
+            --heo-text: rgba(255, 255, 255, 0.88);
+            --heo-text-secondary: rgba(235, 235, 245, 0.68);
+            --heo-text-tertiary: rgba(235, 235, 245, 0.52);
+        }
+
+        body {
+            background-color: #f7f9fe;
+            background-image: radial-gradient(rgba(60, 132, 246, 0.03) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+
+        html.dark body {
+            background-color: #0f1115;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+
+        /* 动态环境光（Ambient Light） */
         body::before {
-          animation: none;
-        }
-      }
-
-      /* Hero: 梦幻层次与动效（不改组件结构，仅 CSS 增强） */
-      #theme-heo #hero.recent-post-top {
-        position: relative;
-        isolation: isolate;
-        border-radius: 18px !important;
-      }
-
-      #theme-heo #hero.recent-post-top::before {
-        content: '';
-        position: absolute;
-        inset: -1px;
-        border-radius: 20px;
-        pointer-events: none;
-        background:
-          radial-gradient(800px 420px at 10% 10%, rgba(79, 101, 240, 0.16), transparent 60%),
-          radial-gradient(720px 420px at 90% 30%, rgba(59, 130, 246, 0.14), transparent 62%),
-          radial-gradient(760px 520px at 60% 100%, rgba(162, 82, 255, 0.10), transparent 60%);
-        filter: blur(14px) saturate(140%);
-        opacity: 0.9;
-        z-index: -1;
-      }
-
-      html.dark #theme-heo #hero.recent-post-top::before {
-        background:
-          radial-gradient(900px 520px at 15% 5%, rgba(234, 179, 8, 0.16), transparent 60%),
-          radial-gradient(820px 520px at 95% 35%, rgba(249, 115, 22, 0.12), transparent 62%),
-          radial-gradient(900px 640px at 55% 105%, rgba(59, 130, 246, 0.10), transparent 60%);
-        filter: blur(16px) saturate(130%);
-        opacity: 0.85;
-      }
-
-      #theme-heo #hero #banners,
-      #theme-heo #hero-right-wrapper #top-group > a > div,
-      #theme-heo #hero-right-wrapper #today-card #card-body {
-        position: relative;
-        border: 1px solid rgba(255, 255, 255, 0.45) !important;
-        background: rgba(255, 255, 255, 0.62) !important;
-        -webkit-backdrop-filter: saturate(210%) blur(24px);
-        backdrop-filter: saturate(210%) blur(24px);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 22px 58px rgba(0, 0, 0, 0.10) !important;
-        overflow: hidden;
-      }
-
-      /* iOS 边缘扫光效果 */
-      #theme-heo #hero-right-wrapper #top-group > a > div::after {
-        content: '';
-        position: absolute;
-        top: -30%;
-        left: -140%;
-        width: 55%;
-        height: 160%;
-        opacity: 0;
-        background: linear-gradient(
-          90deg,
-          rgba(255, 255, 255, 0),
-          rgba(255, 255, 255, 0.34),
-          rgba(255, 255, 255, 0)
-        );
-        transform: skewX(-18deg);
-        transition: left 650ms var(--heo-ease), opacity 280ms var(--heo-ease);
-        z-index: 5;
-        pointer-events: none;
-      }
-
-      #theme-heo #hero-right-wrapper #top-group > a > div:hover::after {
-        left: 140%;
-        opacity: 1;
-      }
-
-      html.dark #theme-heo #hero-right-wrapper #top-group > a > div::after {
-        background: linear-gradient(
-          90deg,
-          rgba(234, 179, 8, 0),
-          rgba(234, 179, 8, 0.22),
-          rgba(234, 179, 8, 0)
-        );
-      }
-
-      html.dark #theme-heo #hero #banners,
-      html.dark #theme-heo #hero-right-wrapper #top-group > a > div,
-      html.dark #theme-heo #hero-right-wrapper #today-card #card-body {
-        border-color: rgba(255, 255, 255, 0.09) !important;
-        background: rgba(27, 28, 32, 0.56) !important;
-        -webkit-backdrop-filter: saturate(170%) blur(26px);
-        backdrop-filter: saturate(170%) blur(26px);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 26px 70px rgba(0, 0, 0, 0.34) !important;
-      }
-
-      @media (hover: hover) {
-        #theme-heo #hero #banners:hover,
-        #theme-heo #hero-right-wrapper #top-group > a > div:hover,
-        #theme-heo #hero-right-wrapper #today-card #card-body:hover {
-          transform: translateY(-3px) scale(1.02);
-          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10), 0 36px 110px rgba(0, 0, 0, 0.14) !important;
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.65;
+            background:
+                    radial-gradient(600px 380px at 15% 20%, rgba(79, 101, 240, 0.18), transparent 60%),
+                    radial-gradient(520px 360px at 85% 25%, rgba(59, 130, 246, 0.14), transparent 62%),
+                    radial-gradient(640px 420px at 60% 85%, rgba(162, 82, 255, 0.10), transparent 60%),
+                    radial-gradient(520px 420px at 10% 85%, rgba(16, 185, 129, 0.08), transparent 62%);
+            filter: blur(14px) saturate(135%);
+            transform: translate3d(0, 0, 0);
+            animation: heoAmbientMove 18s ease-in-out infinite alternate;
         }
 
-        html.dark #theme-heo #hero #banners:hover,
-        html.dark #theme-heo #hero-right-wrapper #top-group > a > div:hover,
-        html.dark #theme-heo #hero-right-wrapper #today-card #card-body:hover {
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.42), 0 34px 96px rgba(0, 0, 0, 0.38) !important;
+        html.dark body::before {
+            opacity: 0.55;
+            background:
+                    radial-gradient(680px 420px at 20% 15%, rgba(234, 179, 8, 0.16), transparent 60%),
+                    radial-gradient(620px 420px at 85% 25%, rgba(249, 115, 22, 0.12), transparent 62%),
+                    radial-gradient(760px 520px at 60% 90%, rgba(59, 130, 246, 0.10), transparent 60%),
+                    radial-gradient(520px 420px at 15% 85%, rgba(34, 197, 94, 0.06), transparent 62%);
+            filter: blur(16px) saturate(125%);
         }
-      }
 
-      @keyframes heoHeroFloat {
-        0% {
-          transform: translateY(0);
+        @keyframes heoAmbientMove {
+            0% {
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+            50% {
+                transform: translate3d(-1.5%, 1%, 0) scale(1.02);
+            }
+            100% {
+                transform: translate3d(1.5%, -1%, 0) scale(1.03);
+            }
         }
-        100% {
-          transform: translateY(-3px);
+
+        @media (prefers-reduced-motion: reduce) {
+            body::before {
+                animation: none;
+            }
         }
-      }
 
-      #theme-heo #hero #banners {
-        animation: heoHeroFloat 6s ease-in-out infinite alternate;
-      }
-
-      /* Bento Grid 核心样式 */
-      #hero-bento {
-        perspective: 1000px;
-      }
-
-      .bento-card {
-        border-radius: 24px !important;
-        border: 1px solid rgba(255, 255, 255, 0.45) !important;
-        background: rgba(255, 255, 255, 0.62) !important;
-        backdrop-filter: saturate(210%) blur(24px) !important;
-        -webkit-backdrop-filter: saturate(210%) blur(24px) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 12px 36px rgba(0, 0, 0, 0.06) !important;
-        transition: all 0.4s var(--heo-ease) !important;
-        overflow: hidden;
-      }
-
-      html.dark .bento-card {
-        border-color: rgba(255, 255, 255, 0.08) !important;
-        background: rgba(27, 28, 32, 0.52) !important;
-        backdrop-filter: saturate(170%) blur(26px) !important;
-        -webkit-backdrop-filter: saturate(170%) blur(26px) !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 18px 48px rgba(0, 0, 0, 0.3) !important;
-      }
-
-      .bento-card:hover {
-        transform: translateY(-5px) scale(1.01);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06), 0 24px 64px rgba(0, 0, 0, 0.1) !important;
-        border-color: rgba(255, 255, 255, 0.65) !important;
-      }
-
-      html.dark .bento-card:hover {
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 28px 80px rgba(0, 0, 0, 0.45) !important;
-        border-color: rgba(255, 255, 255, 0.15) !important;
-      }
-
-      /* 针对不同卡片的细节微调 */
-      .welcome-card {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.5) 100%) !important;
-      }
-
-      html.dark .welcome-card {
-        background: linear-gradient(135deg, rgba(30, 30, 35, 0.7) 0%, rgba(20, 20, 25, 0.5) 100%) !important;
-      }
-
-      .inspiration-card {
-        border-style: dashed !important; /* 增加一点设计感 */
-        border-width: 2px !important;
-        background: transparent !important;
-      }
-
-      .main-feature h3 {
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      }
-
-      .sub-post:hover h4 {
-        color: #4f65f0 !important;
-      }
-
-      html.dark .sub-post:hover h4 {
-        color: #eab308 !important;
-      }
-
-      /* 移动端适配 */
-      @media (max-width: 768px) {
-        #hero-bento {
-          grid-template-columns: 1fr !important;
-          gap: 1rem;
+        /* Hero: 梦幻层次与动效（不改组件结构，仅 CSS 增强） */
+        #theme-heo #hero.recent-post-top {
+            position: relative;
+            isolation: isolate;
+            border-radius: 18px !important;
         }
-        .bento-card {
-          border-radius: 20px !important;
-        }
-      }
 
-      @media (prefers-reduced-motion: reduce) {
+        #theme-heo #hero.recent-post-top::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 20px;
+            pointer-events: none;
+            background:
+                    radial-gradient(800px 420px at 10% 10%, rgba(79, 101, 240, 0.16), transparent 60%),
+                    radial-gradient(720px 420px at 90% 30%, rgba(59, 130, 246, 0.14), transparent 62%),
+                    radial-gradient(760px 520px at 60% 100%, rgba(162, 82, 255, 0.10), transparent 60%);
+            filter: blur(14px) saturate(140%);
+            opacity: 0.9;
+            z-index: -1;
+        }
+
+        html.dark #theme-heo #hero.recent-post-top::before {
+            background:
+                    radial-gradient(900px 520px at 15% 5%, rgba(234, 179, 8, 0.16), transparent 60%),
+                    radial-gradient(820px 520px at 95% 35%, rgba(249, 115, 22, 0.12), transparent 62%),
+                    radial-gradient(900px 640px at 55% 105%, rgba(59, 130, 246, 0.10), transparent 60%);
+            filter: blur(16px) saturate(130%);
+            opacity: 0.85;
+        }
+
+        #theme-heo #hero #banners,
+        #theme-heo #hero-right-wrapper #top-group > a > div,
+        #theme-heo #hero-right-wrapper #today-card #card-body {
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.45) !important;
+            background: rgba(255, 255, 255, 0.62) !important;
+            -webkit-backdrop-filter: saturate(210%) blur(24px);
+            backdrop-filter: saturate(210%) blur(24px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 22px 58px rgba(0, 0, 0, 0.10) !important;
+            overflow: hidden;
+        }
+
+        /* iOS 边缘扫光效果 */
+        #theme-heo #hero-right-wrapper #top-group > a > div::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.3),
+                    transparent
+            );
+            transform: skewX(-20deg);
+            transition: 0.6s;
+            z-index: 5;
+        }
+
+        #theme-heo #hero-right-wrapper #top-group > a > div:hover::after {
+            left: 150%;
+        }
+
+        html.dark #theme-heo #hero-right-wrapper #top-group > a > div::after {
+            background: linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(234, 179, 8, 0.2),
+                    transparent
+            );
+        }
+
+        html.dark #theme-heo #hero #banners,
+        html.dark #theme-heo #hero-right-wrapper #top-group > a > div,
+        html.dark #theme-heo #hero-right-wrapper #today-card #card-body {
+            border-color: rgba(255, 255, 255, 0.09) !important;
+            background: rgba(27, 28, 32, 0.56) !important;
+            -webkit-backdrop-filter: saturate(170%) blur(26px);
+            backdrop-filter: saturate(170%) blur(26px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 26px 70px rgba(0, 0, 0, 0.34) !important;
+        }
+
+        @media (hover: hover) {
+            #theme-heo #hero #banners:hover,
+            #theme-heo #hero-right-wrapper #top-group > a > div:hover,
+            #theme-heo #hero-right-wrapper #today-card #card-body:hover {
+                transform: translateY(-3px) scale(1.02);
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10), 0 36px 110px rgba(0, 0, 0, 0.14) !important;
+            }
+
+            html.dark #theme-heo #hero #banners:hover,
+            html.dark #theme-heo #hero-right-wrapper #top-group > a > div:hover,
+            html.dark #theme-heo #hero-right-wrapper #today-card #card-body:hover {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.42), 0 34px 96px rgba(0, 0, 0, 0.38) !important;
+            }
+        }
+
+        @keyframes heoHeroFloat {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-3px);
+            }
+        }
+
         #theme-heo #hero #banners {
-          animation: none;
+            animation: heoHeroFloat 6s ease-in-out infinite alternate;
         }
-      }
 
-      /* TodayCard 彻底修复：拨云见日，让文字变锐利 */
-      #theme-heo #today-card #today-card-info {
-        position: relative;
-        z-index: 20 !important; /* 强制文字在图片之上 */
-        text-rendering: optimizeLegibility;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
+        @media (prefers-reduced-motion: reduce) {
+            #theme-heo #hero #banners {
+                animation: none;
+            }
+        }
 
-      /* 把图片层级降低，并移除可能导致模糊的滤镜 */
-      #theme-heo #today-card #today-card-cover {
-        z-index: 1;
-        filter: none !important; /* 移除图片本身的模糊干扰 */
-      }
+        /* TodayCard 彻底修复：拨云见日，让文字变锐利 */
+        #theme-heo #today-card #today-card-info {
+            position: relative;
+            z-index: 20 !important; /* 强制文字在图片之上 */
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
-      /* 重新设计文字底部的黑科技感遮罩（在文字之下，图片之上） */
-      #theme-heo #today-card #today-card-info::before {
-        content: '';
-        position: absolute;
-        inset: -100px -40px -40px -40px; /* 向上延伸遮罩范围 */
-        pointer-events: none;
-        background: linear-gradient(
-          to top,
-          rgba(0, 0, 0, 0.85) 0%,
-          rgba(0, 0, 0, 0.4) 45%,
-          rgba(0, 0, 0, 0) 100%
-        );
-        z-index: -1; /* 保证在文字下面 */
-      }
+        /* 把图片层级降低，并移除可能导致模糊的滤镜 */
+        #theme-heo #today-card #today-card-cover {
+            z-index: 1;
+            filter: none !important; /* 移除图片本身的模糊干扰 */
+        }
 
-      /* 增强文字本身的对比度 */
-      #theme-heo #today-card-info .text-3xl {
-        color: #ffffff !important;
-        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
-        font-weight: 800 !important;
-      }
+        /* 重新设计文字底部的黑科技感遮罩（在文字之下，图片之上） */
+        #theme-heo #today-card #today-card-info::before {
+            content: '';
+            position: absolute;
+            inset: -100px -40px -40px -40px; /* 向上延伸遮罩范围 */
+            pointer-events: none;
+            background: linear-gradient(
+                    to top,
+                    rgba(0, 0, 0, 0.85) 0%,
+                    rgba(0, 0, 0, 0.4) 45%,
+                    rgba(0, 0, 0, 0) 100%
+            );
+            z-index: -1; /* 保证在文字下面 */
+        }
 
-      #theme-heo #today-card-info .text-xs {
-        color: rgba(255, 255, 255, 0.9) !important;
-        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-      }
+        /* 增强文字本身的对比度 */
+        #theme-heo #today-card-info .text-3xl {
+            color: #ffffff !important;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+            font-weight: 800 !important;
+        }
 
-      /* 移除文字层自带的噪点，因为它会模糊字体边缘 */
-      #theme-heo #today-card #today-card-info::after {
-        display: none;
-      }
+        #theme-heo #today-card-info .text-xs {
+            color: rgba(255, 255, 255, 0.9) !important;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+        }
 
-      html.dark #theme-heo #today-card #today-card-info::before {
-        background:
-          linear-gradient(
-            to top,
-            rgba(0, 0, 0, 0.82) 0%,
-            rgba(0, 0, 0, 0.50) 35%,
-            rgba(0, 0, 0, 0.12) 70%,
-            rgba(0, 0, 0, 0) 100%
-          );
-      }
-
-      html.dark #theme-heo #today-card #today-card-info::after {
-        opacity: 0.12;
-      }
-
-      @media (prefers-reduced-motion: reduce) {
+        /* 移除文字层自带的噪点，因为它会模糊字体边缘 */
         #theme-heo #today-card #today-card-info::after {
-          opacity: 0.06;
-        }
-      }
-
-      #theme-heo {
-        background: transparent !important;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        font-family: var(--heo-font-sans);
-        color: var(--heo-text);
-        text-rendering: optimizeLegibility;
-      }
-
-      #theme-heo #announcement-content .notion {
-        color: white;
-      }
-
-      ::-webkit-scrollbar {
-        width: 10px;
-        height: 10px;
-      }
-
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background: rgba(60, 60, 67, 0.28);
-        border-radius: 999px;
-        cursor: pointer;
-      }
-
-      ::-webkit-scrollbar-thumb:hover {
-        background: rgba(60, 60, 67, 0.42);
-      }
-
-      html.dark ::-webkit-scrollbar-thumb {
-        background: rgba(235, 235, 245, 0.2);
-      }
-
-      html.dark ::-webkit-scrollbar-thumb:hover {
-        background: rgba(235, 235, 245, 0.3);
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      #theme-heo a,
-      #theme-heo button,
-      #theme-heo input,
-      #theme-heo textarea,
-      #theme-heo select,
-      #theme-heo [role='button'] {
-        transition: background-color var(--heo-dur-fast) var(--heo-ease),
-          border-color var(--heo-dur-fast) var(--heo-ease),
-          color var(--heo-dur-fast) var(--heo-ease),
-          opacity var(--heo-dur-fast) var(--heo-ease),
-          box-shadow var(--heo-dur) var(--heo-ease),
-          transform var(--heo-dur) var(--heo-ease),
-          filter var(--heo-dur) var(--heo-ease);
-      }
-
-      #theme-heo nav#nav.bg-white,
-      #theme-heo nav#nav.dark\:bg-\[\#18171d\] {
-        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 22px 60px rgba(0, 0, 0, 0.08);
-      }
-
-      html.dark #theme-heo nav#nav.dark\:bg-\[\#18171d\] {
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 26px 70px rgba(0, 0, 0, 0.38);
-      }
-
-      #theme-heo nav#nav.bg-white {
-        background: rgba(255, 255, 255, 0.72) !important;
-        -webkit-backdrop-filter: saturate(210%) blur(24px);
-        backdrop-filter: saturate(210%) blur(24px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-      }
-
-      html.dark #theme-heo nav#nav.dark\:bg-\[\#18171d\] {
-        background: rgba(27, 28, 32, 0.65) !important;
-        -webkit-backdrop-filter: saturate(170%) blur(26px);
-        backdrop-filter: saturate(170%) blur(26px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 14px 36px rgba(0, 0, 0, 0.35);
-      }
-
-      /* 顶部导航栏：菜单项与右侧按钮发光效果 */
-      #theme-heo nav#nav a[aria-current='page'],
-      #theme-heo nav#nav a.active,
-      #theme-heo nav#nav button[aria-current='page'],
-      #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'],
-      #theme-heo #nav-bar-swipe nav#nav-mobile a.active,
-      #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'] > div,
-      #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer[aria-current='page'],
-      #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
-        position: relative;
-        border-radius: 999px;
-        background: rgba(37, 99, 235, 0.78) !important;
-        -webkit-backdrop-filter: saturate(180%) blur(12px);
-        backdrop-filter: saturate(180%) blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.35) !important;
-        box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3),
-          0 0 26px rgba(37, 99, 235, 0.55),
-          0 0 52px rgba(59, 132, 246, 0.25);
-        color: #ffffff !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.02em;
-      }
-
-      html.dark #theme-heo nav#nav a[aria-current='page'],
-      html.dark #theme-heo nav#nav a.active,
-      html.dark #theme-heo nav#nav button[aria-current='page'],
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'],
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a.active,
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'] > div,
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer[aria-current='page'],
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
-        background: rgba(234, 179, 8, 0.72) !important;
-        -webkit-backdrop-filter: saturate(140%) blur(12px);
-        backdrop-filter: saturate(140%) blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-        box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.3),
-          0 0 26px rgba(234, 179, 8, 0.5),
-          0 0 52px rgba(250, 204, 21, 0.2);
-        color: #000000 !important;
-        font-weight: 600 !important;
-      }
-
-      @media (hover: hover) {
-        /* 中间菜单项 hover */
-        #theme-heo #nav-bar-swipe nav#nav-mobile a:hover,
-        #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover,
-        /* 右侧图标按钮 hover (针对 SearchButton, DarkModeButton, RandomPostButton 等) */
-        #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover {
-          border-radius: 999px;
-          background-color: rgba(37, 99, 235, 0.75) !important;
-          -webkit-backdrop-filter: saturate(190%) blur(16px);
-          backdrop-filter: saturate(190%) blur(16px);
-          border: 1px solid rgba(255, 255, 255, 0.3) !important;
-          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4),
-            0 0 40px rgba(37, 99, 235, 0.2);
-          color: #ffffff !important;
-          transform: translateY(-1px);
+            display: none;
         }
 
-        /* 右侧图标内部特殊处理 (针对某些被包裹的图标) */
-        #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover i,
-        #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover svg {
-           color: #ffffff !important;
-           fill: #ffffff !important;
-           transform: scale(1.05);
-           transition: transform 0.2s ease;
+        html.dark #theme-heo #today-card #today-card-info::before {
+            background:
+                    linear-gradient(
+                            to top,
+                            rgba(0, 0, 0, 0.82) 0%,
+                            rgba(0, 0, 0, 0.50) 35%,
+                            rgba(0, 0, 0, 0.12) 70%,
+                            rgba(0, 0, 0, 0) 100%
+                    );
         }
 
-        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a:hover,
-        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover,
-        html.dark #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover {
-          background-color: rgba(234, 179, 8, 0.75) !important;
-          -webkit-backdrop-filter: saturate(155%) blur(16px);
-          backdrop-filter: saturate(155%) blur(16px);
-          border: 1px solid rgba(255, 255, 255, 0.15) !important;
-          box-shadow: 0 8px 20px rgba(234, 179, 8, 0.4),
-            0 0 40px rgba(234, 179, 8, 0.2);
-          color: #000000 !important;
-          transform: translateY(-1px);
+        html.dark #theme-heo #today-card #today-card-info::after {
+            opacity: 0.12;
         }
 
-        html.dark #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover i,
-        html.dark #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover svg {
-           color: #000000 !important;
-           fill: #000000 !important;
-           transform: scale(1.05);
-        }
-      }
-
-      /* 下拉菜单容器：大圆角胶囊感与玻璃质感优化 */
-      #theme-heo #nav-bar-swipe nav#nav-mobile ul {
-        border-radius: 28px !important;
-        padding: 8px !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
-        background: rgba(255, 255, 255, 0.65) !important;
-        -webkit-backdrop-filter: saturate(210%) blur(24px) !important;
-        backdrop-filter: saturate(210%) blur(24px) !important;
-      }
-
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile ul {
-        background: rgba(27, 28, 32, 0.55) !important;
-        border-color: rgba(255, 255, 255, 0.08) !important;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
-        -webkit-backdrop-filter: saturate(170%) blur(26px) !important;
-        backdrop-filter: saturate(170%) blur(26px) !important;
-      }
-
-      /* 下拉菜单项：同步为大圆角胶囊发光样式 */
-      #theme-heo #nav-bar-swipe nav#nav-mobile ul li {
-        border-radius: 20px !important;
-        margin: 4px 0 !important;
-        padding: 6px 16px !important;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      }
-
-      #theme-heo #nav-bar-swipe nav#nav-mobile ul li:hover {
-        background: rgba(37, 99, 235, 1) !important;
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3) !important;
-        color: #ffffff !important;
-      }
-
-      #theme-heo #nav-bar-swipe nav#nav-mobile ul li:hover a span {
-        color: #ffffff !important;
-      }
-
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile ul li:hover {
-        background: rgba(234, 179, 8, 1) !important;
-        box-shadow: 0 8px 20px rgba(234, 179, 8, 0.4) !important;
-        color: #000000 !important;
-      }
-
-      html.dark #theme-heo #nav-bar-swipe nav#nav-mobile ul li:hover a span {
-        color: #000000 !important;
-      }
-
-      #theme-heo nav#nav a:focus-visible,
-      #theme-heo nav#nav button:focus-visible,
-      #theme-heo #nav-bar-swipe nav#nav-mobile a:focus-visible,
-      #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:focus-visible,
-      #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:focus-visible {
-        outline: none;
-        border-radius: 999px;
-        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.8),
-          0 0 20px rgba(59, 130, 246, 0.7);
-      }
-
-      #theme-heo #wrapper-outer .article {
-        background: var(--heo-surface) !important;
-        border: 1px solid var(--heo-border-subtle) !important;
-        border-radius: var(--heo-radius-lg) !important;
-        box-shadow: var(--heo-shadow-sm);
-        color: var(--heo-text);
-      }
-
-      #theme-heo #article-wrapper,
-      #theme-heo #article-wrapper #notion-article {
-        font-size: var(--heo-article-font-size);
-        line-height: var(--heo-article-line-height);
-        color: var(--heo-text);
-        letter-spacing: 0.01em;
-      }
-
-      #theme-heo #article-wrapper #notion-article p {
-        margin: 0 0 var(--heo-article-paragraph-gap);
-      }
-
-      #theme-heo #article-wrapper #notion-article h2 {
-        font-size: var(--heo-h2-size);
-        line-height: 1.35;
-        margin: 2.8rem 0 0.6rem !important;
-        letter-spacing: -0.01em;
-        font-weight: 600;
-      }
-
-      #theme-heo #article-wrapper #notion-article h3 {
-        font-size: var(--heo-h3-size);
-        line-height: 1.4;
-        margin: 2rem 0 0.5rem !important;
-        letter-spacing: -0.005em;
-        font-weight: 600;
-      }
-
-      #theme-heo #article-wrapper #notion-article h4 {
-        font-size: var(--heo-h4-size);
-        line-height: 1.45;
-        margin: 1.5rem 0 0.4rem !important;
-      }
-
-
-      #theme-heo #article-wrapper #notion-article .notion-list {
-        margin-block-start: 0.2em !important;
-        margin-block-end: 0.8rem !important;
-      }
-
-      #theme-heo #article-wrapper #notion-article .notion-list-disc,
-      #theme-heo #article-wrapper #notion-article .notion-list-numbered {
-        padding-inline-start: 1rem !important;
-      }
-
-      #theme-heo #article-wrapper #notion-article .notion-list li {
-        margin-bottom: 0.25rem !important;
-        padding: 1px 0 !important;
-        line-height: var(--heo-article-line-height);
-      }
-
-      #theme-heo #article-wrapper #notion-article .notion-list li::marker {
-        color: var(--heo-text-tertiary);
-        font-size: 0.85em; /* 圆点小一点更精致 */
-      }
-
-      /* 链接与下划线优化：去网页化，更像 Apple 设计 */
-      #theme-heo #article-wrapper #notion-article .notion-link,
-      #theme-heo #article-wrapper #notion-article .notion-inline-underscore {
-        text-decoration: none !important;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        transition: border-color var(--heo-dur-fast) var(--heo-ease);
-      }
-
-      html.dark #theme-heo #article-wrapper #notion-article .notion-link,
-      html.dark #theme-heo #article-wrapper #notion-article .notion-inline-underscore {
-        border-bottom-color: rgba(255, 255, 255, 0.15);
-      }
-
-      #theme-heo #article-wrapper #notion-article .notion-link:hover {
-        border-bottom-color: currentColor;
-      }
-
-      /* 统一普通 ul/ol 的样式，保持一致性 */
-      #theme-heo #article-wrapper #notion-article ul,
-      #theme-heo #article-wrapper #notion-article ol {
-        padding-left: 1rem;
-        margin: 0.2rem 0 1rem;
-      }
-
-      #theme-heo #article-wrapper #notion-article li {
-        margin-bottom: 0.35rem;
-      }
-
-      #theme-heo #article-wrapper #notion-article li > p {
-        margin: 0 !important;
-      }
-
-      #theme-heo #article-wrapper #notion-article li::marker {
-        color: var(--heo-text-tertiary);
-      }
-
-      #theme-heo #article-wrapper #notion-article blockquote {
-        margin: 0 0 var(--heo-article-block-gap);
-        padding: 0.6rem 1rem;
-        border-left: 3px solid rgba(0, 0, 0, 0.12);
-        background: rgba(0, 0, 0, 0.03);
-        border-radius: 12px;
-        color: var(--heo-text-secondary);
-      }
-
-      html.dark #theme-heo #article-wrapper #notion-article blockquote {
-        border-left-color: rgba(255, 255, 255, 0.18);
-        background: rgba(255, 255, 255, 0.06);
-      }
-
-      #theme-heo #article-wrapper #notion-article code {
-        font-family: var(--heo-font-mono);
-        font-size: 0.92em;
-      }
-
-
-      /* Article Images (B-Plan: Apple-style frame) */
-      #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image {
-        margin: 1.5rem auto !important;
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
-        transition: transform var(--heo-dur) var(--heo-ease),
-          box-shadow var(--heo-dur) var(--heo-ease);
-        max-width: 100% !important;
-        min-width: 0 !important;
-        width: auto !important;
-        display: block;
-      }
-
-      #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image > div {
-        width: auto !important;
-        max-width: 100% !important;
-      }
-
-      #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image img {
-        width: auto !important;
-        max-width: 100% !important;
-        height: auto !important;
-      }
-
-      #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image img {
-        border-radius: 12px !important;
-        display: block;
-      }
-
-      html.dark #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image {
-        border-color: rgba(255, 255, 255, 0.08);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
-      }
-
-      /* Image Caption (Apple-style minimal) */
-      #theme-heo #article-wrapper #notion-article .notion-asset-caption {
-        margin-top: 0.75rem !important;
-        padding: 0 1rem;
-        font-size: 0.85rem !important;
-        line-height: 1.5;
-        color: var(--heo-text-tertiary) !important;
-        text-align: center !important;
-        font-style: normal !important;
-      }
-
-      #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
-      }
-
-      html.dark #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image:hover {
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), 0 2px 4px rgba(0, 0, 0, 0.2);
-      }
-
-      html.dark #theme-heo #wrapper-outer .article {
-        background: var(--heo-surface-dark) !important;
-        border-color: var(--heo-border-subtle-dark) !important;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
-      }
-
-      @media (hover: hover) {
-        #theme-heo #wrapper-outer .article:hover {
-          box-shadow: var(--heo-shadow-lg);
-          transform: translateY(var(--heo-card-hover-translate));
+        @media (prefers-reduced-motion: reduce) {
+            #theme-heo #today-card #today-card-info::after {
+                opacity: 0.06;
+            }
         }
 
-        html.dark #theme-heo #wrapper-outer .article:hover {
-          box-shadow: var(--heo-shadow-lg-dark);
-        }
-      }
-
-      #more {
-        white-space: nowrap;
-      }
-
-      .today-card-cover {
-        -webkit-mask-image: linear-gradient(to top, transparent 5%, black 70%);
-        mask-image: linear-gradient(to top, transparent 5%, black 70%);
-      }
-
-      .recent-top-post-group::-webkit-scrollbar {
-        display: none;
-      }
-
-      .scroll-hidden::-webkit-scrollbar {
-        display: none;
-      }
-
-      /* CategoryBar 容器：磨砂玻璃质感与圆角 */
-      #theme-heo #category-bar {
-        background: rgba(255, 255, 255, 0.6) !important;
-        -webkit-backdrop-filter: saturate(210%) blur(24px);
-        backdrop-filter: saturate(210%) blur(24px);
-        border: 1px solid rgba(255, 255, 255, 0.4) !important;
-        border-radius: 24px !important;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 26px rgba(0, 0, 0, 0.06);
-        transition: all var(--heo-dur) var(--heo-ease);
-      }
-
-      html.dark #theme-heo #category-bar {
-        background: rgba(27, 28, 32, 0.5) !important;
-        -webkit-backdrop-filter: saturate(170%) blur(26px);
-        backdrop-filter: saturate(170%) blur(26px);
-        border-color: rgba(255, 255, 255, 0.08) !important;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.35);
-      }
-
-      /* 分类项：同步发光胶囊样式 */
-      #theme-heo #category-bar .category-bar-item {
-        border-radius: 16px !important;
-        transition: all 0.25s var(--heo-ease) !important;
-        padding: 4px 12px !important;
-        margin: 0 4px !important;
-      }
-
-      #theme-heo #category-bar .category-bar-item:hover,
-      #theme-heo #category-bar .category-bar-item.selected {
-        background: rgba(37, 99, 235, 0.82) !important;
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4), 0 0 1px rgba(37, 99, 235, 0.5);
-        color: #ffffff !important;
-        transform: translateY(-1px);
-      }
-
-      html.dark #theme-heo #category-bar .category-bar-item:hover,
-      html.dark #theme-heo #category-bar .category-bar-item.selected {
-        background: rgba(234, 179, 8, 0.85) !important;
-        box-shadow: 0 8px 20px rgba(234, 179, 8, 0.5), 0 0 1px rgba(234, 179, 8, 0.6);
-        color: #000000 !important;
-        transform: translateY(-1px);
-      }
-
-      /* 侧边栏文章列表项（最新发布/随机文章等）聚焦效果适配真实 DOM */
-      #theme-heo #sideRight a.my-3.flex {
-        padding: 8px !important;
-        margin-top: 4px !important;
-        margin-bottom: 4px !important;
-        border-radius: 16px !important;
-        transition: all 0.25s var(--heo-ease) !important;
-        text-decoration: none !important;
-      }
-
-      /* 亮色模式悬停 */
-      #theme-heo #sideRight a.my-3.flex:hover {
-        background: rgba(37, 99, 235, 1) !important;
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4), 
-                    0 0 0 1px rgba(37, 99, 235, 0.1);
-        transform: translateY(-1px);
-      }
-
-      /* 亮色模式文字反色 */
-      #theme-heo #sideRight a.my-3.flex:hover .text-sm,
-      #theme-heo #sideRight a.my-3.flex:hover .text-gray-400,
-      #theme-heo #sideRight a.my-3.flex:hover .menu-link {
-        color: #ffffff !important;
-      }
-
-      /* 暗色模式悬停 */
-      html.dark #theme-heo #sideRight a.my-3.flex:hover {
-        background: rgba(234, 179, 8, 1) !important;
-        box-shadow: 0 8px 20px rgba(234, 179, 8, 0.5),
-                    0 0 0 1px rgba(234, 179, 8, 0.2);
-        transform: translateY(-1px);
-      }
-
-      /* 暗色模式文字反色 */
-      html.dark #theme-heo #sideRight a.my-3.flex:hover .text-sm,
-      html.dark #theme-heo #sideRight a.my-3.flex:hover .text-gray-400,
-      html.dark #theme-heo #sideRight a.my-3.flex:hover .menu-link {
-        color: #000000 !important;
-      }
-
-      /* 缩略图圆角微调 */
-      #theme-heo #sideRight a.my-3.flex:hover img {
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-      }
-
-      /* 文章页目录（Catalog / TOC）适配 Heo Pro 风格 - 修正版 */
-      /* 1. 容器样式 (确保背景只在最外层，移除内层背景) */
-      #theme-heo #sideRight .px-3.py-1.dark\:text-white.text-black {
-        background: transparent !important;
-        backdrop-filter: none !important;
-        border: none !important;
-        padding: 0 !important;
-        box-shadow: none !important;
-      }
-
-      /* 2. 目录项（链接）基础样式与动画 */
-      #theme-heo .notion-table-of-contents-item.catalog-item {
-        border-radius: 999px !important;
-        margin: 4px 8px 4px 0 !important; /* 增加右边距防止位移时被裁剪 */
-        padding: 6px 16px !important;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        display: block !important;
-        text-decoration: none !important;
-        width: fit-content !important; /* 宽度适应文字，防止填满容器导致右侧顶死 */
-        max-width: calc(100% - 12px);
-      }
-
-      /* 3. 亮色模式：当前选中项 (Active) 与 Hover */
-      #theme-heo .notion-table-of-contents-item.catalog-item:hover,
-      #theme-heo .notion-table-of-contents-item.catalog-item a span.font-bold.text-indigo-600,
-      #theme-heo .notion-table-of-contents-item.catalog-item:has(span.font-bold.text-indigo-600) {
-        background: rgba(37, 99, 235, 0.9) !important;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
-        transform: translateX(6px) !important; /* 保持灵动位移 */
-      }
-
-      #theme-heo .notion-table-of-contents-item.catalog-item:hover span,
-      #theme-heo .notion-table-of-contents-item.catalog-item span.font-bold.text-indigo-600 {
-        color: #ffffff !important;
-        font-weight: 600 !important;
-      }
-
-      /* 4. 暗色模式：当前选中项 (Active) 与 Hover */
-      html.dark #theme-heo .notion-table-of-contents-item.catalog-item:hover,
-      html.dark #theme-heo .notion-table-of-contents-item.catalog-item:has(span.font-bold.text-indigo-600) {
-        background: rgba(234, 179, 8, 0.95) !important;
-        box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4) !important;
-        transform: translateX(6px) !important;
-      }
-
-      html.dark #theme-heo .notion-table-of-contents-item.catalog-item:hover span,
-      html.dark #theme-heo .notion-table-of-contents-item.catalog-item span.font-bold.text-indigo-600 {
-        color: #000000 !important;
-        font-weight: 600 !important;
-      }
-
-      #theme-heo #toc-wrapper .toc-item:hover a,
-      #theme-heo #toc-wrapper .toc-item.active a {
-        color: #ffffff !important;
-      }
-
-      /* 暗色模式：当前章节高亮与 Hover */
-      html.dark #theme-heo #toc-wrapper .toc-item:hover,
-      html.dark #theme-heo #toc-wrapper .toc-item.active {
-        background: rgba(234, 179, 8, 0.95) !important;
-        box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
-        color: #000000 !important;
-        transform: translateX(4px);
-      }
-
-      html.dark #theme-heo #toc-wrapper .toc-item:hover a,
-      html.dark #theme-heo #toc-wrapper .toc-item.active a {
-        color: #000000 !important;
-      }
-
-      /* TOC 容器本身同步侧边栏玻璃质感 */
-      #theme-heo #sideRight .toc-card {
-        background: rgba(255, 255, 255, 0.72) !important;
-        backdrop-filter: blur(16px) saturate(180%) !important;
-        border-radius: 24px !important;
-        border: 1px solid rgba(0, 0, 0, 0.06) !important;
-      }
-
-      html.dark #theme-heo #sideRight .toc-card {
-        background: rgba(27, 28, 32, 0.75) !important;
-        backdrop-filter: blur(18px) saturate(140%) !important;
-        border-color: rgba(255, 255, 255, 0.08) !important;
-      }
-
-      @media (hover: hover) {
-        #theme-heo #category-bar:hover {
-          border-color: rgba(37, 99, 235, 0.3) !important;
-          box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08), 0 12px 30px rgba(0, 0, 0, 0.08);
-        }
-        html.dark #theme-heo #category-bar:hover {
-          border-color: rgba(234, 179, 8, 0.3) !important;
-          box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.08), 0 20px 48px rgba(0, 0, 0, 0.4);
-        }
-      }
-
-      /* Hero section styles */
-      #theme-heo #hero .recent-post-top {
-        background: transparent !important;
-        border: 1px solid var(--heo-border-subtle) !important;
-        box-shadow: none !important;
-        transition: all var(--heo-dur) var(--heo-ease);
-      }
-
-      html.dark #theme-heo #hero .recent-post-top {
-        border-color: var(--heo-border-subtle-dark) !important;
-      }
-
-      #theme-heo #hero #banners,
-      #theme-heo #hero-right-wrapper #top-group > a > div {
-        background: var(--heo-surface) !important;
-        border: 1px solid var(--heo-border-subtle) !important;
-        box-shadow: var(--heo-shadow-sm);
-        transition: all var(--heo-dur) var(--heo-ease);
-      }
-
-      #theme-heo #hero-right-wrapper #today-card #card-body {
-        border: 1px solid var(--heo-border-subtle) !important;
-        box-shadow: var(--heo-shadow-sm);
-        transition: all var(--heo-dur) var(--heo-ease);
-      }
-
-      html.dark #theme-heo #hero #banners,
-      html.dark #theme-heo #hero-right-wrapper #top-group > a > div {
-        background: var(--heo-surface-dark) !important;
-        border-color: var(--heo-border-subtle-dark) !important;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
-      }
-
-      html.dark #theme-heo #hero-right-wrapper #today-card #card-body {
-        border-color: var(--heo-border-subtle-dark) !important;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
-      }
-
-      @media (hover: hover) {
-        #theme-heo #hero #banners:hover,
-        #theme-heo #hero-right-wrapper #top-group > a > div:hover,
-        #theme-heo #hero-right-wrapper #today-card #card-body:hover {
-          box-shadow: var(--heo-shadow-lg);
-          transform: translateY(var(--heo-card-hover-translate));
-        }
-        html.dark #theme-heo #hero #banners:hover,
-        html.dark #theme-heo #hero-right-wrapper #top-group > a > div:hover,
-        html.dark #theme-heo #hero-right-wrapper #today-card #card-body:hover {
-          box-shadow: var(--heo-shadow-lg-dark);
-        }
-      }
-
-      /* InfoCard v2 三段式结构优化 */
-      #theme-heo #sideRight .heo-infocard-v2 {
-        background: var(--heo-infocard-bg, linear-gradient(135deg, #4f65f0 0%, #a252ff 100%)) !important;
-        border: none !important;
-        padding: 1.5rem !important;
-        min-height: 20rem !important;
-        height: auto !important;
-        display: flex !important;
-        flex-direction: column !important;
-        position: relative !important;
-        transition: min-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.5s var(--heo-ease) !important;
-        overflow: hidden !important;
-      }
-
-      html.dark #theme-heo #sideRight .heo-infocard-v2 {
-        background: var(--heo-infocard-bg, linear-gradient(135deg, #f39c12 0%, #e67e22 100%)) !important;
-      }
-
-      /* 1. Header 样式 */
-      .heo-info-header {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        margin-bottom: 1rem;
-        z-index: 10;
-      }
-
-      .heo-info-greetings-pill {
-        background: rgba(255, 255, 255, 0.2) !important;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: white !important;
-        border-radius: 999px !important;
-        padding: 4px 16px !important;
-        white-space: nowrap !important;
-        font-size: 0.875rem;
-        width: auto !important;
-        height: auto !important;
-        transition: all 0.3s var(--heo-ease);
-      }
-
-      /* 2. Body 样式 */
-      .heo-info-body {
-        flex: 1;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        min-height: 160px;
-      }
-
-      .heo-info-avatar-wrap {
-        opacity: 1;
-        transform: scale(1);
-        transition: all 0.4s var(--heo-ease);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .heo-info-avatar-wrap .rounded-full {
-        width: 120px !important;
-        height: 120px !important;
-        border: 4px solid rgba(255, 255, 255, 0.4);
-        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
-        background: white;
-      }
-
-      /* 状态图标定位 (仿参考样式) */
-      .author-status {
-        position: absolute;
-        right: 5px;
-        bottom: 5px;
-        width: 36px;
-        height: 36px;
-        background: white;
-        border-radius: 50%;
-        border: 3px solid white;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        z-index: 5;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        transition: transform 0.3s var(--heo-ease);
-      }
-
-      .author-status .g-status {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .heo-infocard-v2:hover .author-status {
-        transform: scale(1.1) rotate(5deg);
-      }
-
-      /* 状态图标定位 */
-      .author-status {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        width: 32px;
-        height: 32px;
-        background: white;
-        border-radius: 50%;
-        border: 3px solid white;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        z-index: 5;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        transition: transform 0.3s var(--heo-ease);
-      }
-
-      .heo-infocard-v2:hover .author-status {
-        transform: scale(1.1) rotate(5deg);
-      }
-
-      .heo-info-announcement-wrap {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: auto;
-        opacity: 0;
-        transform: translateY(20px);
-        pointer-events: none;
-        transition: all 0.4s var(--heo-ease);
-        display: flex;
-        flex-direction: column;
-      }
-
-      .heo-infocard-v2:hover .heo-info-avatar-wrap {
-        opacity: 0;
-        transform: scale(0.8) translateY(-20px);
-        position: absolute;
-      }
-
-      .heo-infocard-v2:hover .heo-info-announcement-wrap {
-        opacity: 1;
-        transform: translateY(0);
-        pointer-events: auto;
-        position: relative;
-      }
-
-      .heo-info-welcome-title {
-        font-size: 1.5rem;
-        font-weight: 800;
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .heo-info-emoji {
-        animation: wave 2.5s infinite;
-        transform-origin: 70% 70%;
-        display: inline-block;
-      }
-
-      /* 3. Footer 样式 - 对齐参考图 */
-      .heo-info-footer {
-        width: 100%;
-        margin-top: 1.5rem;
-        padding-top: 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-      }
-
-      .heo-info-footer-text {
-        display: flex;
-        flex-direction: column;
-        text-align: left;
-      }
-
-      .author-info__name {
-        line-height: 1.2;
-      }
-
-      .author-info__desc {
-        opacity: 0.8;
-      }
-
-      /* 按钮专用样式 */
-      .heo-info-social-btn, .heo-info-more-btn {
-        background: rgba(255, 255, 255, 0.15) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        backdrop-filter: blur(10px) !important;
-        width: 42px !important;
-        height: 42px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        border-radius: 50% !important;
-        transition: all 0.3s var(--heo-ease) !important;
-        cursor: pointer;
-        color: white !important;
-      }
-
-      .heo-info-social-btn:hover, .heo-info-more-btn:hover {
-        background: white !important;
-        color: #4f65f0 !important;
-        transform: scale(1.1) translateY(-2px);
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-      }
-
-      /* Sidebar cards: only affect right sidebar (B-plan dreamy glass) */
-      #theme-heo #sideRight .wow.fadeInUp.border.bg-white,
-      #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\],
-      #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\].dark\:text-white,
-      #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl,
-      #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.lg\:p-6,
-      #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.p-4 {
-        background: rgba(255, 255, 255, 0.62) !important;
-        border: 1px solid rgba(255, 255, 255, 0.45) !important;
-        border-radius: var(--heo-radius-lg) !important;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 18px 44px rgba(0, 0, 0, 0.08) !important;
-        -webkit-backdrop-filter: saturate(210%) blur(24px);
-        backdrop-filter: saturate(210%) blur(24px);
-      }
-
-      html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white,
-      html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\],
-      html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\].dark\:text-white,
-      html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl,
-      html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.lg\:p-6,
-      html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.p-4 {
-        background: rgba(27, 28, 32, 0.56) !important;
-        border-color: rgba(255, 255, 255, 0.09) !important;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 22px 56px rgba(0, 0, 0, 0.35) !important;
-        -webkit-backdrop-filter: saturate(170%) blur(26px);
-        backdrop-filter: saturate(170%) blur(26px);
-      }
-
-      @media (hover: hover) {
-        #theme-heo #sideRight .wow.fadeInUp.border.bg-white:hover,
-        #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl:hover {
-          box-shadow: var(--heo-shadow-lg);
-          transform: translateY(var(--heo-card-hover-translate));
+        #theme-heo {
+            background: transparent !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-family: var(--heo-font-sans);
+            color: var(--heo-text);
+            text-rendering: optimizeLegibility;
         }
 
-        html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white:hover,
-        html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl:hover {
-          box-shadow: var(--heo-shadow-lg-dark);
+        #theme-heo #announcement-content .notion {
+            color: white;
         }
-      }
 
-      /* Search page (Apple-style) */
-      #theme-heo .heo-search {
-        max-width: 56rem;
-        margin-left: auto;
-        margin-right: auto;
-      }
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
 
-      #theme-heo .heo-search-input input {
-        height: 44px;
-        line-height: 44px;
-        border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.45);
-        background: rgba(255, 255, 255, 0.62);
-        -webkit-backdrop-filter: saturate(210%) blur(24px);
-        backdrop-filter: saturate(210%) blur(24px);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 18px 44px rgba(0, 0, 0, 0.08);
-        font-size: 15px;
-        color: var(--heo-text);
-      }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
-      #theme-heo .heo-search-input input:focus {
-        border-color: rgba(0, 122, 255, 0.55);
-        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.18),
-          0 12px 30px rgba(0, 0, 0, 0.08);
-      }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(60, 60, 67, 0.28);
+            border-radius: 999px;
+            cursor: pointer;
+        }
 
-      html.dark #theme-heo .heo-search-input input {
-        border-color: rgba(255, 255, 255, 0.12);
-        background: rgba(27, 28, 32, 0.56);
-        -webkit-backdrop-filter: saturate(170%) blur(26px);
-        backdrop-filter: saturate(170%) blur(26px);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 22px 56px rgba(0, 0, 0, 0.35);
-        color: var(--heo-text);
-      }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(60, 60, 67, 0.42);
+        }
 
-      #theme-heo .heo-search-card {
-        border-radius: var(--heo-radius-lg);
-        border: 1px solid var(--heo-border) !important;
-        background: rgba(255, 255, 255, 0.75) !important;
-        -webkit-backdrop-filter: saturate(180%) blur(14px);
-        backdrop-filter: saturate(180%) blur(14px);
-        box-shadow: var(--heo-shadow-sm);
-      }
+        html.dark ::-webkit-scrollbar-thumb {
+            background: rgba(235, 235, 245, 0.2);
+        }
 
-      html.dark #theme-heo .heo-search-card {
-        border-color: rgba(255, 255, 255, 0.12) !important;
-        background: rgba(27, 28, 32, 0.68) !important;
-      }
+        html.dark ::-webkit-scrollbar-thumb:hover {
+            background: rgba(235, 235, 245, 0.3);
+        }
 
-      #theme-heo .heo-search-title {
-        font-size: 1.25rem !important;
-        line-height: 1.4;
-        font-weight: 600;
-        letter-spacing: -0.01em;
-        margin-bottom: 1rem !important;
-        color: var(--heo-text);
-      }
+        * {
+            box-sizing: border-box;
+        }
 
-      #theme-heo .heo-search-category-list,
-      #theme-heo .heo-search-tags-list {
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-      }
+        #theme-heo a,
+        #theme-heo button,
+        #theme-heo input,
+        #theme-heo textarea,
+        #theme-heo select,
+        #theme-heo [role='button'] {
+            transition: background-color var(--heo-dur-fast) var(--heo-ease),
+            border-color var(--heo-dur-fast) var(--heo-ease),
+            color var(--heo-dur-fast) var(--heo-ease),
+            opacity var(--heo-dur-fast) var(--heo-ease),
+            box-shadow var(--heo-dur) var(--heo-ease),
+            transform var(--heo-dur) var(--heo-ease),
+            filter var(--heo-dur) var(--heo-ease);
+        }
 
-      #theme-heo .heo-search-category-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 6px 14px;
-        margin: 6px 8px 0 0;
-        border-radius: 999px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        background: rgba(255, 255, 255, 0.6);
-        backdrop-filter: blur(8px);
-        color: var(--heo-text-secondary);
-        transition: all 0.25s var(--heo-ease);
-      }
+        #theme-heo nav#nav.bg-white,
+        #theme-heo nav#nav.dark\:bg-\[\#18171d\] {
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 22px 60px rgba(0, 0, 0, 0.08);
+        }
 
-      #theme-heo .heo-search-category-item:hover,
-      #theme-heo .heo-search-category-item.active {
-        background: rgba(37, 99, 235, 0.8) !important;
-        border-color: rgba(255, 255, 255, 0.3) !important;
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35), 0 0 0 1px rgba(37, 99, 235, 0.1);
-        color: #ffffff !important;
-        transform: translateY(-2px);
-      }
+        html.dark #theme-heo nav#nav.dark\:bg-\[\#18171d\] {
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 26px 70px rgba(0, 0, 0, 0.38);
+        }
 
-      html.dark #theme-heo .heo-search-category-item {
-        border-color: rgba(255, 255, 255, 0.14);
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--heo-text-secondary);
-      }
+        #theme-heo nav#nav.bg-white {
+            background: rgba(255, 255, 255, 0.72) !important;
+            -webkit-backdrop-filter: saturate(210%) blur(24px);
+            backdrop-filter: saturate(210%) blur(24px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
 
-      html.dark #theme-heo .heo-search-category-item:hover,
-      html.dark #theme-heo .heo-search-category-item.active {
-        background: rgba(234, 179, 8, 0.85) !important;
-        border-color: rgba(255, 255, 255, 0.15) !important;
-        box-shadow: 0 8px 20px rgba(234, 179, 8, 0.45), 0 0 0 1px rgba(234, 179, 8, 0.2);
-        color: #000000 !important;
-        transform: translateY(-2px);
-      }
+        html.dark #theme-heo nav#nav.dark\:bg-\[\#18171d\] {
+            background: rgba(27, 28, 32, 0.65) !important;
+            -webkit-backdrop-filter: saturate(170%) blur(26px);
+            backdrop-filter: saturate(170%) blur(26px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 14px 36px rgba(0, 0, 0, 0.35);
+        }
 
-      /* Tags mini pills */
-      #theme-heo #tags-list a,
-      #theme-heo #tags-list .tag-mini,
-      #theme-heo .heo-search-tags-list a {
-        border-radius: 999px;
-        padding: 4px 12px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        background: rgba(255, 255, 255, 0.6);
-        backdrop-filter: blur(8px);
-        color: var(--heo-text-secondary);
-        transition: all 0.25s var(--heo-ease);
-      }
+        /* 顶部导航栏：菜单项与右侧按钮发光效果 */
+        #theme-heo nav#nav a[aria-current='page'],
+        #theme-heo nav#nav a.active,
+        #theme-heo nav#nav button[aria-current='page'],
+        #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'],
+        #theme-heo #nav-bar-swipe nav#nav-mobile a.active,
+        #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'] > div,
+        #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer[aria-current='page'],
+        #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
+            position: relative;
+            border-radius: 999px;
+            background: rgba(37, 99, 235, 0.78) !important;
+            -webkit-backdrop-filter: saturate(180%) blur(12px);
+            backdrop-filter: saturate(180%) blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.35) !important;
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3),
+            0 0 26px rgba(37, 99, 235, 0.55),
+            0 0 52px rgba(59, 132, 246, 0.25);
+            color: #ffffff !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.02em;
+        }
 
-      html.dark #theme-heo #tags-list a,
-      html.dark #theme-heo #tags-list .tag-mini,
-      html.dark #theme-heo .heo-search-tags-list a {
-        border-color: rgba(255, 255, 255, 0.14);
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--heo-text-secondary);
-      }
+        html.dark #theme-heo nav#nav a[aria-current='page'],
+        html.dark #theme-heo nav#nav a.active,
+        html.dark #theme-heo nav#nav button[aria-current='page'],
+        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'],
+        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a.active,
+        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a[aria-current='page'] > div,
+        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer[aria-current='page'],
+        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer.active {
+            background: rgba(234, 179, 8, 0.72) !important;
+            -webkit-backdrop-filter: saturate(140%) blur(12px);
+            backdrop-filter: saturate(140%) blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.3),
+            0 0 26px rgba(234, 179, 8, 0.5),
+            0 0 52px rgba(250, 204, 21, 0.2);
+            color: #000000 !important;
+            font-weight: 600 !important;
+        }
 
-      #theme-heo #tags-list a:hover,
-      #theme-heo .heo-search-tags-list a:hover {
-        background: rgba(37, 99, 235, 0.8) !important;
-        border-color: rgba(255, 255, 255, 0.3) !important;
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
-        color: #ffffff !important;
-        transform: translateY(-2px);
-      }
+        @media (hover: hover) {
+            /* 中间菜单项 hover */
+            #theme-heo #nav-bar-swipe nav#nav-mobile a:hover,
+            #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover,
+                /* 右侧图标按钮 hover (针对 SearchButton, DarkModeButton, RandomPostButton 等) */
+            #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover {
+                border-radius: 999px;
+                background-color: rgba(37, 99, 235, 0.75) !important;
+                -webkit-backdrop-filter: saturate(190%) blur(16px);
+                backdrop-filter: saturate(190%) blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4),
+                0 0 40px rgba(37, 99, 235, 0.2);
+                color: #ffffff !important;
+                transform: translateY(-1px);
+            }
 
-      html.dark #theme-heo #tags-list a:hover,
-      html.dark #theme-heo .heo-search-tags-list a:hover {
-        background: rgba(234, 179, 8, 0.85) !important;
-        border-color: rgba(255, 255, 255, 0.15) !important;
-        box-shadow: 0 8px 20px rgba(234, 179, 8, 0.45);
-        color: #000000 !important;
-        transform: translateY(-2px);
-      }
+            /* 右侧图标内部特殊处理 (针对某些被包裹的图标) */
+            #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover i,
+            #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover svg {
+                color: #ffffff !important;
+                fill: #ffffff !important;
+                transform: scale(1.05);
+                transition: transform 0.2s ease;
+            }
 
-      /* Footer (Apple-style minimal) */
-      #theme-heo footer {
-        background: transparent !important;
-      }
+            html.dark #theme-heo #nav-bar-swipe nav#nav-mobile a:hover,
+            html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:hover,
+            html.dark #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover {
+                background-color: rgba(234, 179, 8, 0.75) !important;
+                -webkit-backdrop-filter: saturate(155%) blur(16px);
+                backdrop-filter: saturate(155%) blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                box-shadow: 0 8px 20px rgba(234, 179, 8, 0.4),
+                0 0 40px rgba(234, 179, 8, 0.2);
+                color: #000000 !important;
+                transform: translateY(-1px);
+            }
 
-      #theme-heo footer #color-transition {
-        height: 48px;
-        background: linear-gradient(to bottom, transparent, #f9fafc) !important;
-      }
+            html.dark #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover i,
+            html.dark #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover svg {
+                color: #000000 !important;
+                fill: #000000 !important;
+                transform: scale(1.05);
+            }
+        }
 
-      html.dark #theme-heo footer #color-transition {
-        background: linear-gradient(to bottom, #0f1115, #18171d) !important;
-      }
+        /* 下拉菜单容器：大圆角胶囊感与玻璃质感优化 */
+        #theme-heo #nav-bar-swipe nav#nav-mobile ul {
+            border-radius: 28px !important;
+            padding: 8px !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
+            background: rgba(255, 255, 255, 0.65) !important;
+            -webkit-backdrop-filter: saturate(210%) blur(24px) !important;
+            backdrop-filter: saturate(210%) blur(24px) !important;
+        }
 
-      #theme-heo footer #footer-bottom {
-        height: auto !important;
-        padding-top: 1.5rem !important;
-        padding-bottom: 2rem !important;
-        background: rgba(249, 250, 252, 0.8) !important;
-        -webkit-backdrop-filter: saturate(190%) blur(20px);
-        backdrop-filter: saturate(190%) blur(20px);
-        border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
-        color: var(--heo-text-tertiary);
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
+        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile ul {
+            background: rgba(27, 28, 32, 0.55) !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+            -webkit-backdrop-filter: saturate(170%) blur(26px) !important;
+            backdrop-filter: saturate(170%) blur(26px) !important;
+        }
 
-      @media (min-width: 1024px) {
+        /* 下拉菜单项：同步为大圆角胶囊发光样式 */
+        #theme-heo #nav-bar-swipe nav#nav-mobile ul li {
+            border-radius: 20px !important;
+            margin: 4px 0 !important;
+            padding: 6px 16px !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        #theme-heo #nav-bar-swipe nav#nav-mobile ul li:hover {
+            background: rgba(37, 99, 235, 1) !important;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3) !important;
+            color: #ffffff !important;
+        }
+
+        #theme-heo #nav-bar-swipe nav#nav-mobile ul li:hover a span {
+            color: #ffffff !important;
+        }
+
+        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile ul li:hover {
+            background: rgba(234, 179, 8, 1) !important;
+            box-shadow: 0 8px 20px rgba(234, 179, 8, 0.4) !important;
+            color: #000000 !important;
+        }
+
+        html.dark #theme-heo #nav-bar-swipe nav#nav-mobile ul li:hover a span {
+            color: #000000 !important;
+        }
+
+        #theme-heo nav#nav a:focus-visible,
+        #theme-heo nav#nav button:focus-visible,
+        #theme-heo #nav-bar-swipe nav#nav-mobile a:focus-visible,
+        #theme-heo #nav-bar-swipe nav#nav-mobile .cursor-pointer:focus-visible,
+        #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:focus-visible {
+            outline: none;
+            border-radius: 999px;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.8),
+            0 0 20px rgba(59, 130, 246, 0.7);
+        }
+
+        #theme-heo #wrapper-outer .article {
+            background: var(--heo-surface) !important;
+            border: 1px solid var(--heo-border-subtle) !important;
+            border-radius: var(--heo-radius-lg) !important;
+            box-shadow: var(--heo-shadow-sm);
+            color: var(--heo-text);
+        }
+
+        #theme-heo #article-wrapper,
+        #theme-heo #article-wrapper #notion-article {
+            font-size: var(--heo-article-font-size);
+            line-height: var(--heo-article-line-height);
+            color: var(--heo-text);
+            letter-spacing: 0.01em;
+        }
+
+        #theme-heo #article-wrapper #notion-article p {
+            margin: 0 0 var(--heo-article-paragraph-gap);
+        }
+
+        #theme-heo #article-wrapper #notion-article h2 {
+            font-size: var(--heo-h2-size);
+            line-height: 1.35;
+            margin: 2.8rem 0 0.6rem !important;
+            letter-spacing: -0.01em;
+            font-weight: 600;
+        }
+
+        #theme-heo #article-wrapper #notion-article h3 {
+            font-size: var(--heo-h3-size);
+            line-height: 1.4;
+            margin: 2rem 0 0.5rem !important;
+            letter-spacing: -0.005em;
+            font-weight: 600;
+        }
+
+        #theme-heo #article-wrapper #notion-article h4 {
+            font-size: var(--heo-h4-size);
+            line-height: 1.45;
+            margin: 1.5rem 0 0.4rem !important;
+        }
+
+
+        #theme-heo #article-wrapper #notion-article .notion-list {
+            margin-block-start: 0.2em !important;
+            margin-block-end: 0.8rem !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-list-disc,
+        #theme-heo #article-wrapper #notion-article .notion-list-numbered {
+            padding-inline-start: 1rem !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-list li {
+            margin-bottom: 0.25rem !important;
+            padding: 1px 0 !important;
+            line-height: var(--heo-article-line-height);
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-list li::marker {
+            color: var(--heo-text-tertiary);
+            font-size: 0.85em; /* 圆点小一点更精致 */
+        }
+
+        /* 链接与下划线优化：去网页化，更像 Apple 设计 */
+        #theme-heo #article-wrapper #notion-article .notion-link,
+        #theme-heo #article-wrapper #notion-article .notion-inline-underscore {
+            text-decoration: none !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            transition: border-color var(--heo-dur-fast) var(--heo-ease);
+        }
+
+        html.dark #theme-heo #article-wrapper #notion-article .notion-link,
+        html.dark #theme-heo #article-wrapper #notion-article .notion-inline-underscore {
+            border-bottom-color: rgba(255, 255, 255, 0.15);
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-link:hover {
+            border-bottom-color: currentColor;
+        }
+
+        /* 统一普通 ul/ol 的样式，保持一致性 */
+        #theme-heo #article-wrapper #notion-article ul,
+        #theme-heo #article-wrapper #notion-article ol {
+            padding-left: 1rem;
+            margin: 0.2rem 0 1rem;
+        }
+
+        #theme-heo #article-wrapper #notion-article li {
+            margin-bottom: 0.35rem;
+        }
+
+        #theme-heo #article-wrapper #notion-article li > p {
+            margin: 0 !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article li::marker {
+            color: var(--heo-text-tertiary);
+        }
+
+        #theme-heo #article-wrapper #notion-article blockquote {
+            margin: 0 0 var(--heo-article-block-gap);
+            padding: 0.6rem 1rem;
+            border-left: 3px solid rgba(0, 0, 0, 0.12);
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 12px;
+            color: var(--heo-text-secondary);
+        }
+
+        html.dark #theme-heo #article-wrapper #notion-article blockquote {
+            border-left-color: rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        #theme-heo #article-wrapper #notion-article code {
+            font-family: var(--heo-font-mono);
+            font-size: 0.92em;
+        }
+
+
+        /* Article Images (B-Plan: Apple-style frame) */
+        #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image {
+            margin: 1.5rem auto !important;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
+            transition: transform var(--heo-dur) var(--heo-ease),
+            box-shadow var(--heo-dur) var(--heo-ease);
+            max-width: 100% !important;
+            min-width: 0 !important;
+            width: auto !important;
+            display: block;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image > div {
+            width: auto !important;
+            max-width: 100% !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image img {
+            width: auto !important;
+            max-width: 100% !important;
+            height: auto !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image img {
+            border-radius: 12px !important;
+            display: block;
+        }
+
+        html.dark #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image {
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Image Caption (Apple-style minimal) */
+        #theme-heo #article-wrapper #notion-article .notion-asset-caption {
+            margin-top: 0.75rem !important;
+            padding: 0 1rem;
+            font-size: 0.85rem !important;
+            line-height: 1.5;
+            color: var(--heo-text-tertiary) !important;
+            text-align: center !important;
+            font-style: normal !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        html.dark #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        html.dark #theme-heo #wrapper-outer .article {
+            background: var(--heo-surface-dark) !important;
+            border-color: var(--heo-border-subtle-dark) !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        @media (hover: hover) {
+            #theme-heo #wrapper-outer .article:hover {
+                box-shadow: var(--heo-shadow-lg);
+                transform: translateY(var(--heo-card-hover-translate));
+            }
+
+            html.dark #theme-heo #wrapper-outer .article:hover {
+                box-shadow: var(--heo-shadow-lg-dark);
+            }
+        }
+
+        #more {
+            white-space: nowrap;
+        }
+
+        .today-card-cover {
+            -webkit-mask-image: linear-gradient(to top, transparent 5%, black 70%);
+            mask-image: linear-gradient(to top, transparent 5%, black 70%);
+        }
+
+        .recent-top-post-group::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scroll-hidden::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* CategoryBar 容器：磨砂玻璃质感与圆角 */
+        #theme-heo #category-bar {
+            background: rgba(255, 255, 255, 0.6) !important;
+            -webkit-backdrop-filter: saturate(210%) blur(24px);
+            backdrop-filter: saturate(210%) blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            border-radius: 24px !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 26px rgba(0, 0, 0, 0.06);
+            transition: all var(--heo-dur) var(--heo-ease);
+        }
+
+        html.dark #theme-heo #category-bar {
+            background: rgba(27, 28, 32, 0.5) !important;
+            -webkit-backdrop-filter: saturate(170%) blur(26px);
+            backdrop-filter: saturate(170%) blur(26px);
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        /* 分类项：同步发光胶囊样式 */
+        #theme-heo #category-bar .category-bar-item {
+            border-radius: 16px !important;
+            transition: all 0.25s var(--heo-ease) !important;
+            padding: 4px 12px !important;
+            margin: 0 4px !important;
+        }
+
+        #theme-heo #category-bar .category-bar-item:hover,
+        #theme-heo #category-bar .category-bar-item.selected {
+            background: rgba(37, 99, 235, 0.82) !important;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4), 0 0 1px rgba(37, 99, 235, 0.5);
+            color: #ffffff !important;
+            transform: translateY(-1px);
+        }
+
+        html.dark #theme-heo #category-bar .category-bar-item:hover,
+        html.dark #theme-heo #category-bar .category-bar-item.selected {
+            background: rgba(234, 179, 8, 0.85) !important;
+            box-shadow: 0 8px 20px rgba(234, 179, 8, 0.5), 0 0 1px rgba(234, 179, 8, 0.6);
+            color: #000000 !important;
+            transform: translateY(-1px);
+        }
+
+        /* 侧边栏文章列表项（最新发布/随机文章等）聚焦效果适配真实 DOM */
+        #theme-heo #sideRight a.my-3.flex {
+            padding: 8px !important;
+            margin-top: 4px !important;
+            margin-bottom: 4px !important;
+            border-radius: 16px !important;
+            transition: all 0.25s var(--heo-ease) !important;
+            text-decoration: none !important;
+        }
+
+        /* 亮色模式悬停 */
+        #theme-heo #sideRight a.my-3.flex:hover {
+            background: rgba(37, 99, 235, 1) !important;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4),
+            0 0 0 1px rgba(37, 99, 235, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* 亮色模式文字反色 */
+        #theme-heo #sideRight a.my-3.flex:hover .text-sm,
+        #theme-heo #sideRight a.my-3.flex:hover .text-gray-400,
+        #theme-heo #sideRight a.my-3.flex:hover .menu-link {
+            color: #ffffff !important;
+        }
+
+        /* 暗色模式悬停 */
+        html.dark #theme-heo #sideRight a.my-3.flex:hover {
+            background: rgba(234, 179, 8, 1) !important;
+            box-shadow: 0 8px 20px rgba(234, 179, 8, 0.5),
+            0 0 0 1px rgba(234, 179, 8, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* 暗色模式文字反色 */
+        html.dark #theme-heo #sideRight a.my-3.flex:hover .text-sm,
+        html.dark #theme-heo #sideRight a.my-3.flex:hover .text-gray-400,
+        html.dark #theme-heo #sideRight a.my-3.flex:hover .menu-link {
+            color: #000000 !important;
+        }
+
+        /* 缩略图圆角微调 */
+        #theme-heo #sideRight a.my-3.flex:hover img {
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        /* 文章页目录（Catalog / TOC）适配 Heo Pro 风格 - 修正版 */
+        /* 1. 容器样式 (确保背景只在最外层，移除内层背景) */
+        #theme-heo #sideRight .px-3.py-1.dark\:text-white.text-black {
+            background: transparent !important;
+            backdrop-filter: none !important;
+            border: none !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+
+        /* 2. 目录项（链接）基础样式与动画 */
+        #theme-heo .notion-table-of-contents-item.catalog-item {
+            border-radius: 999px !important;
+            margin: 4px 8px 4px 0 !important; /* 增加右边距防止位移时被裁剪 */
+            padding: 6px 16px !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            display: block !important;
+            text-decoration: none !important;
+            width: fit-content !important; /* 宽度适应文字，防止填满容器导致右侧顶死 */
+            max-width: calc(100% - 12px);
+        }
+
+        /* 3. 亮色模式：当前选中项 (Active) 与 Hover */
+        #theme-heo .notion-table-of-contents-item.catalog-item:hover,
+        #theme-heo .notion-table-of-contents-item.catalog-item a span.font-bold.text-indigo-600,
+        #theme-heo .notion-table-of-contents-item.catalog-item:has(span.font-bold.text-indigo-600) {
+            background: rgba(37, 99, 235, 0.9) !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+            transform: translateX(6px) !important; /* 保持灵动位移 */
+        }
+
+        #theme-heo .notion-table-of-contents-item.catalog-item:hover span,
+        #theme-heo .notion-table-of-contents-item.catalog-item span.font-bold.text-indigo-600 {
+            color: #ffffff !important;
+            font-weight: 600 !important;
+        }
+
+        /* 4. 暗色模式：当前选中项 (Active) 与 Hover */
+        html.dark #theme-heo .notion-table-of-contents-item.catalog-item:hover,
+        html.dark #theme-heo .notion-table-of-contents-item.catalog-item:has(span.font-bold.text-indigo-600) {
+            background: rgba(234, 179, 8, 0.95) !important;
+            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4) !important;
+            transform: translateX(6px) !important;
+        }
+
+        html.dark #theme-heo .notion-table-of-contents-item.catalog-item:hover span,
+        html.dark #theme-heo .notion-table-of-contents-item.catalog-item span.font-bold.text-indigo-600 {
+            color: #000000 !important;
+            font-weight: 600 !important;
+        }
+
+        #theme-heo #toc-wrapper .toc-item:hover a,
+        #theme-heo #toc-wrapper .toc-item.active a {
+            color: #ffffff !important;
+        }
+
+        /* 暗色模式：当前章节高亮与 Hover */
+        html.dark #theme-heo #toc-wrapper .toc-item:hover,
+        html.dark #theme-heo #toc-wrapper .toc-item.active {
+            background: rgba(234, 179, 8, 0.95) !important;
+            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+            color: #000000 !important;
+            transform: translateX(4px);
+        }
+
+        html.dark #theme-heo #toc-wrapper .toc-item:hover a,
+        html.dark #theme-heo #toc-wrapper .toc-item.active a {
+            color: #000000 !important;
+        }
+
+        /* TOC 容器本身同步侧边栏玻璃质感 */
+        #theme-heo #sideRight .toc-card {
+            background: rgba(255, 255, 255, 0.72) !important;
+            backdrop-filter: blur(16px) saturate(180%) !important;
+            border-radius: 24px !important;
+            border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        }
+
+        html.dark #theme-heo #sideRight .toc-card {
+            background: rgba(27, 28, 32, 0.75) !important;
+            backdrop-filter: blur(18px) saturate(140%) !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        @media (hover: hover) {
+            #theme-heo #category-bar:hover {
+                border-color: rgba(37, 99, 235, 0.3) !important;
+                box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08), 0 12px 30px rgba(0, 0, 0, 0.08);
+            }
+            html.dark #theme-heo #category-bar:hover {
+                border-color: rgba(234, 179, 8, 0.3) !important;
+                box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.08), 0 20px 48px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        /* Hero section styles */
+        #theme-heo #hero .recent-post-top {
+            background: transparent !important;
+            border: 1px solid var(--heo-border-subtle) !important;
+            box-shadow: none !important;
+            transition: all var(--heo-dur) var(--heo-ease);
+        }
+
+        html.dark #theme-heo #hero .recent-post-top {
+            border-color: var(--heo-border-subtle-dark) !important;
+        }
+
+        #theme-heo #hero #banners,
+        #theme-heo #hero-right-wrapper #top-group > a > div {
+            background: var(--heo-surface) !important;
+            border: 1px solid var(--heo-border-subtle) !important;
+            box-shadow: var(--heo-shadow-sm);
+            transition: all var(--heo-dur) var(--heo-ease);
+        }
+
+        #theme-heo #hero-right-wrapper #today-card #card-body {
+            border: 1px solid var(--heo-border-subtle) !important;
+            box-shadow: var(--heo-shadow-sm);
+            transition: all var(--heo-dur) var(--heo-ease);
+        }
+
+        html.dark #theme-heo #hero #banners,
+        html.dark #theme-heo #hero-right-wrapper #top-group > a > div {
+            background: var(--heo-surface-dark) !important;
+            border-color: var(--heo-border-subtle-dark) !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        html.dark #theme-heo #hero-right-wrapper #today-card #card-body {
+            border-color: var(--heo-border-subtle-dark) !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        @media (hover: hover) {
+            #theme-heo #hero #banners:hover,
+            #theme-heo #hero-right-wrapper #top-group > a > div:hover,
+            #theme-heo #hero-right-wrapper #today-card #card-body:hover {
+                box-shadow: var(--heo-shadow-lg);
+                transform: translateY(var(--heo-card-hover-translate));
+            }
+            html.dark #theme-heo #hero #banners:hover,
+            html.dark #theme-heo #hero-right-wrapper #top-group > a > div:hover,
+            html.dark #theme-heo #hero-right-wrapper #today-card #card-body:hover {
+                box-shadow: var(--heo-shadow-lg-dark);
+            }
+        }
+
+        /* InfoCard v2 三段式结构优化 */
+        #theme-heo #sideRight .heo-infocard-v2 {
+            background: var(--heo-infocard-bg, linear-gradient(135deg, #4f65f0 0%, #a252ff 100%)) !important;
+            border: none !important;
+            padding: 1.5rem !important;
+            min-height: 20rem !important;
+            height: auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            position: relative !important;
+            transition: min-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.5s var(--heo-ease) !important;
+            overflow: hidden !important;
+        }
+
+        html.dark #theme-heo #sideRight .heo-infocard-v2 {
+            background: var(--heo-infocard-bg, linear-gradient(135deg, #f39c12 0%, #e67e22 100%)) !important;
+        }
+
+        /* 1. Header 样式 */
+        .heo-info-header {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+            z-index: 10;
+        }
+
+        .heo-info-greetings-pill {
+            background: rgba(255, 255, 255, 0.2) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white !important;
+            border-radius: 999px !important;
+            padding: 4px 16px !important;
+            white-space: nowrap !important;
+            font-size: 0.875rem;
+            width: auto !important;
+            height: auto !important;
+            transition: all 0.3s var(--heo-ease);
+        }
+
+        /* 2. Body 样式 */
+        .heo-info-body {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 160px;
+        }
+
+        .heo-info-avatar-wrap {
+            opacity: 1;
+            transform: scale(1);
+            transition: all 0.4s var(--heo-ease);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .heo-info-avatar-wrap .rounded-full {
+            width: 120px !important;
+            height: 120px !important;
+            border: 4px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
+            background: white;
+        }
+
+        /* 状态图标定位 (仿参考样式) */
+        .author-status {
+            position: absolute;
+            right: 5px;
+            bottom: 5px;
+            width: 36px;
+            height: 36px;
+            background: white;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: transform 0.3s var(--heo-ease);
+        }
+
+        .author-status .g-status {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .heo-infocard-v2:hover .author-status {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* 状态图标定位 */
+        .author-status {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: transform 0.3s var(--heo-ease);
+        }
+
+        .heo-infocard-v2:hover .author-status {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .heo-info-announcement-wrap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: all 0.4s var(--heo-ease);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .heo-infocard-v2:hover .heo-info-avatar-wrap {
+            opacity: 0;
+            transform: scale(0.8) translateY(-20px);
+            position: absolute;
+        }
+
+        .heo-infocard-v2:hover .heo-info-announcement-wrap {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            position: relative;
+        }
+
+        .heo-info-welcome-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .heo-info-emoji {
+            animation: wave 2.5s infinite;
+            transform-origin: 70% 70%;
+            display: inline-block;
+        }
+
+        /* 3. Footer 样式 - 对齐参考图 */
+        .heo-info-footer {
+            width: 100%;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .heo-info-footer-text {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .author-info__name {
+            line-height: 1.2;
+        }
+
+        .author-info__desc {
+            opacity: 0.8;
+        }
+
+        /* 按钮专用样式 */
+        .heo-info-social-btn, .heo-info-more-btn {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(10px) !important;
+            width: 42px !important;
+            height: 42px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 50% !important;
+            transition: all 0.3s var(--heo-ease) !important;
+            cursor: pointer;
+            color: white !important;
+        }
+
+        .heo-info-social-btn:hover, .heo-info-more-btn:hover {
+            background: white !important;
+            color: #4f65f0 !important;
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Sidebar cards: only affect right sidebar (B-plan dreamy glass) */
+        #theme-heo #sideRight .wow.fadeInUp.border.bg-white,
+        #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\],
+        #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\].dark\:text-white,
+                                                                                 #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl,
+                                                                                 #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.lg\:p-6,
+                                                                                 #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.p-4 {
+                                                                                     background: rgba(255, 255, 255, 0.62) !important;
+                                                                                     border: 1px solid rgba(255, 255, 255, 0.45) !important;
+                                                                                     border-radius: var(--heo-radius-lg) !important;
+                                                                                     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 18px 44px rgba(0, 0, 0, 0.08) !important;
+                                                                                     -webkit-backdrop-filter: saturate(210%) blur(24px);
+                                                                                     backdrop-filter: saturate(210%) blur(24px);
+                                                                                 }
+
+        html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white,
+        html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\],
+        html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.dark\:bg-\[\#1e1e1e\].dark\:text-white,
+                                                                                           html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl,
+                                                                                           html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.lg\:p-6,
+                                                                                           html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl.p-4 {
+                                                                                               background: rgba(27, 28, 32, 0.56) !important;
+                                                                                               border-color: rgba(255, 255, 255, 0.09) !important;
+                                                                                               box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 22px 56px rgba(0, 0, 0, 0.35) !important;
+                                                                                               -webkit-backdrop-filter: saturate(170%) blur(26px);
+                                                                                               backdrop-filter: saturate(170%) blur(26px);
+                                                                                           }
+
+        @media (hover: hover) {
+            #theme-heo #sideRight .wow.fadeInUp.border.bg-white:hover,
+            #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl:hover {
+                box-shadow: var(--heo-shadow-lg);
+                transform: translateY(var(--heo-card-hover-translate));
+            }
+
+            html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white:hover,
+            html.dark #theme-heo #sideRight .wow.fadeInUp.border.bg-white.rounded-xl:hover {
+                box-shadow: var(--heo-shadow-lg-dark);
+            }
+        }
+
+        /* Search page (Apple-style) */
+        #theme-heo .heo-search {
+            max-width: 56rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #theme-heo .heo-search-input input {
+            height: 44px;
+            line-height: 44px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.62);
+            -webkit-backdrop-filter: saturate(210%) blur(24px);
+            backdrop-filter: saturate(210%) blur(24px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 18px 44px rgba(0, 0, 0, 0.08);
+            font-size: 15px;
+            color: var(--heo-text);
+        }
+
+        #theme-heo .heo-search-input input:focus {
+            border-color: rgba(0, 122, 255, 0.55);
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.18),
+            0 12px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        html.dark #theme-heo .heo-search-input input {
+            border-color: rgba(255, 255, 255, 0.12);
+            background: rgba(27, 28, 32, 0.56);
+            -webkit-backdrop-filter: saturate(170%) blur(26px);
+            backdrop-filter: saturate(170%) blur(26px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 22px 56px rgba(0, 0, 0, 0.35);
+            color: var(--heo-text);
+        }
+
+        #theme-heo .heo-search-card {
+            border-radius: var(--heo-radius-lg);
+            border: 1px solid var(--heo-border) !important;
+            background: rgba(255, 255, 255, 0.75) !important;
+            -webkit-backdrop-filter: saturate(180%) blur(14px);
+            backdrop-filter: saturate(180%) blur(14px);
+            box-shadow: var(--heo-shadow-sm);
+        }
+
+        html.dark #theme-heo .heo-search-card {
+            border-color: rgba(255, 255, 255, 0.12) !important;
+            background: rgba(27, 28, 32, 0.68) !important;
+        }
+
+        #theme-heo .heo-search-title {
+            font-size: 1.25rem !important;
+            line-height: 1.4;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 1rem !important;
+            color: var(--heo-text);
+        }
+
+        #theme-heo .heo-search-category-list,
+        #theme-heo .heo-search-tags-list {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        #theme-heo .heo-search-category-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 14px;
+            margin: 6px 8px 0 0;
+            border-radius: 999px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            color: var(--heo-text-secondary);
+            transition: all 0.25s var(--heo-ease);
+        }
+
+        #theme-heo .heo-search-category-item:hover,
+        #theme-heo .heo-search-category-item.active {
+            background: rgba(37, 99, 235, 0.8) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35), 0 0 0 1px rgba(37, 99, 235, 0.1);
+            color: #ffffff !important;
+            transform: translateY(-2px);
+        }
+
+        html.dark #theme-heo .heo-search-category-item {
+            border-color: rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--heo-text-secondary);
+        }
+
+        html.dark #theme-heo .heo-search-category-item:hover,
+        html.dark #theme-heo .heo-search-category-item.active {
+            background: rgba(234, 179, 8, 0.85) !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 8px 20px rgba(234, 179, 8, 0.45), 0 0 0 1px rgba(234, 179, 8, 0.2);
+            color: #000000 !important;
+            transform: translateY(-2px);
+        }
+
+        /* Tags mini pills */
+        #theme-heo #tags-list a,
+        #theme-heo #tags-list .tag-mini,
+        #theme-heo .heo-search-tags-list a {
+            border-radius: 999px;
+            padding: 4px 12px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            color: var(--heo-text-secondary);
+            transition: all 0.25s var(--heo-ease);
+        }
+
+        html.dark #theme-heo #tags-list a,
+        html.dark #theme-heo #tags-list .tag-mini,
+        html.dark #theme-heo .heo-search-tags-list a {
+            border-color: rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--heo-text-secondary);
+        }
+
+        #theme-heo #tags-list a:hover,
+        #theme-heo .heo-search-tags-list a:hover {
+            background: rgba(37, 99, 235, 0.8) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+            color: #ffffff !important;
+            transform: translateY(-2px);
+        }
+
+        html.dark #theme-heo #tags-list a:hover,
+        html.dark #theme-heo .heo-search-tags-list a:hover {
+            background: rgba(234, 179, 8, 0.85) !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 8px 20px rgba(234, 179, 8, 0.45);
+            color: #000000 !important;
+            transform: translateY(-2px);
+        }
+
+        /* Footer (Apple-style minimal) */
+        #theme-heo footer {
+            background: transparent !important;
+        }
+
+        #theme-heo footer #color-transition {
+            height: 48px;
+            background: linear-gradient(to bottom, transparent, #f9fafc) !important;
+        }
+
+        html.dark #theme-heo footer #color-transition {
+            background: linear-gradient(to bottom, #0f1115, #18171d) !important;
+        }
+
         #theme-heo footer #footer-bottom {
-          flex-direction: row;
-          justify-content: space-between;
-          align-items: center;
+            height: auto !important;
+            padding-top: 1.5rem !important;
+            padding-bottom: 2rem !important;
+            background: rgba(249, 250, 252, 0.8) !important;
+            -webkit-backdrop-filter: saturate(190%) blur(20px);
+            backdrop-filter: saturate(190%) blur(20px);
+            border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+            color: var(--heo-text-tertiary);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
-      }
 
-      #theme-heo footer #footer-bottom-center {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-      }
+        @media (min-width: 1024px) {
+            #theme-heo footer #footer-bottom {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
 
-      @media (min-width: 1024px) {
         #theme-heo footer #footer-bottom-center {
-          width: auto;
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
-      }
 
-      #theme-heo footer #footer-bottom-center > div {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 14px;
-      }
-
-      #theme-heo footer #footer-bottom-center > div > div {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        font-size: 20px;
-        line-height: 1;
-        color: var(--heo-text-secondary);
-      }
-
-      #theme-heo footer #footer-bottom-center a {
-        color: inherit;
-        text-decoration: none !important;
-      }
-
-      #theme-heo footer #footer-bottom-center i {
-        transform: none !important;
-        transition: transform var(--heo-dur) var(--heo-ease),
-          color var(--heo-dur-fast) var(--heo-ease),
-          opacity var(--heo-dur-fast) var(--heo-ease);
-        opacity: 0.9;
-      }
-
-      #theme-heo footer #footer-bottom-center a:hover i {
-        transform: translateY(-1px) scale(1.08) !important;
-        color: var(--heo-text);
-        opacity: 1;
-      }
-
-      html.dark #theme-heo footer #footer-bottom {
-        background: rgba(27, 28, 32, 0.68) !important;
-        -webkit-backdrop-filter: saturate(155%) blur(22px);
-        backdrop-filter: saturate(155%) blur(22px);
-        border-top-color: rgba(255, 255, 255, 0.08) !important;
-        box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.06), 0 -14px 36px rgba(0, 0, 0, 0.45);
-      }
-
-      #theme-heo footer #footer-bottom a {
-        color: var(--heo-text-secondary);
-        text-decoration: none !important;
-        transition: color var(--heo-dur-fast) var(--heo-ease);
-      }
-
-      #theme-heo footer #footer-bottom a:hover {
-        color: var(--heo-text);
-        text-decoration: underline !important;
-      }
-
-      #theme-heo footer #footer-bottom-left,
-      #theme-heo footer #footer-bottom-right {
-        font-size: 12px;
-        line-height: 2;
-      }
-
-      #theme-heo footer br {
-        display: none;
-      }
-
-      #theme-heo footer .social-button-group {
-        padding: 2rem 0;
-      }
-
-      .tags-group-wrapper {
-        animation: rowup 60s linear infinite;
-      }
-
-      @keyframes rowup {
-        0% {
-          transform: translateX(0%);
+        @media (min-width: 1024px) {
+            #theme-heo footer #footer-bottom-center {
+                width: auto;
+            }
         }
-        100% {
-          transform: translateX(-50%);
+
+        #theme-heo footer #footer-bottom-center > div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 14px;
         }
-      }
 
-      /* Loading 动画样式 */
-      #loading-box {
-        position: fixed;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        z-index: 1001;
-      }
+        #theme-heo footer #footer-bottom-center > div > div {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 20px;
+            line-height: 1;
+            color: var(--heo-text-secondary);
+        }
 
-      #loading-box.loaded {
-        pointer-events: none;
-      }
+        #theme-heo footer #footer-bottom-center a {
+            color: inherit;
+            text-decoration: none !important;
+        }
 
-      #loading-box.loaded .loading-bg,
-      #loading-box.loaded .loading-animation {
-        border-radius: 3rem;
-        transform: translateX(100%);
-        transition: 1.3s ease;
-      }
+        #theme-heo footer #footer-bottom-center i {
+            transform: none !important;
+            transition: transform var(--heo-dur) var(--heo-ease),
+            color var(--heo-dur-fast) var(--heo-ease),
+            opacity var(--heo-dur-fast) var(--heo-ease);
+            opacity: 0.9;
+        }
 
-      #loading-box.loaded .loading-bg {
-        transition-delay: 0.3s;
-      }
+        #theme-heo footer #footer-bottom-center a:hover i {
+            transform: translateY(-1px) scale(1.08) !important;
+            color: var(--heo-text);
+            opacity: 1;
+        }
 
-      #loading-box .loading-bg,
-      #loading-box .loading-animation {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        will-change: transform;
-      }
+        html.dark #theme-heo footer #footer-bottom {
+            background: rgba(27, 28, 32, 0.68) !important;
+            -webkit-backdrop-filter: saturate(155%) blur(22px);
+            backdrop-filter: saturate(155%) blur(22px);
+            border-top-color: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.06), 0 -14px 36px rgba(0, 0, 0, 0.45);
+        }
 
-      #loading-box .loading-bg {
-        background: #4f65f0 url("/loadings.svg") repeat;
-        background-size: 30%;
-      }
+        #theme-heo footer #footer-bottom a {
+            color: var(--heo-text-secondary);
+            text-decoration: none !important;
+            transition: color var(--heo-dur-fast) var(--heo-ease);
+        }
 
-      html.dark #loading-box .loading-bg {
-        background: #eab308 url("/loadings.svg") repeat;
-        background-size: 30%;
-      }
+        #theme-heo footer #footer-bottom a:hover {
+            color: var(--heo-text);
+            text-decoration: underline !important;
+        }
 
-      #loading-box .loading-animation {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        background: var(--heo-surface-strong);
-      }
+        #theme-heo footer #footer-bottom-left,
+        #theme-heo footer #footer-bottom-right {
+            font-size: 12px;
+            line-height: 2;
+        }
 
-      html.dark #loading-box .loading-animation {
-        background: var(--heo-surface-dark);
-      }
+        #theme-heo footer br {
+            display: none;
+        }
 
-      #loading-box .loading-animation .loading {
-        width: 16rem;
-        height: 16rem;
-      }
+        #theme-heo footer .social-button-group {
+            padding: 2rem 0;
+        }
 
-      #loading-box .loading-animation .loading path {
-        stroke: var(--heo-text);
-        stroke-width: 0.5px;
-        animation: dashArray 5s ease-in-out infinite, dashOffset 5s linear infinite;
-      }
+        .tags-group-wrapper {
+            animation: rowup 60s linear infinite;
+        }
 
-      #loading-box .loading-animation .loading path.color {
-        stroke: #4f65f0;
-      }
+        @keyframes rowup {
+            0% {
+                transform: translateX(0%);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
 
-      html.dark #loading-box .loading-animation .loading path {
-        stroke: var(--heo-text);
-      }
+        /* Loading 动画样式 */
+        #loading-box {
+            position: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 1001;
+        }
 
-      html.dark #loading-box .loading-animation .loading path.color {
-        stroke: #eab308;
-      }
+        #loading-box.loaded {
+            pointer-events: none;
+        }
 
-      #loading-box .loading-text {
-        position: relative;
-        margin-top: 1rem;
-        font-size: 26px;
-        font-weight: 700;
-        line-height: 1.2;
-        letter-spacing: 0.3rem;
-        z-index: 1;
-        animation: shift 1s ease-in-out infinite alternate;
-        color: var(--heo-text);
-      }
+        #loading-box.loaded .loading-bg,
+        #loading-box.loaded .loading-animation {
+            border-radius: 3rem;
+            transform: translateX(100%);
+            transition: 1.3s ease;
+        }
 
-      #loading-box .loading-text:before,
-      #loading-box .loading-text:after {
-        display: block;
-        content: attr(data-glitch);
-        position: absolute;
-        top: 0;
-        left: 0;
-        opacity: 0.8;
-      }
+        #loading-box.loaded .loading-bg {
+            transition-delay: 0.3s;
+        }
 
-      #loading-box .loading-text:before {
-        animation: glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-        color: #ff5252;
-        z-index: -1;
-      }
+        #loading-box .loading-bg,
+        #loading-box .loading-animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            will-change: transform;
+        }
 
-      #loading-box .loading-text:after {
-        animation: glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
-        color: #2ecc71;
-        z-index: -2;
-      }
+        #loading-box .loading-bg {
+            background: #4f65f0 url("/loadings.svg") repeat;
+            background-size: 30%;
+        }
 
-      html.dark #loading-box .loading-text {
-        color: var(--heo-text);
-      }
+        html.dark #loading-box .loading-bg {
+            background: #eab308 url("/loadings.svg") repeat;
+            background-size: 30%;
+        }
 
-      html.dark #loading-box .loading-text:before {
-        color: #f97316;
-      }
+        #loading-box .loading-animation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: var(--heo-surface-strong);
+        }
 
-      html.dark #loading-box .loading-text:after {
-        color: #22c55e;
-      }
+        html.dark #loading-box .loading-animation {
+            background: var(--heo-surface-dark);
+        }
 
-      @keyframes dashArray {
-        0% { stroke-dasharray: 0 1 359 0; }
-        50% { stroke-dasharray: 0 359 1 0; }
-        100% { stroke-dasharray: 359 1 0 0; }
-      }
+        #loading-box .loading-animation .loading {
+            width: 16rem;
+            height: 16rem;
+        }
 
-      @keyframes dashOffset {
-        0% { stroke-dashoffset: 365; }
-        100% { stroke-dashoffset: 5; }
-      }
+        #loading-box .loading-animation .loading path {
+            stroke: var(--heo-text);
+            stroke-width: 0.5px;
+            animation: dashArray 5s ease-in-out infinite, dashOffset 5s linear infinite;
+        }
 
-      @keyframes glitch {
-        0% { transform: translate(0); }
-        20% { transform: translate(-3px, 3px); }
-        40% { transform: translate(-3px, -3px); }
-        60% { transform: translate(3px, 3px); }
-        80% { transform: translate(3px, -3px); }
-        100% { transform: translate(0); }
-      }
+        #loading-box .loading-animation .loading path.color {
+            stroke: #4f65f0;
+        }
 
-      @keyframes shift {
-        0%, 40%, 44%, 58%, 61%, 65%, 69%, 73%, 100% { transform: skewX(0deg); }
-        41% { transform: skewX(10deg); }
-        42% { transform: skewX(-10deg); }
-        59% { transform: skewX(40deg) skewY(10deg); }
-        60% { transform: skewX(-40deg) skewY(-10deg); }
-        63% { transform: skewX(10deg) skewY(-5deg); }
-        70% { transform: skewX(-50deg) skewY(-20deg); }
-        71% { transform: skewX(10deg) skewY(-10deg); }
-      }
+        html.dark #loading-box .loading-animation .loading path {
+            stroke: var(--heo-text);
+        }
+
+        html.dark #loading-box .loading-animation .loading path.color {
+            stroke: #eab308;
+        }
+
+        #loading-box .loading-text {
+            position: relative;
+            margin-top: 1rem;
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: 0.3rem;
+            z-index: 1;
+            animation: shift 1s ease-in-out infinite alternate;
+            color: var(--heo-text);
+        }
+
+        #loading-box .loading-text:before,
+        #loading-box .loading-text:after {
+            display: block;
+            content: attr(data-glitch);
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.8;
+        }
+
+        #loading-box .loading-text:before {
+            animation: glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+            color: #ff5252;
+            z-index: -1;
+        }
+
+        #loading-box .loading-text:after {
+            animation: glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
+            color: #2ecc71;
+            z-index: -2;
+        }
+
+        html.dark #loading-box .loading-text {
+            color: var(--heo-text);
+        }
+
+        html.dark #loading-box .loading-text:before {
+            color: #f97316;
+        }
+
+        html.dark #loading-box .loading-text:after {
+            color: #22c55e;
+        }
+
+        @keyframes dashArray {
+            0% { stroke-dasharray: 0 1 359 0; }
+            50% { stroke-dasharray: 0 359 1 0; }
+            100% { stroke-dasharray: 359 1 0 0; }
+        }
+
+        @keyframes dashOffset {
+            0% { stroke-dashoffset: 365; }
+            100% { stroke-dashoffset: 5; }
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes shift {
+            0%, 40%, 44%, 58%, 61%, 65%, 69%, 73%, 100% { transform: skewX(0deg); }
+            41% { transform: skewX(10deg); }
+            42% { transform: skewX(-10deg); }
+            59% { transform: skewX(40deg) skewY(10deg); }
+            60% { transform: skewX(-40deg) skewY(-10deg); }
+            63% { transform: skewX(10deg) skewY(-5deg); }
+            70% { transform: skewX(-50deg) skewY(-20deg); }
+            71% { transform: skewX(10deg) skewY(-10deg); }
+        }
     `}</style>
 
   )
