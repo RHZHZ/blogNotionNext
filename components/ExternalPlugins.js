@@ -207,7 +207,12 @@ const ExternalPlugin = props => {
       {FIREWORKS && <Fireworks />}
       {SAKURA && <Sakura />}
       {STARRY_SKY && <StarrySky />}
-      {MUSIC_PLAYER && <MusicPlayer />}
+      {MUSIC_PLAYER && (
+        <>
+          <MusicPlayer />
+          <DynamicIslandPlayer />
+        </>
+      )}
       {NEST && <Nest />}
       {FLUTTERINGRIBBON && <FlutteringRibbon />}
       {COMMENT_TWIKOO_COUNT_ENABLE && <TwikooCommentCounter {...props} />}
@@ -490,6 +495,7 @@ const Analytics = dynamic(
   { ssr: false }
 )
 const MusicPlayer = dynamic(() => import('@/components/Player'), { ssr: false })
+const DynamicIslandPlayer = dynamic(() => import('@/components/DynamicIslandPlayer'), { ssr: false })
 const Ackee = dynamic(() => import('@/components/Ackee'), { ssr: false })
 const Gtag = dynamic(() => import('@/components/Gtag'), { ssr: false })
 const Busuanzi = dynamic(() => import('@/components/Busuanzi'), { ssr: false })
