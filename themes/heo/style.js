@@ -163,31 +163,34 @@ const Style = () => {
       #theme-heo #hero-right-wrapper #top-group > a > div::after {
         content: '';
         position: absolute;
-        top: 0;
-        left: -150%;
-        width: 100%;
-        height: 100%;
+        top: -30%;
+        left: -140%;
+        width: 55%;
+        height: 160%;
+        opacity: 0;
         background: linear-gradient(
           90deg,
-          transparent,
-          rgba(255, 255, 255, 0.3),
-          transparent
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0.34),
+          rgba(255, 255, 255, 0)
         );
-        transform: skewX(-20deg);
-        transition: 0.6s;
+        transform: skewX(-18deg);
+        transition: left 650ms var(--heo-ease), opacity 280ms var(--heo-ease);
         z-index: 5;
+        pointer-events: none;
       }
 
       #theme-heo #hero-right-wrapper #top-group > a > div:hover::after {
-        left: 150%;
+        left: 140%;
+        opacity: 1;
       }
 
       html.dark #theme-heo #hero-right-wrapper #top-group > a > div::after {
         background: linear-gradient(
           90deg,
-          transparent,
-          rgba(234, 179, 8, 0.2),
-          transparent
+          rgba(234, 179, 8, 0),
+          rgba(234, 179, 8, 0.22),
+          rgba(234, 179, 8, 0)
         );
       }
 
@@ -227,6 +230,79 @@ const Style = () => {
 
       #theme-heo #hero #banners {
         animation: heoHeroFloat 6s ease-in-out infinite alternate;
+      }
+
+      /* Bento Grid 核心样式 */
+      #hero-bento {
+        perspective: 1000px;
+      }
+
+      .bento-card {
+        border-radius: 24px !important;
+        border: 1px solid rgba(255, 255, 255, 0.45) !important;
+        background: rgba(255, 255, 255, 0.62) !important;
+        backdrop-filter: saturate(210%) blur(24px) !important;
+        -webkit-backdrop-filter: saturate(210%) blur(24px) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 12px 36px rgba(0, 0, 0, 0.06) !important;
+        transition: all 0.4s var(--heo-ease) !important;
+        overflow: hidden;
+      }
+
+      html.dark .bento-card {
+        border-color: rgba(255, 255, 255, 0.08) !important;
+        background: rgba(27, 28, 32, 0.52) !important;
+        backdrop-filter: saturate(170%) blur(26px) !important;
+        -webkit-backdrop-filter: saturate(170%) blur(26px) !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 18px 48px rgba(0, 0, 0, 0.3) !important;
+      }
+
+      .bento-card:hover {
+        transform: translateY(-5px) scale(1.01);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06), 0 24px 64px rgba(0, 0, 0, 0.1) !important;
+        border-color: rgba(255, 255, 255, 0.65) !important;
+      }
+
+      html.dark .bento-card:hover {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 28px 80px rgba(0, 0, 0, 0.45) !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+      }
+
+      /* 针对不同卡片的细节微调 */
+      .welcome-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.5) 100%) !important;
+      }
+
+      html.dark .welcome-card {
+        background: linear-gradient(135deg, rgba(30, 30, 35, 0.7) 0%, rgba(20, 20, 25, 0.5) 100%) !important;
+      }
+
+      .inspiration-card {
+        border-style: dashed !important; /* 增加一点设计感 */
+        border-width: 2px !important;
+        background: transparent !important;
+      }
+
+      .main-feature h3 {
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .sub-post:hover h4 {
+        color: #4f65f0 !important;
+      }
+
+      html.dark .sub-post:hover h4 {
+        color: #eab308 !important;
+      }
+
+      /* 移动端适配 */
+      @media (max-width: 768px) {
+        #hero-bento {
+          grid-template-columns: 1fr !important;
+          gap: 1rem;
+        }
+        .bento-card {
+          border-radius: 20px !important;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
