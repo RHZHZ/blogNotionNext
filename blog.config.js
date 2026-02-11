@@ -25,6 +25,14 @@ const BLOG = {
   BEI_AN_GONGAN: process.env.NEXT_PUBLIC_BEI_AN_GONGAN || '', // 公安备案号，例如 '浙公网安备3xxxxxxxx8号'
   CODE_COLLAPSE_MIN_LINES: 30,//“长代码”阈值
 
+    // --- 灵动岛播放器配置 ---
+  MUSIC_PLAYER: true,
+  MUSIC_PLAYER_METING_ID: '2037842140,2037843139,2758268699,2021556256,2845780,1933427867,2037843141,39324826,2708984802,1490402910', // 全局随机歌曲池
+  MUSIC_PLAYER_ARTICLE_AUDIO_CONVERT: true,      // 自动转换文中音频
+  MUSIC_PLAYER_ARTICLE_META_ENABLE: true,       // 开启封面/歌词自动补全
+  MUSIC_PLAYER_ARTICLE_META_DB_ID: '3049daca95bb806889ffe623a8e74e5c', // AudioMeta 数据库ID
+  // 机器人key配置到环境变量中
+
   // 图片代理（用于封面取色等场景绕过 CORS）
   IMAGE_PROXY_ALLOW_HOSTS: (process.env.IMAGE_PROXY_ALLOW_HOSTS || 'www.notion.so,prod-files-secure.s3.us-west-2.amazonaws.com,s3.us-west-2.amazonaws.com,images.unsplash.com,s41.ax1x.com,rhzhz.cn')
     .split(',')
