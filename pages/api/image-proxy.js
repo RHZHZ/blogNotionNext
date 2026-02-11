@@ -10,6 +10,7 @@ export default async function handler(req, res) {
     return res.status(400).send('Missing url parameter')
   }
 
+  
   // 安全检查：限制仅代理允许的域名，防止 SSRF
   // 允许列表可在 blog.config.js 中通过 IMAGE_PROXY_ALLOW_HOSTS 配置
   const BLOG = require('../../blog.config')
@@ -44,4 +45,5 @@ export default async function handler(req, res) {
     return res.status(500).send('Error fetching image')
   }
 }
+
 
