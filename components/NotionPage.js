@@ -6,6 +6,8 @@ import 'katex/dist/katex.min.css'
 import dynamic from 'next/dynamic'
 import { useEffect, useRef } from 'react'
 import { NotionRenderer } from 'react-notion-x'
+import InlineIslandAudio from '@/components/InlineIslandAudio'
+import ReactDOM from 'react-dom/client'
 
 /**
  * 整个站点的核心组件
@@ -19,6 +21,10 @@ const NotionPage = ({ post, className }) => {
   const POST_DISABLE_DATABASE_CLICK = siteConfig('POST_DISABLE_DATABASE_CLICK')
   const SPOILER_TEXT_TAG = siteConfig('SPOILER_TEXT_TAG')
 
+  // 文章音频转换配置
+  const ARTICLE_AUDIO_CONVERT = siteConfig('MUSIC_PLAYER_ARTICLE_AUDIO_CONVERT', true)
+  const ARTICLE_META_ENABLE = siteConfig('MUSIC_PLAYER_ARTICLE_META_ENABLE', true)
+
   const zoom =
     isBrowser &&
     mediumZoom({
@@ -29,6 +35,62 @@ const NotionPage = ({ post, className }) => {
 
   const zoomRef = useRef(zoom ? zoom.clone() : null)
   const IMAGE_ZOOM_IN_WIDTH = siteConfig('IMAGE_ZOOM_IN_WIDTH', 1200)
+
+  // 灵动岛音频转换逻辑
+  useEffect(() => {
+    if (!ARTICLE_AUDIO_CONVERT) return
+
+    const convertAudios = async () => {
+      let metaMap = {}
+      if (ARTICLE_META_ENABLE) {
+        try {
+          const res = await fetch('/api/audio-meta')
+          if (res.ok) {
+            metaMap = await res.json()
+          }
+        } catch (e) {
+          console.error('[AudioMeta] Fetch failed', e)
+        }
+      }
+
+      const audioBlocks = document.querySelectorAll('.notion-audio:not(.island-converted)')
+      audioBlocks.forEach(block => {
+        const audioTag = block.querySelector('audio')
+        if (audioTag && audioTag.src) {
+          const url = audioTag.src
+          // 提取文件名作为 key，并进行解码以支持中文
+          const audioKey = decodeURIComponent(url.split('?')[0].split('/').pop())
+          const meta = metaMap[audioKey] || {}
+
+          // 获取默认标题
+          const defaultTitle = block.closest('.notion-column')?.innerText || 
+                               block.previousElementSibling?.innerText || 
+                               '文章音频'
+          
+          block.classList.add('island-converted')
+          audioTag.style.display = 'none'
+          
+          const container = document.createElement('div')
+          block.appendChild(container)
+          const root = ReactDOM.createRoot(container)
+          root.render(
+            <InlineIslandAudio 
+              url={url} 
+              title={meta.name || defaultTitle} 
+              artist={meta.artist}
+              cover={meta.cover}
+              lrc={meta.lrc}
+              album={meta.album}
+            />
+          )
+        }
+      })
+    }
+
+    const timer = setTimeout(convertAudios, 1000)
+    return () => clearTimeout(timer)
+  }, [post, ARTICLE_AUDIO_CONVERT, ARTICLE_META_ENABLE])
+
   // 页面首次打开时执行的勾子
   useEffect(() => {
     // 检测当前的url并自动滚动到对应目标
@@ -133,7 +195,8 @@ const NotionPage = ({ post, className }) => {
           Equation,
           Modal,
           Pdf,
-          Tweet
+          Tweet,
+          Audio: InlineIslandAudio
         }}
       />
 
