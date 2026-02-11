@@ -206,6 +206,11 @@ function adjustColor(hex, { darkenRatio = 0, lightenRatio = 0 } = {}) {
   return hex
 }
 
+function toProxyImageUrl(imageUrl) {
+  if (!imageUrl) return imageUrl
+  return `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`
+}
+
 async function getDarkDominantColorFromImageUrl(
   imageUrl,
   { fallback = '#4f65f0', darkenRatio = 0.1, maxSize = 48 } = {}
@@ -217,7 +222,7 @@ async function getDarkDominantColorFromImageUrl(
     const loaded = await new Promise((resolve, reject) => {
       img.onload = () => resolve(true)
       img.onerror = reject
-      img.src = imageUrl
+      img.src = toProxyImageUrl(imageUrl)
     })
     if (!loaded) return fallback
     const w = img.naturalWidth || img.width
