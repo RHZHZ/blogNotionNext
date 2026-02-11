@@ -150,11 +150,45 @@ const Style = () => {
       #theme-heo #hero #banners,
       #theme-heo #hero-right-wrapper #top-group > a > div,
       #theme-heo #hero-right-wrapper #today-card #card-body {
+        position: relative;
         border: 1px solid rgba(255, 255, 255, 0.45) !important;
         background: rgba(255, 255, 255, 0.62) !important;
         -webkit-backdrop-filter: saturate(210%) blur(24px);
         backdrop-filter: saturate(210%) blur(24px);
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 22px 58px rgba(0, 0, 0, 0.10) !important;
+        overflow: hidden;
+      }
+
+      /* iOS 边缘扫光效果 */
+      #theme-heo #hero-right-wrapper #top-group > a > div::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -150%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transform: skewX(-20deg);
+        transition: 0.6s;
+        z-index: 5;
+      }
+
+      #theme-heo #hero-right-wrapper #top-group > a > div:hover::after {
+        left: 150%;
+      }
+
+      html.dark #theme-heo #hero-right-wrapper #top-group > a > div::after {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(234, 179, 8, 0.2),
+          transparent
+        );
       }
 
       html.dark #theme-heo #hero #banners,
@@ -171,8 +205,8 @@ const Style = () => {
         #theme-heo #hero #banners:hover,
         #theme-heo #hero-right-wrapper #top-group > a > div:hover,
         #theme-heo #hero-right-wrapper #today-card #card-body:hover {
-          transform: translateY(-2px) scale(1.01);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 30px 90px rgba(0, 0, 0, 0.12) !important;
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10), 0 36px 110px rgba(0, 0, 0, 0.14) !important;
         }
 
         html.dark #theme-heo #hero #banners:hover,
@@ -198,6 +232,74 @@ const Style = () => {
       @media (prefers-reduced-motion: reduce) {
         #theme-heo #hero #banners {
           animation: none;
+        }
+      }
+
+      /* TodayCard 彻底修复：拨云见日，让文字变锐利 */
+      #theme-heo #today-card #today-card-info {
+        position: relative;
+        z-index: 20 !important; /* 强制文字在图片之上 */
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* 把图片层级降低，并移除可能导致模糊的滤镜 */
+      #theme-heo #today-card #today-card-cover {
+        z-index: 1;
+        filter: none !important; /* 移除图片本身的模糊干扰 */
+      }
+
+      /* 重新设计文字底部的黑科技感遮罩（在文字之下，图片之上） */
+      #theme-heo #today-card #today-card-info::before {
+        content: '';
+        position: absolute;
+        inset: -100px -40px -40px -40px; /* 向上延伸遮罩范围 */
+        pointer-events: none;
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.85) 0%,
+          rgba(0, 0, 0, 0.4) 45%,
+          rgba(0, 0, 0, 0) 100%
+        );
+        z-index: -1; /* 保证在文字下面 */
+      }
+
+      /* 增强文字本身的对比度 */
+      #theme-heo #today-card-info .text-3xl {
+        color: #ffffff !important;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+        font-weight: 800 !important;
+      }
+
+      #theme-heo #today-card-info .text-xs {
+        color: rgba(255, 255, 255, 0.9) !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      /* 移除文字层自带的噪点，因为它会模糊字体边缘 */
+      #theme-heo #today-card #today-card-info::after {
+        display: none;
+      }
+
+      html.dark #theme-heo #today-card #today-card-info::before {
+        background:
+          linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.82) 0%,
+            rgba(0, 0, 0, 0.50) 35%,
+            rgba(0, 0, 0, 0.12) 70%,
+            rgba(0, 0, 0, 0) 100%
+          );
+      }
+
+      html.dark #theme-heo #today-card #today-card-info::after {
+        opacity: 0.12;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #theme-heo #today-card #today-card-info::after {
+          opacity: 0.06;
         }
       }
 
