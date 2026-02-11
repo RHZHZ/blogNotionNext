@@ -70,6 +70,52 @@ const Style = () => {
         background-size: 24px 24px;
       }
 
+      /* 动态环境光（Ambient Light） */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.65;
+        background:
+          radial-gradient(600px 380px at 15% 20%, rgba(79, 101, 240, 0.18), transparent 60%),
+          radial-gradient(520px 360px at 85% 25%, rgba(59, 130, 246, 0.14), transparent 62%),
+          radial-gradient(640px 420px at 60% 85%, rgba(162, 82, 255, 0.10), transparent 60%),
+          radial-gradient(520px 420px at 10% 85%, rgba(16, 185, 129, 0.08), transparent 62%);
+        filter: blur(14px) saturate(135%);
+        transform: translate3d(0, 0, 0);
+        animation: heoAmbientMove 18s ease-in-out infinite alternate;
+      }
+
+      html.dark body::before {
+        opacity: 0.55;
+        background:
+          radial-gradient(680px 420px at 20% 15%, rgba(234, 179, 8, 0.16), transparent 60%),
+          radial-gradient(620px 420px at 85% 25%, rgba(249, 115, 22, 0.12), transparent 62%),
+          radial-gradient(760px 520px at 60% 90%, rgba(59, 130, 246, 0.10), transparent 60%),
+          radial-gradient(520px 420px at 15% 85%, rgba(34, 197, 94, 0.06), transparent 62%);
+        filter: blur(16px) saturate(125%);
+      }
+
+      @keyframes heoAmbientMove {
+        0% {
+          transform: translate3d(0, 0, 0) scale(1);
+        }
+        50% {
+          transform: translate3d(-1.5%, 1%, 0) scale(1.02);
+        }
+        100% {
+          transform: translate3d(1.5%, -1%, 0) scale(1.03);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        body::before {
+          animation: none;
+        }
+      }
+
       #theme-heo {
         background: transparent !important;
         -webkit-font-smoothing: antialiased;
@@ -105,7 +151,6 @@ const Style = () => {
       html.dark ::-webkit-scrollbar-thumb {
         background: rgba(235, 235, 245, 0.2);
       }
-
 
       html.dark ::-webkit-scrollbar-thumb:hover {
         background: rgba(235, 235, 245, 0.3);
@@ -1303,12 +1348,21 @@ const Style = () => {
         background-size: 30%;
       }
 
+      html.dark #loading-box .loading-bg {
+        background: #eab308 url("/loadings.svg") repeat;
+        background-size: 30%;
+      }
+
       #loading-box .loading-animation {
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
         background: var(--heo-surface-strong);
+      }
+
+      html.dark #loading-box .loading-animation {
+        background: var(--heo-surface-dark);
       }
 
       #loading-box .loading-animation .loading {
@@ -1324,6 +1378,14 @@ const Style = () => {
 
       #loading-box .loading-animation .loading path.color {
         stroke: #4f65f0;
+      }
+
+      html.dark #loading-box .loading-animation .loading path {
+        stroke: var(--heo-text);
+      }
+
+      html.dark #loading-box .loading-animation .loading path.color {
+        stroke: #eab308;
       }
 
       #loading-box .loading-text {
@@ -1358,6 +1420,18 @@ const Style = () => {
         animation: glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
         color: #2ecc71;
         z-index: -2;
+      }
+
+      html.dark #loading-box .loading-text {
+        color: var(--heo-text);
+      }
+
+      html.dark #loading-box .loading-text:before {
+        color: #f97316;
+      }
+
+      html.dark #loading-box .loading-text:after {
+        color: #22c55e;
       }
 
       @keyframes dashArray {
