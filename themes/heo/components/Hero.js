@@ -1,7 +1,7 @@
 // import Image from 'next/image'
 import { ArrowSmallRight, PlusSmall } from '@/components/HeroIcons'
 import LazyImage from '@/components/LazyImage'
-import { siteConfig } from '@/lib/utils/config'
+import { siteConfig } from '@/lib/config'
 import SmartLink from '@/components/SmartLink'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
