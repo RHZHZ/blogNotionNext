@@ -38,7 +38,7 @@ export function InfoCard(props) {
         setCardColor(fallbackColor)
         return
       }
-
+      
       const color = await getDarkDominantColorFromImageUrl(post.pageCover, {
         fallback: fallbackColor,
         darkenRatio: 0.62,
