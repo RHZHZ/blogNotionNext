@@ -1,5 +1,3 @@
-import { useEffect, useMemo, useState } from 'react'
-
 import { HashTag } from '@/components/HeroIcons'
 import LazyImage from '@/components/LazyImage'
 import NotionIcon from '@/components/NotionIcon'
@@ -234,6 +232,11 @@ function adjustColor(hex, { darkenRatio = 0, lightenRatio = 0 } = {}) {
   return hex
 }
 
+function toProxyImageUrl(imageUrl) {
+  if (!imageUrl) return imageUrl
+  return `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`
+}
+
 async function getDarkDominantColorFromImageUrl(
   imageUrl,
   { fallback = '#0060e0', darkenRatio = 0.62, maxSize = 48 } = {}
@@ -245,10 +248,10 @@ async function getDarkDominantColorFromImageUrl(
 
     const img = new window.Image()
 
-    // 允许跨域图片取像素（前提：图片资源响应带了 CORS header）
+    // 同源代理后不需要 CORS，但保留该设置以兼容允许 CORS 的图源
     img.crossOrigin = 'anonymous'
 
-    const src = imageUrl
+    const src = toProxyImageUrl(imageUrl)
 
     const loaded = await new Promise((resolve, reject) => {
       img.onload = () => resolve(true)
