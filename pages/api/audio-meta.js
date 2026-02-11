@@ -4,7 +4,7 @@ import BLOG from '@/blog.config'
 const AUDIO_META_DB_ID =
   process.env.NEXT_PUBLIC_MUSIC_PLAYER_ARTICLE_META_DB_ID ||
   BLOG.MUSIC_PLAYER_ARTICLE_META_DB_ID ||
-  '3049daca95bb806889ffe623a8e74e5c'
+  ''
 
 /**
  * 规范化音频 Key：支持从 URL 提取文件名或直接使用字符串
@@ -32,7 +32,8 @@ const cache = {
 const CACHE_TTL = 10 * 60 * 1000 // 缓存 10 分钟
 
 export default async function handler(_req, res) {
-  const notionToken = process.env.NOTION_ACCESS_TOKEN || BLOG.NOTION_ACCESS_TOKEN
+  // 安全起见：只从环境变量读取 Token，不再从 blog.config 读取以防泄露
+  const notionToken = process.env.NOTION_ACCESS_TOKEN
 
   // 1. 检查内存缓存
   if (cache.data && (Date.now() - cache.timestamp < CACHE_TTL)) {
