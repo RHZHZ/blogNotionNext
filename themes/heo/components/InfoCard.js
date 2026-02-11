@@ -38,7 +38,7 @@ export function InfoCard(props) {
         setCardColor(fallbackColor)
         return
       }
-      
+
       const color = await getDarkDominantColorFromImageUrl(post.pageCover, {
         fallback: fallbackColor,
         darkenRatio: 0.62,
@@ -72,7 +72,7 @@ export function InfoCard(props) {
           <div
             className={`${
               isSlugPage
-                ? 'absolute right-0 -mt-8 -mr-6 hover:opacity-0 hover:scale-150'
+                ? 'cursor-pointer'
                 : 'cursor-pointer'
             } justify-center items-center flex dark:text-gray-100 transform transition-all duration-200 relative`}>
             <LazyImage
