@@ -18,13 +18,84 @@ const DynamicIslandPlayer = ({ className }) => {
   const [progress, setProgress] = useState({ current: 0, duration: 0 })
   const [isDark, setIsDark] = useState(false)
   const [showLrc, setShowLrc] = useState(false)
-  const [danmakus, setDanmakus] = useState([]) // {key, text}
+  const [danmakus, setDanmakus] = useState([]) // {key, text, lane}
   const danmakuKeyRef = useRef(0)
   const lastLrcIdxRef = useRef(-1)
   const lastTrackKeyRef = useRef('')
   const lrcListRef = useRef([])
 
+  // 弹幕防重叠：轨道占用时间戳（基于同速移动，需等前一条“头部”领先安全距离后再放入同轨）
+  const danmakuLaneUntilRef = useRef([])
+  const danmakuHostRef = useRef(null)
+
   const mountedRef = useRef(false)
+
+  // 弹幕参数（可按需调整）
+  const DANMAKU_CONFIG = {
+    lanes: 3,
+    laneHeight: 40,
+    durationMs: 8500,
+    safeGapPx: 24,
+    fontSize: 14,
+    fontWeight: 600
+  }
+
+  const measureDanmakuWidth = (text) => {
+    if (typeof document === 'undefined') return 0
+    const el = document.createElement('span')
+    el.style.position = 'fixed'
+    el.style.left = '-99999px'
+    el.style.top = '-99999px'
+    el.style.whiteSpace = 'nowrap'
+    el.style.fontSize = `${DANMAKU_CONFIG.fontSize}px`
+    el.style.fontWeight = String(DANMAKU_CONFIG.fontWeight)
+    el.style.padding = '4px 15px'
+    el.style.border = '1px solid transparent'
+    el.textContent = String(text || '')
+    document.body.appendChild(el)
+    const w = el.getBoundingClientRect().width
+    document.body.removeChild(el)
+    return w
+  }
+
+  const pickDanmakuLane = (textWidth) => {
+    const now = Date.now()
+    const hostW = danmakuHostRef.current?.getBoundingClientRect?.().width || (typeof window !== 'undefined' ? window.innerWidth : 0)
+    const durationMs = DANMAKU_CONFIG.durationMs
+    const speedPxPerMs = hostW > 0 ? (hostW + textWidth) / durationMs : 0
+    const neededMs = speedPxPerMs > 0 ? (textWidth + DANMAKU_CONFIG.safeGapPx) / speedPxPerMs : durationMs
+
+    const laneUntil = danmakuLaneUntilRef.current
+
+    // 优先找当前空闲轨道
+    for (let lane = 0; lane < DANMAKU_CONFIG.lanes; lane++) {
+      if ((laneUntil[lane] || 0) <= now) {
+        laneUntil[lane] = now + neededMs
+        return lane
+      }
+    }
+
+    // 都不空闲时：为了保证“看起来是多轨道”而不是永远挤在同一轨道，
+    // 选择到期时间最早的轨道；如果多个轨道相同，则用时间做一个轮询打散。
+    let bestUntil = Infinity
+    let bestLanes = []
+    for (let lane = 0; lane < DANMAKU_CONFIG.lanes; lane++) {
+      const until = laneUntil[lane] || 0
+      if (until < bestUntil) {
+        bestUntil = until
+        bestLanes = [lane]
+      } else if (until === bestUntil) {
+        bestLanes.push(lane)
+      }
+    }
+
+    const pick = bestLanes.length
+      ? bestLanes[Math.floor(now / 50) % bestLanes.length]
+      : 0
+
+    laneUntil[pick] = bestUntil + neededMs
+    return pick
+  }
 
   // 解析 LRC 格式
   const parseLrc = (lrcStr) => {
@@ -142,13 +213,15 @@ const DynamicIslandPlayer = ({ className }) => {
             const text = lrcListRef.current[nextIdx]?.text
             if (text) {
               const key = ++danmakuKeyRef.current
+              const w = measureDanmakuWidth(text)
+              const lane = pickDanmakuLane(w)
               setDanmakus(prev => {
-                const next = [...prev, { key, text }]
-                return next.slice(-3)
+                const next = [...prev, { key, text, lane }]
+                return next.slice(-(DANMAKU_CONFIG.lanes * 2))
               })
               setTimeout(() => {
                 setDanmakus(prev => prev.filter(d => d.key !== key))
-              }, 10000)
+              }, DANMAKU_CONFIG.durationMs + 1500)
             }
           }
         }
@@ -229,12 +302,13 @@ const DynamicIslandPlayer = ({ className }) => {
       {/* 弹幕歌词渲染层 */}
       {showLrc && (
         <div
+          ref={danmakuHostRef}
           style={{
             position: 'fixed',
             left: 0,
             right: 0,
             bottom: 100,
-            height: 40,
+            height: DANMAKU_CONFIG.lanes * DANMAKU_CONFIG.laneHeight,
             pointerEvents: 'none',
             zIndex: 1000,
             overflow: 'hidden'
@@ -247,10 +321,10 @@ const DynamicIslandPlayer = ({ className }) => {
               style={{
                 position: 'absolute',
                 left: 0,
-                top: 0,
+                top: (d.lane || 0) * DANMAKU_CONFIG.laneHeight,
                 whiteSpace: 'nowrap',
-                fontSize: 18,
-                fontWeight: 600,
+                fontSize: DANMAKU_CONFIG.fontSize,
+                fontWeight: DANMAKU_CONFIG.fontWeight,
                 color: isDark ? 'rgba(255,255,255,0.95)' : 'rgba(0,0,0,0.85)',
                 textShadow: isDark 
                   ? '0 0 12px rgba(0,0,0,0.8), 0 0 4px rgba(0,0,0,1)' 
