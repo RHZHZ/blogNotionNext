@@ -288,6 +288,28 @@ img {
 }
 
 
+/* 彻底禁闭 APlayer 原生 UI，确保只有我们自定义的灵动岛可见 */
+.aplayer, 
+.aplayer-fixed, 
+.aplayer-body, 
+.aplayer-pic, 
+.aplayer-info, 
+.aplayer-lrc, 
+.aplayer-controller,
+.aplayer-miniswitcher {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  width: 0 !important;
+  height: 0 !important;
+  z-index: -999 !important;
+}
+
+
 .lazy-image-placeholder{
   background: 
       linear-gradient(90deg,#0001 33%,#0005 50%,#0001 66%)
