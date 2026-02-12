@@ -185,20 +185,22 @@ const NotionPage = ({ post, className }) => {
     <div
       id='notion-article'
       className={`mx-auto overflow-hidden ${className || ''}`}>
-      <NotionRenderer
-        recordMap={post?.blockMap}
-        mapPageUrl={mapPageUrl}
-        mapImageUrl={mapImgUrl}
-        components={{
-          Code,
-          Collection,
-          Equation,
-          Modal,
-          Pdf,
-          Tweet,
-          Audio: InlineIslandAudio
-        }}
-      />
+      {post?.blockMap?.block ? (
+        <NotionRenderer
+          recordMap={post?.blockMap}
+          mapPageUrl={mapPageUrl}
+          mapImageUrl={mapImgUrl}
+          components={{
+            Code,
+            Collection,
+            Equation,
+            Modal,
+            Pdf,
+            Tweet,
+            Audio: InlineIslandAudio
+          }}
+        />
+      ) : null}
 
       <AdEmbed />
       <PrismMac />
@@ -266,6 +268,7 @@ const autoScrollToHash = () => {
  * @returns
  */
 const mapPageUrl = id => {
+  if (!id) return '/'
   // return 'https://www.notion.so/' + id.replace(/-/g, '')
   return '/' + id.replace(/-/g, '')
 }
