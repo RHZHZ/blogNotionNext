@@ -48,7 +48,7 @@ export default async function handler(req, res) {
           const track = {
             name: d.name || d.al_name || id,
             artist: d.ar_name || '',
-            url: d.url,
+            url: typeof d.url === 'string' ? d.url.replace(/^http:\/\//, 'https://') : d.url,
             cover: d.pic || '',
             lrc: d.lyric || ''
           }
