@@ -95,7 +95,29 @@ const Player = () => {
         type='text/css'
         href={musicPlayerStyleCDN}
       />
-      {/* APlayer 引擎容器：UI 已在 globals.css 中被隐藏 */}
+      <style jsx global>{`
+        /* 彻底禁闭 APlayer 原生 UI，确保只有自定义的灵动岛可见 */
+        .aplayer, 
+        .aplayer-fixed, 
+        .aplayer-body, 
+        .aplayer-pic, 
+        .aplayer-info, 
+        .aplayer-lrc, 
+        .aplayer-controller,
+        .aplayer-miniswitcher {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+          position: fixed !important;
+          top: -9999px !important;
+          left: -9999px !important;
+          width: 0 !important;
+          height: 0 !important;
+          z-index: -999 !important;
+        }
+      `}</style>
+      {/* APlayer 引擎容器 */}
       <div ref={ref} data-player={player} />
     </div>
   )
