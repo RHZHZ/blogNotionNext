@@ -5,7 +5,7 @@ import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import SmartLink from '@/components/SmartLink'
 import { useRouter } from 'next/router'
-import { useImperativeHandle, useRef, useState } from 'react'
+import { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import CONFIG from '../config'
 
 /**
@@ -328,6 +328,20 @@ function TodayCard({ cRef, siteInfo }) {
   const { locale } = useGlobal()
   // 卡牌是否盖住下层
   const [isCoverUp, setIsCoverUp] = useState(true)
+  const [isDark, setIsDark] = useState(false)
+
+  useEffect(() => {
+    // 初始检查
+    setIsDark(document.documentElement.classList.contains('dark'))
+
+    // 监听暗色模式变化
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'))
+    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+
+    return () => observer.disconnect()
+  }, [])
 
   /**
    * 外部可以调用此方法
@@ -402,7 +416,7 @@ function TodayCard({ cRef, siteInfo }) {
         {/* 封面图 */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={siteInfo?.pageCover}
+          src={isDark ? 'https://s41.ax1x.com/2026/02/12/pZbYkyq.png' : 'https://s41.ax1x.com/2026/02/12/pZbY5Xq.png'}
           id='today-card-cover'
           className={`${
             isCoverUp ? '' : ' pointer-events-none'
