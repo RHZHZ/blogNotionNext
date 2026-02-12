@@ -8,6 +8,8 @@ const DynamicIslandPlayer = ({ className }) => {
   const [ap, setAp] = useState(null)
   const [expanded, setExpanded] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
   const [track, setTrack] = useState({
     name: '',
     artist: '',
@@ -27,7 +29,6 @@ const DynamicIslandPlayer = ({ className }) => {
   // 解析 LRC 格式
   const parseLrc = (lrcStr) => {
     if (!lrcStr) return []
-    // 处理可能存在的字面量 \n 字符串
     const normalizedLrc = String(lrcStr).replace(/\\n/g, '\n')
     const lines = normalizedLrc.split('\n')
     const result = []
@@ -51,10 +52,11 @@ const DynamicIslandPlayer = ({ className }) => {
   }
 
   const title = useMemo(() => {
+    if (isError) return '(资源加载失败)'
     const n = track?.name || ''
     const a = track?.artist || ''
     return a ? `${n} - ${a}` : n
-  }, [track])
+  }, [track, isError])
 
   useEffect(() => {
     mountedRef.current = true
@@ -110,6 +112,8 @@ const DynamicIslandPlayer = ({ className }) => {
           lastTrackKeyRef.current = trackKey
           lastLrcIdxRef.current = -1
           lrcListRef.current = parseLrc(aud?.lrc || '')
+          setIsLoading(true)
+          setIsError(false)
         }
 
         const audio = ap.audio
@@ -118,6 +122,11 @@ const DynamicIslandPlayer = ({ className }) => {
 
         setIsPlaying(!audio?.paused)
         setProgress({ current, duration })
+
+        // 加载态兜底判断
+        if (audio?.readyState < 2 && !audio?.paused) {
+          setIsLoading(true)
+        }
 
         if (showLrc && !audio?.paused && lrcListRef.current?.length) {
           const nextIdx = (() => {
@@ -135,17 +144,24 @@ const DynamicIslandPlayer = ({ className }) => {
               const key = ++danmakuKeyRef.current
               setDanmakus(prev => {
                 const next = [...prev, { key, text }]
-                return next.slice(-3) // 最多保留3条正在跑的，避免内存泄漏
+                return next.slice(-3)
               })
               setTimeout(() => {
                 setDanmakus(prev => prev.filter(d => d.key !== key))
-              }, 10000) // 10秒后彻底移除
+              }, 10000)
             }
           }
         }
       } catch (e) {
         // ignore
       }
+    }
+
+    const handleWaiting = () => setIsLoading(true)
+    const handleCanPlay = () => setIsLoading(false)
+    const handleError = () => {
+      setIsLoading(false)
+      setIsError(true)
     }
 
     sync()
@@ -155,6 +171,9 @@ const DynamicIslandPlayer = ({ className }) => {
     ap.on('ended', sync)
     ap.on('timeupdate', sync)
     ap.on('listswitch', sync)
+    ap.on('waiting', handleWaiting)
+    ap.on('canplay', handleCanPlay)
+    ap.on('error', handleError)
 
     return () => {
       try {
@@ -163,6 +182,9 @@ const DynamicIslandPlayer = ({ className }) => {
         ap.off('ended', sync)
         ap.off('timeupdate', sync)
         ap.off('listswitch', sync)
+        ap.off('waiting', handleWaiting)
+        ap.off('canplay', handleCanPlay)
+        ap.off('error', handleError)
       } catch (e) {
         // ignore
       }
@@ -270,18 +292,20 @@ const DynamicIslandPlayer = ({ className }) => {
           alignItems: 'center',
           gap: 10,
           overflow: 'hidden',
-          border: isDark
-            ? '1px solid rgba(255,255,255,0.10)'
-            : '1px solid rgba(0,0,0,0.06)',
+          border: isError 
+            ? '1.5px solid rgba(239, 68, 68, 0.6)' 
+            : (isDark ? '1px solid rgba(255,255,255,0.10)' : '1px solid rgba(0,0,0,0.06)'),
           background: isDark
             ? 'rgba(24, 23, 29, 0.72)'
             : 'rgba(255, 255, 255, 0.90)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
-          boxShadow: isDark
-            ? 'rgba(0, 0, 0, 0.35) 0px 10px 28px, rgba(0, 0, 0, 0.2) 0px 1px 2px'
-            : 'rgba(0, 0, 0, 0.08) 0px 6px 18px, rgba(0, 0, 0, 0.06) 0px 1px 2px',
-          transition: 'width 420ms cubic-bezier(0.18, 0.89, 0.32, 1.28)'
+          boxShadow: isError
+            ? '0 0 15px rgba(239, 68, 68, 0.25)'
+            : (isDark
+                ? 'rgba(0, 0, 0, 0.35) 0px 10px 28px, rgba(0, 0, 0, 0.2) 0px 1px 2px'
+                : 'rgba(0, 0, 0, 0.08) 0px 6px 18px, rgba(0, 0, 0, 0.06) 0px 1px 2px'),
+          transition: 'all 420ms cubic-bezier(0.18, 0.89, 0.32, 1.28)'
         }}
       >
         <div
@@ -292,9 +316,11 @@ const DynamicIslandPlayer = ({ className }) => {
             overflow: 'hidden',
             flexShrink: 0,
             position: 'relative',
+            opacity: isLoading ? 0.6 : 1,
             boxShadow: isDark
               ? '0 0 0 3px rgba(0, 0, 0, 0.35)'
-              : '0 0 0 3px rgba(255, 255, 255, 0.85)'
+              : '0 0 0 3px rgba(255, 255, 255, 0.85)',
+            transition: 'opacity 300ms ease'
           }}
         >
           {track.cover ? (
@@ -306,7 +332,9 @@ const DynamicIslandPlayer = ({ className }) => {
                 height: '100%',
                 objectFit: 'cover',
                 transformOrigin: '50% 50%',
-                animation: isPlaying ? 'islandSpin 18s linear infinite' : 'none'
+                animation: isLoading 
+                  ? 'islandPulse 1.5s ease-in-out infinite' 
+                  : (isPlaying ? 'islandSpin 18s linear infinite' : 'none')
               }}
             />
           ) : (
@@ -334,8 +362,11 @@ const DynamicIslandPlayer = ({ className }) => {
               background: 'rgba(0,0,0,0.18)',
               border: 'none',
               cursor: 'pointer',
-              color: 'white'
+              color: 'white',
+              transition: 'transform 150ms ease'
             }}
+            onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.85)'}
+            onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
             aria-label={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? (
@@ -379,7 +410,9 @@ const DynamicIslandPlayer = ({ className }) => {
             style={{
               fontSize: 14,
               fontWeight: 700,
-              color: isDark ? 'rgba(255,255,255,0.92)' : 'rgba(17,24,39,0.92)',
+              color: isError 
+                ? 'rgba(239, 68, 68, 0.9)' 
+                : (isDark ? 'rgba(255,255,255,0.92)' : 'rgba(17,24,39,0.92)'),
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis'
@@ -504,9 +537,14 @@ const DynamicIslandPlayer = ({ className }) => {
           to { transform: rotate(360deg); }
         }
 
+        @keyframes islandPulse {
+          0%, 100% { opacity: 0.5; filter: blur(1px); }
+          50% { opacity: 1; filter: blur(0px); }
+        }
+
         @keyframes diDanmakuMove {
           from { transform: translateX(100vw); }
-          to { transform: translateX(-100%); }
+          to { transform: translateX(-120%); }
         }
 
         .di-danmaku {
@@ -602,4 +640,3 @@ const iconButtonStyle = (isDark) => ({
 })
 
 export default DynamicIslandPlayer
-
