@@ -32,11 +32,11 @@ const DynamicIslandPlayer = ({ className }) => {
 
   // 弹幕参数（可按需调整）
   const DANMAKU_CONFIG = {
-    lanes: 3,
+    lanes: 2,
     laneHeight: 40,
     durationMs: 8500,
     safeGapPx: 24,
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: 600
   }
 
