@@ -175,7 +175,7 @@ const nextConfig = {
           // 示例： source: '/:locale(zh|en)/:path*' ; :locale() 会将语言放入重写后的 `?locale=` 中。
           langsRewrites.push(
             {
-              source: `/:locale(${langs.join('|')})/:path*`,
+              source: `/:locale(${langs.join('|')})/:path((?!_next|api).*)`,
               destination: '/:path*'
             },
             // 匹配没有路径的情况，例如 [domain]/zh 或 [domain]/en
