@@ -26,16 +26,16 @@ const BLOG = {
   CODE_COLLAPSE_MIN_LINES: 30,//“长代码”阈值
 
     // --- 灵动岛播放器配置 ---
-  MUSIC_PLAYER: true,
-  MUSIC_PLAYER_METING_ID: '2037842140,2037843139,2758268699,2845780,1933427867,2037843141,39324826,2708984802,1490402910', // 全局随机歌曲池
-  MUSIC_PLAYER_ARTICLE_AUDIO_CONVERT: true,      // 自动转换文中音频
-  MUSIC_PLAYER_ARTICLE_META_ENABLE: true,       // 开启封面/歌词自动补全
-  MUSIC_PLAYER_ARTICLE_DEFAULT_COVER:
-    process.env.NEXT_PUBLIC_MUSIC_PLAYER_ARTICLE_DEFAULT_COVER || '/avatar.png', // 元数据缺失时文章音频默认封面
-  MUSIC_PLAYER_ARTICLE_DEFAULT_ARTIST:
-    process.env.NEXT_PUBLIC_MUSIC_PLAYER_ARTICLE_DEFAULT_ARTIST || 'RHZ', // 元数据缺失时文章音频默认歌手
-  MUSIC_PLAYER_ARTICLE_META_DB_ID: '3049daca95bb806889ffe623a8e74e5c', // AudioMeta 数据库ID
-  MUSIC_PLAYER_CDN_URL:'https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js',
+  // MUSIC_PLAYER: true,
+  // MUSIC_PLAYER_METING_ID: '2037842140,2037843139,2758268699,2845780,1933427867,2037843141,39324826,2708984802,1490402910', // 全局随机歌曲池
+  // MUSIC_PLAYER_ARTICLE_AUDIO_CONVERT: true,      // 自动转换文中音频
+  // MUSIC_PLAYER_ARTICLE_META_ENABLE: true,       // 开启封面/歌词自动补全
+  // MUSIC_PLAYER_ARTICLE_DEFAULT_COVER:
+  //   process.env.NEXT_PUBLIC_MUSIC_PLAYER_ARTICLE_DEFAULT_COVER || '/avatar.png', // 元数据缺失时文章音频默认封面
+  // MUSIC_PLAYER_ARTICLE_DEFAULT_ARTIST:
+  //   process.env.NEXT_PUBLIC_MUSIC_PLAYER_ARTICLE_DEFAULT_ARTIST || 'RHZ', // 元数据缺失时文章音频默认歌手
+  // MUSIC_PLAYER_ARTICLE_META_DB_ID: '3049daca95bb806889ffe623a8e74e5c', // AudioMeta 数据库ID
+  // MUSIC_PLAYER_CDN_URL:'https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js',
   // 机器人key配置到环境变量中
 
   // 图片代理（用于封面取色等场景绕过 CORS）
