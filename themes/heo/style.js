@@ -599,14 +599,14 @@ const Style = () => {
 
         /* 链接与下划线优化：去网页化，更像 Apple 设计 */
         #theme-heo #article-wrapper #notion-article .notion-link,
-        #theme-heo #article-wrapper #notion-article .notion-inline-underscore {
+        #theme-heo #article-wrapper #notion-article {
             text-decoration: none !important;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             transition: border-color var(--heo-dur-fast) var(--heo-ease);
         }
 
         html.dark #theme-heo #article-wrapper #notion-article .notion-link,
-        html.dark #theme-heo #article-wrapper #notion-article .notion-inline-underscore {
+        html.dark #theme-heo #article-wrapper #notion-article  {
             border-bottom-color: rgba(255, 255, 255, 0.15);
         }
 
