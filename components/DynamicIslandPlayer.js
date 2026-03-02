@@ -1,127 +1,227 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, useCallback, useReducer } from 'react'
 
+// 防抖函数
+const throttle = (func, wait) => {
+  let timeout = null
+  let previous = 0
+  
+  const throttled = function() {
+    const now = Date.now()
+    const remaining = wait - (now - previous)
+    const context = this
+    const args = arguments
+    
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout)
+        timeout = null
+      }
+      previous = now
+      func.apply(context, args)
+    } else if (!timeout) {
+      timeout = setTimeout(() => {
+        previous = Date.now()
+        timeout = null
+        func.apply(context, args)
+      }, remaining)
+    }
+  }
+  
+  throttled.cancel = () => {
+    clearTimeout(timeout)
+    timeout = null
+  }
+  
+  return throttled
+}
+
+// 获取暗色主题状态
 const getIsDark = () =>
   typeof document !== 'undefined' &&
   document.documentElement.classList.contains('dark')
 
+// 状态reducer
+const playerReducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_TRACK':
+      return { ...state, track: action.payload }
+    case 'SET_PLAYING':
+      return { ...state, isPlaying: action.payload }
+    case 'SET_LOADING':
+      return { ...state, isLoading: action.payload }
+    case 'SET_PROGRESS':
+      return { ...state, progress: action.payload }
+    case 'SET_ERROR':
+      return { ...state, isError: action.payload }
+    case 'RESET_TRACK':
+      return {
+        ...state,
+        track: { name: '', artist: '', cover: '' },
+        progress: { current: 0, duration: 0 },
+        isLoading: false,
+        isError: false
+      }
+    default:
+      return state
+  }
+}
+
+// 初始状态
+const initialState = {
+  track: { name: '', artist: '', cover: '' },
+  isPlaying: false,
+  isLoading: false,
+  isError: false,
+  progress: { current: 0, duration: 0 }
+}
+
 const DynamicIslandPlayer = ({ className }) => {
   const [ap, setAp] = useState(null)
   const [expanded, setExpanded] = useState(false)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isError, setIsError] = useState(false)
-  const [track, setTrack] = useState({
-    name: '',
-    artist: '',
-    cover: ''
-  })
-  const [progress, setProgress] = useState({ current: 0, duration: 0 })
   const [isDark, setIsDark] = useState(false)
   const [showLrc, setShowLrc] = useState(false)
   const [danmakus, setDanmakus] = useState([]) // {key, text, lane}
+  
+  // 使用reducer管理播放器状态
+  const [playerState, dispatch] = useReducer(playerReducer, initialState)
+  const { track, isPlaying, isLoading, isError, progress } = playerState
+  
   const danmakuKeyRef = useRef(0)
   const lastLrcIdxRef = useRef(-1)
   const lastTrackKeyRef = useRef('')
   const lrcListRef = useRef([])
-
-  // 弹幕防重叠：轨道占用时间戳（基于同速移动，需等前一条“头部”领先安全距离后再放入同轨）
+  const mountedRef = useRef(false)
+  const measureElRef = useRef(null)
+  
+  // 弹幕防重叠：轨道占用时间戳
   const danmakuLaneUntilRef = useRef([])
   const danmakuHostRef = useRef(null)
+  const syncThrottleRef = useRef(null)
 
-  const mountedRef = useRef(false)
-
-  // 弹幕参数（可按需调整）
-  const DANMAKU_CONFIG = {
+  // 弹幕配置（使用useMemo缓存）
+  const DANMAKU_CONFIG = useMemo(() => ({
     lanes: 2,
     laneHeight: 40,
     durationMs: 8500,
     safeGapPx: 24,
     fontSize: 18,
     fontWeight: 600
-  }
+  }), [])
 
-  const measureDanmakuWidth = (text) => {
-    if (typeof document === 'undefined') return 0
-    const el = document.createElement('span')
-    el.style.position = 'fixed'
-    el.style.left = '-99999px'
-    el.style.top = '-99999px'
-    el.style.whiteSpace = 'nowrap'
+  // 测量弹幕宽度（使用useCallback缓存，避免重复创建DOM元素）
+  const measureDanmakuWidth = useCallback((text) => {
+    if (typeof document === 'undefined' || !text) return 0
+    
+    if (!measureElRef.current) {
+      const el = document.createElement('span')
+      el.style.position = 'fixed'
+      el.style.left = '-99999px'
+      el.style.top = '-99999px'
+      el.style.whiteSpace = 'nowrap'
+      el.style.padding = '4px 15px'
+      el.style.border = '1px solid transparent'
+      el.style.visibility = 'hidden'
+      el.style.fontFamily = 'inherit'
+      document.body.appendChild(el)
+      measureElRef.current = el
+    }
+    
+    const el = measureElRef.current
     el.style.fontSize = `${DANMAKU_CONFIG.fontSize}px`
     el.style.fontWeight = String(DANMAKU_CONFIG.fontWeight)
-    el.style.padding = '4px 15px'
-    el.style.border = '1px solid transparent'
-    el.textContent = String(text || '')
-    document.body.appendChild(el)
-    const w = el.getBoundingClientRect().width
-    document.body.removeChild(el)
-    return w
-  }
+    el.textContent = String(text)
+    
+    return el.getBoundingClientRect().width
+  }, [DANMAKU_CONFIG.fontSize, DANMAKU_CONFIG.fontWeight])
 
-  const pickDanmakuLane = (textWidth) => {
-    const now = Date.now()
-    const hostW = danmakuHostRef.current?.getBoundingClientRect?.().width || (typeof window !== 'undefined' ? window.innerWidth : 0)
+  // 选择弹幕轨道（优化版本，清理过期轨道）
+  const pickDanmakuLane = useCallback((textWidth) => {
+    const now = performance.now()
+    const hostW = danmakuHostRef.current?.getBoundingClientRect?.().width || 0
+    
+    if (hostW <= 0) return 0
+    
     const durationMs = DANMAKU_CONFIG.durationMs
-    const speedPxPerMs = hostW > 0 ? (hostW + textWidth) / durationMs : 0
+    const speedPxPerMs = (hostW + textWidth) / durationMs
     const neededMs = speedPxPerMs > 0 ? (textWidth + DANMAKU_CONFIG.safeGapPx) / speedPxPerMs : durationMs
-
+    
     const laneUntil = danmakuLaneUntilRef.current
-
-    // 优先找当前空闲轨道
+    
+    // 清理过期轨道（超过1秒未使用的轨道）
+    const cleanupThreshold = now - 1000
+    for (let i = 0; i < (laneUntil.length || 0); i++) {
+      if (laneUntil[i] < cleanupThreshold) {
+        laneUntil[i] = 0
+      }
+    }
+    
+    // 确保轨道数组长度
+    while (laneUntil.length < DANMAKU_CONFIG.lanes) {
+      laneUntil.push(0)
+    }
+    
+    // 优先选择空闲轨道
     for (let lane = 0; lane < DANMAKU_CONFIG.lanes; lane++) {
       if ((laneUntil[lane] || 0) <= now) {
         laneUntil[lane] = now + neededMs
         return lane
       }
     }
-
-    // 都不空闲时：为了保证“看起来是多轨道”而不是永远挤在同一轨道，
-    // 选择到期时间最早的轨道；如果多个轨道相同，则用时间做一个轮询打散。
-    let bestUntil = Infinity
-    let bestLanes = []
+    
+    // 无空闲轨道，选择最早可用的
+    let earliestTime = Infinity
+    let bestLane = 0
+    
     for (let lane = 0; lane < DANMAKU_CONFIG.lanes; lane++) {
-      const until = laneUntil[lane] || 0
-      if (until < bestUntil) {
-        bestUntil = until
-        bestLanes = [lane]
-      } else if (until === bestUntil) {
-        bestLanes.push(lane)
+      const availableAt = laneUntil[lane] || 0
+      if (availableAt < earliestTime) {
+        earliestTime = availableAt
+        bestLane = lane
       }
     }
+    
+    laneUntil[bestLane] = earliestTime + neededMs
+    return bestLane
+  }, [DANMAKU_CONFIG.lanes, DANMAKU_CONFIG.durationMs, DANMAKU_CONFIG.safeGapPx])
 
-    const pick = bestLanes.length
-      ? bestLanes[Math.floor(now / 50) % bestLanes.length]
-      : 0
-
-    laneUntil[pick] = bestUntil + neededMs
-    return pick
-  }
-
-  // 解析 LRC 格式
-  const parseLrc = (lrcStr) => {
+  // 解析LRC歌词
+  const parseLrc = useCallback((lrcStr) => {
     if (!lrcStr) return []
+    
     const normalizedLrc = String(lrcStr).replace(/\\n/g, '\n')
     const lines = normalizedLrc.split('\n')
     const result = []
-    const timeReg = /\[(\d+):(\d+)(?:\.(\d+))?\]/
-
+    const timeReg = /\[(\d+):(\d+)(?:\.(\d+))?\]/g
+    
     lines.forEach(line => {
-      const match = timeReg.exec(line)
-      if (!match) return
-
-      const min = parseInt(match[1])
-      const sec = parseInt(match[2])
-      const frac = match[3] ? match[3] : '0'
-      const ms = parseInt(frac)
-      const time = min * 60 + sec + (frac.length >= 3 ? ms / 1000 : ms / 100)
-
-      const text = line.replace(timeReg, '').trim()
-      if (text) result.push({ time, text })
+      const times = []
+      let match
+      
+      // 匹配所有时间标签
+      while ((match = timeReg.exec(line)) !== null) {
+        const min = parseInt(match[1])
+        const sec = parseInt(match[2])
+        const frac = match[3] || '0'
+        const ms = parseInt(frac)
+        const time = min * 60 + sec + (frac.length >= 3 ? ms / 1000 : ms / 100)
+        times.push(time)
+      }
+      
+      if (times.length > 0) {
+        const text = line.replace(/\[\d+:\d+(?:\.\d+)?\]/g, '').trim()
+        if (text) {
+          // 为每个时间标签创建条目
+          times.forEach(time => {
+            result.push({ time, text })
+          })
+        }
+      }
     })
-
+    
     return result.sort((a, b) => a.time - b.time)
-  }
+  }, [])
 
+  // 计算标题
   const title = useMemo(() => {
     if (isError) return '(资源加载失败)'
     const n = track?.name || ''
@@ -129,6 +229,7 @@ const DynamicIslandPlayer = ({ className }) => {
     return a ? `${n} - ${a}` : n
   }, [track, isError])
 
+  // 初始化
   useEffect(() => {
     mountedRef.current = true
 
@@ -148,9 +249,21 @@ const DynamicIslandPlayer = ({ className }) => {
     return () => {
       mountedRef.current = false
       obs.disconnect()
+      
+      // 清理测量元素
+      if (measureElRef.current && document.body.contains(measureElRef.current)) {
+        document.body.removeChild(measureElRef.current)
+        measureElRef.current = null
+      }
+      
+      // 清理防抖函数
+      if (syncThrottleRef.current) {
+        syncThrottleRef.current.cancel()
+      }
     }
   }, [])
 
+  // 获取AP实例
   useEffect(() => {
     const timer = setInterval(() => {
       const inst = window.__APPLAYER__
@@ -163,134 +276,185 @@ const DynamicIslandPlayer = ({ className }) => {
     return () => clearInterval(timer)
   }, [])
 
+  // 同步播放器状态
+  const syncPlayerState = useCallback(() => {
+    if (!ap || !mountedRef.current) return
+    
+    try {
+      const list = ap.list
+      const idx = list?.index
+      const aud = list?.audios?.[idx]
+
+      // 更新歌曲信息
+      const newTrack = {
+        name: aud?.name || '',
+        artist: aud?.artist || '',
+        cover: aud?.cover || ''
+      }
+      
+      dispatch({ type: 'SET_TRACK', payload: newTrack })
+
+      // 检查歌曲是否切换
+      const trackKey = `${aud?.name || ''}|${aud?.artist || ''}|${aud?.url || ''}`
+      if (trackKey && trackKey !== lastTrackKeyRef.current) {
+        lastTrackKeyRef.current = trackKey
+        lastLrcIdxRef.current = -1
+        lrcListRef.current = parseLrc(aud?.lrc || '')
+        dispatch({ type: 'SET_LOADING', payload: true })
+        dispatch({ type: 'SET_ERROR', payload: false })
+        
+        // 清空弹幕
+        setDanmakus([])
+        // 重置轨道占用
+        danmakuLaneUntilRef.current = []
+      }
+
+      const audio = ap.audio
+      if (!audio) return
+      
+      const current = audio.currentTime || 0
+      const duration = audio.duration || 0
+      
+      // 更新播放状态
+      dispatch({ type: 'SET_PLAYING', payload: !audio.paused })
+      dispatch({ type: 'SET_PROGRESS', payload: { current, duration } })
+
+      // 加载状态兜底判断
+      if (audio.readyState < 2 && !audio.paused) {
+        dispatch({ type: 'SET_LOADING', payload: true })
+      } else if (isLoading && audio.readyState >= 2) {
+        dispatch({ type: 'SET_LOADING', payload: false })
+      }
+
+      // 弹幕逻辑
+      if (showLrc && !audio.paused && lrcListRef.current.length > 0) {
+        const nextIdx = (() => {
+          const lastIdx = lastLrcIdxRef.current
+          let i = Math.max(0, lastIdx)
+          
+          // 向前查找
+          while (i + 1 < lrcListRef.current.length && current >= lrcListRef.current[i + 1].time) {
+            i++
+          }
+          
+          // 向后查找
+          while (i > 0 && current < lrcListRef.current[i].time) {
+            i--
+          }
+          
+          return i
+        })()
+
+        if (nextIdx !== lastLrcIdxRef.current) {
+          lastLrcIdxRef.current = nextIdx
+          const text = lrcListRef.current[nextIdx]?.text
+          
+          if (text && danmakuHostRef.current) {
+            const key = ++danmakuKeyRef.current
+            const width = measureDanmakuWidth(text)
+            const lane = pickDanmakuLane(width)
+            
+            setDanmakus(prev => {
+              const newDanmakus = [...prev, { key, text, lane }]
+              // 限制弹幕数量
+              return newDanmakus.slice(-(DANMAKU_CONFIG.lanes * 3))
+            })
+            
+            // 自动移除弹幕
+            setTimeout(() => {
+              if (mountedRef.current) {
+                setDanmakus(prev => prev.filter(d => d.key !== key))
+              }
+            }, DANMAKU_CONFIG.durationMs + 1500)
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Player sync error:', error)
+    }
+  }, [ap, showLrc, isLoading, DANMAKU_CONFIG.lanes, measureDanmakuWidth, pickDanmakuLane, parseLrc])
+
+  // 监听AP事件
   useEffect(() => {
     if (!ap) return
 
-    const sync = () => {
-      try {
-        const list = ap.list
-        const idx = list?.index
-        const aud = list?.audios?.[idx]
-
-        setTrack({
-          name: aud?.name || '',
-          artist: aud?.artist || '',
-          cover: aud?.cover || ''
-        })
-
-        const trackKey = `${aud?.name || ''}|${aud?.artist || ''}|${aud?.url || ''}`
-        if (trackKey && trackKey !== lastTrackKeyRef.current) {
-          lastTrackKeyRef.current = trackKey
-          lastLrcIdxRef.current = -1
-          lrcListRef.current = parseLrc(aud?.lrc || '')
-          setIsLoading(true)
-          setIsError(false)
-        }
-
-        const audio = ap.audio
-        const current = audio?.currentTime || 0
-        const duration = audio?.duration || 0
-
-        setIsPlaying(!audio?.paused)
-        setProgress({ current, duration })
-
-        // 加载态兜底判断
-        if (audio?.readyState < 2 && !audio?.paused) {
-          setIsLoading(true)
-        }
-
-        if (showLrc && !audio?.paused && lrcListRef.current?.length) {
-          const nextIdx = (() => {
-            const lastIdx = lastLrcIdxRef.current
-            let i = Math.max(0, lastIdx)
-            while (i + 1 < lrcListRef.current.length && current >= lrcListRef.current[i + 1].time) i++
-            while (i > 0 && current < lrcListRef.current[i].time) i--
-            return i
-          })()
-
-          if (nextIdx !== lastLrcIdxRef.current) {
-            lastLrcIdxRef.current = nextIdx
-            const text = lrcListRef.current[nextIdx]?.text
-            if (text) {
-              const key = ++danmakuKeyRef.current
-              const w = measureDanmakuWidth(text)
-              const lane = pickDanmakuLane(w)
-              setDanmakus(prev => {
-                const next = [...prev, { key, text, lane }]
-                return next.slice(-(DANMAKU_CONFIG.lanes * 2))
-              })
-              setTimeout(() => {
-                setDanmakus(prev => prev.filter(d => d.key !== key))
-              }, DANMAKU_CONFIG.durationMs + 1500)
-            }
-          }
-        }
-      } catch (e) {
-        // ignore
-      }
+    // 创建防抖的sync函数
+    if (!syncThrottleRef.current) {
+      syncThrottleRef.current = throttle(syncPlayerState, 100)
     }
-
-    const handleWaiting = () => setIsLoading(true)
-    const handleCanPlay = () => setIsLoading(false)
+    
+    const throttledSync = syncThrottleRef.current
+    
+    const handleWaiting = () => dispatch({ type: 'SET_LOADING', payload: true })
+    const handleCanPlay = () => dispatch({ type: 'SET_LOADING', payload: false })
     const handleError = () => {
-      setIsLoading(false)
-      setIsError(true)
+      dispatch({ type: 'SET_LOADING', payload: false })
+      dispatch({ type: 'SET_ERROR', payload: true })
     }
 
-    sync()
+    // 初始同步
+    syncPlayerState()
 
-    ap.on('play', sync)
-    ap.on('pause', sync)
-    ap.on('ended', sync)
-    ap.on('timeupdate', sync)
-    ap.on('listswitch', sync)
-    ap.on('waiting', handleWaiting)
-    ap.on('canplay', handleCanPlay)
-    ap.on('error', handleError)
+    // 绑定事件
+    const events = {
+      'timeupdate': throttledSync,
+      'listswitch': throttledSync,
+      'play': syncPlayerState,
+      'pause': syncPlayerState,
+      'ended': syncPlayerState,
+      'waiting': handleWaiting,
+      'canplay': handleCanPlay,
+      'error': handleError
+    }
+
+    Object.entries(events).forEach(([event, handler]) => {
+      ap.on(event, handler)
+    })
 
     return () => {
-      try {
-        ap.off('play', sync)
-        ap.off('pause', sync)
-        ap.off('ended', sync)
-        ap.off('timeupdate', sync)
-        ap.off('listswitch', sync)
-        ap.off('waiting', handleWaiting)
-        ap.off('canplay', handleCanPlay)
-        ap.off('error', handleError)
-      } catch (e) {
-        // ignore
+      // 解绑事件
+      Object.entries(events).forEach(([event, handler]) => {
+        try {
+          ap.off(event, handler)
+        } catch (e) {
+          // ignore
+        }
+      })
+      
+      if (syncThrottleRef.current) {
+        syncThrottleRef.current.cancel()
       }
     }
-  }, [ap, showLrc])
+  }, [ap, syncPlayerState])
 
-  const togglePlay = () => {
+  // 控制函数
+  const togglePlay = useCallback(() => {
     if (!ap) return
     try {
       if (ap.audio?.paused) ap.play()
       else ap.pause()
     } catch (e) {
-      // ignore
+      console.error('Toggle play error:', e)
     }
-  }
+  }, [ap])
 
-  const next = () => {
+  const next = useCallback(() => {
     if (!ap) return
     try {
       ap.skipForward()
     } catch (e) {
-      // ignore
+      console.error('Next track error:', e)
     }
-  }
+  }, [ap])
 
-  const prev = () => {
+  const prev = useCallback(() => {
     if (!ap) return
     try {
       ap.skipBack()
     } catch (e) {
-      // ignore
+      console.error('Previous track error:', e)
     }
-  }
+  }, [ap])
 
   const progressPct =
     progress.duration > 0
