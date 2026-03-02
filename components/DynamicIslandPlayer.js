@@ -356,8 +356,9 @@ const DynamicIslandPlayer = ({ className }) => {
             
             setDanmakus(prev => {
               const newDanmakus = [...prev, { key, text, lane }]
-              // 限制弹幕数量
-              return newDanmakus.slice(-(DANMAKU_CONFIG.lanes * 3))
+             // 根据弹幕密度动态调整数量限制
+            const maxDanmakus = Math.min(20, Math.max(8, Math.floor(window.innerWidth / 100)))
+            return newDanmakus.slice(-maxDanmakus)
             })
             
             // 自动移除弹幕
