@@ -44,9 +44,14 @@ const Player = () => {
       try {
         const res = await fetch(apiUrl)
         if (res.ok) {
-          const data = await res.json()
-          if (Array.isArray(data) && data.length > 0) {
-            audio = data
+          
+          // const data = await res.json()
+          // if (Array.isArray(data) && data.length > 0) {
+          //   audio = data
+          // }
+          const result = await res.json() // result 现在是 { tracks: [...], meta: {...} }
+          if (result.tracks && Array.isArray(result.tracks) && result.tracks.length > 0) {
+            audio = result.tracks // ✅ 正确提取 tracks 数组
           }
         }
       } catch (e) {
