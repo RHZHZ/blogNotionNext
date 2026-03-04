@@ -2087,3 +2087,73 @@ figure.notion-asset-wrapper.notion-asset-wrapper-video > div {
 .notion-gallery {
   padding: 0 16px;
 }
+
+/* 列表样式优化 - 亮色模式 */
+#theme-heo .notion-list {
+  margin: 1.2em 0 !important;
+  padding-left: 0 !important;
+}
+
+#theme-heo .notion-list-disc,
+#theme-heo .notion-list-numbered {
+  padding-inline-start: 2em !important;
+}
+
+#theme-heo .notion-list li {
+  padding: 0.6em 0.5em !important;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+  position: relative;
+  line-height: 1.75;
+  border-radius: 6px;
+}
+
+#theme-heo .notion-list li::marker {
+  color: #6366f1 !important;
+  font-weight: 500;
+  font-size: 1.1em;
+}
+
+#theme-heo .notion-list li:hover {
+  background: rgba(99, 102, 241, 0.06) !important;
+  transform: translateX(3px);
+}
+
+/* 嵌套列表优化 */
+#theme-heo .notion-list .notion-list {
+  margin-top: 0.4em !important;
+  margin-bottom: 0.4em !important;
+  margin-left: 0.5em !important;
+}
+
+#theme-heo .notion-list .notion-list li::marker {
+  color: #8b5cf6 !important;
+}
+
+/* 列表样式优化 - 暗色模式 */
+html.dark #theme-heo .notion-list li::marker {
+  color: #f59e0b !important;
+}
+
+html.dark #theme-heo .notion-list li:hover {
+  background: rgba(245, 158, 11, 0.1) !important;
+}
+
+html.dark #theme-heo .notion-list .notion-list li::marker {
+  color: #10b981 !important;
+}
+
+/* 列表样式优化 - 移动端 */
+@media (max-width: 768px) {
+  #theme-heo .notion-list-disc,
+  #theme-heo .notion-list-numbered {
+    padding-inline-start: 1.5em !important;
+  }
+
+  #theme-heo .notion-list li {
+    padding: 0.5em 0.3em !important;
+  }
+
+  #theme-heo .notion-list li:hover {
+    transform: none;
+  }
+}
