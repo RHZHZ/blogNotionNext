@@ -1,0 +1,61 @@
+name: Baidu URL Push
+
+on:
+  schedule:
+    # 每天上午10点（北京时间）自动推送
+    - cron: '0 2 * * *'  # UTC时间2点 = 北京时间10点
+  workflow_dispatch:  # 支持手动触发
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'pages/**'
+      - 'pushUrl.py'
+      - '.github/workflows/baidu-push.yml'
+
+jobs:
+  push-to-baidu:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Push URLs to Baidu
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          BAIDU_TOKEN: ${{ secrets.BAIDU_TOKEN }}
+        run: |
+          if [ -z "$SITE_URL" ] || [ -z "$BAIDU_TOKEN" ]; then
+            echo "❌ Missing required secrets. Please configure SITE_URL and BAIDU_TOKEN in GitHub Secrets."
+            echo "📖 Documentation: https://docs.github.com/en/actions/security-guides/encrypted-secrets"
+            exit 1
+          fi
+          
+          echo "🚀 Starting Baidu URL push for: $SITE_URL"
+          python pushUrl.py --url "$SITE_URL" --baidu_token "$BAIDU_TOKEN"
+          
+          # 检查推送结果
+          if [ $? -eq 0 ]; then
+            echo "✅ Baidu URL push completed successfully!"
+          else
+            echo "❌ Baidu URL push failed!"
+            exit 1
+          fi
+
+      - name: Push to Bing (Optional)
+        if: env.BING_API_KEY != ''
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          BING_API_KEY: ${{ secrets.BING_API_KEY }}
+        run: |
+          echo "🚀 Starting Bing URL push..."
+          python pushUrl.py --url "$SITE_URL" --bing_api_key "$BING_API_KEY"
+          echo "✅ Bing URL push completed!"
