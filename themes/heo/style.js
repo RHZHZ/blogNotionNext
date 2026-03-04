@@ -1817,18 +1817,39 @@ const Style = () => {
         // }
 
         /* ===== 优雅分割线 ===== */
+       /* ===== 优化方案三：带中心装饰的细线 ===== */
         #theme-heo .notion-hr {
             border: none !important;
             height: 1px !important;
-            background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent) !important;
             margin: 2.5rem auto !important;
-            width: 80% !important;
+            width: 100% !important; /* 或设置为一个较宽的比例，如 60% */
+            background: rgba(0, 0, 0, 0.1) !important; /* 基础细线 */
+            position: relative !important;
+        }
+
+        /* 在细线中心添加一个装饰性小图标（例如：一个菱形或圆点） */
+        #theme-heo .notion-hr::after {
+            content: '' !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            width: 6px !important;
+            height: 6px !important;
+            background-color: #d0d0d0 !important; /* 图标颜色 */
+            border-radius: 50% !important; /* 圆形，可改为0 菱形 */
+            box-shadow: 0 0 0 3px white !important; /* 用白边“挖空”细线，形成穿透效果 */
         }
 
         html.dark #theme-heo .notion-hr {
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent) !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+        }
+        html.dark #theme-heo .notion-hr::after {
+            background-color: #888 !important;
+            box-shadow: 0 0 0 3px var(--dark-bg-color) !important; /* 需替换为实际的深色背景变量 */
         }
 
+        
         /* ===== 任务列表自定义复选框 ===== */
         #theme-heo .notion-to-do-item {
             align-items: flex-start !important;
@@ -1924,7 +1945,7 @@ const Style = () => {
         #theme-heo .notion-toggle[open] > summary {
             background: rgba(173, 216, 230, 0.15) !important; /* 极浅蓝色背景 */
             border: 1px solid rgba(100, 149, 237, 0.3) !important; /* 浅蓝色描边 */
-            border-bottom: none !important;
+            border-bottom: 1px solid rgba(100, 149, 237, 0.3) !important; /* 保持底部边框 */
             border-radius: 8px 8px 0 0 !important;
             margin: 0 !important; /* 移除补偿，因为容器边框已透明 */
         }
@@ -1958,8 +1979,8 @@ const Style = () => {
         #theme-heo .notion-toggle > div {
             padding: 0 16px 16px 16px !important;
             border: 1px solid rgba(100, 149, 237, 0.3) !important; /* 浅蓝色描边 */
-            border-top: none !important;
-            margin-top: 0 !important;
+            // border-top: none !important;
+            margin-top: -1px !important; /* 上移1px，使内容区域顶部边框与标题底部边框重叠 */
             margin-left: 0 !important;
             border-radius: 0 0 8px 8px !important;
             background: rgba(255, 255, 255, 0.98) !important;
@@ -1995,7 +2016,7 @@ const Style = () => {
         html.dark #theme-heo .notion-toggle[open] > summary {
             background: rgba(255, 140, 0, 0.2) !important; /* 亮橘色背景 */
             border: 1px solid rgba(255, 165, 0, 0.4) !important; /* 橘色描边 */
-            border-bottom: none !important;
+            border-bottom: 1px solid rgba(255, 165, 0, 0.4) !important; /* 保持底部边框 */
             border-radius: 8px 8px 0 0 !important;
             margin: 0 !important; /* 移除补偿 */
         }
@@ -2014,7 +2035,8 @@ const Style = () => {
 
         html.dark #theme-heo .notion-toggle > div {
             border: 1px solid rgba(255, 165, 0, 0.4) !important; /* 橘色描边 */
-            border-top: none !important;
+            // border-top: none !important;
+            margin-top: -1px !important; /* 上移1px，使内容区域顶部边框与标题底部边框重叠 */
             background: rgba(27, 28, 32, 0.98) !important;
         }
 
