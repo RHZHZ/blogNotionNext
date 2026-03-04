@@ -104,6 +104,39 @@ pre.notion-code {
   -webkit-overflow-scrolling: touch;
 }
 
+/* 自定义滚动条样式 */
+pre.notion-code::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+pre.notion-code::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+}
+
+pre.notion-code::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+pre.notion-code::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* 暗色模式滚动条 */
+html.dark pre.notion-code::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+html.dark pre.notion-code::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+html.dark pre.notion-code::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 /* 5. 智能折叠 S1 极简 UI */
 .collapse-wrapper {
   margin: 1rem 0;
@@ -170,7 +203,7 @@ html.dark .collapse-panel {
 }
 
 .collapse-panel.is-expanded {
-  max-height: 3000px;
+  max-height: 10000px;
 }
 
 /* 6. Prism 代码高亮补丁 (亮色模式) */
