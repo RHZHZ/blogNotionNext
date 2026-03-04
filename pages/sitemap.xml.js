@@ -52,36 +52,30 @@ function generateLocalesSitemap(link, allPages, locale) {
       loc: `${link}${locale}`,
       lastmod: dateNow,
       changefreq: 'daily',
-      priority: '0.7'
+      priority: '1.0'
     },
     {
       loc: `${link}${locale}/archive`,
       lastmod: dateNow,
-      changefreq: 'daily',
-      priority: '0.7'
+      changefreq: 'weekly',
+      priority: '0.9'
     },
     {
       loc: `${link}${locale}/category`,
       lastmod: dateNow,
-      changefreq: 'daily',
-      priority: '0.7'
+      changefreq: 'weekly',
+      priority: '0.8'
     },
     {
       loc: `${link}${locale}/rss/feed.xml`,
       lastmod: dateNow,
       changefreq: 'daily',
-      priority: '0.7'
-    },
-    {
-      loc: `${link}${locale}/search`,
-      lastmod: dateNow,
-      changefreq: 'daily',
-      priority: '0.7'
+      priority: '0.6'
     },
     {
       loc: `${link}${locale}/tag`,
       lastmod: dateNow,
-      changefreq: 'daily',
+      changefreq: 'weekly',
       priority: '0.7'
     }
   ]
@@ -92,13 +86,23 @@ function generateLocalesSitemap(link, allPages, locale) {
         const slugWithoutLeadingSlash = post?.slug.startsWith('/')
           ? post?.slug?.slice(1)
           : post.slug
+
+        // 跳过无效链接
+        if (!slugWithoutLeadingSlash ||
+            slugWithoutLeadingSlash.startsWith('#') ||
+            slugWithoutLeadingSlash.startsWith('http://') ||
+            slugWithoutLeadingSlash.startsWith('https://')) {
+          return null
+        }
+
         return {
           loc: `${link}${locale}/${slugWithoutLeadingSlash}`,
-          lastmod: new Date(post?.publishDay).toISOString().split('T')[0],
-          changefreq: 'daily',
-          priority: '0.7'
+          lastmod: new Date(post?.publishDay || post?.lastEditedTime || Date.now()).toISOString().split('T')[0],
+          changefreq: post.type === 'Post' ? 'weekly' : 'monthly',
+          priority: post.type === 'Post' ? '0.9' : '0.7'
         }
-      }) ?? []
+      })
+      .filter(Boolean) ?? []
 
   return defaultFields.concat(postFields)
 }
