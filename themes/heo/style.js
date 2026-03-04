@@ -1732,21 +1732,21 @@ const Style = () => {
             background-color: rgba(0, 0, 0, 0.02) !important;
         }
 
-        /* 暗色模式 */
+        /* 暗色模式 - 增强表格边框对比度 */
         html.dark #theme-heo .notion-table {
-            border-color: rgba(255, 255, 255, 0.12) !important;
+            border-color: rgba(255, 255, 255, 0.22) !important;
             background: rgba(30, 30, 32, 0.8) !important;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2) !important;
         }
 
         html.dark #theme-heo .notion-table-header-inner {
-            border-top-color: rgba(255, 255, 255, 0.08) !important;
-            border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+            border-top-color: rgba(255, 255, 255, 0.18) !important;
+            border-bottom-color: rgba(255, 255, 255, 0.25) !important;
             background: rgba(40, 40, 42, 0.8) !important;
         }
 
         html.dark #theme-heo .notion-table-row {
-            border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+            border-bottom-color: rgba(255, 255, 255, 0.16) !important;
         }
 
         html.dark #theme-heo .notion-table-row:hover {
@@ -1754,28 +1754,28 @@ const Style = () => {
         }
 
         html.dark #theme-heo .notion-table-cell {
-            border-right-color: rgba(255, 255, 255, 0.06) !important;
+            border-right-color: rgba(255, 255, 255, 0.16) !important;
         }
 
         html.dark #theme-heo .notion-table-view-header-cell-inner {
-            border-right-color: rgba(255, 255, 255, 0.08) !important;
+            border-right-color: rgba(255, 255, 255, 0.18) !important;
             color: rgba(255, 255, 255, 0.9) !important;
         }
 
         html.dark #theme-heo .notion-simple-table {
-            border-color: rgba(255, 255, 255, 0.12) !important;
+            border-color: rgba(255, 255, 255, 0.22) !important;
             background: rgba(30, 30, 32, 0.8) !important;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2) !important;
         }
 
         html.dark #theme-heo .notion-simple-table td {
-            border-color: rgba(255, 255, 255, 0.06) !important;
+            border-color: rgba(255, 255, 255, 0.16) !important;
         }
 
         html.dark #theme-heo .notion-simple-table tr:first-child td {
             background: rgba(40, 40, 42, 0.8) !important;
             color: rgba(255, 255, 255, 0.9) !important;
-            border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+            border-bottom-color: rgba(255, 255, 255, 0.25) !important;
         }
 
         html.dark #theme-heo .notion-simple-table tr:hover {
@@ -2211,9 +2211,62 @@ const Style = () => {
 
         /* ===== 响应式细节优化 ===== */
         @media (max-width: 768px) {
+            /* 移动端文章内容优化 - 防止拥挤，避免横屏滚动 */
+            #theme-heo #article-wrapper,
+            #theme-heo #article-wrapper #notion-article {
+                font-size: 14px !important;
+                line-height: 1.65 !important;
+                overflow-wrap: break-word !important;
+                word-break: break-word !important;
+            }
+            
+            #theme-heo #article-wrapper #notion-article p {
+                margin: 0 0 0.8em !important;
+            }
+            
+            #theme-heo #article-wrapper #notion-article h2 {
+                font-size: 1.25rem !important;
+                margin: 2.2rem 0 0.5rem !important;
+            }
+            
+            #theme-heo #article-wrapper #notion-article h3 {
+                font-size: 1.1rem !important;
+                margin: 1.8rem 0 0.4rem !important;
+            }
+            
+            #theme-heo #article-wrapper #notion-article h4 {
+                font-size: 1rem !important;
+                margin: 1.2rem 0 0.3rem !important;
+            }
+            
+            #theme-heo #article-wrapper #notion-article ul,
+            #theme-heo #article-wrapper #notion-article ol {
+                padding-left: 0.8rem;
+                margin: 0.2rem 0 0.8rem;
+            }
+            
+            #theme-heo #article-wrapper #notion-article li {
+                margin-bottom: 0.25rem;
+            }
+            
+            #theme-heo #article-wrapper #notion-article blockquote {
+                margin: 0 0 1rem;
+                padding: 0.5rem 0.8rem;
+            }
+            
+            #theme-heo #article-wrapper #notion-article .notion-list {
+                margin-block-end: 0.6rem !important;
+            }
+            
+            #theme-heo #article-wrapper #notion-article .notion-list-disc,
+            #theme-heo #article-wrapper #notion-article .notion-list-numbered {
+                padding-inline-start: 0.8rem !important;
+            }
+            
             #theme-heo .notion-code {
                 padding: 16px !important;
                 font-size: 0.85em !important;
+                overflow-x: auto !important;
             }
             
             #theme-heo .notion-callout,
@@ -2230,6 +2283,36 @@ const Style = () => {
             
             #theme-heo .notion-file-link {
                 padding: 10px 14px !important;
+            }
+            
+            /* 移动端表格优化 - 防止水平滚动 */
+            #theme-heo .notion-table,
+            #theme-heo .notion-simple-table {
+                font-size: 0.9em !important;
+                padding: 8px !important;
+                overflow-x: auto !important;
+                display: block !important;
+            }
+            
+            #theme-heo .notion-table-cell,
+            #theme-heo .notion-simple-table td {
+                padding: 8px 10px !important;
+                min-width: 60px !important;
+            }
+            
+            #theme-heo .notion-table-view-header-cell-inner {
+                padding: 6px 10px !important;
+            }
+            
+            /* 移动端图片优化 - 减小边距 */
+            #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image {
+                margin: 1rem auto !important;
+                border-radius: 10px !important;
+            }
+            
+            #theme-heo #article-wrapper #notion-article .notion-asset-caption {
+                font-size: 0.8rem !important;
+                padding: 0 0.5rem !important;
             }
         }
 
