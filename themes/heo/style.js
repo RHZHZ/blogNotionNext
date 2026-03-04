@@ -1781,6 +1781,483 @@ const Style = () => {
         html.dark #theme-heo .notion-simple-table tr:hover {
             background-color: rgba(255, 255, 255, 0.04) !important;
         }
+
+        /* ===== macOS 风格代码块 ===== */
+        #theme-heo .notion-code {
+            border-radius: 12px !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            background: rgba(248, 249, 250, 0.9) !important;
+            backdrop-filter: blur(10px) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            padding: 24px !important;
+            margin: 1.5rem 0 !important;
+            font-family: var(--heo-font-mono) !important;
+            font-size: 0.92em !important;
+            line-height: 1.6 !important;
+            overflow-x: auto !important;
+            position: relative !important;
+        }
+
+        #theme-heo .notion-code::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 12px !important;
+            left: 12px !important;
+            width: 12px !important;
+            height: 12px !important;
+            border-radius: 50% !important;
+            background: #ff5f57 !important;
+            box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #28ca42 !important;
+        }
+
+        html.dark #theme-heo .notion-code {
+            border-color: rgba(255, 255, 255, 0.12) !important;
+            background: rgba(30, 30, 32, 0.9) !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        /* ===== 优雅分割线 ===== */
+        #theme-heo .notion-hr {
+            border: none !important;
+            height: 1px !important;
+            background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent) !important;
+            margin: 2.5rem auto !important;
+            width: 80% !important;
+        }
+
+        html.dark #theme-heo .notion-hr {
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent) !important;
+        }
+
+        /* ===== 任务列表自定义复选框 ===== */
+        #theme-heo .notion-to-do-item {
+            align-items: flex-start !important;
+            padding: 8px 2px !important;
+            margin: 4px 0 !important;
+        }
+
+        #theme-heo .notion-property-checkbox {
+            width: 20px !important;
+            height: 20px !important;
+            border: 2px solid rgba(0, 0, 0, 0.2) !important;
+            border-radius: 6px !important;
+            margin-right: 12px !important;
+            margin-top: 2px !important;
+            position: relative !important;
+            flex-shrink: 0 !important;
+            transition: all 0.2s var(--heo-ease) !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(10px) !important;
+        }
+
+        #theme-heo .notion-property-checkbox:hover {
+            border-color: rgba(37, 99, 235, 0.6) !important;
+            transform: scale(1.05) !important;
+        }
+
+        #theme-heo .notion-property-checkbox-checked {
+            background: rgba(37, 99, 235, 0.9) !important;
+            border-color: rgba(37, 99, 235, 0.9) !important;
+        }
+
+        #theme-heo .notion-property-checkbox-checked::after {
+            content: '' !important;
+            position: absolute !important;
+            top: 4px !important;
+            left: 7px !important;
+            width: 6px !important;
+            height: 10px !important;
+            border: solid white !important;
+            border-width: 0 2px 2px 0 !important;
+            transform: rotate(45deg) !important;
+        }
+
+        #theme-heo .notion-to-do-checked {
+            opacity: 0.7 !important;
+            color: var(--heo-text-tertiary) !important;
+        }
+
+        html.dark #theme-heo .notion-property-checkbox {
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            background: rgba(40, 40, 42, 0.8) !important;
+        }
+
+        html.dark #theme-heo .notion-property-checkbox:hover {
+            border-color: rgba(234, 179, 8, 0.6) !important;
+        }
+
+        html.dark #theme-heo .notion-property-checkbox-checked {
+            background: rgba(234, 179, 8, 0.9) !important;
+            border-color: rgba(234, 179, 8, 0.9) !important;
+        }
+
+        /* ===== 折叠块箭头动画 ===== */
+        #theme-heo .notion-toggle > summary {
+            list-style: none !important;
+            cursor: pointer !important;
+            padding: 12px 16px !important;
+            border-radius: 12px !important;
+            background: rgba(248, 249, 250, 0.8) !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(0, 0, 0, 0.06) !important;
+            transition: all 0.3s var(--heo-ease) !important;
+            position: relative !important;
+            margin: 8px 0 !important;
+        }
+
+        #theme-heo .notion-toggle > summary::after {
+            content: '▶' !important;
+            position: absolute !important;
+            right: 16px !important;
+            top: 50% !important;
+            transform: translateY(-50%) rotate(0deg) !important;
+            transition: transform 0.3s var(--heo-ease) !important;
+            color: var(--heo-text-tertiary) !important;
+            font-size: 0.8em !important;
+        }
+
+        #theme-heo .notion-toggle[open] > summary::after {
+            transform: translateY(-50%) rotate(90deg) !important;
+        }
+
+        #theme-heo .notion-toggle > summary:hover {
+            background: rgba(37, 99, 235, 0.05) !important;
+            border-color: rgba(37, 99, 235, 0.2) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1) !important;
+        }
+
+        #theme-heo .notion-toggle > div {
+            margin-left: 24px !important;
+            padding: 16px !important;
+            border-left: 2px solid rgba(0, 0, 0, 0.08) !important;
+            margin-top: 8px !important;
+            border-radius: 0 0 8px 8px !important;
+        }
+
+        html.dark #theme-heo .notion-toggle > summary {
+            background: rgba(40, 40, 42, 0.8) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        html.dark #theme-heo .notion-toggle > summary:hover {
+            background: rgba(234, 179, 8, 0.05) !important;
+            border-color: rgba(234, 179, 8, 0.2) !important;
+            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.1) !important;
+        }
+
+        html.dark #theme-heo .notion-toggle > div {
+            border-left-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* ===== 警告/提示框通知样式 ===== */
+        #theme-heo .notion-callout {
+            border-radius: 14px !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            background: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(12px) !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+            padding: 20px 24px !important;
+            margin: 1.5rem 0 !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+
+        #theme-heo .notion-callout::before {
+            content: '' !important;
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            width: 4px !important;
+            background: linear-gradient(to bottom, #4f65f0, #a252ff) !important;
+            border-radius: 4px 0 0 4px !important;
+        }
+
+        #theme-heo .notion-callout .notion-page-icon {
+            color: #4f65f0 !important;
+            font-size: 1.4em !important;
+            margin-right: 16px !important;
+            flex-shrink: 0 !important;
+        }
+
+        html.dark #theme-heo .notion-callout {
+            border-color: rgba(255, 255, 255, 0.12) !important;
+            background: rgba(30, 30, 32, 0.85) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        html.dark #theme-heo .notion-callout::before {
+            background: linear-gradient(to bottom, #eab308, #f97316) !important;
+        }
+
+        html.dark #theme-heo .notion-callout .notion-page-icon {
+            color: #eab308 !important;
+        }
+
+        /* ===== 书签块卡片式设计 ===== */
+        #theme-heo .notion-bookmark {
+            border-radius: 14px !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(12px) !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+            overflow: hidden !important;
+            transition: all 0.3s var(--heo-ease) !important;
+            margin: 1.5rem 0 !important;
+        }
+
+        #theme-heo .notion-bookmark:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1) !important;
+            border-color: rgba(37, 99, 235, 0.2) !important;
+        }
+
+        #theme-heo .notion-bookmark > div:first-child {
+            padding: 20px !important;
+        }
+
+        #theme-heo .notion-bookmark-title {
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            color: var(--heo-text) !important;
+            margin-bottom: 8px !important;
+        }
+
+        #theme-heo .notion-bookmark-description {
+            font-size: 14px !important;
+            line-height: 1.5 !important;
+            color: var(--heo-text-secondary) !important;
+            height: auto !important;
+            max-height: 3em !important;
+        }
+
+        #theme-heo .notion-bookmark-link {
+            margin-top: 12px !important;
+        }
+
+        html.dark #theme-heo .notion-bookmark {
+            border-color: rgba(255, 255, 255, 0.12) !important;
+            background: rgba(30, 30, 32, 0.8) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        html.dark #theme-heo .notion-bookmark:hover {
+            border-color: rgba(234, 179, 8, 0.2) !important;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        /* ===== 文件块按钮式外观 ===== */
+        #theme-heo .notion-file-link {
+            border-radius: 10px !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(10px) !important;
+            padding: 12px 16px !important;
+            margin: 8px 0 !important;
+            transition: all 0.3s var(--heo-ease) !important;
+            text-decoration: none !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        #theme-heo .notion-file-link:hover {
+            background: rgba(37, 99, 235, 0.05) !important;
+            border-color: rgba(37, 99, 235, 0.2) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1) !important;
+        }
+
+        #theme-heo .notion-file-icon {
+            margin-right: 12px !important;
+            color: #4f65f0 !important;
+            font-size: 1.2em !important;
+        }
+
+        #theme-heo .notion-file-title {
+            font-weight: 500 !important;
+            color: var(--heo-text) !important;
+            flex: 1 !important;
+        }
+
+        #theme-heo .notion-file-size {
+            color: var(--heo-text-tertiary) !important;
+            font-size: 12px !important;
+            margin-left: 12px !important;
+        }
+
+        html.dark #theme-heo .notion-file-link {
+            border-color: rgba(255, 255, 255, 0.12) !important;
+            background: rgba(40, 40, 42, 0.8) !important;
+        }
+
+        html.dark #theme-heo .notion-file-link:hover {
+            background: rgba(234, 179, 8, 0.05) !important;
+            border-color: rgba(234, 179, 8, 0.2) !important;
+            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.1) !important;
+        }
+
+        html.dark #theme-heo .notion-file-icon {
+            color: #eab308 !important;
+        }
+
+        /* ===== 音频块自定义播放器 ===== */
+        #theme-heo .notion-audio {
+            border-radius: 12px !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(10px) !important;
+            padding: 20px !important;
+            margin: 1.5rem 0 !important;
+        }
+
+        #theme-heo .notion-audio audio {
+            width: 100% !important;
+            border-radius: 8px !important;
+            background: rgba(248, 249, 250, 0.9) !important;
+        }
+
+        #theme-heo .notion-audio audio::-webkit-media-controls-panel {
+            background: rgba(248, 249, 250, 0.9) !important;
+            border-radius: 8px !important;
+        }
+
+        html.dark #theme-heo .notion-audio {
+            border-color: rgba(255, 255, 255, 0.12) !important;
+            background: rgba(30, 30, 32, 0.8) !important;
+        }
+
+        html.dark #theme-heo .notion-audio audio {
+            background: rgba(40, 40, 42, 0.9) !important;
+        }
+
+        html.dark #theme-heo .notion-audio audio::-webkit-media-controls-panel {
+            background: rgba(40, 40, 42, 0.9) !important;
+        }
+
+        /* ===== 公式块清晰显示 ===== */
+        #theme-heo .notion-equation-block {
+            border-radius: 12px !important;
+            background: rgba(248, 249, 250, 0.9) !important;
+            backdrop-filter: blur(10px) !important;
+            padding: 20px !important;
+            margin: 1.5rem 0 !important;
+            border: 1px solid rgba(0, 0, 0, 0.06) !important;
+            overflow: auto !important;
+        }
+
+        #theme-heo .notion-equation-inline {
+            background: rgba(248, 249, 250, 0.9) !important;
+            border-radius: 6px !important;
+            padding: 2px 6px !important;
+            border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        }
+
+        html.dark #theme-heo .notion-equation-block {
+            background: rgba(30, 30, 32, 0.9) !important;
+            border-color: rgba(255, 255, 255, 0.12) !important;
+        }
+
+        html.dark #theme-heo .notion-equation-inline {
+            background: rgba(40, 40, 42, 0.9) !important;
+            border-color: rgba(255, 255, 255, 0.12) !important;
+        }
+
+        /* ===== 内联代码微调 ===== */
+        #theme-heo .notion-inline-code {
+            background: rgba(248, 249, 250, 0.9) !important;
+            border-radius: 6px !important;
+            padding: 2px 6px !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            font-family: var(--heo-font-mono) !important;
+            font-size: 0.9em !important;
+            color: #eb5757 !important;
+        }
+
+        html.dark #theme-heo .notion-inline-code {
+            background: rgba(40, 40, 42, 0.9) !important;
+            border-color: rgba(255, 255, 255, 0.12) !important;
+            color: #ff7b72 !important;
+        }
+
+        /* ===== 颜色背景文本对比度 ===== */
+        #theme-heo .notion-red_background,
+        #theme-heo .notion-pink_background,
+        #theme-heo .notion-blue_background,
+        #theme-heo .notion-purple_background,
+        #theme-heo .notion-teal_background,
+        #theme-heo .notion-yellow_background,
+        #theme-heo .notion-orange_background,
+        #theme-heo .notion-brown_background,
+        #theme-heo .notion-gray_background,
+        #theme-heo .notion-green_background {
+            border-radius: 6px !important;
+            padding: 2px 6px !important;
+            margin: 0 1px !important;
+        }
+
+        html.dark #theme-heo .notion-red_background,
+        html.dark #theme-heo .notion-pink_background,
+        html.dark #theme-heo .notion-blue_background,
+        html.dark #theme-heo .notion-purple_background,
+        html.dark #theme-heo .notion-teal_background,
+        html.dark #theme-heo .notion-yellow_background,
+        html.dark #theme-heo .notion-orange_background,
+        html.dark #theme-heo .notion-brown_background,
+        html.dark #theme-heo .notion-gray_background,
+        html.dark #theme-heo .notion-green_background {
+            opacity: 0.9 !important;
+        }
+
+        /* ===== 响应式细节优化 ===== */
+        @media (max-width: 768px) {
+            #theme-heo .notion-code {
+                padding: 16px !important;
+                font-size: 0.85em !important;
+            }
+            
+            #theme-heo .notion-callout,
+            #theme-heo .notion-bookmark,
+            #theme-heo .notion-audio,
+            #theme-heo .notion-equation-block {
+                padding: 16px !important;
+                margin: 1rem 0 !important;
+            }
+            
+            #theme-heo .notion-toggle > summary {
+                padding: 10px 14px !important;
+            }
+            
+            #theme-heo .notion-file-link {
+                padding: 10px 14px !important;
+            }
+        }
+
+        /* ===== 可访问性改进 ===== */
+        #theme-heo .notion-link:focus-visible,
+        #theme-heo .notion-file-link:focus-visible,
+        #theme-heo .notion-toggle > summary:focus-visible,
+        #theme-heo .notion-bookmark:focus-visible {
+            outline: 2px solid rgba(37, 99, 235, 0.6) !important;
+            outline-offset: 2px !important;
+            border-radius: 6px !important;
+        }
+
+        html.dark #theme-heo .notion-link:focus-visible,
+        html.dark #theme-heo .notion-file-link:focus-visible,
+        html.dark #theme-heo .notion-toggle > summary:focus-visible,
+        html.dark #theme-heo .notion-bookmark:focus-visible {
+            outline-color: rgba(234, 179, 8, 0.6) !important;
+        }
+
+        #theme-heo .notion-property-checkbox:focus-visible {
+            outline: 2px solid rgba(37, 99, 235, 0.6) !important;
+            outline-offset: 2px !important;
+        }
+
+        html.dark #theme-heo .notion-property-checkbox:focus-visible {
+            outline-color: rgba(234, 179, 8, 0.6) !important;
+        }
     `}</style>
 
   )
