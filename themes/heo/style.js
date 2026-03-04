@@ -1660,57 +1660,126 @@ const Style = () => {
             71% { transform: skewX(10deg) skewY(-10deg); }
         }
 
-        /* 修复亮色模式下表格边框不明显的问题 */
-        #theme-heo .notion-table-cell {
-            border-color: rgba(0, 0, 0, 0.25) !important;
+        /* Mac风格表格美化 */
+        #theme-heo .notion-table {
+            border: 1px solid rgba(0, 0, 0, 0.1) !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(10px) !important;
+        }
+
+        #theme-heo .notion-table-header-inner {
+            border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+            background: rgba(248, 249, 250, 0.8) !important;
+            backdrop-filter: blur(10px) !important;
         }
 
         #theme-heo .notion-table-row {
-            border-bottom-color: rgba(0, 0, 0, 0.25) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+            transition: background-color 0.2s ease !important;
+        }
+
+        #theme-heo .notion-table-row:hover {
+            background-color: rgba(0, 0, 0, 0.02) !important;
+        }
+
+        #theme-heo .notion-table-cell {
+            border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
+            padding: 12px 16px !important;
+        }
+
+        #theme-heo .notion-table-cell:last-child {
+            border-right: none !important;
         }
 
         #theme-heo .notion-table-view-header-cell-inner {
-            border-right-color: rgba(0, 0, 0, 0.25) !important;
+            border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+            padding: 10px 16px !important;
+            font-weight: 600 !important;
+            color: rgba(0, 0, 0, 0.8) !important;
+        }
+
+        #theme-heo .notion-table-view-header-cell-inner:last-child {
+            border-right: none !important;
+        }
+
+        #theme-heo .notion-simple-table {
+            border: 1px solid rgba(0, 0, 0, 0.1) !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(10px) !important;
         }
 
         #theme-heo .notion-simple-table td {
-            border-color: rgba(0, 0, 0, 0.25) !important;
+            border: 1px solid rgba(0, 0, 0, 0.06) !important;
+            padding: 12px 16px !important;
         }
 
-        #theme-heo .notion-table {
-            border-color: rgba(0, 0, 0, 0.25) !important;
+        #theme-heo .notion-simple-table tr:first-child td {
+            background: rgba(248, 249, 250, 0.8) !important;
+            backdrop-filter: blur(10px) !important;
+            font-weight: 600 !important;
+            color: rgba(0, 0, 0, 0.8) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
         }
 
-        /* 修复暗色模式下表格边框不可见的问题 */
-        html.dark #theme-heo .notion-table-cell {
-            border-color: rgba(255, 255, 255, 0.3) !important;
+        #theme-heo .notion-simple-table tr:hover {
+            background-color: rgba(0, 0, 0, 0.02) !important;
         }
 
-        html.dark #theme-heo .notion-table-row {
-            border-bottom-color: rgba(255, 255, 255, 0.3) !important;
-        }
-
-        html.dark #theme-heo .notion-table-view-header-cell-inner {
-            border-right-color: rgba(255, 255, 255, 0.3) !important;
-        }
-
-        html.dark #theme-heo .notion-simple-table td {
-            border-color: rgba(255, 255, 255, 0.3) !important;
-        }
-
+        /* 暗色模式 */
         html.dark #theme-heo .notion-table {
-            border-color: rgba(255, 255, 255, 0.3) !important;
-        }
-
-        /* 表格表头边框 */
-        #theme-heo .notion-table-header-inner {
-            border-top-color: rgba(0, 0, 0, 0.25) !important;
-            border-bottom-color: rgba(0, 0, 0, 0.25) !important;
+            border-color: rgba(255, 255, 255, 0.12) !important;
+            background: rgba(30, 30, 32, 0.8) !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2) !important;
         }
 
         html.dark #theme-heo .notion-table-header-inner {
-            border-top-color: rgba(255, 255, 255, 0.3) !important;
-            border-bottom-color: rgba(255, 255, 255, 0.3) !important;
+            border-top-color: rgba(255, 255, 255, 0.08) !important;
+            border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+            background: rgba(40, 40, 42, 0.8) !important;
+        }
+
+        html.dark #theme-heo .notion-table-row {
+            border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+        }
+
+        html.dark #theme-heo .notion-table-row:hover {
+            background-color: rgba(255, 255, 255, 0.04) !important;
+        }
+
+        html.dark #theme-heo .notion-table-cell {
+            border-right-color: rgba(255, 255, 255, 0.06) !important;
+        }
+
+        html.dark #theme-heo .notion-table-view-header-cell-inner {
+            border-right-color: rgba(255, 255, 255, 0.08) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        html.dark #theme-heo .notion-simple-table {
+            border-color: rgba(255, 255, 255, 0.12) !important;
+            background: rgba(30, 30, 32, 0.8) !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        html.dark #theme-heo .notion-simple-table td {
+            border-color: rgba(255, 255, 255, 0.06) !important;
+        }
+
+        html.dark #theme-heo .notion-simple-table tr:first-child td {
+            background: rgba(40, 40, 42, 0.8) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+            border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+        }
+
+        html.dark #theme-heo .notion-simple-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.04) !important;
         }
     `}</style>
 
