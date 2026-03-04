@@ -599,14 +599,14 @@ const Style = () => {
 
         /* 链接与下划线优化：去网页化，更像 Apple 设计 */
         #theme-heo #article-wrapper #notion-article .notion-link,
-        #theme-heo #article-wrapper #notion-article {
+        #theme-heo #article-wrapper #notion-article .notion-inline-underscore {
             text-decoration: none !important;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             transition: border-color var(--heo-dur-fast) var(--heo-ease);
         }
 
         html.dark #theme-heo #article-wrapper #notion-article .notion-link,
-        html.dark #theme-heo #article-wrapper #notion-article  {
+        html.dark #theme-heo #article-wrapper #notion-article .notion-inline-underscore {
             border-bottom-color: rgba(255, 255, 255, 0.15);
         }
 
@@ -1658,6 +1658,59 @@ const Style = () => {
             63% { transform: skewX(10deg) skewY(-5deg); }
             70% { transform: skewX(-50deg) skewY(-20deg); }
             71% { transform: skewX(10deg) skewY(-10deg); }
+        }
+
+        /* 修复亮色模式下表格边框不明显的问题 */
+        #theme-heo .notion-table-cell {
+            border-color: rgba(0, 0, 0, 0.25) !important;
+        }
+
+        #theme-heo .notion-table-row {
+            border-bottom-color: rgba(0, 0, 0, 0.25) !important;
+        }
+
+        #theme-heo .notion-table-view-header-cell-inner {
+            border-right-color: rgba(0, 0, 0, 0.25) !important;
+        }
+
+        #theme-heo .notion-simple-table td {
+            border-color: rgba(0, 0, 0, 0.25) !important;
+        }
+
+        #theme-heo .notion-table {
+            border-color: rgba(0, 0, 0, 0.25) !important;
+        }
+
+        /* 修复暗色模式下表格边框不可见的问题 */
+        html.dark #theme-heo .notion-table-cell {
+            border-color: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        html.dark #theme-heo .notion-table-row {
+            border-bottom-color: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        html.dark #theme-heo .notion-table-view-header-cell-inner {
+            border-right-color: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        html.dark #theme-heo .notion-simple-table td {
+            border-color: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        html.dark #theme-heo .notion-table {
+            border-color: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        /* 表格表头边框 */
+        #theme-heo .notion-table-header-inner {
+            border-top-color: rgba(0, 0, 0, 0.25) !important;
+            border-bottom-color: rgba(0, 0, 0, 0.25) !important;
+        }
+
+        html.dark #theme-heo .notion-table-header-inner {
+            border-top-color: rgba(255, 255, 255, 0.3) !important;
+            border-bottom-color: rgba(255, 255, 255, 0.3) !important;
         }
     `}</style>
 
