@@ -293,8 +293,12 @@ const getSEOMeta = (props, router, locale) => {
   switch (router.route) {
     case '/':
       return {
-        title: `${siteInfo?.title} | ${siteInfo?.description}`,
-        description: `${siteInfo?.description}`,
+        title: siteInfo?.title 
+          ? `${siteInfo.title} - 技术博客与个人成长分享` 
+          : 'RHZ的博客 - 技术笔记与个人成长分享',
+        description: siteInfo?.description && siteInfo.description.length <= 160
+          ? siteInfo.description
+          : 'RHZ的个人技术博客，分享算法设计、编程学习、Notion笔记和Web开发经验。探索技术成长与个人发展的无限可能。',
         image: `${siteInfo?.pageCover}`,
         slug: '',
         type: 'website'
