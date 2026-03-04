@@ -635,17 +635,45 @@ const Style = () => {
 
         #theme-heo #article-wrapper #notion-article blockquote {
             margin: 0 0 var(--heo-article-block-gap);
-            padding: 0.6rem 1rem;
-            border-left: 3px solid rgba(0, 0, 0, 0.12);
-            background: rgba(0, 0, 0, 0.03);
-            border-radius: 12px;
+            padding: 0.8rem 1.2rem 0.8rem 1.4rem;
+            border-left: 4px solid #6366f1;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(99, 102, 241, 0.01) 100%);
+            border-radius: 0 12px 12px 0;
             color: var(--heo-text-secondary);
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        #theme-heo #article-wrapper #notion-article blockquote::before {
+            content: '"';
+            position: absolute;
+            left: 0.8rem;
+            top: 0.6rem;
+            font-size: 2rem;
+            line-height: 1;
+            color: rgba(99, 102, 241, 0.15);
+            font-family: Georgia, serif;
+            font-weight: 700;
+        }
+
+        #theme-heo #article-wrapper #notion-article blockquote:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(99, 102, 241, 0.02) 100%);
+            transform: translateX(4px);
         }
 
         html.dark #theme-heo #article-wrapper #notion-article blockquote {
-            border-left-color: rgba(255, 255, 255, 0.18);
-            background: rgba(255, 255, 255, 0.06);
+            border-left-color: #f59e0b;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.06) 0%, rgba(245, 158, 11, 0.02) 100%);
         }
+
+        html.dark #theme-heo #article-wrapper #notion-article blockquote::before {
+            color: rgba(245, 158, 11, 0.2);
+        }
+
+        html.dark #theme-heo #article-wrapper #notion-article blockquote:hover {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.04) 100%);
+        }
+
 
         #theme-heo #article-wrapper #notion-article code {
             font-family: var(--heo-font-mono);
@@ -2258,21 +2286,36 @@ const Style = () => {
             border-color: rgba(255, 255, 255, 0.12) !important;
         }
 
-        /* ===== 内联代码微调 ===== */
+      /* ===== 内联代码微调 ===== */
         #theme-heo .notion-inline-code {
-            background: rgba(248, 249, 250, 0.9) !important;
+            background: linear-gradient(135deg, rgba(236, 87, 87, 0.06) 0%, rgba(236, 87, 87, 0.02) 100%) !important;
             border-radius: 6px !important;
-            padding: 2px 6px !important;
-            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            padding: 3px 8px !important;
+            border: 1px solid rgba(236, 87, 87, 0.2) !important;
             font-family: var(--heo-font-mono) !important;
-            font-size: 0.9em !important;
-            color: #eb5757 !important;
+            font-size: 0.88em !important;
+            color: #e11d48 !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 1px 2px rgba(236, 87, 87, 0.1) !important;
+        }
+
+        #theme-heo .notion-inline-code:hover {
+            background: rgba(236, 87, 87, 0.1) !important;
+            border-color: rgba(236, 87, 87, 0.35) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(236, 87, 87, 0.15) !important;
         }
 
         html.dark #theme-heo .notion-inline-code {
-            background: rgba(40, 40, 42, 0.9) !important;
-            border-color: rgba(255, 255, 255, 0.12) !important;
-            color: #ff7b72 !important;
+            background: linear-gradient(135deg, rgba(255, 123, 114, 0.1) 0%, rgba(255, 123, 114, 0.04) 100%) !important;
+            border-color: rgba(255, 123, 114, 0.3) !important;
+            color: #ffaba3 !important;
+        }
+
+        html.dark #theme-heo .notion-inline-code:hover {
+            background: rgba(255, 123, 114, 0.15) !important;
+            border-color: rgba(255, 123, 114, 0.5) !important;
+            box-shadow: 0 2px 6px rgba(255, 123, 114, 0.2) !important;
         }
 
         /* ===== 颜色背景文本对比度 ===== */
