@@ -1783,38 +1783,38 @@ const Style = () => {
         }
 
         /* ===== macOS 风格代码块 ===== */
-        #theme-heo .notion-code {
-            border-radius: 12px !important;
-            border: 1px solid rgba(0, 0, 0, 0.08) !important;
-            background: rgba(248, 249, 250, 0.9) !important;
-            backdrop-filter: blur(10px) !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-            padding: 24px !important;
-            margin: 1.5rem 0 !important;
-            font-family: var(--heo-font-mono) !important;
-            font-size: 0.92em !important;
-            line-height: 1.6 !important;
-            overflow-x: auto !important;
-            position: relative !important;
-        }
+        // #theme-heo .notion-code {
+        //     border-radius: 12px !important;
+        //     border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        //     background: rgba(248, 249, 250, 0.9) !important;
+        //     backdrop-filter: blur(10px) !important;
+        //     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+        //     padding: 24px !important;
+        //     margin: 1.5rem 0 !important;
+        //     font-family: var(--heo-font-mono) !important;
+        //     font-size: 0.92em !important;
+        //     line-height: 1.6 !important;
+        //     overflow-x: auto !important;
+        //     position: relative !important;
+        // }
 
-        #theme-heo .notion-code::before {
-            content: '' !important;
-            position: absolute !important;
-            top: 12px !important;
-            left: 12px !important;
-            width: 12px !important;
-            height: 12px !important;
-            border-radius: 50% !important;
-            background: #ff5f57 !important;
-            box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #28ca42 !important;
-        }
+        // #theme-heo .notion-code::before {
+        //     content: '' !important;
+        //     position: absolute !important;
+        //     top: 12px !important;
+        //     left: 12px !important;
+        //     width: 12px !important;
+        //     height: 12px !important;
+        //     border-radius: 50% !important;
+        //     background: #ff5f57 !important;
+        //     box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #28ca42 !important;
+        // }
 
-        html.dark #theme-heo .notion-code {
-            border-color: rgba(255, 255, 255, 0.12) !important;
-            background: rgba(30, 30, 32, 0.9) !important;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2) !important;
-        }
+        // html.dark #theme-heo .notion-code {
+        //     border-color: rgba(255, 255, 255, 0.12) !important;
+        //     background: rgba(30, 30, 32, 0.9) !important;
+        //     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2) !important;
+        // }
 
         /* ===== 优雅分割线 ===== */
         #theme-heo .notion-hr {
@@ -1951,49 +1951,49 @@ const Style = () => {
         }
 
         /* ===== 警告/提示框通知样式 ===== */
-        #theme-heo .notion-callout {
-            border-radius: 14px !important;
-            border: 1px solid rgba(0, 0, 0, 0.08) !important;
-            background: rgba(255, 255, 255, 0.85) !important;
-            backdrop-filter: blur(12px) !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
-            padding: 20px 24px !important;
-            margin: 1.5rem 0 !important;
-            position: relative !important;
-            overflow: hidden !important;
-        }
+        // #theme-heo .notion-callout {
+        //     border-radius: 14px !important;
+        //     border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        //     // background: rgba(255, 255, 255, 0.85) !important;
+        //     backdrop-filter: blur(12px) !important;
+        //     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+        //     padding: 20px 24px !important;
+        //     margin: 1.5rem 0 !important;
+        //     position: relative !important;
+        //     overflow: hidden !important;
+        // }
 
-        #theme-heo .notion-callout::before {
-            content: '' !important;
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            bottom: 0 !important;
-            width: 4px !important;
-            background: linear-gradient(to bottom, #4f65f0, #a252ff) !important;
-            border-radius: 4px 0 0 4px !important;
-        }
+        // #theme-heo .notion-callout::before {
+        //     content: '' !important;
+        //     position: absolute !important;
+        //     left: 0 !important;
+        //     top: 0 !important;
+        //     bottom: 0 !important;
+        //     width: 4px !important;
+        //     // background: linear-gradient(to bottom, #4f65f0, #a252ff) !important;
+        //     border-radius: 4px 0 0 4px !important;
+        // }
 
-        #theme-heo .notion-callout .notion-page-icon {
-            color: #4f65f0 !important;
-            font-size: 1.4em !important;
-            margin-right: 16px !important;
-            flex-shrink: 0 !important;
-        }
+        // #theme-heo .notion-callout .notion-page-icon {
+        //     color: #4f65f0 !important;
+        //     font-size: 1.4em !important;
+        //     margin-right: 16px !important;
+        //     flex-shrink: 0 !important;
+        // }
 
-        html.dark #theme-heo .notion-callout {
-            border-color: rgba(255, 255, 255, 0.12) !important;
-            background: rgba(30, 30, 32, 0.85) !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
-        }
+        // html.dark #theme-heo .notion-callout {
+        //     border-color: rgba(255, 255, 255, 0.12) !important;
+        //     // background: rgba(30, 30, 32, 0.85) !important;
+        //     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+        // }
 
-        html.dark #theme-heo .notion-callout::before {
-            background: linear-gradient(to bottom, #eab308, #f97316) !important;
-        }
+        // html.dark #theme-heo .notion-callout::before {
+        //     background: linear-gradient(to bottom, #eab308, #f97316) !important;
+        // }
 
-        html.dark #theme-heo .notion-callout .notion-page-icon {
-            color: #eab308 !important;
-        }
+        // html.dark #theme-heo .notion-callout .notion-page-icon {
+        //     color: #eab308 !important;
+        // }
 
         /* ===== 书签块卡片式设计 ===== */
         #theme-heo .notion-bookmark {
@@ -2102,38 +2102,38 @@ const Style = () => {
         }
 
         /* ===== 音频块自定义播放器 ===== */
-        #theme-heo .notion-audio {
-            border-radius: 12px !important;
-            border: 1px solid rgba(0, 0, 0, 0.08) !important;
-            background: rgba(255, 255, 255, 0.8) !important;
-            backdrop-filter: blur(10px) !important;
-            padding: 20px !important;
-            margin: 1.5rem 0 !important;
-        }
+        // #theme-heo .notion-audio {
+        //     border-radius: 12px !important;
+        //     border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        //     background: rgba(255, 255, 255, 0.8) !important;
+        //     backdrop-filter: blur(10px) !important;
+        //     padding: 20px !important;
+        //     margin: 1.5rem 0 !important;
+        // }
 
-        #theme-heo .notion-audio audio {
-            width: 100% !important;
-            border-radius: 8px !important;
-            background: rgba(248, 249, 250, 0.9) !important;
-        }
+        // #theme-heo .notion-audio audio {
+        //     width: 100% !important;
+        //     border-radius: 8px !important;
+        //     background: rgba(248, 249, 250, 0.9) !important;
+        // }
 
-        #theme-heo .notion-audio audio::-webkit-media-controls-panel {
-            background: rgba(248, 249, 250, 0.9) !important;
-            border-radius: 8px !important;
-        }
+        // #theme-heo .notion-audio audio::-webkit-media-controls-panel {
+        //     background: rgba(248, 249, 250, 0.9) !important;
+        //     border-radius: 8px !important;
+        // }
 
-        html.dark #theme-heo .notion-audio {
-            border-color: rgba(255, 255, 255, 0.12) !important;
-            background: rgba(30, 30, 32, 0.8) !important;
-        }
+        // html.dark #theme-heo .notion-audio {
+        //     border-color: rgba(255, 255, 255, 0.12) !important;
+        //     background: rgba(30, 30, 32, 0.8) !important;
+        // }
 
-        html.dark #theme-heo .notion-audio audio {
-            background: rgba(40, 40, 42, 0.9) !important;
-        }
+        // html.dark #theme-heo .notion-audio audio {
+        //     background: rgba(40, 40, 42, 0.9) !important;
+        // }
 
-        html.dark #theme-heo .notion-audio audio::-webkit-media-controls-panel {
-            background: rgba(40, 40, 42, 0.9) !important;
-        }
+        // html.dark #theme-heo .notion-audio audio::-webkit-media-controls-panel {
+        //     background: rgba(40, 40, 42, 0.9) !important;
+        // }
 
         /* ===== 公式块清晰显示 ===== */
         #theme-heo .notion-equation-block {
