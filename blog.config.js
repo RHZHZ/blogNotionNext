@@ -17,8 +17,8 @@ const BLOG = {
 
   AUTHOR: process.env.NEXT_PUBLIC_AUTHOR || 'RHZ', // 您的昵称 例如 tangly1024
   BIO: process.env.NEXT_PUBLIC_BIO || '他山之石，可以攻玉', // 作者简介
-  LINK: process.env.NEXT_PUBLIC_LINK || 'https://rhzhz.cn', // 网站地址
-  KEYWORDS: process.env.NEXT_PUBLIC_KEYWORD || 'RHZ的博客, 博客,个人分享', // 网站关键词 英文逗号隔开
+  LINK: process.env.NEXT_PUBLIC_LINK || 'https://rhzhz.cn', // 网站地址 (必须是HTTPS)
+  KEYWORDS: process.env.NEXT_PUBLIC_KEYWORD || 'RHZ的博客, 博客,个人分享,技术博客,编程,Notion,Next.js', // 网站关键词 英文逗号隔开
   BLOG_FAVICON: process.env.NEXT_PUBLIC_FAVICON || '/favicon.ico', // blog favicon 配置, 默认使用 /public/favicon.ico，支持在线图片，如 https://img.imesong.com/favicon.png
   BEI_AN: process.env.NEXT_PUBLIC_BEI_AN || '渝ICP备2022008933号-1', // 备案号 闽ICP备XXXXXX
   BEI_AN_LINK: process.env.NEXT_PUBLIC_BEI_AN_LINK || 'https://beian.miit.gov.cn/', // 备案查询链接，如果用了萌备等备案请在这里填写
