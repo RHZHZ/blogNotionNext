@@ -1895,17 +1895,21 @@ const Style = () => {
         #theme-heo .notion-toggle {
             margin: 12px 0 !important;
             border-radius: 8px !important;
-            border: 1px solid var(--heo-border-subtle) !important;
-            background: var(--heo-surface) !important;
+            border: 1px solid rgba(0, 0, 0, 0.12) !important;
+            background: rgba(255, 255, 255, 0.98) !important;
             overflow: hidden !important;
             transition: all 0.3s var(--heo-ease) !important;
+        }
+
+        #theme-heo .notion-toggle[open] {
+            border-color: transparent !important; /* 展开时隐藏容器边框，避免双边框 */
         }
 
         #theme-heo .notion-toggle > summary {
             list-style: none !important;
             cursor: pointer !important;
             padding: 14px 16px !important;
-            background: var(--heo-surface) !important;
+            background: rgba(255, 255, 255, 0.98) !important;
             border: none !important;
             border-radius: 8px 8px 0 0 !important;
             transition: all 0.2s var(--heo-ease) !important;
@@ -1915,6 +1919,14 @@ const Style = () => {
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
+        }
+
+        #theme-heo .notion-toggle[open] > summary {
+            background: rgba(173, 216, 230, 0.15) !important; /* 极浅蓝色背景 */
+            border: 1px solid rgba(100, 149, 237, 0.3) !important; /* 浅蓝色描边 */
+            border-bottom: none !important;
+            border-radius: 8px 8px 0 0 !important;
+            margin: 0 !important; /* 移除补偿，因为容器边框已透明 */
         }
 
         #theme-heo .notion-toggle > summary::-webkit-details-marker {
@@ -1932,19 +1944,25 @@ const Style = () => {
 
         #theme-heo .notion-toggle[open] > summary::after {
             transform: rotate(90deg) !important;
+            color: rgba(100, 149, 237, 0.8) !important; /* 浅蓝色箭头 */
         }
 
         #theme-heo .notion-toggle > summary:hover {
-            background: rgba(0, 0, 0, 0.02) !important;
+            background: rgba(0, 0, 0, 0.03) !important;
+        }
+
+        #theme-heo .notion-toggle[open] > summary:hover {
+            background: rgba(173, 216, 230, 0.2) !important; /* 悬停时稍微加深 */
         }
 
         #theme-heo .notion-toggle > div {
             padding: 0 16px 16px 16px !important;
-            border-top: 1px solid var(--heo-border-subtle) !important;
+            border: 1px solid rgba(100, 149, 237, 0.3) !important; /* 浅蓝色描边 */
+            border-top: none !important;
             margin-top: 0 !important;
             margin-left: 0 !important;
             border-radius: 0 0 8px 8px !important;
-            background: var(--heo-surface) !important;
+            background: rgba(255, 255, 255, 0.98) !important;
             animation: slideDown 0.3s var(--heo-ease) !important;
         }
 
@@ -1961,34 +1979,43 @@ const Style = () => {
 
         /* 暗色模式 */
         html.dark #theme-heo .notion-toggle {
-            border-color: var(--heo-border-subtle-dark) !important;
-            background: var(--heo-surface-dark) !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+            background: rgba(27, 28, 32, 0.98) !important;
+        }
+
+        html.dark #theme-heo .notion-toggle[open] {
+            border-color: transparent !important; /* 展开时隐藏容器边框 */
         }
 
         html.dark #theme-heo .notion-toggle > summary {
-            background: var(--heo-surface-dark) !important;
+            background: rgba(27, 28, 32, 0.98) !important;
             color: var(--heo-text) !important;
         }
 
+        html.dark #theme-heo .notion-toggle[open] > summary {
+            background: rgba(255, 140, 0, 0.2) !important; /* 亮橘色背景 */
+            border: 1px solid rgba(255, 165, 0, 0.4) !important; /* 橘色描边 */
+            border-bottom: none !important;
+            border-radius: 8px 8px 0 0 !important;
+            margin: 0 !important; /* 移除补偿 */
+        }
+
         html.dark #theme-heo .notion-toggle > summary:hover {
-            background: rgba(255, 255, 255, 0.03) !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        html.dark #theme-heo .notion-toggle[open] > summary:hover {
+            background: rgba(255, 140, 0, 0.25) !important; /* 悬停时稍微加深 */
+        }
+
+        html.dark #theme-heo .notion-toggle[open] > summary::after {
+            color: rgba(255, 165, 0, 0.8) !important; /* 橘色箭头 */
         }
 
         html.dark #theme-heo .notion-toggle > div {
-            border-top-color: var(--heo-border-subtle-dark) !important;
-            background: var(--heo-surface-dark) !important;
-        }
-
-        /* 变体示例：通过覆盖 background-color 实现个性化 */
-        /* 例如：蓝色标题栏变体 */
-        #theme-heo .notion-toggle.variant-blue > summary {
-            background-color: rgba(37, 99, 235, 0.1) !important;
-            border-left: 3px solid rgba(37, 99, 235, 0.6) !important;
-        }
-        /* 黄色标题栏变体 */
-        #theme-heo .notion-toggle.variant-yellow > summary {
-            background-color: rgba(234, 179, 8, 0.1) !important;
-            border-left: 3px solid rgba(234, 179, 8, 0.6) !important;
+            border: 1px solid rgba(255, 165, 0, 0.4) !important; /* 橘色描边 */
+            border-top: none !important;
+            background: rgba(27, 28, 32, 0.98) !important;
         }
 
         /* ===== 警告/提示框通知样式 ===== */
