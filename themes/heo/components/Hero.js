@@ -416,7 +416,7 @@ function TodayCard({ cRef, siteInfo }) {
         {/* 封面图 */}
        <LazyImage
           priority={true}
-          src={isDark ? 'https://s41.ax1x.com/2026/02/12/pZbYkyq.png' : 'https://s41.ax1x.com/2026/02/12/pZbY5Xq.png'}
+          src={isDark ? 'https://s41.ax1x.com/2026/03/06/peCugfK.webp' : 'https://s41.ax1x.com/2026/03/06/peCucY6.webp'}
           alt="Today card cover"
           id='today-card-cover'
           className={`${
