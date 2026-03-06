@@ -1,137 +1,235 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+
+const DEFAULT_TITLE = '文章音频'
+const DEFAULT_ARTIST = 'RHZ'
+const DEFAULT_COVER = '/avatar.png'
+
+const normalizeText = value => {
+  if (typeof value !== 'string') return ''
+  return value.trim()
+}
+
+const resolveBlockText = value => {
+  if (typeof value === 'string') return value
+  if (Array.isArray(value)) {
+    const first = value?.[0]
+    if (Array.isArray(first)) {
+      return normalizeText(first?.[0])
+    }
+  }
+  return ''
+}
+
+const getPlayerCurrentUrl = ap => ap?.list?.audios?.[ap?.list?.index]?.url || ''
 
 /**
  * 文章内嵌的灵动岛音频卡片
  */
 const InlineIslandAudio = (props) => {
-  const { block, url: propsUrl, title: propsTitle, artist: propsArtist, cover: propsCover, lrc: propsLrc } = props
+  const {
+    block,
+    url: propsUrl,
+    title: propsTitle,
+    artist: propsArtist,
+    cover: propsCover,
+    lrc: propsLrc
+  } = props
+
   const [isPlaying, setIsPlaying] = useState(false)
   const [isDark, setIsDark] = useState(false)
+  const boundPlayerRef = useRef(null)
 
-  // 兼容两种模式：1. Notion渲染器传入的 block；2. DOM扫描传入的 url/title/meta
-  const source = propsUrl || block?.properties?.source?.[0]?.[0]
-  const title = propsTitle || block?.properties?.title?.[0]?.[0] || '文章音频'
-  const artist = propsArtist || '文章音频'
-  const cover = propsCover || '/avatar.png'
-  const lrc = propsLrc || ''
+  const source = useMemo(
+    () => normalizeText(propsUrl || resolveBlockText(block?.properties?.source)),
+    [block, propsUrl]
+  )
+  const title = useMemo(
+    () => normalizeText(propsTitle || resolveBlockText(block?.properties?.title)) || DEFAULT_TITLE,
+    [block, propsTitle]
+  )
+  const artist = useMemo(
+    () => normalizeText(propsArtist) || DEFAULT_ARTIST,
+    [propsArtist]
+  )
+  const cover = useMemo(
+    () => normalizeText(propsCover) || DEFAULT_COVER,
+    [propsCover]
+  )
+  const lrc = useMemo(() => normalizeText(propsLrc), [propsLrc])
+  const isAvailable = Boolean(source)
 
   useEffect(() => {
-    const checkDark = () => setIsDark(document.documentElement.classList.contains('dark'))
+    if (typeof document === 'undefined') return undefined
+
+    const checkDark = () => {
+      setIsDark(document.documentElement.classList.contains('dark'))
+    }
+
     checkDark()
     const obs = new MutationObserver(checkDark)
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    obs.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
 
-    // 监听全局播放器状态
+    return () => {
+      obs.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined
+
     const syncStatus = () => {
       const ap = window.__APPLAYER__
-      if (ap && ap.audio) {
-        setIsPlaying(!ap.audio.paused && ap.list.audios[ap.list.index]?.url === source)
-      }
+      const currentUrl = getPlayerCurrentUrl(ap)
+      setIsPlaying(Boolean(source) && !ap?.audio?.paused && currentUrl === source)
     }
+
+    const bindPlayerEvents = ap => {
+      if (!ap || boundPlayerRef.current === ap) {
+        syncStatus()
+        return
+      }
+
+      if (boundPlayerRef.current) {
+        boundPlayerRef.current.off?.('play', syncStatus)
+        boundPlayerRef.current.off?.('pause', syncStatus)
+        boundPlayerRef.current.off?.('listswitch', syncStatus)
+        boundPlayerRef.current.off?.('ended', syncStatus)
+      }
+
+      ap.on?.('play', syncStatus)
+      ap.on?.('pause', syncStatus)
+      ap.on?.('listswitch', syncStatus)
+      ap.on?.('ended', syncStatus)
+      boundPlayerRef.current = ap
+      syncStatus()
+    }
+
+    syncStatus()
+    bindPlayerEvents(window.__APPLAYER__)
 
     const apTimer = setInterval(() => {
       if (window.__APPLAYER__) {
-        window.__APPLAYER__.on('play', syncStatus)
-        window.__APPLAYER__.on('pause', syncStatus)
-        window.__APPLAYER__.on('listswitch', syncStatus)
+        bindPlayerEvents(window.__APPLAYER__)
         clearInterval(apTimer)
       }
     }, 500)
 
     return () => {
-      obs.disconnect()
       clearInterval(apTimer)
-      if (window.__APPLAYER__) {
-        window.__APPLAYER__.off('play', syncStatus)
-        window.__APPLAYER__.off('pause', syncStatus)
-        window.__APPLAYER__.off('listswitch', syncStatus)
+      if (boundPlayerRef.current) {
+        boundPlayerRef.current.off?.('play', syncStatus)
+        boundPlayerRef.current.off?.('pause', syncStatus)
+        boundPlayerRef.current.off?.('listswitch', syncStatus)
+        boundPlayerRef.current.off?.('ended', syncStatus)
+        boundPlayerRef.current = null
       }
     }
   }, [source])
 
-  const handlePlay = (e) => {
+  const handlePlay = e => {
     e.preventDefault()
     const ap = window.__APPLAYER__
+    const audios = ap?.list?.audios || []
+
     if (!ap || !source) return
 
-    const currentIndex = ap.list.index
-    const isCurrent = ap.list.audios[currentIndex]?.url === source
+    const currentIndex = ap?.list?.index ?? -1
+    const isCurrent = audios[currentIndex]?.url === source
 
     if (isCurrent) {
-      if (ap.audio.paused) ap.play()
+      if (ap.audio?.paused) ap.play()
       else ap.pause()
-    } else {
-      // 检查是否在列表中
-      const existIndex = ap.list.audios.findIndex(a => a.url === source)
-      if (existIndex > -1) {
-        ap.list.switch(existIndex)
-      } else {
-        ap.list.add([{
-          name: title,
-          artist: artist,
-          url: source,
-          cover: cover,
-          lrc: lrc
-        }])
-        ap.list.switch(ap.list.audios.length - 1)
-      }
-      ap.play()
+      return
     }
+
+    const existIndex = audios.findIndex(audio => audio?.url === source)
+    if (existIndex > -1) {
+      ap.list.switch(existIndex)
+    } else {
+      ap.list.add([
+        {
+          name: title,
+          artist,
+          url: source,
+          cover,
+          lrc
+        }
+      ])
+      ap.list.switch(audios.length)
+    }
+
+    ap.play()
   }
 
   return (
     <div className='my-4 flex justify-center'>
       <div
         onClick={handlePlay}
-        className={`group relative flex items-center gap-4 p-3 rounded-full cursor-pointer transition-all duration-500
+        className={`group relative flex items-center gap-4 p-3 rounded-full transition-all duration-500
           ${isDark
             ? 'bg-white/10 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
             : 'bg-white/70 border-black/5 shadow-[0_8px_24px_rgba(0,0,0,0.08)]'}
-          border backdrop-blur-xl hover:scale-[1.02] active:scale-[0.98] w-full max-w-[400px]`}
+          ${isAvailable
+            ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]'
+            : 'cursor-not-allowed opacity-70'}
+          border backdrop-blur-xl w-full max-w-[400px]`}
+        role='button'
+        tabIndex={isAvailable ? 0 : -1}
+        aria-disabled={!isAvailable}
+        onKeyDown={e => {
+          if (!isAvailable) return
+          if (e.key === 'Enter' || e.key === ' ') {
+            handlePlay(e)
+          }
+        }}
       >
-        {/* 封面/唱片 - 修正旋转逻辑：仅背景旋转 */}
         <div className={`relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0
           ${isDark ? 'shadow-[0_0_0_2px_rgba(255,255,255,0.1)]' : 'shadow-[0_0_0_2px_rgba(255,255,255,0.8)]'}`}>
           <div
             className={`absolute inset-0 bg-cover bg-center ${isPlaying ? 'animate-spin-slow' : ''}`}
             style={{ backgroundImage: `url(${cover})` }}
           />
-          {/* 中间播放按钮 - 不随封面旋转 */}
-          <div className="absolute inset-0 bg-black/20 flex items-center justify-center z-10">
-             <div className="text-white opacity-90">
-               {isPlaying ? (
-                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                   <path d="M7 5H10V19H7V5Z" /><path d="M14 5H17V19H14V5Z" />
-                 </svg>
-               ) : (
-                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: '1px' }}>
-                   <path d="M8 5V19L19 12L8 5Z" />
-                 </svg>
-               )}
-             </div>
+          <div className='absolute inset-0 bg-black/20 flex items-center justify-center z-10'>
+            <div className='text-white opacity-90'>
+              {isPlaying ? (
+                <svg width='14' height='14' viewBox='0 0 24 24' fill='currentColor'>
+                  <path d='M7 5H10V19H7V5Z' />
+                  <path d='M14 5H17V19H14V5Z' />
+                </svg>
+              ) : (
+                <svg width='14' height='14' viewBox='0 0 24 24' fill='currentColor' style={{ marginLeft: '1px' }}>
+                  <path d='M8 5V19L19 12L8 5Z' />
+                </svg>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* 文字信息 */}
-        <div className="flex-1 min-width-0 overflow-hidden">
+        <div className='flex-1 min-width-0 overflow-hidden'>
           <div className={`text-sm font-bold truncate ${isDark ? 'text-white/90' : 'text-slate-800'}`}>
             {title}
           </div>
           <div className={`text-[10px] font-medium opacity-50 ${isDark ? 'text-white' : 'text-slate-600'}`}>
-            {isPlaying ? '正在同步播放...' : artist || '文章音频'}
+            {!isAvailable
+              ? '音频地址缺失'
+              : isPlaying
+                ? '正在同步播放...'
+                : artist}
           </div>
         </div>
 
-        {/* 装饰波形 (仅播放时) */}
         {isPlaying && (
-          <div className="flex gap-0.5 items-center pr-4 h-4 overflow-hidden self-center">
+          <div className='flex gap-0.5 items-center pr-4 h-4 overflow-hidden self-center'>
             {[1, 2, 3, 2, 1].map((h, i) => (
               <div
                 key={i}
-                className="w-0.5 bg-blue-400"
+                className='w-0.5 bg-blue-400'
                 style={{
                   height: '100%',
-                  animation: `islandWaveform 0.6s ease-in-out infinite alternate`,
+                  animation: 'islandWaveform 0.6s ease-in-out infinite alternate',
                   animationDelay: `${i * 0.1}s`,
                   transformOrigin: 'bottom'
                 }}

@@ -1,8 +1,29 @@
+import { siteConfig } from '@/lib/config'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 const getIsDark = () =>
   typeof document !== 'undefined' &&
   document.documentElement.classList.contains('dark')
+
+const DEFAULT_PLAYER_META = {
+  source: 'unknown',
+  requestId: null,
+  duration: null,
+  total: null,
+  code: null,
+  updatedAt: null
+}
+
+const getPlayerMetaSnapshot = () => {
+  if (typeof window === 'undefined' || !window.__APPLAYER_META__) {
+    return DEFAULT_PLAYER_META
+  }
+
+  return {
+    ...DEFAULT_PLAYER_META,
+    ...window.__APPLAYER_META__
+  }
+}
 
 const DynamicIslandPlayer = ({ className }) => {
   const [ap, setAp] = useState(null)
@@ -18,6 +39,11 @@ const DynamicIslandPlayer = ({ className }) => {
   const [progress, setProgress] = useState({ current: 0, duration: 0 })
   const [isDark, setIsDark] = useState(false)
   const [showLrc, setShowLrc] = useState(false)
+  const [playerMeta, setPlayerMeta] = useState(DEFAULT_PLAYER_META)
+  const debugMetaVisible = siteConfig(
+    'MUSIC_PLAYER_DEBUG_BADGE',
+    process.env.NODE_ENV !== 'production'
+  )
   const [danmakus, setDanmakus] = useState([]) // {key, text, lane}
   const danmakuKeyRef = useRef(0)
   const lastLrcIdxRef = useRef(-1)
@@ -129,6 +155,41 @@ const DynamicIslandPlayer = ({ className }) => {
     return a ? `${n} - ${a}` : n
   }, [track, isError])
 
+  const sourceBadge = useMemo(() => {
+    switch (playerMeta?.source) {
+      case 'remote':
+        return {
+          label: 'REMOTE',
+          tone: isDark
+            ? 'rgba(52, 211, 153, 0.2)'
+            : 'rgba(16, 185, 129, 0.12)',
+          color: isDark
+            ? 'rgba(167, 243, 208, 0.95)'
+            : 'rgba(5, 150, 105, 0.92)'
+        }
+      case 'fallback':
+        return {
+          label: 'FALLBACK',
+          tone: isDark
+            ? 'rgba(251, 191, 36, 0.18)'
+            : 'rgba(245, 158, 11, 0.12)',
+          color: isDark
+            ? 'rgba(253, 230, 138, 0.95)'
+            : 'rgba(180, 83, 9, 0.92)'
+        }
+      default:
+        return {
+          label: 'UNKNOWN',
+          tone: isDark
+            ? 'rgba(148, 163, 184, 0.18)'
+            : 'rgba(100, 116, 139, 0.10)',
+          color: isDark
+            ? 'rgba(226, 232, 240, 0.9)'
+            : 'rgba(71, 85, 105, 0.88)'
+        }
+    }
+  }, [isDark, playerMeta])
+
   useEffect(() => {
     mountedRef.current = true
 
@@ -159,6 +220,23 @@ const DynamicIslandPlayer = ({ className }) => {
         clearInterval(timer)
       }
     }, 200)
+
+    return () => clearInterval(timer)
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const syncPlayerMeta = () => {
+      if (!mountedRef.current) return
+      setPlayerMeta(prev => {
+        const next = getPlayerMetaSnapshot()
+        return JSON.stringify(prev) === JSON.stringify(next) ? prev : next
+      })
+    }
+
+    syncPlayerMeta()
+    const timer = setInterval(syncPlayerMeta, 500)
 
     return () => clearInterval(timer)
   }, [])
@@ -505,20 +583,59 @@ const DynamicIslandPlayer = ({ className }) => {
           }}
         >
           <div
-            title={title}
             style={{
-              fontSize: 14,
-              fontWeight: 700,
-              color: isError 
-                ? 'rgba(239, 68, 68, 0.9)' 
-                : (isDark ? 'rgba(255,255,255,0.92)' : 'rgba(17,24,39,0.92)'),
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis'
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              minWidth: 0
             }}
           >
-            {title || ' '}
+            <div
+              title={title}
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: isError 
+                  ? 'rgba(239, 68, 68, 0.9)' 
+                  : (isDark ? 'rgba(255,255,255,0.92)' : 'rgba(17,24,39,0.92)'),
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}
+            >
+              {title || ' '}
+            </div>
+            <span
+              style={{
+                flexShrink: 0,
+                padding: '2px 6px',
+                borderRadius: 9999,
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: 0.6,
+                background: sourceBadge.tone,
+                color: sourceBadge.color
+              }}
+            >
+              {sourceBadge.label}
+            </span>
           </div>
+          {debugMetaVisible && expanded && (
+            <div
+              style={{
+                marginTop: 4,
+                fontSize: 10,
+                lineHeight: 1.4,
+                color: isDark ? 'rgba(255,255,255,0.62)' : 'rgba(71,85,105,0.82)',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}
+              title={`source=${playerMeta?.source || 'unknown'} requestId=${playerMeta?.requestId || '-'} code=${playerMeta?.code || '-'} total=${playerMeta?.total ?? '-'} duration=${playerMeta?.duration ?? '-'}`}
+            >
+              {`source=${playerMeta?.source || 'unknown'} · requestId=${playerMeta?.requestId || '-'} · code=${playerMeta?.code || '-'} · total=${playerMeta?.total ?? '-'}`}
+            </div>
+          )}
           <div
             style={{
               marginTop: 6,

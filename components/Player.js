@@ -23,7 +23,40 @@ const Player = () => {
   const metingEnable = JSON.parse(siteConfig('MUSIC_PLAYER_METING'))
   const metingApi = siteConfig('MUSIC_PLAYER_METING_API', '/api/meting?url=:id')
   const metingId = siteConfig('MUSIC_PLAYER_METING_ID')
+  const metingPlaylistId = siteConfig('MUSIC_PLAYER_METING_PLAYLIST_ID', '')
   const audioFallback = siteConfig('MUSIC_PLAYER_AUDIO_LIST')
+
+  const setPlayerMeta = (meta) => {
+    window.__APPLAYER_META__ = {
+      source: meta?.source || 'unknown',
+      requestId: meta?.requestId || null,
+      duration: meta?.duration || null,
+      total: meta?.total || null,
+      code: meta?.code || null,
+      updatedAt: new Date().toISOString()
+    }
+  }
+
+  const resolveMetingApiUrl = () => {
+    const apiTemplate = String(metingApi || '').trim()
+    const playlistId = String(metingPlaylistId || '').trim()
+    const songIds = String(metingId || '').trim()
+
+    if (playlistId) {
+      if (apiTemplate.includes(':playlistId')) {
+        return apiTemplate.replace(':playlistId', encodeURIComponent(playlistId))
+      }
+      return `/api/meting?playlistId=${encodeURIComponent(playlistId)}`
+    }
+
+    if (!songIds) return null
+
+    if (apiTemplate.includes(':id')) {
+      return apiTemplate.replace(':id', encodeURIComponent(songIds))
+    }
+
+    return apiTemplate || `/api/meting?url=${encodeURIComponent(songIds)}`
+  }
 
   const initMusicPlayer = async () => {
     if (!musicPlayerEnable) return
@@ -38,28 +71,48 @@ const Player = () => {
     if (!window.APlayer) return
 
     let audio = audioFallback
+    let source = 'fallback'
+    let remoteMeta = null
 
     if (metingEnable) {
-      const apiUrl = String(metingApi).replace(':id', encodeURIComponent(String(metingId)))
-      try {
-        const res = await fetch(apiUrl)
-        if (res.ok) {
-          
-          // const data = await res.json()
-          // if (Array.isArray(data) && data.length > 0) {
-          //   audio = data
-          // }
-          const result = await res.json() // result 现在是 { tracks: [...], meta: {...} }
-          if (result.tracks && Array.isArray(result.tracks) && result.tracks.length > 0) {
-            audio = result.tracks // ✅ 正确提取 tracks 数组
+      const apiUrl = resolveMetingApiUrl()
+      if (!apiUrl) {
+        console.warn('远程歌单未配置有效的歌曲池或歌单 ID，回退到本地列表')
+      } else {
+        try {
+          const res = await fetch(apiUrl)
+          const result = await res.json().catch(() => null)
+
+          if (res.ok && result?.tracks && Array.isArray(result.tracks) && result.tracks.length > 0) {
+            audio = result.tracks
+            source = 'remote'
+            remoteMeta = result.meta || null
+          } else {
+            console.warn('远程歌单不可用，回退到本地列表', {
+              status: res.status,
+              code: result?.code,
+              error: result?.error
+            })
           }
+        } catch (e) {
+          console.error('音乐列表获取失败，将回退到本地列表', e)
         }
-      } catch (e) {
-        console.error('音乐列表获取失败，将回退到本地列表', e)
       }
     }
 
     if (!ref.current) return
+
+    setPlayerMeta({
+      source,
+      requestId: remoteMeta?.requestId,
+      duration: remoteMeta?.duration,
+      total: remoteMeta?.total,
+      code: remoteMeta?.code || null
+    })
+
+    if (process.env.NODE_ENV !== 'production') {
+      console.info('[Player] playlist source:', source, window.__APPLAYER_META__)
+    }
 
     const ap = new window.APlayer({
       container: ref.current,
@@ -71,7 +124,6 @@ const Player = () => {
       audio: audio
     })
 
-    // 暴露实例给自定义 UI 使用
     window.__APPLAYER__ = ap
     setPlayer(ap)
   }
@@ -83,6 +135,9 @@ const Player = () => {
       try {
         if (window.__APPLAYER__ && window.__APPLAYER__ === player) {
           window.__APPLAYER__ = undefined
+        }
+        if (window.__APPLAYER_META__) {
+          window.__APPLAYER_META__ = undefined
         }
         player?.destroy?.()
       } catch (e) {
@@ -122,7 +177,6 @@ const Player = () => {
           z-index: -999 !important;
         }
       `}</style>
-      {/* APlayer 引擎容器 */}
       <div ref={ref} data-player={player} />
     </div>
   )

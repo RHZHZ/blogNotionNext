@@ -40,54 +40,10 @@ const NotionPage = ({ post, className }) => {
   useEffect(() => {
     if (!ARTICLE_AUDIO_CONVERT) return
 
-    const convertAudios = async () => {
-      let metaMap = {}
-      if (ARTICLE_META_ENABLE) {
-        try {
-          const res = await fetch('/api/audio-meta')
-          if (res.ok) {
-            metaMap = await res.json()
-          }
-        } catch (e) {
-          console.error('[AudioMeta] Fetch failed', e)
-        }
-      }
+    const timer = setTimeout(() => {
+      convertArticleAudios({ ARTICLE_META_ENABLE })
+    }, 1000)
 
-      const audioBlocks = document.querySelectorAll('.notion-audio:not(.island-converted)')
-      audioBlocks.forEach(block => {
-        const audioTag = block.querySelector('audio')
-        if (audioTag && audioTag.src) {
-          const url = audioTag.src
-          // 提取文件名作为 key，并进行解码以支持中文
-          const audioKey = decodeURIComponent(url.split('?')[0].split('/').pop())
-          const meta = metaMap[audioKey] || {}
-
-          // 获取默认标题
-          const defaultTitle = block.closest('.notion-column')?.innerText || 
-                               block.previousElementSibling?.innerText || 
-                               '文章音频'
-          
-          block.classList.add('island-converted')
-          audioTag.style.display = 'none'
-          
-          const container = document.createElement('div')
-          block.appendChild(container)
-          const root = ReactDOM.createRoot(container)
-          root.render(
-            <InlineIslandAudio 
-              url={url} 
-              title={meta.name || defaultTitle} 
-              artist={meta.artist}
-              cover={meta.cover}
-              lrc={meta.lrc}
-              album={meta.album}
-            />
-          )
-        }
-      })
-    }
-
-    const timer = setTimeout(convertAudios, 1000)
     return () => clearTimeout(timer)
   }, [post, ARTICLE_AUDIO_CONVERT, ARTICLE_META_ENABLE])
 
@@ -113,7 +69,7 @@ const NotionPage = ({ post, className }) => {
     /**
      * 放大查看图片时替换成高清图像
      */
-    const observer = new MutationObserver((mutationsList, observer) => {
+    const observer = new MutationObserver(mutationsList => {
       mutationsList.forEach(mutation => {
         if (
           mutation.type === 'attributes' &&
@@ -148,6 +104,58 @@ const NotionPage = ({ post, className }) => {
   }, [post])
 
   useEffect(() => {
+    if (!isBrowser) return
+
+    const applyImageGalleryLayout = () => {
+      const article = document.getElementById('notion-article')
+      if (!article) return
+
+      const rows = article.querySelectorAll('.notion-row')
+      const width = window.innerWidth
+
+      rows.forEach(row => {
+        row.classList.remove('heo-image-gallery-row')
+        row.style.removeProperty('--heo-gallery-cols')
+        row.style.removeProperty('--heo-gallery-gap')
+
+        const columns = Array.from(row.children).filter(child =>
+          child.classList?.contains('notion-column')
+        )
+
+        if (columns.length < 2 || width < 768) return
+
+        const imageColumns = columns.filter(column =>
+          column.querySelector(':scope > figure.notion-asset-wrapper-image')
+        )
+
+        if (imageColumns.length !== columns.length) return
+
+        const desiredCols = width >= 1440 ? 4 : width >= 1024 ? 3 : 2
+        const actualCols = Math.min(desiredCols, imageColumns.length)
+
+        row.classList.add('heo-image-gallery-row')
+        row.style.setProperty('--heo-gallery-cols', String(actualCols))
+        row.style.setProperty('--heo-gallery-gap', width >= 1024 ? '0.75rem' : '0.5rem')
+      })
+    }
+
+    const timer = setTimeout(applyImageGalleryLayout, 60)
+    const target = document.getElementById('notion-article') || document.body
+    const observer = new MutationObserver(() => applyImageGalleryLayout())
+    observer.observe(target, {
+      childList: true,
+      subtree: true
+    })
+    window.addEventListener('resize', applyImageGalleryLayout)
+
+    return () => {
+      clearTimeout(timer)
+      observer.disconnect()
+      window.removeEventListener('resize', applyImageGalleryLayout)
+    }
+  }, [post])
+
+  useEffect(() => {
     // Spoiler文本功能
     if (SPOILER_TEXT_TAG) {
       import('lodash/escapeRegExp').then(escapeRegExp => {
@@ -178,8 +186,6 @@ const NotionPage = ({ post, className }) => {
     return () => clearTimeout(timer)
   }, [post])
 
-  // const cleanBlockMap = cleanBlocksWithWarn(post?.blockMap);
-  // console.log('NotionPage render with post:', post);
 
   return (
     <div
@@ -208,6 +214,115 @@ const NotionPage = ({ post, className }) => {
   )
 }
 
+const normalizeArticleAudioKey = url => {
+  try {
+    return decodeURIComponent(url.split('?')[0].split('/').pop() || '')
+  } catch {
+    return url.split('?')[0].split('/').pop() || ''
+  }
+}
+
+const getArticleAudioDefaultTitle = block => {
+  return (
+    block.closest('.notion-column')?.innerText ||
+    block.previousElementSibling?.innerText ||
+    '文章音频'
+  )
+}
+
+const fetchArticleAudioMetaMap = async ARTICLE_META_ENABLE => {
+  if (!ARTICLE_META_ENABLE) {
+    console.info('[ArticleAudioMeta] metadata fetch skipped because feature is disabled')
+    return {}
+  }
+
+  try {
+    const res = await fetch('/api/audio-meta')
+    if (!res.ok) {
+      console.warn('[ArticleAudioMeta] metadata fetch returned non-ok response', {
+        status: res.status
+      })
+      return {}
+    }
+    return await res.json()
+  } catch (error) {
+    console.error('[ArticleAudioMeta] metadata fetch failed', error)
+    return {}
+  }
+}
+
+const mountInlineIslandAudio = ({ block, audioTag, url, meta }) => {
+  if (!block || !audioTag || !url) return
+
+  const existingContainer = block.querySelector(':scope > [data-inline-island-audio="true"]')
+  if (existingContainer?.dataset?.mounted === 'true') {
+    block.classList.add('island-converted')
+    audioTag.style.display = 'none'
+    return
+  }
+
+  block.classList.add('island-converted')
+  audioTag.style.display = 'none'
+
+  const container = existingContainer || document.createElement('div')
+  container.dataset.inlineIslandAudio = 'true'
+  container.dataset.mounted = 'true'
+
+  if (!existingContainer) {
+    block.appendChild(container)
+  }
+
+  const root = ReactDOM.createRoot(container)
+  root.render(
+    <InlineIslandAudio
+      url={url}
+      title={meta.name || getArticleAudioDefaultTitle(block)}
+      artist={meta.artist}
+      cover={meta.cover}
+      lrc={meta.lrc}
+      album={meta.album}
+    />
+  )
+}
+
+const convertArticleAudios = async ({
+  ARTICLE_META_ENABLE,
+  enableOnDemandMetaLookup = false,
+  resolveMetaByKey = fetchArticleAudioMetaByKey
+}) => {
+  const metaMap = await fetchArticleAudioMetaMap(ARTICLE_META_ENABLE)
+  const audioBlocks = document.querySelectorAll('.notion-audio:not(.island-converted)')
+
+  for (const block of audioBlocks) {
+    const audioTag = block.querySelector('audio')
+    if (!audioTag?.src) continue
+
+    const url = audioTag.src
+    const audioKey = normalizeArticleAudioKey(url)
+    let meta = resolveArticleAudioMeta({ metaMap, audioKey })
+
+    if (!meta && enableOnDemandMetaLookup) {
+      meta = await resolveMetaByKey({ ARTICLE_META_ENABLE, audioKey })
+    }
+
+    if (!meta) {
+      logArticleAudioMetaFallback({
+        reason: ARTICLE_META_ENABLE ? 'meta_missing' : 'meta_disabled',
+        audioKey,
+        url
+      })
+    }
+
+    mountInlineIslandAudio({ block, audioTag, url, meta: meta || {} })
+  }
+}
+
+const fetchArticleAudioMetaByKey = async ({ ARTICLE_META_ENABLE, audioKey }) => {
+  if (!audioKey) return null
+
+  const metaMap = await fetchArticleAudioMetaMap(ARTICLE_META_ENABLE)
+  return resolveArticleAudioMeta({ metaMap, audioKey })
+}
 
 /**
  * 页面的数据库链接禁止跳转，只能查看

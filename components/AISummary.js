@@ -1,13 +1,19 @@
 import styles from './AISummary.module.css'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useGlobal } from '@/lib/global'
+
+const DESKTOP_COLLAPSE_LINES = 5
+const MOBILE_COLLAPSE_LINES = 4
 
 const AISummary = ({ aiSummary, post }) => {
   const { locale, isDarkMode } = useGlobal()
   const [summary, setSummary] = useState(aiSummary)
   const [showStats, setShowStats] = useState(false)
+  const [expanded, setExpanded] = useState(false)
   const [coverColor, setCoverColor] = useState(null)
+  const [shouldCollapse, setShouldCollapse] = useState(false)
   const summaryRef = useRef(null)
+  const contentRef = useRef(null)
 
   // 读取全局取色变量，与 PostHeader / InfoCard 联动
   useEffect(() => {
@@ -44,6 +50,54 @@ const AISummary = ({ aiSummary, post }) => {
   useEffect(() => {
     showAiSummaryAnimation(aiSummary, setSummary)
   }, [aiSummary])
+
+  useEffect(() => {
+    setExpanded(false)
+  }, [post?.id, aiSummary])
+
+  const measureCollapseState = useCallback(() => {
+    if (typeof window === 'undefined') return
+
+    const contentEl = contentRef.current
+    if (!contentEl || !aiSummary) {
+      setShouldCollapse(false)
+      return
+    }
+
+    const computedStyle = window.getComputedStyle(contentEl)
+    const lineHeight = parseFloat(computedStyle.lineHeight)
+
+    if (!lineHeight) {
+      setShouldCollapse(false)
+      return
+    }
+
+    const maxLines = window.innerWidth <= 768 ? MOBILE_COLLAPSE_LINES : DESKTOP_COLLAPSE_LINES
+    const totalLines = Math.round(contentEl.scrollHeight / lineHeight)
+
+    setShouldCollapse(totalLines > maxLines)
+  }, [aiSummary])
+
+  useEffect(() => {
+    measureCollapseState()
+  }, [measureCollapseState, summary, expanded])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    let frameId = 0
+    const handleResize = () => {
+      cancelAnimationFrame(frameId)
+      frameId = window.requestAnimationFrame(measureCollapseState)
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      cancelAnimationFrame(frameId)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [measureCollapseState])
 
   const calculateStats = () => {
     if (!aiSummary || !post?.content) return null
@@ -106,12 +160,29 @@ const AISummary = ({ aiSummary, post }) => {
           </div>
 
           <div className={styles['ai-content']}>
-            <div className={styles['ai-explanation']}>
+            <div
+              ref={contentRef}
+              className={`${styles['ai-explanation']} ${
+                shouldCollapse && !expanded ? styles['collapsed'] : ''
+              }`}>
               {summary}
               {summary !== aiSummary && (
                 <span className={styles['blinking-cursor']}></span>
               )}
             </div>
+
+            {shouldCollapse && !expanded && <div className={styles['ai-fade-mask']} aria-hidden='true' />}
+
+            {shouldCollapse && (
+              <div className={styles['ai-expand-wrap']}>
+                <button
+                  type='button'
+                  onClick={() => setExpanded(v => !v)}
+                  className={styles['ai-expand-btn']}>
+                  {expanded ? '收起摘要' : '展开摘要'}
+                </button>
+              </div>
+            )}
 
             {showStats && stats && (
               <div className={styles['ai-stats']}>
