@@ -1027,7 +1027,7 @@ const Style = () => {
             display: flex !important;
             flex-direction: column !important;
             position: relative !important;
-            transition: min-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.5s var(--heo-ease) !important;
+            transition: min-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s ease !important;
             overflow: hidden !important;
         }
 
