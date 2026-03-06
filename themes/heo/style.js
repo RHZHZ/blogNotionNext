@@ -589,7 +589,7 @@ const Style = () => {
 
         #theme-heo #article-wrapper #notion-article .notion-list-disc,
         #theme-heo #article-wrapper #notion-article .notion-list-numbered {
-            padding-inline-start: 1rem !important;
+            padding-inline-start: 1.5rem !important;
         }
 
         #theme-heo #article-wrapper #notion-article .notion-list li {
@@ -623,12 +623,18 @@ const Style = () => {
         /* 统一普通 ul/ol 的样式，保持一致性 */
         #theme-heo #article-wrapper #notion-article ul,
         #theme-heo #article-wrapper #notion-article ol {
-            padding-left: 1rem;
+            padding-left: 1.5rem;
             margin: 0.2rem 0 1rem;
+            list-style-position: outside;
         }
 
         #theme-heo #article-wrapper #notion-article li {
             margin-bottom: 0.35rem;
+        }
+
+        #theme-heo #article-wrapper #notion-article li > ul,
+        #theme-heo #article-wrapper #notion-article li > ol {
+            margin: 0.35rem 0 0.5rem;
         }
 
         #theme-heo #article-wrapper #notion-article li > p {
@@ -637,6 +643,7 @@ const Style = () => {
 
         #theme-heo #article-wrapper #notion-article li::marker {
             color: var(--heo-text-tertiary);
+            font-variant-numeric: tabular-nums;
         }
 
         #theme-heo #article-wrapper #notion-article blockquote {
@@ -689,7 +696,7 @@ const Style = () => {
 
         /* Article Images (B-Plan: Apple-style frame) */
         #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image {
-            margin: 1.5rem auto !important;
+            margin: 0.9rem auto !important;
             border-radius: 12px;
             overflow: hidden;
             border: 1px solid rgba(0, 0, 0, 0.05);
@@ -700,6 +707,69 @@ const Style = () => {
             min-width: 0 !important;
             width: auto !important;
             display: block;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-row {
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 768px) {
+            #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row {
+                flex-wrap: wrap;
+                gap: var(--heo-gallery-gap, 0.75rem);
+            }
+
+            #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row > .notion-column {
+                flex: 0 0 calc((100% - (var(--heo-gallery-cols, 3) - 1) * var(--heo-gallery-gap, 0.75rem)) / var(--heo-gallery-cols, 3)) !important;
+                width: calc((100% - (var(--heo-gallery-cols, 3) - 1) * var(--heo-gallery-gap, 0.75rem)) / var(--heo-gallery-cols, 3)) !important;
+                min-width: 0;
+            }
+
+            #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row > .notion-spacer {
+                display: none;
+            }
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-column {
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-wrapper-image {
+            margin: 0.55rem auto !important;
+            border-radius: 10px;
+            aspect-ratio: 4 / 5;
+            width: 100% !important;
+            overflow: hidden;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-wrapper-image > div {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: none !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-wrapper-image img {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: none !important;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 10px !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-wrapper-image + .notion-asset-wrapper-image {
+            margin-top: 0.15rem !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-wrapper-image:hover {
+            transform: none;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-caption {
+            margin-top: 0.35rem !important;
+            padding: 0 0.35rem;
+            font-size: 0.8rem !important;
         }
 
         #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image > div {
@@ -1968,7 +2038,7 @@ const Style = () => {
         #theme-heo .notion-toggle > summary {
             list-style: none !important;
             cursor: pointer !important;
-            padding: 14px 16px !important;
+            padding: 14px 40px 14px 16px !important;
             background: rgba(255, 255, 255, 0.98) !important;
             border: none !important;
             border-radius: 8px 8px 0 0 !important;
@@ -1976,9 +2046,7 @@ const Style = () => {
             position: relative !important;
             font-weight: 500 !important;
             color: var(--heo-text) !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: space-between !important;
+            display: block !important;
         }
 
         #theme-heo .notion-toggle[open] > summary {
@@ -2003,7 +2071,7 @@ const Style = () => {
         }
 
         #theme-heo .notion-toggle[open] > summary::after {
-            transform: rotate(90deg) !important;
+            transform: translateY(-50%) rotate(90deg) !important;
             color: rgba(100, 149, 237, 0.8) !important; /* 浅蓝色箭头 */
         }
 
@@ -2069,6 +2137,7 @@ const Style = () => {
         }
 
         html.dark #theme-heo .notion-toggle[open] > summary::after {
+            transform: translateY(-50%) rotate(90deg) !important;
             color: rgba(255, 165, 0, 0.8) !important; /* 橘色箭头 */
         }
 
@@ -2385,12 +2454,18 @@ const Style = () => {
             
             #theme-heo #article-wrapper #notion-article ul,
             #theme-heo #article-wrapper #notion-article ol {
-                padding-left: 0.8rem;
+                padding-left: 1.25rem;
                 margin: 0.2rem 0 0.8rem;
+                list-style-position: outside;
             }
             
             #theme-heo #article-wrapper #notion-article li {
                 margin-bottom: 0.25rem;
+            }
+            
+            #theme-heo #article-wrapper #notion-article li > ul,
+            #theme-heo #article-wrapper #notion-article li > ol {
+                margin: 0.25rem 0 0.45rem;
             }
             
             #theme-heo #article-wrapper #notion-article blockquote {
@@ -2404,7 +2479,7 @@ const Style = () => {
             
             #theme-heo #article-wrapper #notion-article .notion-list-disc,
             #theme-heo #article-wrapper #notion-article .notion-list-numbered {
-                padding-inline-start: 0.8rem !important;
+                padding-inline-start: 1.25rem !important;
             }
             
             #theme-heo .notion-code {
@@ -2422,7 +2497,7 @@ const Style = () => {
             }
             
             #theme-heo .notion-toggle > summary {
-                padding: 10px 14px !important;
+                padding: 10px 36px 10px 14px !important;
             }
             
             #theme-heo .notion-file-link {
@@ -2450,14 +2525,38 @@ const Style = () => {
             
             /* 移动端图片优化 - 减小边距 */
             #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image {
-                margin: 1rem auto !important;
+                margin: 0.65rem auto !important;
                 border-radius: 10px !important;
             }
             
+            #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-wrapper-image {
+                margin: 0.4rem auto !important;
+            }
+
+            #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-wrapper-image + .notion-asset-wrapper-image {
+                margin-top: 0.1rem !important;
+            }
+
+            #theme-heo #article-wrapper #notion-article .notion-row {
+                gap: 0.5rem;
+            }
+
+            #theme-heo #article-wrapper #notion-article .notion-column {
+                padding-top: 4px;
+                padding-bottom: 4px;
+            }
+
+            #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-caption {
+                margin-top: 0.25rem !important;
+                padding: 0 0.25rem !important;
+                font-size: 0.76rem !important;
+            }
+
             #theme-heo #article-wrapper #notion-article .notion-asset-caption {
                 font-size: 0.8rem !important;
                 padding: 0 0.5rem !important;
             }
+
         }
         
         /* 超小屏幕优化（480px以下） */
@@ -2489,12 +2588,18 @@ const Style = () => {
             
             #theme-heo #article-wrapper #notion-article ul,
             #theme-heo #article-wrapper #notion-article ol {
-                padding-left: 0.7rem;
+                padding-left: 1.1rem;
                 margin: 0.2rem 0 0.7rem;
+                list-style-position: outside;
             }
             
             #theme-heo #article-wrapper #notion-article li {
                 margin-bottom: 0.2rem;
+            }
+            
+            #theme-heo #article-wrapper #notion-article li > ul,
+            #theme-heo #article-wrapper #notion-article li > ol {
+                margin: 0.2rem 0 0.35rem;
             }
             
             #theme-heo #article-wrapper #notion-article blockquote {
