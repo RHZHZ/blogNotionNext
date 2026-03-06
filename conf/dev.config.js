@@ -8,8 +8,12 @@ module.exports = {
   BACKGROUND_LIGHT: '#eeeeee', // use hex value, don't forget '#' e.g #fffefc
   BACKGROUND_DARK: '#000000', // use hex value, don't forget '#'
 
-  // Redis 缓存数据库地址
+  // Redis / REST 共享存储配置
   REDIS_URL: process.env.REDIS_URL || '',
+  UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL || '',
+  UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN || '',
+  KV_REST_API_URL: process.env.KV_REST_API_URL || '',
+  KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN || '',
 
   ENABLE_CACHE:
     process.env.ENABLE_CACHE ||
