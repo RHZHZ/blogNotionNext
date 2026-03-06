@@ -1,11 +1,45 @@
 import styles from './AISummary.module.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useGlobal } from '@/lib/global'
 
 const AISummary = ({ aiSummary, post }) => {
-  const { locale } = useGlobal()
+  const { locale, isDarkMode } = useGlobal()
   const [summary, setSummary] = useState(aiSummary)
   const [showStats, setShowStats] = useState(false)
+  const [coverColor, setCoverColor] = useState(null)
+  const summaryRef = useRef(null)
+
+  // 读取全局取色变量，与 PostHeader / InfoCard 联动
+  useEffect(() => {
+    const fallbackColor = isDarkMode ? '#CA8A04' : '#0060e0'
+
+    const applyGlobalColor = (colorFromEvent) => {
+      if (typeof window === 'undefined') {
+        setCoverColor(fallbackColor)
+        return
+      }
+
+      const rootColor =
+        colorFromEvent ||
+        window.getComputedStyle(document.documentElement)
+          .getPropertyValue('--heo-cover-color')
+          .trim()
+
+      setCoverColor(rootColor || fallbackColor)
+    }
+
+    applyGlobalColor()
+
+    const onColorChange = event => {
+      applyGlobalColor(event?.detail?.color)
+    }
+
+    window.addEventListener('heo-cover-color-change', onColorChange)
+
+    return () => {
+      window.removeEventListener('heo-cover-color-change', onColorChange)
+    }
+  }, [post?.id, isDarkMode])
 
   useEffect(() => {
     showAiSummaryAnimation(aiSummary, setSummary)
@@ -16,7 +50,8 @@ const AISummary = ({ aiSummary, post }) => {
 
     const originalLength = post.content.length
     const summaryLength = aiSummary.length
-    const compressionRatio = ((1 - summaryLength / originalLength) * 100).toFixed(1)
+    const ratio = originalLength > 0 ? (1 - summaryLength / originalLength) * 100 : 0
+    const compressionRatio = Math.max(0, ratio).toFixed(1)
 
     return {
       originalLength,
@@ -29,33 +64,47 @@ const AISummary = ({ aiSummary, post }) => {
 
   return (
     aiSummary && !aiSummary.includes('摘要生成暂时不可用') && (
-      <div className={styles['post-ai']}>
+      <div
+        ref={summaryRef}
+        className={styles['post-ai']}
+        style={{ '--cover-color': coverColor }}
+      >
+        <div className={styles['ai-glow']} aria-hidden='true' />
+
         <div className={styles['ai-container']}>
           <div className={styles['ai-header']}>
-            <div className={styles['ai-icon']}>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                viewBox='0 0 24 24'
-                width='24'
-                height='24'>
-                <path
-                  fill='#ffffff'
-                  d='M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z'
-                />
-              </svg>
+            <div className={styles['ai-identity']}>
+              <div className={styles['ai-icon']}>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox='0 0 24 24'
+                  width='24'
+                  height='24'>
+                  <path
+                    fill='currentColor'
+                    d='M12,2A2,2 0 0,1 14,4V5H18A2,2 0 0,1 20,7V19A2,2 0 0,1 18,21H6A2,2 0 0,1 4,19V7A2,2 0 0,1 6,5H10V4A2,2 0 0,1 12,2M8,11A1.5,1.5 0 0,0 6.5,12.5A1.5,1.5 0 0,0 8,14A1.5,1.5 0 0,0 9.5,12.5A1.5,1.5 0 0,0 8,11M16,11A1.5,1.5 0 0,0 14.5,12.5A1.5,1.5 0 0,0 16,14A1.5,1.5 0 0,0 17.5,12.5A1.5,1.5 0 0,0 16,11M7,17H17V15H7V17Z'
+                  />
+                </svg>
+              </div>
+              <div className={styles['ai-heading']}>
+                <div className={styles['ai-title']}>{locale.AI_SUMMARY.NAME}</div>
+                <div className={styles['ai-subtitle']}>智能提炼核心观点与价值</div>
+              </div>
             </div>
-            <div className={styles['ai-title']}>{locale.AI_SUMMARY.NAME}</div>
-            <div className={styles['ai-tag']}>RHZ-Claude</div>
-            {stats && (
-              <button
-                onClick={() => setShowStats(!showStats)}
-                className={styles['ai-stats-btn']}
-                aria-label="显示摘要统计信息"
-              >
-                📊
-              </button>
-            )}
+
+            <div className={styles['ai-actions']}>
+              <div className={styles['ai-tag']}>RHZ-Claude</div>
+              {stats && (
+                <button
+                  onClick={() => setShowStats(!showStats)}
+                  className={styles['ai-stats-btn']}
+                  aria-label='显示摘要统计信息'>
+                  {showStats ? '收起数据' : '查看数据'}
+                </button>
+              )}
+            </div>
           </div>
+
           <div className={styles['ai-content']}>
             <div className={styles['ai-explanation']}>
               {summary}
@@ -63,18 +112,19 @@ const AISummary = ({ aiSummary, post }) => {
                 <span className={styles['blinking-cursor']}></span>
               )}
             </div>
+
             {showStats && stats && (
               <div className={styles['ai-stats']}>
                 <div className={styles['stat-item']}>
-                  <span className={styles['stat-label']}>原文长度:</span>
+                  <span className={styles['stat-label']}>原文</span>
                   <span className={styles['stat-value']}>{stats.originalLength} 字</span>
                 </div>
                 <div className={styles['stat-item']}>
-                  <span className={styles['stat-label']}>摘要长度:</span>
+                  <span className={styles['stat-label']}>摘要</span>
                   <span className={styles['stat-value']}>{stats.summaryLength} 字</span>
                 </div>
                 <div className={styles['stat-item']}>
-                  <span className={styles['stat-label']}>压缩率:</span>
+                  <span className={styles['stat-label']}>压缩率</span>
                   <span className={styles['stat-value']}>{stats.compressionRatio}%</span>
                 </div>
               </div>
