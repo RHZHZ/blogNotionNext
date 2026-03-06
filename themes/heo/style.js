@@ -7,6 +7,12 @@
 const Style = () => {
   return (
     <style jsx global>{`
+        /* LXGW WenKai Mono 字体定义 */
+        /* LXGW WenKai Mono 字体定义 - 更丰富的字重版本
+         * 实际字重由 index.js 中的 <link> 标签加载
+         * 这里只需要定义字体族名称，字重会自动匹配
+         */
+         
         :root {
             --heo-surface: rgba(255, 255, 255, 0.9);
             --heo-surface-strong: #ffffff;
@@ -35,7 +41,7 @@ const Style = () => {
             "SF Pro Display", "PingFang SC", "Hiragino Sans GB",
             "Noto Sans CJK SC", system-ui, Segoe UI, Roboto, Helvetica, Arial,
             sans-serif;
-            --heo-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
+           --heo-font-mono: "LXGW WenKai Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
             Consolas, "Liberation Mono", "Courier New", monospace;
 
             --heo-text: rgba(0, 0, 0, 0.88);
