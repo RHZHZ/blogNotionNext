@@ -42,6 +42,31 @@ import SearchNav from './components/SearchNav'
 import SideRight from './components/SideRight'
 import CONFIG from './config'
 import { Style } from './style'
+
+// 添加 LXGW WenKai Mono 字体
+const addFontLinks = () => {
+  if (typeof window !== 'undefined') {
+    const head = document.head || document.getElementsByTagName('head')[0]
+
+    // Regular 字重
+    const regularLink = document.createElement('link')
+    regularLink.rel = 'stylesheet'
+    regularLink.href = 'https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@latest/dist/LXGWWenKaiMono-Regular.css'
+    head.appendChild(regularLink)
+
+    // Bold 字重
+    const boldLink = document.createElement('link')
+    boldLink.rel = 'stylesheet'
+    boldLink.href = 'https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@latest/dist/LXGWWenKaiMono-Bold.css'
+    head.appendChild(boldLink)
+
+    // Light 字重
+    const lightLink = document.createElement('link')
+    lightLink.rel = 'stylesheet'
+    lightLink.href = 'https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@latest/dist/LXGWWenKaiMono-Light.css'
+    head.appendChild(lightLink)
+  }
+}
 import AISummary from '@/components/AISummary'
 import ArticleExpirationNotice from '@/components/ArticleExpirationNotice'
 
@@ -90,6 +115,10 @@ const LayoutBase = props => {
   // 加载wow动画
   useEffect(() => {
     loadWowJS()
+  }, [])
+
+  useEffect(() => {
+    addFontLinks()
   }, [])
 
   return (
