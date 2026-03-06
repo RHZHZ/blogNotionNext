@@ -3,6 +3,7 @@
 
 // Set test environment variables
 process.env.NODE_ENV = 'test'
+process.env.LOG_LEVEL = 'silent'
 process.env.NEXT_PUBLIC_TITLE = 'Test Blog'
 process.env.NEXT_PUBLIC_DESCRIPTION = 'Test Description'
 process.env.NEXT_PUBLIC_AUTHOR = 'Test Author'

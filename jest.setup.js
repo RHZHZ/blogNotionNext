@@ -74,8 +74,8 @@ Object.defineProperty(window, 'matchMedia', {
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
@@ -102,24 +102,6 @@ global.sessionStorage = sessionStorageMock
 
 // Mock fetch
 global.fetch = jest.fn()
-
-// Mock console methods for cleaner test output
-const originalError = console.error
-beforeAll(() => {
-  console.error = (...args) => {
-    if (
-      typeof args[0] === 'string' &&
-      args[0].includes('Warning: ReactDOM.render is no longer supported')
-    ) {
-      return
-    }
-    originalError.call(console, ...args)
-  }
-})
-
-afterAll(() => {
-  console.error = originalError
-})
 
 // Global test utilities
 global.testUtils = {
@@ -158,28 +140,23 @@ global.testUtils = {
 
 // Setup test environment
 beforeEach(() => {
-  // Clear all mocks before each test
   jest.clearAllMocks()
-  
-  // Reset localStorage
+
   localStorageMock.getItem.mockClear()
   localStorageMock.setItem.mockClear()
   localStorageMock.removeItem.mockClear()
   localStorageMock.clear.mockClear()
-  
-  // Reset sessionStorage
+
   sessionStorageMock.getItem.mockClear()
   sessionStorageMock.setItem.mockClear()
   sessionStorageMock.removeItem.mockClear()
   sessionStorageMock.clear.mockClear()
-  
-  // Reset fetch mock
+
   fetch.mockClear()
 })
 
 // Cleanup after each test
 afterEach(() => {
-  // Cleanup any side effects
   document.body.innerHTML = ''
   document.head.innerHTML = ''
 })

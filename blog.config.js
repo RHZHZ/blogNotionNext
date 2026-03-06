@@ -25,18 +25,31 @@ const BLOG = {
   BEI_AN_GONGAN: process.env.NEXT_PUBLIC_BEI_AN_GONGAN || '', // 公安备案号，例如 '浙公网安备3xxxxxxxx8号'
   CODE_COLLAPSE_MIN_LINES: 30,//“长代码”阈值
 
-    // --- 灵动岛播放器配置 ---
+  // --- 灵动岛播放器配置 ---
+  // 说明：实际生效值优先来自 `conf/widget.config.js` 中的环境变量映射，下面仅保留常用示例与来源说明。
+  // 配置来源优先级：环境变量 > `conf/widget.config.js` > 此处注释示例。
+  // 建议需要跨环境调优的 API 策略统一通过环境变量控制，而不是直接改接口源码。
   // MUSIC_PLAYER: true,
-  // MUSIC_PLAYER_METING_ID: '2037842140,2037843139,2758268699,2845780,1933427867,2037843141,39324826,2708984802,1490402910', // 全局随机歌曲池
-  // MUSIC_PLAYER_ARTICLE_AUDIO_CONVERT: true,      // 自动转换文中音频
-  // MUSIC_PLAYER_ARTICLE_META_ENABLE: true,       // 开启封面/歌词自动补全
+  // MUSIC_PLAYER_METING_ID: '2037842140,2037843139,2758268699,2845780,1933427867,2037843141,39324826,2708984802,1490402910', // 全局随机歌曲池（旧模式）
+  // MUSIC_PLAYER_METING_PLAYLIST_ID: '17814924409', // 歌单模式入口，配置后前端会优先请求 `/api/meting?playlistId=...`
+  // MUSIC_PLAYER_METING_PLAYLIST_MAX_TRACKS: 20, // 歌单模式单次最多补全的曲目数
+  // MUSIC_PLAYER_ARTICLE_AUDIO_CONVERT: true, // 自动转换文中音频
+  // MUSIC_PLAYER_ARTICLE_META_ENABLE: true, // 开启封面/歌词自动补全
   // MUSIC_PLAYER_ARTICLE_DEFAULT_COVER:
   //   process.env.NEXT_PUBLIC_MUSIC_PLAYER_ARTICLE_DEFAULT_COVER || '/avatar.png', // 元数据缺失时文章音频默认封面
   // MUSIC_PLAYER_ARTICLE_DEFAULT_ARTIST:
   //   process.env.NEXT_PUBLIC_MUSIC_PLAYER_ARTICLE_DEFAULT_ARTIST || 'RHZ', // 元数据缺失时文章音频默认歌手
   // MUSIC_PLAYER_ARTICLE_META_DB_ID: '3049daca95bb806889ffe623a8e74e5c', // AudioMeta 数据库ID
+  // MUSIC_PLAYER_METING_CACHE_PROVIDER: 'memory', // `/api/meting` 缓存 provider，当前默认 memory，后续可扩展到共享存储
+  // MUSIC_PLAYER_METING_RATE_LIMIT_PROVIDER: 'memory', // `/api/meting` 限流 provider，当前默认 memory，后续可扩展到共享存储
+  // MUSIC_PLAYER_METING_CACHE_TTL: 86400000, // `/api/meting` 内存缓存时长（毫秒）
+  // MUSIC_PLAYER_METING_MAX_REQUESTS: 60, // `/api/meting` 单 IP 窗口内最大请求数
+  // MUSIC_PLAYER_METING_UPSTREAM_LIMIT: 30, // `/api/meting` 上游窗口内最大请求数
+  // MUSIC_PLAYER_AUDIO_META_CACHE_TTL: 600000, // `/api/audio-meta` 内存缓存时长（毫秒）
+  // MUSIC_PLAYER_AUDIO_META_STRICT_ERROR: true, // `false` 时 `/api/audio-meta` 失败回退为 `{}`
+  // MUSIC_PLAYER_DEBUG_BADGE: false, // 是否展示灵动岛播放器调试信息
   // MUSIC_PLAYER_CDN_URL:'https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js',
-  // 机器人key配置到环境变量中
+  // 其中数据库 ID / 调试开关 / API 策略 / 歌单模式入口更适合通过环境变量注入，不建议写死在仓库中。
 
   // 图片代理（用于封面取色等场景绕过 CORS）
   IMAGE_PROXY_ALLOW_HOSTS: (process.env.IMAGE_PROXY_ALLOW_HOSTS || 'www.notion.so,prod-files-secure.s3.us-west-2.amazonaws.com,s3.us-west-2.amazonaws.com,images.unsplash.com,s41.ax1x.com,rhzhz.cn')
