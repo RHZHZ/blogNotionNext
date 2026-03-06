@@ -106,6 +106,13 @@ const nextConfig = {
       transform: '@heroicons/react/24/solid/{{member}}'
     }
   },
+
+  // API 和缓存优化配置
+  staticPageGenerationTimeout: 120,
+  // 启用 React 严格模式以检测性能问题
+  reactStrictMode: true,
+  // 生产环境优化
+  productionBrowserSourceMaps: false, // 禁用生产环境 source maps 以提高性能
   // 多语言， 在export时禁用
   i18n: process.env.EXPORT
     ? undefined
@@ -117,10 +124,10 @@ const nextConfig = {
   images: {
     // 图片压缩和格式优化
     formats: ['image/avif', 'image/webp'],
-    // 图片尺寸优化
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    // 允许next/image加载的图片 域名
+    // 图片尺寸优化 - 添加更多常用尺寸
+    deviceSizes: [480, 640, 750, 828, 1080, 1200, 1536, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 512, 768],
+    // 允许next/image加载的图片域名
     domains: [
       'gravatar.com',
       'www.notion.so',
@@ -133,12 +140,12 @@ const nextConfig = {
     ],
     // 图片加载器优化
     loader: 'default',
-    // 图片缓存优化
-    minimumCacheTTL: 60 * 60 * 24 * 7, // 7天
+    // 图片缓存优化 - 延长缓存时间
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30天
     // 危险的允许SVG
     dangerouslyAllowSVG: true,
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;"
-  },
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+      },
 
   // 默认将feed重定向至 /public/rss/feed.xml
   redirects: process.env.EXPORT
@@ -152,6 +159,13 @@ const nextConfig = {
           }
         ]
       },
+
+  // 实验性功能
+  experimental: {
+    scrollRestoration: true,
+    // 性能优化实验性功能
+    optimizePackageImports: ['@heroicons/react', 'lodash']
+  },
   // 重写url
   rewrites: process.env.EXPORT
     ? undefined
@@ -274,6 +288,23 @@ const nextConfig = {
   webpack: (config, { dev, isServer }) => {
     // 动态主题：添加 resolve.alias 配置，将动态路径映射到实际路径
     config.resolve.alias['@'] = path.resolve(__dirname)
+
+    // 排除服务端依赖库在客户端打包
+    if (!isServer) {
+      config.externals = config.externals || []
+      config.externals.push({
+        'ioredis': 'commonjs ioredis'
+      })
+      // 排除 Node.js 内置模块
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        dns: false,
+        net: false,
+        tls: false,
+        fs: false,
+        path: false
+      }
+    }
 
     if (!isServer) {
       console.log('[默认主题]', path.resolve(__dirname, 'themes', THEME))
