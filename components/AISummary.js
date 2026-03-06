@@ -2,16 +2,33 @@ import styles from './AISummary.module.css'
 import { useEffect, useState } from 'react'
 import { useGlobal } from '@/lib/global'
 
-const AISummary = ({ aiSummary }) => {
+const AISummary = ({ aiSummary, post }) => {
   const { locale } = useGlobal()
   const [summary, setSummary] = useState(aiSummary)
+  const [showStats, setShowStats] = useState(false)
 
   useEffect(() => {
     showAiSummaryAnimation(aiSummary, setSummary)
-  }, [])
+  }, [aiSummary])
+
+  const calculateStats = () => {
+    if (!aiSummary || !post?.content) return null
+
+    const originalLength = post.content.length
+    const summaryLength = aiSummary.length
+    const compressionRatio = ((1 - summaryLength / originalLength) * 100).toFixed(1)
+
+    return {
+      originalLength,
+      summaryLength,
+      compressionRatio
+    }
+  }
+
+  const stats = calculateStats()
 
   return (
-    aiSummary && (
+    aiSummary && !aiSummary.includes('摘要生成暂时不可用') && (
       <div className={styles['post-ai']}>
         <div className={styles['ai-container']}>
           <div className={styles['ai-header']}>
@@ -28,7 +45,16 @@ const AISummary = ({ aiSummary }) => {
               </svg>
             </div>
             <div className={styles['ai-title']}>{locale.AI_SUMMARY.NAME}</div>
-            <div className={styles['ai-tag']}>GPT</div>
+            <div className={styles['ai-tag']}>RHZ-Claude</div>
+            {stats && (
+              <button
+                onClick={() => setShowStats(!showStats)}
+                className={styles['ai-stats-btn']}
+                aria-label="显示摘要统计信息"
+              >
+                📊
+              </button>
+            )}
           </div>
           <div className={styles['ai-content']}>
             <div className={styles['ai-explanation']}>
@@ -37,6 +63,22 @@ const AISummary = ({ aiSummary }) => {
                 <span className={styles['blinking-cursor']}></span>
               )}
             </div>
+            {showStats && stats && (
+              <div className={styles['ai-stats']}>
+                <div className={styles['stat-item']}>
+                  <span className={styles['stat-label']}>原文长度:</span>
+                  <span className={styles['stat-value']}>{stats.originalLength} 字</span>
+                </div>
+                <div className={styles['stat-item']}>
+                  <span className={styles['stat-label']}>摘要长度:</span>
+                  <span className={styles['stat-value']}>{stats.summaryLength} 字</span>
+                </div>
+                <div className={styles['stat-item']}>
+                  <span className={styles['stat-label']}>压缩率:</span>
+                  <span className={styles['stat-value']}>{stats.compressionRatio}%</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

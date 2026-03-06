@@ -51,3 +51,118 @@
     50% { opacity: 1; }
     100% { opacity: 0; }
 }
+.post-ai {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--heo-surface);
+    border-radius: var(--heo-radius-md);
+    box-shadow: var(--heo-shadow-sm);
+    transition: all 0.3s var(--heo-ease);
+}
+
+.post-ai:hover {
+    box-shadow: var(--heo-shadow-md);
+    transform: translateY(var(--heo-card-hover-translate));
+}
+
+.ai-container {
+    border: 1px solid var(--heo-border);
+    border-radius: var(--heo-radius-sm);
+    overflow: hidden;
+}
+
+.ai-header {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.ai-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 0.5rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.ai-title {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.ai-tag {
+    margin-left: auto;
+    padding: 0.25rem 0.75rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.ai-stats-btn {
+    margin-left: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background 0.2s;
+}
+
+.ai-stats-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.ai-content {
+    padding: 1.5rem;
+}
+
+.ai-explanation {
+    line-height: 1.7;
+    color: var(--heo-text);
+    font-size: 1rem;
+}
+
+.ai-stats {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--heo-border-subtle);
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.stat-label {
+    color: var(--heo-text-secondary);
+}
+
+.stat-value {
+    font-weight: 500;
+    color: var(--heo-text);
+}
+
+.blinking-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: #667eea;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
