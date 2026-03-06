@@ -8,6 +8,7 @@ import { siteConfig } from '@/lib/config'
 import { formatDateFmt } from '@/lib/utils/formatDate'
 import SmartLink from '@/components/SmartLink'
 import WavesArea from './WavesArea'
+import AISummary from '@/components/AISummary'
 
 /**
  * 文章页头
@@ -58,6 +59,23 @@ export default function PostHeader({ post, siteInfo, isDarkMode }) {
   const coverShadowColor = useMemo(() => {
     return adjustColor(headerBgColor, { lightenRatio: 0.12 })
   }, [headerBgColor])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const root = document.documentElement
+    root.style.setProperty('--heo-cover-color', headerBgColor)
+    root.style.setProperty('--heo-cover-shadow-color', coverShadowColor)
+
+    window.dispatchEvent(
+      new CustomEvent('heo-cover-color-change', {
+        detail: { color: headerBgColor, shadow: coverShadowColor }
+      })
+    )
+  }, [headerBgColor, coverShadowColor])
+
+  // 调试信息
+  console.log('PostHeader 渲染 - AI摘要:', post?.aiSummary)
 
   return (
     <div
