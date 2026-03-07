@@ -678,24 +678,30 @@
 3. **后台执行层**
    - 复用现有归档逻辑，通过 `/api/meting` 解析后下载音频、上传 COS、写入 `ArchiveDB`
 
-### 3. 为什么当前仍会频繁 `403`
+### 3. 为什么当前仍会频繁 `403` / 命中旧失败状态
 
 当前前端链路已经正确：
 
 - 播放器会优先请求 `/api/meting?playlistId=...`
 - `/api/meting` 已支持优先使用归档地址
 - `lib/server/audioMeta.js` 已可聚合 `AudioMeta DB + Archive DB`
+- `components/Player.js` 在低覆盖率或播放异常时已会上报 `/api/archive/schedule`
 
-但真实联调中，当前歌单的 `meta.audioArchiveMatched` 仍偏低，这意味着：
+但真实联调中仍可能出现两类问题：
 
-- 很多曲目尚未在 `ArchiveDB` 中存在稳定归档记录
-- `/api/meting` 仍会回退到第三方临时直链
-- 临时直链过期后就容易在前端播放阶段触发 `403`
+1. 很多曲目尚未在 `ArchiveDB` 中存在稳定归档记录
+   - `/api/meting` 仍会回退到第三方临时直链
+   - 临时直链过期后容易在前端播放阶段触发 `403`
+2. 归档任务虽然被触发，但执行失败后如果仍被简单 TTL 去重，就会反复返回旧失败 job
+   - 表现为 `/api/archive/schedule` 返回 `accepted: true`
+   - 同时 `deduplicated: true`
+   - 且 `job.status = failed`
 
 所以后续重点不应再是反复改前端入口，而应转向：
 
 - 自动补齐归档覆盖率
 - 自动刷新失效曲目
+- 为失败任务设计可控重试窗口
 - 自动巡检歌单稳定率
 
 ### 4. 后续自动化目标
@@ -747,7 +753,135 @@
 - 只承担文章音频元数据补全与归档地址映射
 - 不直接作为全局播放器列表来源
 
-### 6.1 推荐的两张表字段规范（新增整理）
+### 6.1 当前失败重试与黑名单策略（新增结论）
+
+围绕“新歌没有自动归档，下一次还是原链接”的真实问题，当前已确认：
+
+- 首次未命中归档记录时，`/api/meting` 只能返回上游原始链接
+- 前端其实已经会上报 `/api/archive/schedule`
+- 真正的问题是：归档任务执行失败后，如果继续按默认 TTL 去重，就会导致短时间内一直返回旧失败 job，而不真正重试
+
+因此当前已在 `lib/server/archiveSchedule.js` 落地以下策略：
+
+1. 调度 key 仍按 `playlistId / trackId / songUrl` 做幂等去重
+2. 失败任务进入指数退让，而不是直接放开无限重试
+3. 失败次数跨退让窗口保留，不因 job 过期而重置
+4. 连续失败达到阈值后进入临时黑名单，避免源站永久失效时无意义重试
+
+当前具体规则为：
+
+- 第 1 次失败：1 分钟后允许重试
+- 第 2 次失败：2 分钟后允许重试
+- 第 3 次失败：进入 6 小时临时黑名单
+- 响应中会回传：
+  - `failureCount`
+  - `nextRetryAt`
+  - `blacklistedUntil`
+
+这使得 `/api/archive/schedule` 的语义从“单纯 TTL 去重”升级为“幂等调度 + 可控重试窗口 + 黑名单保护”。
+
+### 6.2 当前存储层结论：仍是 `COS/local` 双分支
+
+目前归档执行链路虽然已经任务化，但对象存储层还没有彻底抽象。
+
+在 `lib/server/archiveTaskRunner.js` 中，当前仍是：
+
+- 通过 `TENCENT_COS_* / COS_*` 环境变量判断 COS 是否可用
+- 若可用，则上传到 COS 并返回 `cos://bucket/key` 与公网 URL
+- 若不可用，则回退到本地 `public/music-archive`
+
+也就是说，当前结构本质仍是：
+
+- `storageType = 'cos'`
+- 或 `storageType = 'local'`
+
+还没有真正抽象为：
+
+- `storageProvider = 'cos' | 'r2' | 'local'`
+- `putObject()`
+- `buildPublicUrl()`
+- `buildArchivePath()`
+
+这也是后续最小改动接入 `Cloudflare R2` 的关键前置条件。
+
+### 6.3 最小改动接入 `Cloudflare R2` 的建议方案
+
+为了避免大范围重写 `archiveTaskRunner.js`，更合适的做法不是直接把 `COS` 代码替换成 `R2`，而是先抽一层很薄的 provider：
+
+1. 保持现有上层调用面不变
+   - 继续保留 `writeArchiveTarget({ filename, buffer, contentType })`
+2. 在 `writeArchiveTarget(...)` 内部根据配置选择 provider
+   - `local`
+   - `cos`
+   - `r2`
+3. provider 首期只需要统一三个返回字段
+   - `archivedAudioUrl`
+   - `archivePath`
+   - `storageType`
+4. Notion 回写阶段继续复用当前字段
+   - `StorageProvider`
+   - `StorageKey`
+   - `ArchivedAudioUrl`
+5. 等 provider 层稳定后，再考虑统一更细的状态与元数据字段
+
+如果按这个方案推进，`R2` 接入对现有代码的影响将集中在：
+
+- 运行时配置初始化
+- provider 可用性判断
+- 上传实现
+- 公网 URL 与对象 key 拼装
+
+而不会扩散到：
+
+- `/api/archive/schedule`
+- `archiveSchedule.js`
+- `/api/meting`
+- 前端播放器触发逻辑
+
+### 6.4 建议的 `R2` 环境变量
+
+建议新增并统一以下配置：
+
+- `MUSIC_PLAYER_AUDIO_STORAGE_PROVIDER`
+  - `local | cos | r2`
+- `R2_ACCOUNT_ID`
+- `R2_ACCESS_KEY_ID`
+- `R2_SECRET_ACCESS_KEY`
+- `R2_BUCKET`
+- `R2_PUBLIC_BASE_URL`
+- `R2_ENDPOINT`
+- `R2_KEY_PREFIX`
+
+其中：
+
+- `R2_ENDPOINT` 可由 `R2_ACCOUNT_ID` 推导，也允许显式覆盖
+- `R2_PUBLIC_BASE_URL` 用于生成稳定分发 URL
+- `R2_KEY_PREFIX` 对应当前 `COS_KEY_PREFIX` 的语义
+
+### 6.5 迁移风险与兼容建议
+
+当前最需要注意的不是上传 SDK 本身，而是数据语义兼容：
+
+1. `storageType` 目前同时承担“展示类型”和“provider 标识”
+   - 现状只有 `cos / local`
+   - 接入 `r2` 后，建议逐步收敛为 `storageProvider`
+2. `archivePath` 当前对 COS 使用的是 `cos://bucket/key`
+   - 对 local 使用的是本地文件路径
+   - 接入 `r2` 后最好也保持协议化，如 `r2://bucket/key`
+3. Notion 历史记录里已经可能存在旧字段值
+   - 因此代码需要继续兼容 `StorageProvider / StorageType`
+   - 以及 `StorageKey / ArchivePath`
+4. 公网访问域名不能只依赖对象存储默认域名
+   - 否则未来切 CDN、自定义域或鉴权策略时会受限
+   - 因此应继续保留 `*_PUBLIC_BASE_URL` 这一层抽象
+
+更稳妥的迁移顺序应是：
+
+1. 先抽 provider，不改现有 `COS/local` 行为
+2. 再引入 `r2` provider，并仅在显式配置时启用
+3. 最后逐步统一 `storageProvider / storageKey / archivePath` 语义
+
+这样可以把风险集中在存储写入层，而不是扩散到整个播放器主链路。
 
 为了降低后续维护成本，建议将两张 Notion 表的职责进一步收敛为：
 
@@ -929,7 +1063,8 @@
 
 这意味着，后续代码落地方向应是：
 
-1. 抽共享归档执行器
-2. 新增调度 API
-3. 前端只做任务上报
-4. 再补后台巡检入口
+1. 继续收口共享归档执行器，补齐旧离线脚本下沉
+2. 将当前 `COS/local` 写入链路抽象为 `storage provider`
+3. 在 provider 层以最小改动接入 `Cloudflare R2`
+4. 保持前端只做任务上报，后台负责执行与重试
+5. 再补真实后台巡检入口

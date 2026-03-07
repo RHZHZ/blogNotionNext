@@ -329,14 +329,18 @@ P0
 P0
 
 #### 当前状态
-当前仓库只有离线归档脚本，尚无自动化调度 API。
+已新增 `POST /api/archive/schedule` 调度入口，并完成任务幂等去重、失败指数退让、重复失败临时黑名单与接口级回写；当前已能在前端低覆盖率/播放异常场景下上报调度，由服务端执行归档并在失败时返回可观测的 job 状态。
 
 #### 待新增任务
-- [ ] 新增 `POST /api/archive/schedule` 作为任务调度入口
-- [ ] 支持 `playlistId / trackId / songUrl` 三类输入
-- [ ] 为任务增加幂等校验，避免重复归档
-- [ ] 支持记录触发原因：初始化缺归档 / 播放403 / 手动刷新 / 巡检任务
+- [x] 新增 `POST /api/archive/schedule` 作为任务调度入口
+- [x] 支持 `playlistId / trackId / songUrl` 三类输入
+- [x] 为任务增加幂等校验，避免重复归档
+- [x] 支持记录触发原因：初始化缺归档 / 播放403 / 手动刷新 / 巡检任务
 - [ ] 为手动归档补充池预留字段校验：`InGlobalPlayer / AddToPlaylist / PlaylistOrder`
+- [x] 为失败任务增加指数退让：第 1 次失败 1 分钟，第 2 次失败 2 分钟
+- [x] 连续失败达到阈值后加入临时黑名单（当前为第 3 次失败后黑名单 6 小时）
+- [x] 在调度响应中回传 `failureCount / nextRetryAt / blacklistedUntil`
+- [ ] 后续补真实队列化/异步后台执行，避免 API 请求同步等待归档任务完成
 
 ### 11.3 `lib/server/archive*`（待新增）
 
@@ -344,14 +348,50 @@ P0
 P0
 
 #### 当前状态
-已新增 `lib/server/archiveExecutor.js` 作为共享执行入口，`pages/api/archive/schedule` 已开始复用共享参数归一化与模式判定；完整的归档下载 / 上传 / Notion 回写细节仍待继续从旧离线脚本中下沉。
+已新增 `lib/server/archiveExecutor.js` 作为共享执行入口，`pages/api/archive/schedule` 已复用共享参数归一化与模式判定；`lib/server/archiveSchedule.js` 已补齐调度态管理、失败指数退让、临时黑名单与 job 序列化。当前主要剩余工作已转向：继续下沉旧离线脚本细节，并将对象存储从 `COS/local` 双分支整理为可插拔 provider，为 `Cloudflare R2` 接入做准备。
 
 #### 待新增任务
 - [x] 抽离归档执行入口到 `lib/server` 共享模块
 - [x] 让调度 API 复用共享执行入口与模式判定
+- [x] 新增调度状态管理：`pending / running / completed / failed`
+- [x] 统一失败重试、错误截断与失败次数回写逻辑
 - [ ] 继续把旧离线脚本中的下载、上传、回写细节下沉到服务层
 - [ ] 统一归档状态：`pending / archiving / archived / failed / stale`
-- [ ] 统一失败重试、错误截断、字段回写逻辑
+- [ ] 将当前 `COS/local` 双分支改造成 `storage provider` 抽象
+- [ ] 在 provider 层新增 `R2` 兼容实现与环境变量规范
+- [ ] 统一 `storageType / storageProvider / storageKey / archivePath` 字段语义
+
+#### 最小改动的 `R2` 接入方案
+1. 先保留现有 `writeArchiveTarget(...)` 调用面不变，只把其内部改为委托 `storage provider`
+2. provider 首期统一返回：
+   - `archivedAudioUrl`
+   - `archivePath`
+   - `storageType`
+3. provider 工厂先支持：
+   - `local`
+   - `cos`
+   - `r2`
+4. `r2` 继续沿用 S3 兼容接口，只新增 provider 配置，不改上层归档流程
+5. Notion 回写阶段继续复用：
+   - `storageProvider`
+   - `storageKey`
+   - `ArchivedAudioUrl`
+   避免一次性改动过大
+
+#### 建议新增环境变量
+- `MUSIC_PLAYER_AUDIO_STORAGE_PROVIDER=local|cos|r2`
+- `R2_ACCOUNT_ID`
+- `R2_ACCESS_KEY_ID`
+- `R2_SECRET_ACCESS_KEY`
+- `R2_BUCKET`
+- `R2_PUBLIC_BASE_URL`
+- `R2_ENDPOINT`（可由 `ACCOUNT_ID` 推导，也可显式配置）
+- `R2_KEY_PREFIX`
+
+#### 迁移顺序建议
+1. 先抽 `provider` 接口并保持 `cos/local` 行为不变
+2. 再新增 `r2` provider 并只在配置打开时启用
+3. 最后统一清理 `storageType / storageProvider / storageKey` 的历史语义
 
 ### 11.4 `scripts/archive-audio-to-notion-standalone.js`
 
@@ -436,10 +476,11 @@ P1
    - 基础响应 helper
 
 ### 下一步优先
-1. 优先落地自动归档任务化：共享执行器 + 调度 API + 前端上报 + 定时巡检
+1. 优先完成自动归档服务层收口：旧离线脚本细节下沉 + 存储 provider 抽象 + `R2` 接入方案
 2. 再补 `upstash / kv` 真实环境联调与可用性验证
 3. 继续补共享 provider 的环境校验与降级观测
 4. 如有需要，为 `audio-meta` 增加缓存元信息
+5. 后续再推进真实后台巡检与异步队列化执行
 
 
 
