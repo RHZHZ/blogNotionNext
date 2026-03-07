@@ -16,6 +16,13 @@ module.exports = {
   AI_SUMMARY_KEY: process.env.AI_SUMMARY_KEY || '',
   AI_SUMMARY_CACHE_TIME: process.env.AI_SUMMARY_CACHE_TIME || 1800, // 缓存时间，单位秒
   AI_SUMMARY_WORD_LIMIT: process.env.AI_SUMMARY_WORD_LIMIT || 1000,
+  AI_SUMMARY_SEGMENT_LIMIT: process.env.AI_SUMMARY_SEGMENT_LIMIT || 9,
+  AI_SUMMARY_TOC_LIMIT: process.env.AI_SUMMARY_TOC_LIMIT || 8,
+  AI_SUMMARY_MIN_LENGTH: process.env.AI_SUMMARY_MIN_LENGTH || 24,
+  AI_SUMMARY_LENGTH_SHORT: process.env.AI_SUMMARY_LENGTH_SHORT || '60-100字',
+  AI_SUMMARY_LENGTH_MEDIUM: process.env.AI_SUMMARY_LENGTH_MEDIUM || '90-140字',
+  AI_SUMMARY_LENGTH_LONG: process.env.AI_SUMMARY_LENGTH_LONG || '120-180字',
+  AI_SUMMARY_LENGTH_XLONG: process.env.AI_SUMMARY_LENGTH_XLONG || '150-220字',
 
   //   ********挂件组件相关********
   // AI 文章摘要生成 @see https://docs_s.tianli0.top/

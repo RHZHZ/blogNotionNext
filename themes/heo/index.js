@@ -40,7 +40,7 @@ import { PostLock } from './components/PostLock'
 import PostRecommend from './components/PostRecommend'
 import SearchNav from './components/SearchNav'
 import SideRight from './components/SideRight'
-import CONFIG from './config'
+import { isAiSummaryEnabled } from '@/lib/utils'
 import { Style } from './style'
 
 // 添加 LXGW WenKai Mono 字体
@@ -344,7 +344,9 @@ const LayoutSlug = props => {
                 className='wow fadeInUp p-5 justify-center mx-auto'
                 data-wow-delay='.2s'>
                 <ArticleExpirationNotice post={post} />
-                <AISummary aiSummary={post.aiSummary} />
+                {isAiSummaryEnabled(post) && (
+                  <AISummary aiSummary={post.aiSummary} post={post} />
+                )}
                 <WWAds orientation='horizontal' className='w-full' />
                 {post && <NotionPage post={post} />}
                 <WWAds orientation='horizontal' className='w-full' />

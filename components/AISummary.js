@@ -1,6 +1,7 @@
 import styles from './AISummary.module.css'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useGlobal } from '@/lib/global'
+import { isAiSummaryEnabled } from '@/lib/utils'
 
 const DESKTOP_COLLAPSE_LINES = 5
 const MOBILE_COLLAPSE_LINES = 4
@@ -14,6 +15,7 @@ const AISummary = ({ aiSummary, post }) => {
   const [shouldCollapse, setShouldCollapse] = useState(false)
   const summaryRef = useRef(null)
   const contentRef = useRef(null)
+  const aiSummaryEnabled = isAiSummaryEnabled(post)
 
   // 读取全局取色变量，与 PostHeader / InfoCard 联动
   useEffect(() => {
@@ -117,7 +119,7 @@ const AISummary = ({ aiSummary, post }) => {
   const stats = calculateStats()
 
   return (
-    aiSummary && !aiSummary.includes('摘要生成暂时不可用') && (
+    aiSummaryEnabled && aiSummary && !aiSummary.includes('摘要生成暂时不可用') && (
       <div
         ref={summaryRef}
         className={styles['post-ai']}
