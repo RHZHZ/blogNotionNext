@@ -20,7 +20,8 @@ import {
   getAudioMetaMaps,
   hasAudioMetaSourceConfigured,
   normalizeAudioKey,
-  normalizeTrackId
+  normalizeTrackId,
+  buildAudioKeyVariants
 } from '@/lib/server/audioMeta'
 
 const logger = createLogger('meting')
@@ -34,8 +35,15 @@ const cacheStore = createCacheStore(cacheProviderConfigured)
 const cache = cacheStore
 const pendingRequests = new Map();
 const CACHE_TTL = Number(BLOG.MUSIC_PLAYER_METING_CACHE_TTL || 24 * 60 * 60 * 1000); // 24小时
+const PLAYLIST_CACHE_TTL = Number(BLOG.MUSIC_PLAYER_METING_PLAYLIST_CACHE_TTL || CACHE_TTL);
 const PLAYLIST_MAX_TRACKS = Number(BLOG.MUSIC_PLAYER_METING_PLAYLIST_MAX_TRACKS || 20);
-const cacheStats = { hits: 0, misses: 0, retries: 0, rateLimited: 0 };
+const buildPlaylistCacheKey = playlistId => `meting:playlist:${String(playlistId || '').trim()}`
+const cacheStats = {
+  hits: 0,
+  misses: 0,
+  retries: 0,
+  rateLimited: 0
+};
 let hasLoggedProviderDiagnostics = false;
 
 // 速率限制配置
@@ -373,7 +381,7 @@ function resolveAudioMetaEntry(candidate, track, audioMetaMaps) {
   }
 
   const audioKeyCandidates = [track?.url, track?.meta?.sourceUrl, candidate?.meta?.sourceUrl]
-    .map(value => normalizeAudioKey(value))
+    .flatMap(value => buildAudioKeyVariants(value))
     .filter(Boolean)
 
   for (const audioKey of audioKeyCandidates) {
@@ -405,6 +413,8 @@ function applyAudioMetaToTrack(track, candidate, audioMetaMaps) {
       ...(normalizedTrack.meta || {}),
       trackId: audioMetaEntry.trackId || normalizedTrack.meta?.trackId || candidate?.id || null,
       sourceUrl: audioMetaEntry.sourceAudioUrl || audioMetaEntry.rawUrl || normalizedTrack.meta?.sourceUrl || normalizedTrack.url || '',
+      playlistOrder: audioMetaEntry.playlistOrder ?? normalizedTrack.meta?.playlistOrder ?? candidate?.meta?.playlistOrder ?? null,
+      originalIndex: normalizedTrack.meta?.originalIndex ?? candidate?.meta?.originalIndex ?? null,
       audioArchive: {
         matched: true,
         by: audioMetaEntry.trackId ? 'trackId' : 'audioKey',
@@ -416,7 +426,7 @@ function applyAudioMetaToTrack(track, candidate, audioMetaMaps) {
 }
 
 
-function createPlaylistTrackFallback(item = {}) {
+function createPlaylistTrackFallback(item = {}, index = 0) {
   return {
     id: String(item?.id || ''),
     name: item?.name || String(item?.id || ''),
@@ -430,7 +440,9 @@ function createPlaylistTrackFallback(item = {}) {
       album: item?.album || '',
       source: 'playlist-fallback',
       trackId: String(item?.id || ''),
-      sourceUrl: item?.url || ''
+      sourceUrl: item?.url || '',
+      playlistOrder: Number.isFinite(item?.playlistOrder) ? item.playlistOrder : null,
+      originalIndex: index
     }
   };
 }
@@ -447,16 +459,54 @@ function buildTrackIdentityKeys(track) {
   }
 }
 
+function getTrackPlaylistOrder(track) {
+  const value = Number(track?.meta?.playlistOrder)
+  return Number.isFinite(value) && value > 0 ? value : null
+}
+
+function sortTracksByPlaylistOrder(tracks = []) {
+  return tracks
+    .map((track, index) => ({ track, index }))
+    .sort((left, right) => {
+      const leftOrder = getTrackPlaylistOrder(left.track)
+      const rightOrder = getTrackPlaylistOrder(right.track)
+      const leftOriginalIndex = Number.isFinite(left.track?.meta?.originalIndex) ? left.track.meta.originalIndex : left.index
+      const rightOriginalIndex = Number.isFinite(right.track?.meta?.originalIndex) ? right.track.meta.originalIndex : right.index
+
+      if (leftOrder == null && rightOrder == null) return leftOriginalIndex - rightOriginalIndex
+      if (leftOrder == null) return 1
+      if (rightOrder == null) return -1
+      if (leftOrder !== rightOrder) return leftOrder - rightOrder
+      return leftOriginalIndex - rightOriginalIndex
+    })
+    .map(item => item.track)
+}
+
 function mergePlaylistTracksWithArchivePool(playlistTracks = [], archiveTracks = [], audioMetaMaps) {
   const merged = []
   const seen = new Set()
 
+  const findArchiveMatch = track => {
+    const targetKeys = buildTrackIdentityKeys(track)
+    return archiveTracks.find(archiveTrack => {
+      const archiveKeys = buildTrackIdentityKeys(archiveTrack)
+      return (
+        (targetKeys.trackId && archiveKeys.trackId && targetKeys.trackId === archiveKeys.trackId) ||
+        (targetKeys.audioKey && archiveKeys.audioKey && targetKeys.audioKey === archiveKeys.audioKey) ||
+        (targetKeys.urlKey && archiveKeys.urlKey && targetKeys.urlKey === archiveKeys.urlKey)
+      )
+    })
+  }
+
   const pushTrack = (track, source) => {
     if (!track) return
 
+    const archiveMatch = source === 'playlist' ? findArchiveMatch(track) : null
     const normalized = source === 'archive-pool'
       ? applyAudioMetaToTrack(track, track, audioMetaMaps)
-      : track
+      : archiveMatch
+        ? applyAudioMetaToTrack(track, archiveMatch, audioMetaMaps)
+        : track
     const { trackId, audioKey, urlKey } = buildTrackIdentityKeys(normalized)
     const keys = [trackId && `track:${trackId}`, audioKey && `audio:${audioKey}`, urlKey && `url:${urlKey}`].filter(Boolean)
 
@@ -469,65 +519,171 @@ function mergePlaylistTracksWithArchivePool(playlistTracks = [], archiveTracks =
   playlistTracks.forEach(track => pushTrack(track, 'playlist'))
   archiveTracks.forEach(track => pushTrack(track, 'archive-pool'))
 
-  return merged
+  return sortTracksByPlaylistOrder(merged)
 }
 
-async function fetchPlaylist(playlistId, startTime) {
+async function fetchPlaylist(playlistId, startTime, { forceRefresh = false, attempt = 1 } = {}) {
+  const playlistCacheKey = buildPlaylistCacheKey(playlistId)
+
+  const getCachedPlaylistFallback = async fallbackReason => {
+    const cachedPlaylist = await getCacheEntry(cache, playlistCacheKey, PLAYLIST_CACHE_TTL)
+    if (!cachedPlaylist?.data) return null
+
+    cacheStats.hits++
+    return {
+      ...cachedPlaylist.data,
+      meta: {
+        ...(cachedPlaylist.data.meta || {}),
+        cacheSource: 'playlist-cache-fallback',
+        fallbackReason
+      }
+    }
+  }
+
+  if (!forceRefresh) {
+    const cachedPlaylist = await getCacheEntry(cache, playlistCacheKey, PLAYLIST_CACHE_TTL)
+    if (cachedPlaylist?.data) {
+      cacheStats.hits++
+      return {
+        ...cachedPlaylist.data,
+        meta: {
+          ...(cachedPlaylist.data.meta || {}),
+          cacheSource: 'playlist-cache'
+        }
+      }
+    }
+  }
+
   const upstreamLimit = await checkUpstreamRateLimitLocal();
   if (!upstreamLimit.allowed) {
     logRateLimit('上游API限制中', {
       reason: '达到上游请求限制',
-      retryAfter: upstreamLimit.retryAfter
+      retryAfter: upstreamLimit.retryAfter,
+      playlistId,
+      attempt
     });
     await new Promise(resolve => setTimeout(resolve, upstreamLimit.retryAfter));
-    return fetchPlaylist(playlistId, startTime);
+    return fetchPlaylist(playlistId, startTime, { forceRefresh, attempt });
   }
 
   const upstream = new URL('https://metings.qjqq.cn/Playlist');
   upstream.searchParams.set('id', String(playlistId));
 
-  const response = await fetch(upstream.toString(), {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      'Accept': 'application/json',
-      'Accept-Encoding': 'gzip, deflate, br',
-      'Cache-Control': 'no-cache'
+  const controller = new AbortController();
+  const timeout = Math.min(10000, 2000 * attempt);
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(upstream.toString(), {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Cache-Control': 'no-cache'
+      },
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+    const duration = Date.now() - startTime;
+    if (!response.ok) {
+      if (attempt < RETRY_CONFIG.maxRetries && isRetryableError(null, response.status)) {
+        const delay = calculateRetryDelay(attempt);
+        cacheStats.retries++;
+        logRetry(`歌单 HTTP ${response.status}: ${playlistId}`, {
+          attempt,
+          delay,
+          nextAttempt: attempt + 1
+        });
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return fetchPlaylist(playlistId, startTime, { forceRefresh, attempt: attempt + 1 });
+      }
+
+      logError('歌单接口请求失败', {
+        details: `Playlist: ${playlistId} | 状态码: ${response.status} | 耗时: ${duration}ms | 尝试: ${attempt}`
+      });
+      return getCachedPlaylistFallback(`status-${response.status}`);
     }
-  });
 
-  const duration = Date.now() - startTime;
-  if (!response.ok) {
-    logError('歌单接口请求失败', {
-      details: `Playlist: ${playlistId} | 状态码: ${response.status} | 耗时: ${duration}ms`
-    });
-    return null;
+    const payload = await response.json().catch(() => null);
+    const playlist = payload?.data?.playlist || payload?.result?.playlist || payload?.playlist || null;
+    const tracks = Array.isArray(playlist?.tracks)
+      ? playlist.tracks
+      : Array.isArray(payload?.result?.songs)
+        ? payload.result.songs
+        : [];
+
+    if (!playlist && tracks.length === 0) {
+      if (attempt < RETRY_CONFIG.maxRetries) {
+        const delay = calculateRetryDelay(attempt);
+        cacheStats.retries++;
+        logRetry(`歌单空响应: ${playlistId}`, {
+          attempt,
+          delay,
+          nextAttempt: attempt + 1
+        });
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return fetchPlaylist(playlistId, startTime, { forceRefresh, attempt: attempt + 1 });
+      }
+
+      logError('歌单接口返回空数据', {
+        details: `Playlist: ${playlistId} | 耗时: ${duration}ms | 尝试: ${attempt}`
+      });
+      return getCachedPlaylistFallback('empty-playlist');
+    }
+
+    if (attempt > 1) {
+      logRetry(`歌单重试成功: ${playlistId}`, {
+        attempt: attempt - 1,
+        totalAttempts: attempt
+      });
+    }
+
+    const playlistData = {
+      playlist: {
+        id: String(playlist?.id || playlistId),
+        name: playlist?.name || '',
+        cover: playlist?.coverImgUrl || '',
+        creator: playlist?.creator || '',
+        trackCount: Number(playlist?.trackCount || tracks.length || 0)
+      },
+      tracks,
+      meta: {
+        cacheSource: 'upstream',
+        attemptCount: attempt
+      }
+    };
+
+    await setCacheEntry(cache, playlistCacheKey, playlistData, {
+      cachedAt: new Date().toISOString(),
+      source: 'playlist-upstream',
+      ttl: PLAYLIST_CACHE_TTL
+    })
+
+    return playlistData;
+  } catch (error) {
+    clearTimeout(timeoutId);
+
+    if (attempt < RETRY_CONFIG.maxRetries && isRetryableError(error)) {
+      const delay = calculateRetryDelay(attempt);
+      cacheStats.retries++;
+      logRetry(`歌单网络错误: ${playlistId}`, {
+        attempt,
+        delay,
+        nextAttempt: attempt + 1,
+        error: error.message
+      });
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return fetchPlaylist(playlistId, startTime, { forceRefresh, attempt: attempt + 1 });
+    }
+
+    const cachedPlaylist = await getCachedPlaylistFallback(error?.message || 'playlist-fetch-error')
+    if (cachedPlaylist) {
+      return cachedPlaylist
+    }
+
+    throw error
   }
-
-  const payload = await response.json().catch(() => null);
-  const playlist = payload?.data?.playlist || payload?.result?.playlist || payload?.playlist || null;
-  const tracks = Array.isArray(playlist?.tracks)
-    ? playlist.tracks
-    : Array.isArray(payload?.result?.songs)
-      ? payload.result.songs
-      : [];
-
-  if (!playlist && tracks.length === 0) {
-    logError('歌单接口返回空数据', {
-      details: `Playlist: ${playlistId} | 耗时: ${duration}ms`
-    });
-    return null;
-  }
-
-  return {
-    playlist: {
-      id: String(playlist?.id || playlistId),
-      name: playlist?.name || '',
-      cover: playlist?.coverImgUrl || '',
-      creator: playlist?.creator || '',
-      trackCount: Number(playlist?.trackCount || tracks.length || 0)
-    },
-    tracks
-  };
 }
 
 async function cleanupExpiredIpLimitsLocal() {
@@ -592,7 +748,7 @@ export default async function handler(req, res) {
   let playlistMeta = null;
 
   if (isPlaylistMode) {
-    const playlistData = await fetchPlaylist(normalizedPlaylistId, requestStart);
+    const playlistData = await fetchPlaylist(normalizedPlaylistId, requestStart, { forceRefresh: forceRefreshEnabled });
     if (!playlistData) {
       return sendApiError(res, 502, {
         error: '歌单数据获取失败',
@@ -602,8 +758,9 @@ export default async function handler(req, res) {
     }
 
     playlistMeta = playlistData.playlist;
+    requestRetries += Math.max(0, (playlistData?.meta?.attemptCount || 1) - 1);
     candidates = playlistData.tracks
-      .map(item => createPlaylistTrackFallback(item))
+      .map((item, index) => createPlaylistTrackFallback(item, index))
       .filter(item => item.id)
       .slice(0, PLAYLIST_MAX_TRACKS);
 

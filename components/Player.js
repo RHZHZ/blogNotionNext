@@ -231,9 +231,31 @@ const Player = () => {
     const currentAudio = currentPlayer?.list?.audios?.[index] || currentPlayer?.list?.audio?.[index] || null
 
     return {
+      currentAudio,
       trackId: String(currentAudio?.meta?.trackId || '').trim(),
       songUrl: String(currentAudio?.meta?.sourceUrl || currentAudio?.url || '').trim()
     }
+  }
+
+  const shouldSkipAudioErrorRefresh = currentAudio => {
+    const source = String(currentAudio?.meta?.source || '').trim()
+    const archived = Boolean(currentAudio?.meta?.audioArchive?.archived)
+    return source === 'archive-playlist' || archived
+  }
+
+  const shouldThrottleAudioErrorRefresh = refreshTarget => {
+    const cooldownMs = 30 * 1000
+    const key = [refreshTarget.trackId, refreshTarget.songUrl].filter(Boolean).join('::')
+    if (!key) return false
+
+    const now = Date.now()
+    const lastTriggeredAt = Number(audioRefreshCooldownRef.current.get(key) || 0)
+    if (lastTriggeredAt && now - lastTriggeredAt < cooldownMs) {
+      return true
+    }
+
+    audioRefreshCooldownRef.current.set(key, now)
+    return false
   }
 
   const refreshRemoteAudioOn403 = async () => {
@@ -246,6 +268,12 @@ const Player = () => {
       const shouldResume = !(currentPlayer?.audio?.paused ?? true)
 
       const refreshTarget = resolveCurrentTrackPayload(currentPlayer)
+      if (shouldSkipAudioErrorRefresh(refreshTarget.currentAudio)) {
+        return
+      }
+      if (shouldThrottleAudioErrorRefresh(refreshTarget)) {
+        return
+      }
       if (refreshTarget.trackId || refreshTarget.songUrl) {
         await scheduleArchive({
           reason: 'audio-error-refresh',

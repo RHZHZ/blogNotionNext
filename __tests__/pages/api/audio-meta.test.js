@@ -53,6 +53,7 @@ describe('pages/api/audio-meta', () => {
     audioUrl,
     archivedAudioUrl,
     trackId,
+    audioKey,
     name = 'Test Song',
     artist = 'Test Artist',
     album = 'Test Album',
@@ -63,6 +64,7 @@ describe('pages/api/audio-meta', () => {
       AudioUrl: { url: audioUrl },
       ...(archivedAudioUrl ? { ArchivedAudioUrl: { url: archivedAudioUrl } } : {}),
       ...(trackId ? { TrackId: { rich_text: [{ plain_text: String(trackId) }] } } : {}),
+      ...(audioKey ? { AudioKey: { rich_text: [{ plain_text: String(audioKey) }] } } : {}),
       Name: { title: [{ plain_text: name }] },
       Artist: { rich_text: [{ plain_text: artist }] },
       Album: { rich_text: [{ plain_text: album }] },
@@ -70,6 +72,7 @@ describe('pages/api/audio-meta', () => {
       Lyrics: { rich_text: [{ plain_text: lyrics }] }
     }
   })
+
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -288,6 +291,74 @@ describe('pages/api/audio-meta', () => {
       rawUrl: 'https://cdn.example.com/music/source-song.mp3'
     })
   })
+
+  it('indexes audio meta by explicit AudioKey when source url filename differs', async () => {
+    const handler = await loadHandler({
+      NEXT_PUBLIC_MUSIC_PLAYER_ARTICLE_META_DB_ID: 'test-db-id',
+      NOTION_ACCESS_TOKEN: 'test-token'
+    })
+
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: jest.fn().mockResolvedValue({
+        results: [
+          createNotionPage({
+            audioUrl: 'https://cdn.example.com/music/custom-source-name.mp3',
+            audioKey: 'manual-extra.mp3',
+            name: 'Manual AudioKey Song'
+          })
+        ],
+        has_more: false,
+        next_cursor: null
+      })
+    })
+
+    const res = createRes()
+
+    await handler({}, res)
+
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.body['manual-extra.mp3']).toMatchObject({
+      name: 'Manual AudioKey Song',
+      rawUrl: 'https://cdn.example.com/music/custom-source-name.mp3'
+    })
+  })
+  it('indexes audio meta by both extension and extensionless AudioKey variants', async () => {
+    const handler = await loadHandler({
+      NEXT_PUBLIC_MUSIC_PLAYER_ARTICLE_META_DB_ID: 'test-db-id',
+      NOTION_ACCESS_TOKEN: 'test-token'
+    })
+
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: jest.fn().mockResolvedValue({
+        results: [
+          createNotionPage({
+            audioUrl: 'https://cdn.example.com/music/sunny.mp3',
+            audioKey: 'sunny',
+            name: 'Sunny Song'
+          })
+        ],
+        has_more: false,
+        next_cursor: null
+      })
+    })
+
+    const res = createRes()
+
+    await handler({}, res)
+
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.body.sunny).toMatchObject({
+      name: 'Sunny Song',
+      rawUrl: 'https://cdn.example.com/music/sunny.mp3'
+    })
+    expect(res.body['sunny.mp3']).toMatchObject({
+      name: 'Sunny Song',
+      rawUrl: 'https://cdn.example.com/music/sunny.mp3'
+    })
+  })
+
 
   it('sets provider debug headers when debug badge is enabled', async () => {
     const handler = await loadHandler(

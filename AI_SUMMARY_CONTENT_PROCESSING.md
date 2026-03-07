@@ -237,7 +237,85 @@ rm -rf .next
 
 如果预览中没有 URL、代码、公式，说明清理成功！
 
-## 🎉 总结
+## 🆕 最新优化（2026-03-07）
+
+### 预处理策略升级
+
+当前 `lib/plugins/aiSummary.js` 已从“激进删除”调整为“保守去噪”：
+
+1. **保留更多技术表达**
+   - 会尽量保留 `Next.js`、`Node.js`、`C++`、`A/B`、`token-based` 等常见技术词
+   - 不再简单粗暴删除所有特殊字符
+
+2. **Markdown 链接保留文本**
+   ```
+   输入: [官方文档](https://example.com)
+   输出: 官方文档
+   ```
+
+3. **行内代码尽量保留内容本身**
+   ```
+   输入: 使用 `useEffect` 监听状态变化
+   输出: 使用 useEffect 监听状态变化
+   ```
+
+4. **公式改为弱化处理**
+   - 公式块会替换为 `公式推导`
+   - 行内公式会尽量保留可读文本
+
+### 正文采样策略升级
+
+当前不再只做简单 `slice(0, wordLimit)`，而是：
+
+- 优先保留标题
+- 保留目录前 N 项
+- 对正文按 **开头 + 中间 + 结尾** 分段采样
+- 去重后再截断
+
+这样长文的后半部分重点也更容易进入摘要输入。
+
+### 新增可配置项
+
+可在环境变量中配置：
+
+```bash
+AI_SUMMARY_WORD_LIMIT=1000
+AI_SUMMARY_SEGMENT_LIMIT=9
+AI_SUMMARY_TOC_LIMIT=8
+AI_SUMMARY_MIN_LENGTH=24
+AI_SUMMARY_LENGTH_SHORT=60-100字
+AI_SUMMARY_LENGTH_MEDIUM=90-140字
+AI_SUMMARY_LENGTH_LONG=120-180字
+AI_SUMMARY_LENGTH_XLONG=150-220字
+```
+
+含义：
+
+- `AI_SUMMARY_WORD_LIMIT`: 送给 AI 的最大文本长度
+- `AI_SUMMARY_SEGMENT_LIMIT`: 正文采样的最大段数
+- `AI_SUMMARY_TOC_LIMIT`: 目录最多取多少项
+- `AI_SUMMARY_MIN_LENGTH`: 判定摘要是否过短的最小长度
+- `AI_SUMMARY_LENGTH_*`: 不同篇幅下的目标摘要字数范围
+
+### 响应提取与清洗升级
+
+当前已兼容更多 AI 返回结构：
+
+- `choices[0].message.content` 字符串
+- `choices[0].message.content` 数组
+- `choices[0].text`
+- `content`
+- `result`
+- `text`
+
+摘要清洗也做了增强：
+
+- 去除 `<think>`、`<analysis>` 等内部标签
+- 去掉常见 Markdown 包裹
+- 去掉“本文介绍了”“文章主要讲了”等模板句
+- 合并重复标点
+- 自动补句号
+
 
 当前配置针对长文优化：
 - ✅ 输入 3000 字符（包含更多内容）

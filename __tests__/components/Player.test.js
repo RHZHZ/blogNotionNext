@@ -66,6 +66,7 @@ describe('components/Player', () => {
 
   beforeEach(() => {
     playerInstances = []
+    global.fetch = jest.fn()
     window.APlayer = MockAPlayer
     window.__APPLAYER__ = undefined
     window.__APPLAYER_META__ = undefined
@@ -115,42 +116,25 @@ describe('components/Player', () => {
     })
   })
 
-  it('reports current track when audio error triggers remote refresh', async () => {
-    global.fetch
-      .mockResolvedValueOnce(createJsonResponse({
-        tracks: [{
-          name: 'Song B',
-          artist: 'Artist B',
-          url: 'https://example.com/play.mp3',
-          meta: {
-            trackId: 'track-b',
-            sourceUrl: 'https://example.com/source-b.mp3'
-          }
-        }],
+  it('does not reschedule archive or force refresh for archived tracks on audio error', async () => {
+    global.fetch.mockResolvedValueOnce(createJsonResponse({
+      tracks: [{
+        name: 'Archived Song',
+        artist: 'Artist A',
+        url: 'https://music.rhzhz.cn/music-archive/archived.mp3',
         meta: {
-          total: 1,
-          audioArchiveMatched: 1,
-          playlist: { id: '17814924409' }
+          trackId: 'archived.mp3',
+          sourceUrl: 'https://music.rhzhz.cn/music-archive/archived.mp3',
+          source: 'archive-playlist',
+          audioArchive: { archived: true }
         }
-      }))
-      .mockResolvedValueOnce(createJsonResponse({ accepted: true, deduplicated: false }))
-      .mockResolvedValueOnce(createJsonResponse({
-        tracks: [{
-          name: 'Song B2',
-          artist: 'Artist B2',
-          url: 'https://example.com/play-2.mp3',
-          meta: {
-            trackId: 'track-b',
-            sourceUrl: 'https://example.com/source-b.mp3'
-          }
-        }],
-        meta: {
-          total: 1,
-          audioArchiveMatched: 1,
-          playlist: { id: '17814924409' },
-          forceRefresh: true
-        }
-      }))
+      }],
+      meta: {
+        total: 1,
+        audioArchiveMatched: 1,
+        playlist: { id: '17814924409' }
+      }
+    }))
 
     render(<Player />)
 
@@ -159,29 +143,15 @@ describe('components/Player', () => {
     })
 
     const firstPlayer = playerInstances[0]
+    window.__APPLAYER__ = firstPlayer
     firstPlayer.audio.error = { code: 4 }
 
     await act(async () => {
       await firstPlayer.__audioErrorHandler()
     })
 
-    await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith('/api/archive/schedule', expect.objectContaining({
-        method: 'POST'
-      }))
-    })
-
-    const scheduleCall = global.fetch.mock.calls.find(([url]) => url === '/api/archive/schedule')
-    expect(scheduleCall).toBeTruthy()
-    expect(JSON.parse(scheduleCall[1].body)).toMatchObject({
-      reason: 'audio-error-refresh',
-      trackId: 'track-b',
-      songUrl: 'https://example.com/source-b.mp3'
-    })
-
-    await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith('/api/meting?playlistId=17814924409&forceRefresh=1', { cache: 'no-store' })
-    })
-    expect(playerInstances).toHaveLength(2)
+    expect(global.fetch).not.toHaveBeenCalledWith('/api/archive/schedule', expect.anything())
+    expect(global.fetch).not.toHaveBeenCalledWith('/api/meting?playlistId=17814924409&forceRefresh=1', { cache: 'no-store' })
+    expect(playerInstances).toHaveLength(1)
   })
 })

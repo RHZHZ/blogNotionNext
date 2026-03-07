@@ -100,23 +100,30 @@ const DynamicIslandPlayer = ({ className }) => {
   // 解析 LRC 格式
   const parseLrc = (lrcStr) => {
     if (!lrcStr) return []
-    const normalizedLrc = String(lrcStr).replace(/\\n/g, '\n')
+    const normalizedLrc = String(lrcStr)
+      .replace(/\\n/g, '\n')
+      .replace(/\](?=\[\d+:\d+(?:\.\d+)?\])/g, ']\n')
     const lines = normalizedLrc.split('\n')
     const result = []
-    const timeReg = /\[(\d+):(\d+)(?:\.(\d+))?\]/
+    const timePattern = /\[(\d+):(\d+)(?:\.(\d+))?\]/g
 
     lines.forEach(line => {
-      const match = timeReg.exec(line)
-      if (!match) return
+      if (!line) return
 
-      const min = parseInt(match[1])
-      const sec = parseInt(match[2])
-      const frac = match[3] ? match[3] : '0'
-      const ms = parseInt(frac)
-      const time = min * 60 + sec + (frac.length >= 3 ? ms / 1000 : ms / 100)
+      const text = line.replace(timePattern, '').trim()
+      if (!text) return
 
-      const text = line.replace(timeReg, '').trim()
-      if (text) result.push({ time, text })
+      const lineTimePattern = /\[(\d+):(\d+)(?:\.(\d+))?\]/g
+      let match = lineTimePattern.exec(line)
+      while (match) {
+        const min = parseInt(match[1], 10)
+        const sec = parseInt(match[2], 10)
+        const frac = match[3] ? match[3] : '0'
+        const ms = parseInt(frac, 10)
+        const time = min * 60 + sec + (frac.length >= 3 ? ms / 1000 : ms / 100)
+        result.push({ time, text })
+        match = lineTimePattern.exec(line)
+      }
     })
 
     return result.sort((a, b) => a.time - b.time)

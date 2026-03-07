@@ -561,14 +561,371 @@ describe('pages/api/meting', () => {
     await handler(req, res)
 
     expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.body.tracks.map(track => track.name)).toEqual(['Second Song Archived', 'First Song', 'Manual Extra Song'])
+    expect(res.body.tracks.map(track => track.name)).toEqual(['Second Song Archived', 'Manual Extra Song', 'First Song'])
     expect(res.body.tracks.map(track => track.url)).toEqual([
       'https://archive.example.com/second-stable.mp3',
-      'https://audio.example.com/first.mp3',
-      'https://archive.example.com/manual-extra.mp3'
+      'https://archive.example.com/manual-extra.mp3',
+      'https://audio.example.com/first.mp3'
     ])
     expect(res.body.meta.archivePoolEnabled).toBe(true)
     expect(res.body.meta.archivePoolMerged).toBe(1)
+  })
+
+  it('keeps non-ordered playlist tracks in original playlist order after ordered tracks', async () => {
+    const handler = await loadHandler(
+      {},
+      {},
+      {},
+      {
+        hasAudioMetaSourceConfigured: jest.fn(() => true),
+        getAudioMetaMaps: jest.fn().mockResolvedValue({
+          byAudioKey: {},
+          byTrackId: {
+            '2': {
+              trackId: '2',
+              name: 'Second Song Ordered',
+              artist: 'Artist B',
+              cover: '',
+              lrc: '',
+              rawUrl: 'https://audio.example.com/second.mp3',
+              archivedAudioUrl: '',
+              sourceAudioUrl: 'https://audio.example.com/second.mp3',
+              archiveStatus: '',
+              playlistOrder: 1
+            }
+          },
+          archivePlaylist: []
+        })
+      }
+    )
+
+    global.fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            playlist: {
+              id: 17814924409,
+              name: 'rhz的博客',
+              coverImgUrl: 'https://cover.example.com/playlist.jpg',
+              creator: 'kakakajxk',
+              trackCount: 3,
+              tracks: [
+                {
+                  id: 1,
+                  name: 'First Song',
+                  artists: 'Artist A',
+                  album: 'Album A'
+                },
+                {
+                  id: 2,
+                  name: 'Second Song',
+                  artists: 'Artist B',
+                  album: 'Album B'
+                },
+                {
+                  id: 3,
+                  name: 'Third Song',
+                  artists: 'Artist C',
+                  album: 'Album C'
+                }
+              ]
+            }
+          }
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            name: 'First Song',
+            ar_name: 'Artist A',
+            url: 'http://audio.example.com/first.mp3',
+            pic: '',
+            lyric: ''
+          }
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            name: 'Second Song',
+            ar_name: 'Artist B',
+            url: 'http://audio.example.com/second.mp3',
+            pic: '',
+            lyric: ''
+          }
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            name: 'Third Song',
+            ar_name: 'Artist C',
+            url: 'http://audio.example.com/third.mp3',
+            pic: '',
+            lyric: ''
+          }
+        })
+      })
+
+    const req = createReq({ playlistId: '17814924409' })
+    const res = createRes()
+
+    await handler(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.body.tracks.map(track => track.name)).toEqual(['Second Song Ordered', 'First Song', 'Third Song'])
+  })
+
+  it('globally sorts playlist tracks by PlaylistOrder before returning playlist mode results', async () => {
+    const handler = await loadHandler(
+      {},
+      {},
+      {},
+      {
+        hasAudioMetaSourceConfigured: jest.fn(() => true),
+        getAudioMetaMaps: jest.fn().mockResolvedValue({
+          byAudioKey: {},
+          byTrackId: {
+            '1': {
+              trackId: '1',
+              name: 'First Song Ordered',
+              artist: 'Artist A',
+              cover: '',
+              lrc: '',
+              rawUrl: 'https://audio.example.com/first.mp3',
+              archivedAudioUrl: '',
+              sourceAudioUrl: 'https://audio.example.com/first.mp3',
+              archiveStatus: '',
+              playlistOrder: 3
+            },
+            '2': {
+              trackId: '2',
+              name: 'Second Song Ordered',
+              artist: 'Artist B',
+              cover: '',
+              lrc: '',
+              rawUrl: 'https://audio.example.com/second.mp3',
+              archivedAudioUrl: '',
+              sourceAudioUrl: 'https://audio.example.com/second.mp3',
+              archiveStatus: '',
+              playlistOrder: 1
+            }
+          },
+          archivePlaylist: [
+            {
+              id: 'extra-1',
+              name: 'Manual Extra Song',
+              artist: 'Manual Artist',
+              url: 'https://archive.example.com/manual-extra.mp3',
+              cover: '',
+              lrc: '',
+              meta: {
+                trackId: 'extra-1',
+                sourceUrl: 'https://archive.example.com/manual-extra.mp3',
+                source: 'archive-playlist',
+                playlistOrder: 2,
+                audioArchive: {
+                  matched: true,
+                  by: 'trackId',
+                  archived: true,
+                  archiveStatus: 'archived'
+                }
+              }
+            }
+          ]
+        })
+      }
+    )
+
+    global.fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            playlist: {
+              id: 17814924409,
+              name: 'rhz的博客',
+              coverImgUrl: 'https://cover.example.com/playlist.jpg',
+              creator: 'kakakajxk',
+              trackCount: 2,
+              tracks: [
+                {
+                  id: 1,
+                  name: 'First Song',
+                  artists: 'Artist A',
+                  album: 'Album A'
+                },
+                {
+                  id: 2,
+                  name: 'Second Song',
+                  artists: 'Artist B',
+                  album: 'Album B'
+                }
+              ]
+            }
+          }
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            name: 'First Song',
+            ar_name: 'Artist A',
+            url: 'http://audio.example.com/first.mp3',
+            pic: '',
+            lyric: ''
+          }
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            name: 'Second Song',
+            ar_name: 'Artist B',
+            url: 'http://audio.example.com/second.mp3',
+            pic: '',
+            lyric: ''
+          }
+        })
+      })
+
+    const req = createReq({ playlistId: '17814924409' })
+    const res = createRes()
+
+    await handler(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.body.tracks.map(track => track.name)).toEqual(['Second Song Ordered', 'Manual Extra Song', 'First Song Ordered'])
+  })
+
+  it('treats playlistOrder 0 as unordered and keeps it after explicitly ordered tracks', async () => {
+    const handler = await loadHandler(
+      {},
+      {},
+      {},
+      {
+        hasAudioMetaSourceConfigured: jest.fn(() => true),
+        getAudioMetaMaps: jest.fn().mockResolvedValue({
+          byAudioKey: {},
+          byTrackId: {
+            '1': {
+              trackId: '1',
+              name: 'Zero Order Song',
+              artist: 'Artist A',
+              cover: '',
+              lrc: '',
+              rawUrl: 'https://audio.example.com/zero.mp3',
+              archivedAudioUrl: '',
+              sourceAudioUrl: 'https://audio.example.com/zero.mp3',
+              archiveStatus: '',
+              playlistOrder: 0
+            },
+            '2': {
+              trackId: '2',
+              name: 'Ordered Song',
+              artist: 'Artist B',
+              cover: '',
+              lrc: '',
+              rawUrl: 'https://audio.example.com/ordered.mp3',
+              archivedAudioUrl: '',
+              sourceAudioUrl: 'https://audio.example.com/ordered.mp3',
+              archiveStatus: '',
+              playlistOrder: 2
+            }
+          },
+          archivePlaylist: [
+            {
+              id: 'manual-1',
+              name: 'Manual First',
+              artist: 'Manual Artist',
+              url: 'https://archive.example.com/manual-first.mp3',
+              cover: '',
+              lrc: '',
+              meta: {
+                trackId: 'manual-1',
+                sourceUrl: 'https://archive.example.com/manual-first.mp3',
+                source: 'archive-playlist',
+                playlistOrder: 1,
+                audioArchive: {
+                  matched: true,
+                  by: 'trackId',
+                  archived: true,
+                  archiveStatus: 'archived'
+                }
+              }
+            }
+          ]
+        })
+      }
+    )
+
+    global.fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            playlist: {
+              id: 17814924409,
+              name: 'rhz的博客',
+              coverImgUrl: 'https://cover.example.com/playlist.jpg',
+              creator: 'kakakajxk',
+              trackCount: 2,
+              tracks: [
+                {
+                  id: 1,
+                  name: 'Zero Order Song',
+                  artists: 'Artist A',
+                  album: 'Album A'
+                },
+                {
+                  id: 2,
+                  name: 'Ordered Song',
+                  artists: 'Artist B',
+                  album: 'Album B'
+                }
+              ]
+            }
+          }
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            name: 'Zero Order Song',
+            ar_name: 'Artist A',
+            url: 'http://audio.example.com/zero.mp3',
+            pic: '',
+            lyric: ''
+          }
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            name: 'Ordered Song',
+            ar_name: 'Artist B',
+            url: 'http://audio.example.com/ordered.mp3',
+            pic: '',
+            lyric: ''
+          }
+        })
+      })
+
+    const req = createReq({ playlistId: '17814924409' })
+    const res = createRes()
+
+    await handler(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.body.tracks.map(track => track.name)).toEqual(['Manual First', 'Ordered Song', 'Zero Order Song'])
   })
 
   it('enriches manual archive supplement tracks with AudioMeta fields by audioKey', async () => {
@@ -655,7 +1012,176 @@ describe('pages/api/meting', () => {
     })
   })
 
+  it('enriches manual archive supplement tracks with AudioMeta fields by explicit AudioKey', async () => {
+    const handler = await loadHandler(
+      {},
+      {},
+      {},
+      {
+        hasAudioMetaSourceConfigured: jest.fn(() => true),
+        getAudioMetaMaps: jest.fn().mockResolvedValue({
+          byAudioKey: {
+            'manual-extra.mp3': {
+              trackId: null,
+              name: 'AudioMeta Manual Song By Key',
+              artist: 'AudioMeta Artist',
+              cover: 'https://audio-meta.example.com/manual-cover.jpg',
+              lrc: '[00:00.00] manual lyrics',
+              rawUrl: 'https://origin.example.com/custom-source-name.mp3',
+              archivedAudioUrl: '',
+              sourceAudioUrl: 'https://origin.example.com/custom-source-name.mp3',
+              archiveStatus: ''
+            }
+          },
+          byTrackId: {},
+          archivePlaylist: [
+            {
+              id: 'manual-extra',
+              name: '',
+              artist: '',
+              url: 'https://archive.example.com/manual-extra.mp3',
+              cover: '',
+              lrc: '',
+              meta: {
+                trackId: null,
+                sourceUrl: 'https://origin.example.com/manual-extra.mp3',
+                source: 'archive-playlist',
+                playlistOrder: 1,
+                audioArchive: {
+                  matched: true,
+                  by: 'audioKey',
+                  archived: true,
+                  archiveStatus: 'archived'
+                }
+              }
+            }
+          ]
+        })
+      }
+    )
+
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValue({
+        data: {
+          playlist: {
+            id: 17814924409,
+            name: 'rhz的博客',
+            coverImgUrl: 'https://cover.example.com/playlist.jpg',
+            creator: 'kakakajxk',
+            trackCount: 0,
+            tracks: []
+          }
+        }
+      })
+    })
+
+    const req = createReq({ playlistId: '17814924409' })
+    const res = createRes()
+
+    await handler(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.body.tracks).toHaveLength(1)
+    expect(res.body.tracks[0]).toMatchObject({
+      name: 'AudioMeta Manual Song By Key',
+      artist: 'AudioMeta Artist',
+      url: 'https://archive.example.com/manual-extra.mp3'
+    })
+  })
+
+  it('matches archive playlist lyrics when AudioKey is extensionless and track url has extension', async () => {
+    const handler = await loadHandler(
+      {},
+      {},
+      {},
+      {
+        hasAudioMetaSourceConfigured: jest.fn(() => true),
+        getAudioMetaMaps: jest.fn().mockResolvedValue({
+          byAudioKey: {
+            sunny: {
+              trackId: null,
+              name: '晴天',
+              artist: 'jay',
+              cover: 'https://audio-meta.example.com/sunny-cover.jpg',
+              lrc: '[00:00.00]晴天',
+              rawUrl: 'https://music.rhzhz.cn/music-archive/sunny.mp3',
+              archivedAudioUrl: 'https://music.rhzhz.cn/music-archive/sunny.mp3',
+              sourceAudioUrl: 'https://music.rhzhz.cn/music-archive/',
+              archiveStatus: 'archived'
+            },
+            'sunny.mp3': {
+              trackId: null,
+              name: '晴天',
+              artist: 'jay',
+              cover: 'https://audio-meta.example.com/sunny-cover.jpg',
+              lrc: '[00:00.00]晴天',
+              rawUrl: 'https://music.rhzhz.cn/music-archive/sunny.mp3',
+              archivedAudioUrl: 'https://music.rhzhz.cn/music-archive/sunny.mp3',
+              sourceAudioUrl: 'https://music.rhzhz.cn/music-archive/',
+              archiveStatus: 'archived'
+            }
+          },
+          byTrackId: {},
+          archivePlaylist: [
+            {
+              id: 'sunny',
+              name: '',
+              artist: '',
+              url: 'https://music.rhzhz.cn/music-archive/sunny.mp3',
+              cover: '',
+              lrc: '',
+              meta: {
+                trackId: null,
+                sourceUrl: 'https://music.rhzhz.cn/music-archive/',
+                source: 'archive-playlist',
+                playlistOrder: 1,
+                audioArchive: {
+                  matched: true,
+                  by: 'audioKey',
+                  archived: true,
+                  archiveStatus: 'archived'
+                }
+              }
+            }
+          ]
+        })
+      }
+    )
+
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValue({
+        data: {
+          playlist: {
+            id: 17814924409,
+            name: 'rhz的博客',
+            coverImgUrl: 'https://cover.example.com/playlist.jpg',
+            creator: 'kakakajxk',
+            trackCount: 0,
+            tracks: []
+          }
+        }
+      })
+    })
+
+    const req = createReq({ playlistId: '17814924409' })
+    const res = createRes()
+
+    await handler(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.body.tracks).toHaveLength(1)
+    expect(res.body.tracks[0]).toMatchObject({
+      name: '晴天',
+      artist: 'jay',
+      url: 'https://music.rhzhz.cn/music-archive/sunny.mp3',
+      lrc: '[00:00.00]晴天'
+    })
+  })
+
   it('can disable archive playlist supplement tracks in playlist mode', async () => {
+
     const handler = await loadHandler(
       {},
       {},
@@ -866,6 +1392,159 @@ describe('pages/api/meting', () => {
     expect(res.headers['X-Upstream-RateLimit-Provider-Active']).toBe('memory')
     expect(res.headers['X-RateLimit-Provider-Fallback']).toBe('true')
     expect(res.headers['X-RateLimit-Provider-Reason']).toBe('missing-redis-url')
+  })
+
+  it('falls back to cached playlist data when playlist upstream request fails', async () => {
+    const handler = await loadHandler()
+
+    global.fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            playlist: {
+              id: 17814924409,
+              name: 'rhz的博客',
+              coverImgUrl: 'https://cover.example.com/playlist.jpg',
+              creator: 'kakakajxk',
+              trackCount: 1,
+              tracks: [
+                {
+                  id: 1,
+                  name: 'Cached Playlist Song',
+                  artists: 'Artist A',
+                  album: 'Album A'
+                }
+              ]
+            }
+          }
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            name: 'Cached Playlist Song',
+            ar_name: 'Artist A',
+            url: 'http://audio.example.com/cached-playlist.mp3',
+            pic: '',
+            lyric: ''
+          }
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        json: jest.fn().mockResolvedValue({})
+      })
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        json: jest.fn().mockResolvedValue({})
+      })
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        json: jest.fn().mockResolvedValue({})
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            name: 'Cached Playlist Song',
+            ar_name: 'Artist A',
+            url: 'http://audio.example.com/cached-playlist.mp3',
+            pic: '',
+            lyric: ''
+          }
+        })
+      })
+
+    const req = createReq({ playlistId: '17814924409' })
+    const firstRes = createRes()
+    const secondRes = createRes()
+
+    await handler(req, firstRes)
+    await handler(req, secondRes)
+
+    expect(firstRes.status).toHaveBeenCalledWith(200)
+    expect(secondRes.status).toHaveBeenCalledWith(200)
+    expect(secondRes.body.tracks).toHaveLength(1)
+    expect(secondRes.body.tracks[0]).toMatchObject({
+      name: 'Cached Playlist Song',
+      artist: 'Artist A'
+    })
+  })
+
+  it('retries playlist upstream failures and returns recovered playlist data', async () => {
+    const handler = await loadHandler()
+    jest.useFakeTimers()
+    jest.spyOn(Math, 'random').mockReturnValue(0)
+
+    global.fetch
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        json: jest.fn().mockResolvedValue({})
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            playlist: {
+              id: 17814924409,
+              name: 'Recovered Playlist',
+              coverImgUrl: 'https://cover.example.com/playlist.jpg',
+              creator: 'kakakajxk',
+              trackCount: 1,
+              tracks: [
+                {
+                  id: 1,
+                  name: 'Recovered Playlist Song',
+                  artists: 'Artist A',
+                  album: 'Album A'
+                }
+              ]
+            }
+          }
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: {
+            name: 'Recovered Playlist Song',
+            ar_name: 'Artist A',
+            url: 'http://audio.example.com/recovered-playlist.mp3',
+            pic: '',
+            lyric: ''
+          }
+        })
+      })
+
+    const req = createReq({ playlistId: '17814924409' })
+    const res = createRes()
+
+    const request = handler(req, res)
+
+    await jest.advanceTimersByTimeAsync(1000)
+    await request
+
+    expect(global.fetch).toHaveBeenCalledTimes(3)
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.body.meta.retries).toBe(1)
+    expect(res.body.meta.playlist).toMatchObject({
+      id: '17814924409',
+      name: 'Recovered Playlist',
+      trackCount: 1
+    })
+    expect(res.body.tracks[0]).toMatchObject({
+      name: 'Recovered Playlist Song',
+      artist: 'Artist A',
+      url: 'https://audio.example.com/recovered-playlist.mp3'
+    })
+
+    Math.random.mockRestore()
   })
 
   it('returns 502 when upstream fetch yields no valid tracks', async () => {

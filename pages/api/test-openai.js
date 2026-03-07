@@ -1,4 +1,5 @@
 import { getAiSummary } from '@/lib/plugins/aiSummary'
+import { isValidAiSummary } from '@/lib/utils'
 
 export default async function handler(req, res) {
   // 设置 CORS 头
@@ -45,7 +46,7 @@ export default async function handler(req, res) {
     // 使用现有的 getAiSummary 函数
     const summary = await getAiSummary(aiSummaryAPI, aiSummaryKey, content)
 
-    if (summary && !summary.includes('摘要生成暂时不可用')) {
+    if (isValidAiSummary(summary)) {
       res.status(200).json({
         success: true,
         summary,

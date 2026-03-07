@@ -1,7 +1,7 @@
 import styles from './AISummary.module.css'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useGlobal } from '@/lib/global'
-import { isAiSummaryEnabled } from '@/lib/utils'
+import { isAiSummaryEnabled, isValidAiSummary } from '@/lib/utils'
 
 const DESKTOP_COLLAPSE_LINES = 5
 const MOBILE_COLLAPSE_LINES = 4
@@ -16,6 +16,7 @@ const AISummary = ({ aiSummary, post }) => {
   const summaryRef = useRef(null)
   const contentRef = useRef(null)
   const aiSummaryEnabled = isAiSummaryEnabled(post)
+  const shouldRender = aiSummaryEnabled && isValidAiSummary(aiSummary)
 
   // 读取全局取色变量，与 PostHeader / InfoCard 联动
   useEffect(() => {
@@ -118,13 +119,15 @@ const AISummary = ({ aiSummary, post }) => {
 
   const stats = calculateStats()
 
+  if (!shouldRender) {
+    return null
+  }
+
   return (
-    aiSummaryEnabled && aiSummary && !aiSummary.includes('摘要生成暂时不可用') && (
-      <div
-        ref={summaryRef}
-        className={styles['post-ai']}
-        style={{ '--cover-color': coverColor }}
-      >
+    <div
+      ref={summaryRef}
+      className={styles['post-ai']}
+      style={{ '--cover-color': coverColor }}>
         <div className={styles['ai-glow']} aria-hidden='true' />
 
         <div className={styles['ai-container']}>
@@ -205,7 +208,6 @@ const AISummary = ({ aiSummary, post }) => {
           </div>
         </div>
       </div>
-    )
   )
 }
 
