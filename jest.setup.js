@@ -68,19 +68,21 @@ global.ResizeObserver = class ResizeObserver {
 }
 
 // Mock matchMedia
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-})
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  })
+}
 
 // Mock localStorage
 const localStorageMock = {
@@ -152,11 +154,16 @@ beforeEach(() => {
   sessionStorageMock.removeItem.mockClear()
   sessionStorageMock.clear.mockClear()
 
-  fetch.mockClear()
+  global.fetch = jest.fn()
+  if (typeof window !== 'undefined') {
+    window.fetch = global.fetch
+  }
 })
 
 // Cleanup after each test
 afterEach(() => {
-  document.body.innerHTML = ''
-  document.head.innerHTML = ''
+  if (typeof document !== 'undefined') {
+    document.body.innerHTML = ''
+    document.head.innerHTML = ''
+  }
 })

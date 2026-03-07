@@ -11,6 +11,15 @@ const DEFAULT_PLAYER_META = {
   duration: null,
   total: null,
   code: null,
+  cacheProviderConfigured: null,
+  cacheProviderActive: null,
+  cacheProviderFallback: null,
+  cacheProviderReason: null,
+  rateLimitProviderConfigured: null,
+  ipRateLimitProviderActive: null,
+  upstreamRateLimitProviderActive: null,
+  rateLimitProviderFallback: null,
+  rateLimitProviderReason: null,
   updatedAt: null
 }
 
@@ -40,6 +49,10 @@ const DynamicIslandPlayer = ({ className }) => {
   const [isDark, setIsDark] = useState(false)
   const [showLrc, setShowLrc] = useState(false)
   const [playerMeta, setPlayerMeta] = useState(DEFAULT_PLAYER_META)
+  const sourceBadgeVisible = siteConfig(
+    'MUSIC_PLAYER_SOURCE_BADGE',
+    true
+  )
   const debugMetaVisible = siteConfig(
     'MUSIC_PLAYER_DEBUG_BADGE',
     process.env.NODE_ENV !== 'production'
@@ -189,6 +202,21 @@ const DynamicIslandPlayer = ({ className }) => {
         }
     }
   }, [isDark, playerMeta])
+
+  const debugSummary = useMemo(() => {
+    const cacheActive = playerMeta?.cacheProviderActive || '-'
+    const cacheConfigured = playerMeta?.cacheProviderConfigured || '-'
+    const rateActive = playerMeta?.ipRateLimitProviderActive || playerMeta?.upstreamRateLimitProviderActive || '-'
+    const rateConfigured = playerMeta?.rateLimitProviderConfigured || '-'
+    const cacheFallback = playerMeta?.cacheProviderFallback == null ? '-' : String(playerMeta.cacheProviderFallback)
+    const rateFallback = playerMeta?.rateLimitProviderFallback == null ? '-' : String(playerMeta.rateLimitProviderFallback)
+    const forceRefresh = playerMeta?.forceRefresh == null ? '-' : String(playerMeta.forceRefresh)
+
+    return {
+      title: `source=${playerMeta?.source || 'unknown'} requestId=${playerMeta?.requestId || '-'} code=${playerMeta?.code || '-'} total=${playerMeta?.total ?? '-'} duration=${playerMeta?.duration ?? '-'} forceRefresh=${forceRefresh} cache=${cacheActive}/${cacheConfigured} cacheFallback=${cacheFallback} rate=${rateActive}/${rateConfigured} rateFallback=${rateFallback} cacheReason=${playerMeta?.cacheProviderReason || '-'} rateReason=${playerMeta?.rateLimitProviderReason || '-'}`,
+      text: `refresh=${forceRefresh} · cache=${cacheActive}/${cacheConfigured}(${cacheFallback}) · rate=${rateActive}/${rateConfigured}(${rateFallback}) · requestId=${playerMeta?.requestId || '-'}`
+    }
+  }, [playerMeta])
 
   useEffect(() => {
     mountedRef.current = true
@@ -605,20 +633,22 @@ const DynamicIslandPlayer = ({ className }) => {
             >
               {title || ' '}
             </div>
-            <span
-              style={{
-                flexShrink: 0,
-                padding: '2px 6px',
-                borderRadius: 9999,
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: 0.6,
-                background: sourceBadge.tone,
-                color: sourceBadge.color
-              }}
-            >
-              {sourceBadge.label}
-            </span>
+            {sourceBadgeVisible && (
+              <span
+                style={{
+                  flexShrink: 0,
+                  padding: '2px 6px',
+                  borderRadius: 9999,
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: 0.6,
+                  background: sourceBadge.tone,
+                  color: sourceBadge.color
+                }}
+              >
+                {sourceBadge.label}
+              </span>
+            )}
           </div>
           {debugMetaVisible && expanded && (
             <div
@@ -631,9 +661,9 @@ const DynamicIslandPlayer = ({ className }) => {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis'
               }}
-              title={`source=${playerMeta?.source || 'unknown'} requestId=${playerMeta?.requestId || '-'} code=${playerMeta?.code || '-'} total=${playerMeta?.total ?? '-'} duration=${playerMeta?.duration ?? '-'}`}
+              title={debugSummary.title}
             >
-              {`source=${playerMeta?.source || 'unknown'} · requestId=${playerMeta?.requestId || '-'} · code=${playerMeta?.code || '-'} · total=${playerMeta?.total ?? '-'}`}
+              {debugSummary.text}
             </div>
           )}
           <div

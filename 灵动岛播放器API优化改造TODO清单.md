@@ -39,7 +39,9 @@
 - [x] 继续收敛调试日志输出
 - [x] 已接入共享 `cache` 抽象，支持 `memory / redis / upstash / kv`
 - [x] 已增加 provider 诊断日志，记录配置 provider / 实际 provider / fallback 状态
-- [ ] 增加缓存元信息（可选）
+- [x] 已改为复用 `lib/server/audioMeta.js` 共享模块，后续继续补充更细粒度缓存元信息/诊断透出
+
+
 
 ---
 
@@ -126,6 +128,25 @@
 - [x] 补单测验证同 key 并发请求只打一次上游
 - [x] 补单测验证 Promise 失败后正确释放
 
+### D5. 接入 AudioMeta 归档音频优先
+- [x] `/api/meting` 已接入 `lib/server/audioMeta.js`
+- [x] 优先按 `trackId` 匹配归档条目，未命中再回退 `audioKey`
+- [x] 命中 `ArchivedAudioUrl / StableAudioUrl` 时优先替换 `track.url`
+- [x] 将归档匹配结果写入 `track.meta.audioArchive`
+- [x] 已补充定向测试与请求级统计字段，相关 Jest 回归已恢复通过（`/api/meting` 11/11）
+- [x] 已增强真实运行诊断：脚本现在会输出来源类型，并在仅命中 Notion 临时文件且缺少真实 `TrackId` 时直接告警，便于识别无法通过 `/api/meting` 回退刷新的记录
+- [x] 已确认当前正确方向：前端播放器与离线归档脚本统一复用 `/api/meting` 作为解析层，不再让前端直接依赖第三方临时音源
+- [x] 已补 `playlistId` 归档脚本入口并完成本地验证，确认歌单场景可以先经 `/api/meting?playlistId=...` 再逐曲归档
+- [x] 已将 `lib/server/audioMeta.js` 扩展为同时读取 `AudioMeta DB + Archive DB`，使 `/api/meting` 可以消费独立归档库中的稳定地址
+- [-] 当前真实联调结论：前端链路方向正确、歌单模式已可播放，但 `403` 仍容易出现；根因不是前端入口错误，而是当前歌单大部分曲目尚未在 `Archive DB` 命中稳定归档记录，接口仍会回退到上游临时直链
+- [ ] 继续批量归档当前歌单曲目到 `Archive DB`，并再次验证 `meta.audioArchiveMatched` 是否明显提升
+- [ ] 对 `雨后青花` 等历史样本补齐真实 `TrackId` 或稳定源地址，避免仅靠 `file.notion.so` 临时链接
+
+
+
+
+
+
 
 ---
 
@@ -198,9 +219,55 @@
 
 
 
+## M. 自动归档任务化（新增）
+
+### M1. 明确自动化边界
+- [x] 已确认不能由前端直接执行 COS 上传 / Notion 写库 / 删除修改记录
+- [x] 已确认前端只负责“检测与触发”，真正归档必须在服务端任务中执行
+- [x] 已确认前端、归档任务、后台巡检都应统一复用 `/api/meting` 解析层
+
+### M2. 调度入口设计
+- [x] 新增内部调度入口（如 `POST /api/archive/schedule`）
+- [x] 支持按 `playlistId` / `trackId` / `songUrl` 上报待归档任务
+- [x] 对重复触发做幂等去重，避免同一曲目被重复归档
+- [x] 区分触发原因：初始化缺归档 / 播放 `403` / 手动强制刷新 / 定时巡检
+
+### M3. 执行器与归档核心抽离
+- [x] 已新增 `lib/server/archiveExecutor.js`，统一归档任务参数归一化与模式判定
+- [x] `/api/archive/schedule` 已改为复用共享执行入口，并补充定向测试
+- [ ] 将原离线脚本中的完整归档实现继续下沉到共享服务层，彻底移除对脚本入口的依赖
+- [ ] 统一归档状态流转：`pending -> archiving -> archived / failed / stale`
+- [ ] 统一失败重试与错误记录字段
+
+### M4. 前端协同而非直接归档
+- [x] `components/Player.js` 在检测到歌单未命中归档或播放 `403` 时，仅上报调度请求，不直接执行归档
+- [x] 增加最小去抖/节流，避免同一会话内重复上报
+- [x] 保持前端播放链路不被后台归档阻塞
+
+### M5. 自动更新 / 删除 / 修改策略
+- [ ] 自动新增：歌单出现新曲目时自动补归档
+- [ ] 自动更新：已归档记录失效、失败或元数据变化时自动刷新
+- [ ] 自动删除先采用软删除/失效标记，不直接物理删除 COS 文件
+- [ ] 自动修改统一回写 `ArchiveDB` 字段：标题、歌手、专辑、状态、错误、存储键、文件大小等
+
+### M5.1 手动归档补充池（新增）
+- [x] 已明确 `ArchiveDB` 中“仅归档映射”和“进入全局播放器补充池”两类记录边界
+- [x] 已为手动归档记录增加 `InGlobalPlayer / AddToPlaylist` 布尔字段兼容读取
+- [x] 已支持 `PlaylistOrder` 字段控制补充曲目顺序
+- [x] `/api/meting?playlistId=...` 已先返回歌单曲目，再合并 `ArchiveDB` 中允许进入全局播放器的补充曲目
+- [x] 已按 `trackId / audioKey / url` 去重，重复项优先保留歌单项，仅使用归档稳定地址与元数据覆盖展示字段
+- [x] 已明确 `AudioMeta DB` 仍只承担元数据/映射职责，不直接作为全局播放器列表来源
+- [x] 已支持手动归档补充曲目按 `AudioKey` 回查 `AudioMeta DB`，补全歌词 / 封面 / 标题 / 歌手等展示元数据，同时继续优先保留 `ArchiveDB` 稳定音源地址
+- [x] 已将 `AudioMeta DB / ArchiveDB` 的推荐字段规范、职责边界、优先收敛字段与迁移顺序整理到分析文档，便于后续按表收敛 Notion 字段命名
+
+### M6. 定时巡检与兜底
+- [ ] 增加服务端巡检任务，定时比对 `playlistId` 与 `ArchiveDB` 覆盖率
+- [ ] 定时补齐缺失归档，降低必须依赖前端访问才能触发的问题
+- [ ] 巡检后输出覆盖率指标，如 `audioArchiveMatched / total`
+
 ---
 
-# 测试任务
+
 
 ## L. `__tests__/*`
 
@@ -232,12 +299,19 @@
 
 ### 当前联调环境状态
 - [ ] `REDIS_URL`（当前缺失）
-- [ ] `UPSTASH_REDIS_REST_URL`（当前缺失）
-- [ ] `UPSTASH_REDIS_REST_TOKEN`（当前缺失）
+- [x] `UPSTASH_REDIS_REST_URL`（本地与线上已验证生效）
+- [x] `UPSTASH_REDIS_REST_TOKEN`（本地与线上已验证生效）
 - [ ] `KV_REST_API_URL`（当前缺失）
 - [ ] `KV_REST_API_TOKEN`（当前缺失）
 - [x] 已完成联调前可观测性准备：provider 诊断日志 + 调试响应头 + 定向测试
-- [ ] 待补齐任一共享 provider 所需环境后再进入真实联调
+- [x] 已完成 `upstash` 本地联调验证（`/api/meting` 与 `/api/audio-meta` 均为 `Active: upstash`）
+- [x] 已完成 `rhzhz.cn` 线上联调验证（缓存与限流均为 `upstash`，且 `Fallback: false`）
+- [x] 已完成本地前端联调验证：播放器实际走 `playlistId` 模式，请求 `/api/meting?playlistId=17814924409`，且页面可以正常播放
+- [x] 已完成本地脚本联调验证：`scripts/archive-audio-to-notion-standalone.js --playlistId 17814924409 --dry-run --limit 2` 能正确返回歌单曲目
+- [-] 已完成 ArchiveDB 接线，但当前歌单接口返回的 `meta.audioArchiveMatched` 仍为 `0`，说明稳定归档资产覆盖率仍不足
+- [x] 已完成 `/api/meting` 补充池合并实现与定向测试：手动归档曲目可在 `playlistId` 模式下追加进入全局播放器结果，并按 `trackId / audioKey / url` 去重
+- [ ] 仍需做一次真实 `ArchiveDB` 数据联调，确认前端全局播放器最终展示顺序与数据库字段命名一致
+- [ ] 如需继续扩展，再补 `redis` 或 `kv` provider 真实联调
 
 ---
 
@@ -245,5 +319,6 @@
 
 优先继续这三项：
 
-1. 优先补 `upstash / kv` 真实环境联调与可用性验证
-2. 视需要为 `au
+1. 先批量归档当前播放器歌单到 `Archive DB`，让 `/api/meting` 尽量返回 COS 稳定地址，而不是上游临时直链
+2. 归档后再次验证 `/api/meting?playlistId=17814924409&forceRefresh=1` 的 `meta.audioArchiveMatched`
+3. 再视需要补 `upstash / kv` 真实环境联调与可用性验证

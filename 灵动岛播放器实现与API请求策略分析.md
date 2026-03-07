@@ -643,4 +643,293 @@
 - `*.zip`
   - 对应分发压缩包
 
-其中，**当前博客项目实际运行链路基于 `components/*` 这一套实现**。
+
+---
+
+## 十一、自动归档方向补充结论
+
+基于当前联调结果，可以明确后续“全自动归档”的正确方向不是让前端直接执行归档，而是采用 **前端检测 + 服务端调度 + 后台执行** 的任务化结构。
+
+### 1. 为什么不能由前端直接归档
+
+前端虽然最先感知到：
+
+- 当前歌单未命中稳定归档
+- 实际播放中出现 `403`
+- `meta.audioArchiveMatched` 偏低
+
+但前端不适合直接执行以下动作：
+
+- 下载音频文件
+- 上传 COS
+- 写入 / 更新 / 删除 `ArchiveDB`
+- 持有 Notion / COS 写权限
+
+因此，前端应只承担“检测问题并上报任务”的职责，而不承担真正的归档写入。
+
+### 2. 正确的自动归档链路
+
+推荐统一为三层：
+
+1. **前端检测层**
+   - `components/Player.js` 在检测到低覆盖率或播放 `403` 时，仅上报调度请求
+2. **服务端调度层**
+   - 新增内部接口（如 `POST /api/archive/schedule`）负责去重、幂等与入队
+3. **后台执行层**
+   - 复用现有归档逻辑，通过 `/api/meting` 解析后下载音频、上传 COS、写入 `ArchiveDB`
+
+### 3. 为什么当前仍会频繁 `403`
+
+当前前端链路已经正确：
+
+- 播放器会优先请求 `/api/meting?playlistId=...`
+- `/api/meting` 已支持优先使用归档地址
+- `lib/server/audioMeta.js` 已可聚合 `AudioMeta DB + Archive DB`
+
+但真实联调中，当前歌单的 `meta.audioArchiveMatched` 仍偏低，这意味着：
+
+- 很多曲目尚未在 `ArchiveDB` 中存在稳定归档记录
+- `/api/meting` 仍会回退到第三方临时直链
+- 临时直链过期后就容易在前端播放阶段触发 `403`
+
+所以后续重点不应再是反复改前端入口，而应转向：
+
+- 自动补齐归档覆盖率
+- 自动刷新失效曲目
+- 自动巡检歌单稳定率
+
+### 4. 后续自动化目标
+
+自动化目标建议拆为四类：
+
+- **自动新增**：歌单出现新曲目时自动归档
+- **自动更新**：稳定链接缺失、失效、失败时自动刷新
+- **自动删除/失效**：长期不在歌单或长期不可用的资产打 `stale` 标记
+- **自动巡检**：周期性统计歌单归档覆盖率，并补齐缺失曲目
+
+### 5. 与当前仓库结构的关系
+
+当前仓库内：
+
+- `components/*` 是真实运行主链路
+- `scripts/archive-audio-to-notion-standalone.js` 是当前可用的离线归档入口
+- 下一步应将脚本中的归档核心抽离到 `lib/server/*`，供 API、脚本、定时任务三方复用
+
+### 6. 手动归档补充池的当前实现结论
+
+在当前这轮实现后，`ArchiveDB` 已不再只是“稳定地址映射库”，还可以作为 **歌单之外的补充音源池**。
+
+当前已落地的规则是：
+
+- 全局播放器默认列表仍以 `/api/meting?playlistId=...` 返回的歌单曲目为主
+- `ArchiveDB` 中被标记为允许进入全局播放器的记录，会在 `playlistId` 模式下追加合并到返回结果里
+- 当前兼容字段名：
+  - `InGlobalPlayer`
+  - `AddToPlaylist`
+  - `AddToGlobalPlayer`
+  - `GlobalPlayerEnabled`
+- 当前排序字段：
+  - `PlaylistOrder`
+- 合并时会按 `trackId / audioKey / url` 去重
+- 若手动归档曲目与歌单曲目重复，则优先保留歌单项，只用归档稳定地址和元数据覆盖展示字段
+
+这意味着当前最推荐的数据库字段规范已经基本明确为：
+
+1. `InGlobalPlayer`
+   - 类型：Checkbox
+   - 作用：是否允许该手动归档曲目进入全局播放器补充池
+2. `PlaylistOrder`
+   - 类型：Number
+   - 作用：控制补充曲目在歌单主列表之后的顺序
+
+而 `AudioMeta DB` 的职责仍应保持不变：
+
+- 只承担文章音频元数据补全与归档地址映射
+- 不直接作为全局播放器列表来源
+
+### 6.1 推荐的两张表字段规范（新增整理）
+
+为了降低后续维护成本，建议将两张 Notion 表的职责进一步收敛为：
+
+- `AudioMeta DB`：只负责元数据
+- `ArchiveDB`：只负责稳定音源、归档状态与全局播放器补充池
+
+#### A. `AudioMeta DB` 推荐字段
+
+用途：为文章音频、手动归档曲目、补充池曲目提供展示信息补全。
+
+推荐保留字段：
+
+1. `Enabled`
+   - 类型：Checkbox
+   - 作用：是否启用该条元数据参与匹配
+2. `TrackId`
+   - 类型：Text
+   - 作用：歌曲唯一 ID，优先匹配键
+3. `SourceAudioUrl`
+   - 类型：URL
+   - 作用：原始音源地址，用于生成 `AudioKey`
+4. `Name`
+   - 类型：Title / Text
+   - 作用：标题
+5. `Artist`
+   - 类型：Text
+   - 作用：歌手
+6. `Album`
+   - 类型：Text
+   - 作用：专辑
+7. `Cover`
+   - 类型：URL / Files
+   - 作用：封面
+8. `Lyrics`
+   - 类型：Text
+   - 作用：歌词
+9. `Remark`
+   - 类型：Text
+   - 作用：备注，可选
+
+职责说明：
+
+- 负责标题 / 歌手 / 专辑 / 封面 / 歌词等展示元数据
+- 可通过 `TrackId` 或 `SourceAudioUrl -> AudioKey` 为手动归档曲目补全展示信息
+- 不负责稳定归档地址
+- 不负责控制是否进入全局播放器
+
+建议逐步废弃的历史别名：
+
+- `AudioUrl`
+- `OriginalSourceUrl`
+- `OriginAudioUrl`
+- `Lrc`
+
+长期建议统一到：
+
+- `SourceAudioUrl`
+- `Lyrics`
+
+#### B. `ArchiveDB` 推荐字段
+
+用途：保存稳定音源、归档状态，以及是否进入全局播放器补充池。
+
+推荐保留字段：
+
+1. `TrackId`
+   - 类型：Text
+   - 作用：歌曲唯一 ID，优先匹配键
+2. `SourceAudioUrl`
+   - 类型：URL
+   - 作用：原始音源地址
+3. `ArchivedAudioUrl`
+   - 类型：URL / Files
+   - 作用：归档后的稳定地址
+4. `ArchiveStatus`
+   - 类型：Select / Status
+   - 作用：建议统一为 `pending / archived / failed / stale`
+5. `Name`
+   - 类型：Title / Text
+   - 作用：标题
+6. `Artist`
+   - 类型：Text
+   - 作用：歌手
+7. `Album`
+   - 类型：Text
+   - 作用：专辑
+8. `Cover`
+   - 类型：URL / Files
+   - 作用：封面
+9. `Lyrics`
+   - 类型：Text
+   - 作用：歌词，可选冗余保存
+10. `InGlobalPlayer`
+    - 类型：Checkbox
+    - 作用：是否进入全局播放器补充池
+11. `PlaylistOrder`
+    - 类型：Number
+    - 作用：补充池排序
+12. `StorageKey`
+    - 类型：Text
+    - 作用：对象存储路径
+13. `FileSize`
+    - 类型：Number
+    - 作用：文件大小
+14. `LastArchiveAt`
+    - 类型：Date
+    - 作用：最近归档时间
+15. `LastError`
+    - 类型：Text
+    - 作用：最近归档错误
+16. `Remark`
+    - 类型：Text
+    - 作用：备注，可选
+
+职责说明：
+
+- 负责为 `/api/meting` 提供稳定音源地址
+- 负责记录归档状态与错误
+- 负责作为全局播放器补充池来源
+- 可以保留部分标题 / 封面 / 歌词副本，但长期建议仍以 `AudioMeta DB` 作为展示元数据主来源
+
+建议逐步废弃的历史别名：
+
+- `StableAudioUrl`
+- `AddToPlaylist`
+- `AddToGlobalPlayer`
+- `GlobalPlayerEnabled`
+
+长期建议统一到：
+
+- `ArchivedAudioUrl`
+- `InGlobalPlayer`
+
+#### C. 两张表的匹配优先级
+
+后续建议统一按以下顺序匹配：
+
+1. `TrackId`
+2. `SourceAudioUrl` 生成的 `AudioKey`
+3. 兜底再看当前 `url`
+
+#### D. 当前最值得优先统一的字段
+
+如果暂时不想一次性调整太多字段，建议先统一以下最关键字段：
+
+- `AudioMeta DB`
+  - `SourceAudioUrl`
+  - `Lyrics`
+- `ArchiveDB`
+  - `SourceAudioUrl`
+  - `ArchivedAudioUrl`
+  - `InGlobalPlayer`
+  - `PlaylistOrder`
+
+#### E. 迁移建议
+
+推荐分阶段迁移：
+
+1. 先在两张表中新增标准字段
+2. 将旧字段值逐步迁移到标准字段
+3. 代码继续兼容历史字段一段时间
+4. 最后再废弃旧字段
+
+### 7. 当前已验证结果
+
+当前定向测试已覆盖并通过：
+
+- `playlistId` 模式保持原歌单顺序
+- 手动归档补充曲目可被追加到结果中
+- 补充曲目与歌单重复时不会重复出现
+- `/api/meting` 响应中已增加：
+  - `meta.archivePoolEnabled`
+  - `meta.archivePoolMerged`
+
+这意味着，后续下一步重点已经从“是否可行”转为：
+
+- 在真实 `ArchiveDB` 中统一字段命名
+- 做一次真实接口联调，确认前端全局播放器最终展示结果
+
+这意味着，后续代码落地方向应是：
+
+1. 抽共享归档执行器
+2. 新增调度 API
+3. 前端只做任务上报
+4. 再补后台巡检入口

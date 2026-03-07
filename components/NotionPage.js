@@ -222,6 +222,22 @@ const normalizeArticleAudioKey = url => {
   }
 }
 
+const resolveArticleAudioMeta = ({ metaMap, audioKey }) => {
+  if (!metaMap || !audioKey) return null
+
+  return metaMap[audioKey] || metaMap?.byAudioKey?.[audioKey] || null
+}
+
+const logArticleAudioMetaFallback = ({ reason, audioKey, url }) => {
+  if (process.env.NODE_ENV === 'production') return
+
+  console.info('[ArticleAudioMeta] fallback to inline audio card', {
+    reason,
+    audioKey,
+    url
+  })
+}
+
 const getArticleAudioDefaultTitle = block => {
   return (
     block.closest('.notion-column')?.innerText ||

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="27" failures="0" errors="0" time="0.83">
+  <testsuite name="pages/api/archive/schedule" errors="0" failures="0" skipped="0" timestamp="2026-03-07T11:31:22" time="0.409" tests="8">
+    <testcase classname="pages/api/archive/schedule returns 405 for non-POST methods" name="pages/api/archive/schedule returns 405 for non-POST methods" time="0.021">
+    </testcase>
+    <testcase classname="pages/api/archive/schedule returns 400 when schedule target is missing" name="pages/api/archive/schedule returns 400 when schedule target is missing" time="0.002">
+    </testcase>
+    <testcase classname="pages/api/archive/schedule accepts and executes a new archive job" name="pages/api/archive/schedule accepts and executes a new archive job" time="0.002">
+    </testcase>
+    <testcase classname="pages/api/archive/schedule deduplicates repeated archive jobs within ttl window" name="pages/api/archive/schedule deduplicates repeated archive jobs within ttl window" time="0.002">
+    </testcase>
+    <testcase classname="pages/api/archive/schedule returns failed job state when archive execution throws" name="pages/api/archive/schedule returns failed job state when archive execution throws" time="0.002">
+    </testcase>
+    <testcase classname="pages/api/archive/schedule deduplicates failed jobs during exponential backoff window" name="pages/api/archive/schedule deduplicates failed jobs during exponential backoff window" time="0.003">
+    </testcase>
+    <testcase classname="pages/api/archive/schedule allows retry after failed job backoff expires and blacklists after repeated failures" name="pages/api/archive/schedule allows retry after failed job backoff expires and blacklists after repeated failures" time="0.002">
+    </testcase>
+    <testcase classname="pages/api/archive/schedule supports stringified JSON body" name="pages/api/archive/schedule supports stringified JSON body" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="lib/server/archiveTaskRunner __internal" errors="0" failures="0" skipped="0" timestamp="2026-03-07T11:31:22" time="0.081" tests="1">
+    <testcase classname="lib/server/archiveTaskRunner __internal detects completed archive pages only when archived status and stable url both exist" name="lib/server/archiveTaskRunner __internal detects completed archive pages only when archived status and stable url both exist" time="0.006">
+    </testcase>
+  </testsuite>
+  <testsuite name="pages/api/meting" errors="0" failures="0" skipped="0" timestamp="2026-03-07T11:31:22" time="0.195" tests="14">
+    <testcase classname="pages/api/meting returns 400 when url query param is missing" name="pages/api/meting returns 400 when url query param is missing" time="0.025">
+    </testcase>
+    <testcase classname="pages/api/meting returns cached data on repeated requests" name="pages/api/meting returns cached data on repeated requests" time="0.007">
+    </testcase>
+    <testcase classname="pages/api/meting merges duplicate concurrent track requests into one upstream fetch" name="pages/api/meting merges duplicate concurrent track requests into one upstream fetch" time="0.015">
+    </testcase>
+    <testcase classname="pages/api/meting retries retryable upstream failures and returns recovered track" name="pages/api/meting retries retryable upstream failures and returns recovered track" time="0.007">
+    </testcase>
+    <testcase classname="pages/api/meting releases pending request after failure so the next request can refetch" name="pages/api/meting releases pending request after failure so the next request can refetch" time="0.007">
+    </testcase>
+    <testcase classname="pages/api/meting prefers archived audio url from audio meta when track id matches" name="pages/api/meting prefers archived audio url from audio meta when track id matches" time="0.006">
+    </testcase>
+    <testcase classname="pages/api/meting supports playlistId mode and preserves playlist order" name="pages/api/meting supports playlistId mode and preserves playlist order" time="0.006">
+    </testcase>
+    <testcase classname="pages/api/meting merges archive playlist supplement tracks in playlist mode and deduplicates overlaps" name="pages/api/meting merges archive playlist supplement tracks in playlist mode and deduplicates overlaps" time="0.007">
+    </testcase>
+    <testcase classname="pages/api/meting enriches manual archive supplement tracks with AudioMeta fields by audioKey" name="pages/api/meting enriches manual archive supplement tracks with AudioMeta fields by audioKey" time="0.009">
+    </testcase>
+    <testcase classname="pages/api/meting can disable archive playlist supplement tracks in playlist mode" name="pages/api/meting can disable archive playlist supplement tracks in playlist mode" time="0.006">
+    </testcase>
+    <testcase classname="pages/api/meting falls back to playlist metadata when song detail fetch fails in playlist mode" name="pages/api/meting falls back to playlist metadata when song detail fetch fails in playlist mode" time="0.006">
+    </testcase>
+    <testcase classname="pages/api/meting returns 404 when playlistId mode yields no tracks" name="pages/api/meting returns 404 when playlistId mode yields no tracks" time="0.006">
+    </testcase>
+    <testcase classname="pages/api/meting sets provider debug headers when debug badge is enabled" name="pages/api/meting sets provider debug headers when debug badge is enabled" time="0.006">
+    </testcase>
+    <testcase classname="pages/api/meting returns 502 when upstream fetch yields no valid tracks" name="pages/api/meting returns 502 when upstream fetch yields no valid tracks" time="0.006">
+    </testcase>
+  </testsuite>
+  <testsuite name="lib/server/archiveExecutor" errors="0" failures="0" skipped="0" timestamp="2026-03-07T11:31:23" time="0.087" tests="4">
+    <testcase classname="lib/server/archiveExecutor normalizes archive task options" name="lib/server/archiveExecutor normalizes archive task options" time="0.001">
+    </testcase>
+    <testcase classname="lib/server/archiveExecutor resolves task mode by priority" name="lib/server/archiveExecutor resolves task mode by priority" time="0">
+    </testcase>
+    <testcase classname="lib/server/archiveExecutor delegates execution to injected runner with normalized options" name="lib/server/archiveExecutor delegates execution to injected runner with normalized options" time="0.001">
+    </testcase>
+    <testcase classname="lib/server/archiveExecutor loads shared archive task runner module when no injected runner is set" name="lib/server/archiveExecutor loads shared archive task runner module when no injected runner is set" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>

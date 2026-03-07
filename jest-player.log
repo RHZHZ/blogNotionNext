@@ -1,0 +1,74 @@
+  console.info
+    [Player] playlist source: remote {
+      source: 'remote',
+      requestId: null,
+      duration: null,
+      total: 3,
+      code: null,
+      cacheProviderConfigured: null,
+      cacheProviderActive: null,
+      cacheProviderFallback: null,
+      cacheProviderReason: null,
+      rateLimitProviderConfigured: null,
+      ipRateLimitProviderActive: null,
+      upstreamRateLimitProviderActive: null,
+      rateLimitProviderFallback: null,
+      rateLimitProviderReason: null,
+      forceRefresh: null,
+      updatedAt: '2026-03-07T08:00:35.644Z'
+    }
+
+      at info (components/Player.js:326:15)
+
+  console.info
+    [Player] playlist source: remote {
+      source: 'remote',
+      requestId: null,
+      duration: null,
+      total: 1,
+      code: null,
+      cacheProviderConfigured: null,
+      cacheProviderActive: null,
+      cacheProviderFallback: null,
+      cacheProviderReason: null,
+      rateLimitProviderConfigured: null,
+      ipRateLimitProviderActive: null,
+      upstreamRateLimitProviderActive: null,
+      rateLimitProviderFallback: null,
+      rateLimitProviderReason: null,
+      forceRefresh: null,
+      updatedAt: '2026-03-07T08:00:35.688Z'
+    }
+
+      at info (components/Player.js:326:15)
+
+  console.info
+    [Player] refreshed remote audio after 403 {
+      total: 1,
+      audioArchiveMatched: 1,
+      playlist: { id: '17814924409' },
+      forceRefresh: true,
+      requestId: null,
+      cacheProviderConfigured: null,
+      cacheProviderActive: null,
+      cacheProviderFallback: null,
+      cacheProviderReason: null,
+      rateLimitProviderConfigured: null,
+      ipRateLimitProviderActive: null,
+      upstreamRateLimitProviderActive: null,
+      rateLimitProviderFallback: null,
+      rateLimitProviderReason: null
+    }
+
+      at info (components/Player.js:284:17)
+
+PASS __tests__/components/Player.test.js
+  components/Player
+    √ reports playlist-low-coverage when remote archive coverage is incomplete (60 ms)
+    √ reports current track when audio error triggers remote refresh (42 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        1.13 s
+Ran all test suites matching /__tests__\\components\\Player.test.js/i.

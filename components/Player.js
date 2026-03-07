@@ -11,6 +11,8 @@ import { useEffect, useRef, useState } from 'react'
 const Player = () => {
   const [player, setPlayer] = useState()
   const ref = useRef(null)
+  const refreshInFlightRef = useRef(false)
+  const scheduledArchiveKeysRef = useRef(new Set())
 
   const playerVisible = JSON.parse(siteConfig('MUSIC_PLAYER_VISIBLE'))
   const autoPlay = JSON.parse(siteConfig('MUSIC_PLAYER_AUTO_PLAY'))
@@ -33,29 +35,259 @@ const Player = () => {
       duration: meta?.duration || null,
       total: meta?.total || null,
       code: meta?.code || null,
+      cacheProviderConfigured: meta?.cacheProviderConfigured || null,
+      cacheProviderActive: meta?.cacheProviderActive || null,
+      cacheProviderFallback: meta?.cacheProviderFallback ?? null,
+      cacheProviderReason: meta?.cacheProviderReason || null,
+      rateLimitProviderConfigured: meta?.rateLimitProviderConfigured || null,
+      ipRateLimitProviderActive: meta?.ipRateLimitProviderActive || null,
+      upstreamRateLimitProviderActive: meta?.upstreamRateLimitProviderActive || null,
+      rateLimitProviderFallback: meta?.rateLimitProviderFallback ?? null,
+      rateLimitProviderReason: meta?.rateLimitProviderReason || null,
+      forceRefresh: meta?.forceRefresh ?? null,
       updatedAt: new Date().toISOString()
     }
   }
 
-  const resolveMetingApiUrl = () => {
+  const readProviderMetaFromHeaders = (headers) => {
+    if (!headers?.get) return {}
+
+    const read = key => headers.get(key)
+    const readBoolean = key => {
+      const value = read(key)
+      return value == null ? null : value === 'true'
+    }
+
+    return {
+      requestId: read('X-Request-Id'),
+      cacheProviderConfigured: read('X-Cache-Provider-Configured'),
+      cacheProviderActive: read('X-Cache-Provider-Active'),
+      cacheProviderFallback: readBoolean('X-Cache-Provider-Fallback'),
+      cacheProviderReason: read('X-Cache-Provider-Reason'),
+      rateLimitProviderConfigured: read('X-RateLimit-Provider-Configured') || read('X-Ratelimit-Provider-Configured'),
+      ipRateLimitProviderActive: read('X-Ip-RateLimit-Provider-Active') || read('X-Ip-Ratelimit-Provider-Active'),
+      upstreamRateLimitProviderActive:
+        read('X-Upstream-RateLimit-Provider-Active') || read('X-Upstream-Ratelimit-Provider-Active'),
+      rateLimitProviderFallback:
+        readBoolean('X-RateLimit-Provider-Fallback') ?? readBoolean('X-Ratelimit-Provider-Fallback'),
+      rateLimitProviderReason: read('X-RateLimit-Provider-Reason') || read('X-Ratelimit-Provider-Reason')
+    }
+  }
+
+  const resolveMetingApiUrl = (options = {}) => {
     const apiTemplate = String(metingApi || '').trim()
     const playlistId = String(metingPlaylistId || '').trim()
     const songIds = String(metingId || '').trim()
+    const querySuffix = options.forceRefresh
+      ? `${apiTemplate.includes('?') || playlistId ? '&' : '?'}forceRefresh=1`
+      : ''
 
     if (playlistId) {
       if (apiTemplate.includes(':playlistId')) {
-        return apiTemplate.replace(':playlistId', encodeURIComponent(playlistId))
+        return `${apiTemplate.replace(':playlistId', encodeURIComponent(playlistId))}${options.forceRefresh ? '&forceRefresh=1' : ''}`
       }
-      return `/api/meting?playlistId=${encodeURIComponent(playlistId)}`
+      return `/api/meting?playlistId=${encodeURIComponent(playlistId)}${options.forceRefresh ? '&forceRefresh=1' : ''}`
     }
 
     if (!songIds) return null
 
     if (apiTemplate.includes(':id')) {
-      return apiTemplate.replace(':id', encodeURIComponent(songIds))
+      return `${apiTemplate.replace(':id', encodeURIComponent(songIds))}${querySuffix}`
     }
 
-    return apiTemplate || `/api/meting?url=${encodeURIComponent(songIds)}`
+    return `${apiTemplate || `/api/meting?url=${encodeURIComponent(songIds)}`}${querySuffix}`
+  }
+
+  const attachAudioErrorListener = (apInstance, handler) => {
+    apInstance.audio?.addEventListener?.('error', handler)
+    apInstance.__handleAudioError__ = handler
+  }
+
+  const detachAudioErrorListener = (apInstance) => {
+    if (apInstance?.audio && apInstance?.__handleAudioError__) {
+      apInstance.audio.removeEventListener('error', apInstance.__handleAudioError__)
+    }
+  }
+
+  const createPlayerInstance = (audio, handleAudioError) => {
+    const ap = new window.APlayer({
+      container: ref.current,
+      fixed: false,
+      mini: false,
+      autoplay: autoPlay,
+      order: order,
+      lrcType: lrcType,
+      audio
+    })
+
+    attachAudioErrorListener(ap, handleAudioError)
+    window.__APPLAYER__ = ap
+    setPlayer(ap)
+    return ap
+  }
+
+  const fetchRemoteAudio = async (options = {}) => {
+    const apiUrl = resolveMetingApiUrl(options)
+    if (!apiUrl) return null
+
+    const res = await fetch(apiUrl, { cache: 'no-store' })
+    const providerMeta = readProviderMetaFromHeaders(res.headers)
+    const result = await res.json().catch(() => null)
+
+    if (res.ok && result?.tracks && Array.isArray(result.tracks) && result.tracks.length > 0) {
+      return {
+        audio: result.tracks,
+        source: 'remote',
+        remoteMeta: {
+          ...(result.meta || null),
+          ...providerMeta
+        }
+      }
+    }
+
+    console.warn('远程歌单不可用，回退到本地列表', {
+      status: res.status,
+      code: result?.code,
+      error: result?.error,
+      forceRefresh: options.forceRefresh || false
+    })
+
+    return null
+  }
+
+  const scheduleArchive = async ({ reason, trackId = '', songUrl = '', playlistId = '' }) => {
+    const normalizedReason = String(reason || 'manual').trim() || 'manual'
+    const normalizedPlaylistId = String(playlistId || '').trim()
+    const normalizedTrackId = String(trackId || '').trim()
+    const normalizedSongUrl = String(songUrl || '').trim()
+
+    if (!normalizedPlaylistId && !normalizedTrackId && !normalizedSongUrl) return
+
+    const key = [normalizedReason, normalizedPlaylistId, normalizedTrackId, normalizedSongUrl].join('::')
+    if (scheduledArchiveKeysRef.current.has(key)) return
+
+    scheduledArchiveKeysRef.current.add(key)
+
+    try {
+      await fetch('/api/archive/schedule', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          reason: normalizedReason,
+          playlistId: normalizedPlaylistId,
+          trackId: normalizedTrackId,
+          songUrl: normalizedSongUrl
+        })
+      })
+    } catch (error) {
+      console.warn('归档调度上报失败', {
+        reason: normalizedReason,
+        playlistId: normalizedPlaylistId || null,
+        trackId: normalizedTrackId || null,
+        songUrl: normalizedSongUrl || null,
+        error
+      })
+    }
+  }
+
+  const maybeSchedulePlaylistArchive = async (remoteMeta) => {
+    const playlistId = String(remoteMeta?.playlist?.id || metingPlaylistId || '').trim()
+    if (!playlistId) return
+
+    const matched = Number(remoteMeta?.audioArchiveMatched || 0)
+    const total = Number(remoteMeta?.total || 0)
+    if (!total || matched >= total) return
+
+    await scheduleArchive({
+      reason: 'playlist-low-coverage',
+      playlistId
+    })
+  }
+
+  const applyPlayerMeta = (source, remoteMeta) => {
+    setPlayerMeta({
+      source,
+      requestId: remoteMeta?.requestId,
+      duration: remoteMeta?.duration,
+      total: remoteMeta?.total,
+      code: remoteMeta?.code || null,
+      cacheProviderConfigured: remoteMeta?.cacheProviderConfigured,
+      cacheProviderActive: remoteMeta?.cacheProviderActive,
+      cacheProviderFallback: remoteMeta?.cacheProviderFallback,
+      cacheProviderReason: remoteMeta?.cacheProviderReason,
+      rateLimitProviderConfigured: remoteMeta?.rateLimitProviderConfigured,
+      ipRateLimitProviderActive: remoteMeta?.ipRateLimitProviderActive,
+      upstreamRateLimitProviderActive: remoteMeta?.upstreamRateLimitProviderActive,
+      rateLimitProviderFallback: remoteMeta?.rateLimitProviderFallback,
+      rateLimitProviderReason: remoteMeta?.rateLimitProviderReason,
+      forceRefresh: remoteMeta?.forceRefresh
+    })
+  }
+
+  const resolveCurrentTrackPayload = (currentPlayer = window.__APPLAYER__) => {
+    const index = currentPlayer?.list?.index || 0
+    const currentAudio = currentPlayer?.list?.audios?.[index] || currentPlayer?.list?.audio?.[index] || null
+
+    return {
+      trackId: String(currentAudio?.meta?.trackId || '').trim(),
+      songUrl: String(currentAudio?.meta?.sourceUrl || currentAudio?.url || '').trim()
+    }
+  }
+
+  const refreshRemoteAudioOn403 = async () => {
+    if (refreshInFlightRef.current || !metingEnable || !ref.current || !window.APlayer) return
+    refreshInFlightRef.current = true
+
+    try {
+      const currentPlayer = window.__APPLAYER__
+      const currentIndex = currentPlayer?.list?.index || 0
+      const shouldResume = !(currentPlayer?.audio?.paused ?? true)
+
+      const refreshTarget = resolveCurrentTrackPayload(currentPlayer)
+      if (refreshTarget.trackId || refreshTarget.songUrl) {
+        await scheduleArchive({
+          reason: 'audio-error-refresh',
+          trackId: refreshTarget.trackId,
+          songUrl: refreshTarget.songUrl
+        })
+      }
+
+      const refreshed = await fetchRemoteAudio({ forceRefresh: true })
+      if (!refreshed?.audio?.length) return
+
+      detachAudioErrorListener(currentPlayer)
+      currentPlayer?.destroy?.()
+      if (window.__APPLAYER__ === currentPlayer) {
+        window.__APPLAYER__ = undefined
+      }
+
+      applyPlayerMeta('remote', refreshed.remoteMeta)
+
+      const handleAudioError = async () => {
+        const mediaError = window.__APPLAYER__?.audio?.error
+        if (mediaError?.code === 4 || mediaError?.code === 2 || mediaError) {
+          await refreshRemoteAudioOn403()
+        }
+      }
+
+      const nextPlayer = createPlayerInstance(refreshed.audio, handleAudioError)
+      if (currentIndex > 0 && currentIndex < refreshed.audio.length) {
+        nextPlayer.list?.switch?.(currentIndex)
+      }
+      if (shouldResume) {
+        nextPlayer.play()
+      }
+
+      if (process.env.NODE_ENV !== 'production') {
+        console.info('[Player] refreshed remote audio after 403', refreshed.remoteMeta)
+      }
+    } catch (error) {
+      console.error('403 后刷新远程音频失败', error)
+    } finally {
+      refreshInFlightRef.current = false
+    }
   }
 
   const initMusicPlayer = async () => {
@@ -75,57 +307,33 @@ const Player = () => {
     let remoteMeta = null
 
     if (metingEnable) {
-      const apiUrl = resolveMetingApiUrl()
-      if (!apiUrl) {
+      const remoteResult = await fetchRemoteAudio()
+      if (remoteResult) {
+        audio = remoteResult.audio
+        source = remoteResult.source
+        remoteMeta = remoteResult.remoteMeta
+        await maybeSchedulePlaylistArchive(remoteMeta)
+      } else if (!resolveMetingApiUrl()) {
         console.warn('远程歌单未配置有效的歌曲池或歌单 ID，回退到本地列表')
-      } else {
-        try {
-          const res = await fetch(apiUrl)
-          const result = await res.json().catch(() => null)
-
-          if (res.ok && result?.tracks && Array.isArray(result.tracks) && result.tracks.length > 0) {
-            audio = result.tracks
-            source = 'remote'
-            remoteMeta = result.meta || null
-          } else {
-            console.warn('远程歌单不可用，回退到本地列表', {
-              status: res.status,
-              code: result?.code,
-              error: result?.error
-            })
-          }
-        } catch (e) {
-          console.error('音乐列表获取失败，将回退到本地列表', e)
-        }
       }
     }
 
     if (!ref.current) return
 
-    setPlayerMeta({
-      source,
-      requestId: remoteMeta?.requestId,
-      duration: remoteMeta?.duration,
-      total: remoteMeta?.total,
-      code: remoteMeta?.code || null
-    })
+    applyPlayerMeta(source, remoteMeta)
 
     if (process.env.NODE_ENV !== 'production') {
       console.info('[Player] playlist source:', source, window.__APPLAYER_META__)
     }
 
-    const ap = new window.APlayer({
-      container: ref.current,
-      fixed: false,
-      mini: false,
-      autoplay: autoPlay,
-      order: order,
-      lrcType: lrcType,
-      audio: audio
-    })
+    const handleAudioError = async () => {
+      const mediaError = window.__APPLAYER__?.audio?.error
+      if (mediaError?.code === 4 || mediaError?.code === 2 || mediaError) {
+        await refreshRemoteAudioOn403()
+      }
+    }
 
-    window.__APPLAYER__ = ap
-    setPlayer(ap)
+    createPlayerInstance(audio, handleAudioError)
   }
 
   useEffect(() => {
@@ -133,6 +341,7 @@ const Player = () => {
 
     return () => {
       try {
+        detachAudioErrorListener(window.__APPLAYER__)
         if (window.__APPLAYER__ && window.__APPLAYER__ === player) {
           window.__APPLAYER__ = undefined
         }

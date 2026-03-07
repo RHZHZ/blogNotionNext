@@ -14,9 +14,14 @@ import {
   cleanupExpiredIpLimits,
   createIpRateLimitStore,
   createUpstreamRateLimitStore,
-  setRateLimitHeaders,
-  __internal as rateLimitInternal
+  setRateLimitHeaders
 } from '@/lib/server/rateLimit'
+import {
+  getAudioMetaMaps,
+  hasAudioMetaSourceConfigured,
+  normalizeAudioKey,
+  normalizeTrackId
+} from '@/lib/server/audioMeta'
 
 const logger = createLogger('meting')
 
@@ -204,7 +209,6 @@ function isRetryableError(error, statusCode) {
 
 // 带重试和速率限制的fetchTrack函数
 async function fetchTrack(id, level, type, startTime, attempt = 1) {
-  const cacheKey = buildMetingCacheKey({ id, level, type });
   const upstream = new URL('https://metings.qjqq.cn/Song_V1');
   upstream.searchParams.set('url', id);
   upstream.searchParams.set('level', String(level));
@@ -296,12 +300,15 @@ async function fetchTrack(id, level, type, startTime, attempt = 1) {
     });
     
     return {
+      id: String(id),
       name: d.name || d.al_name || id,
       artist: d.ar_name || '',
       url: typeof d.url === 'string' ? d.url.replace(/^http:\/\//, 'https://') : d.url,
       cover: d.pic || '',
       lrc: d.lyric || '',
       meta: {
+        trackId: String(id),
+        sourceUrl: typeof d.url === 'string' ? d.url : '',
         attemptCount: attempt,
         fetchedAt: new Date().toISOString()
       }
@@ -335,6 +342,7 @@ async function fetchTrack(id, level, type, startTime, attempt = 1) {
 
 function normalizeTrack(track, fallback = {}) {
   return {
+    id: track?.id || fallback.id,
     name: track?.name || fallback.name || fallback.id,
     artist: track?.artist || fallback.artist || '',
     url: track?.url,
@@ -346,6 +354,67 @@ function normalizeTrack(track, fallback = {}) {
     }
   };
 }
+
+function resolveAudioMetaEntry(candidate, track, audioMetaMaps) {
+  if (!audioMetaMaps) return null
+
+  const trackIdCandidates = [
+    track?.id,
+    candidate?.id,
+    track?.meta?.trackId,
+    candidate?.meta?.trackId
+  ]
+    .map(value => normalizeTrackId(value))
+    .filter(Boolean)
+
+  for (const trackId of trackIdCandidates) {
+    const entry = audioMetaMaps.byTrackId?.[trackId]
+    if (entry) return entry
+  }
+
+  const audioKeyCandidates = [track?.url, track?.meta?.sourceUrl, candidate?.meta?.sourceUrl]
+    .map(value => normalizeAudioKey(value))
+    .filter(Boolean)
+
+  for (const audioKey of audioKeyCandidates) {
+    const entry = audioMetaMaps.byAudioKey?.[audioKey]
+    if (entry) return entry
+  }
+
+  return null
+}
+
+function applyAudioMetaToTrack(track, candidate, audioMetaMaps) {
+  const normalizedTrack = normalizeTrack(track, candidate)
+  const audioMetaEntry = resolveAudioMetaEntry(candidate, normalizedTrack, audioMetaMaps)
+
+  if (!audioMetaEntry) {
+    return normalizedTrack
+  }
+
+  const preserveStableArchiveUrl = [normalizedTrack?.meta?.source, candidate?.meta?.source].includes('archive-playlist')
+  const archivedAudioUrl = audioMetaEntry.archivedAudioUrl || (preserveStableArchiveUrl ? normalizedTrack.url : (audioMetaEntry.rawUrl || normalizedTrack.url))
+  return {
+    ...normalizedTrack,
+    name: audioMetaEntry.name || normalizedTrack.name,
+    artist: audioMetaEntry.artist || normalizedTrack.artist,
+    url: archivedAudioUrl || normalizedTrack.url,
+    cover: audioMetaEntry.cover || normalizedTrack.cover,
+    lrc: audioMetaEntry.lrc || normalizedTrack.lrc,
+    meta: {
+      ...(normalizedTrack.meta || {}),
+      trackId: audioMetaEntry.trackId || normalizedTrack.meta?.trackId || candidate?.id || null,
+      sourceUrl: audioMetaEntry.sourceAudioUrl || audioMetaEntry.rawUrl || normalizedTrack.meta?.sourceUrl || normalizedTrack.url || '',
+      audioArchive: {
+        matched: true,
+        by: audioMetaEntry.trackId ? 'trackId' : 'audioKey',
+        archived: Boolean(audioMetaEntry.archivedAudioUrl || preserveStableArchiveUrl),
+        archiveStatus: audioMetaEntry.archiveStatus || null
+      }
+    }
+  }
+}
+
 
 function createPlaylistTrackFallback(item = {}) {
   return {
@@ -359,9 +428,48 @@ function createPlaylistTrackFallback(item = {}) {
     cover: item?.coverImgUrl || item?.picUrl || '',
     meta: {
       album: item?.album || '',
-      source: 'playlist-fallback'
+      source: 'playlist-fallback',
+      trackId: String(item?.id || ''),
+      sourceUrl: item?.url || ''
     }
   };
+}
+
+function buildTrackIdentityKeys(track) {
+  const trackId = normalizeTrackId(track?.id || track?.meta?.trackId)
+  const audioKey = normalizeAudioKey(track?.meta?.sourceUrl || track?.url)
+  const urlKey = String(track?.url || '').trim()
+
+  return {
+    trackId,
+    audioKey,
+    urlKey
+  }
+}
+
+function mergePlaylistTracksWithArchivePool(playlistTracks = [], archiveTracks = [], audioMetaMaps) {
+  const merged = []
+  const seen = new Set()
+
+  const pushTrack = (track, source) => {
+    if (!track) return
+
+    const normalized = source === 'archive-pool'
+      ? applyAudioMetaToTrack(track, track, audioMetaMaps)
+      : track
+    const { trackId, audioKey, urlKey } = buildTrackIdentityKeys(normalized)
+    const keys = [trackId && `track:${trackId}`, audioKey && `audio:${audioKey}`, urlKey && `url:${urlKey}`].filter(Boolean)
+
+    if (keys.some(key => seen.has(key))) return
+
+    keys.forEach(key => seen.add(key))
+    merged.push(normalized)
+  }
+
+  playlistTracks.forEach(track => pushTrack(track, 'playlist'))
+  archiveTracks.forEach(track => pushTrack(track, 'archive-pool'))
+
+  return merged
 }
 
 async function fetchPlaylist(playlistId, startTime) {
@@ -429,7 +537,7 @@ async function cleanupExpiredIpLimitsLocal() {
 export default async function handler(req, res) {
   const requestId = createRequestId(6);
   const requestStart = Date.now();
-  const { url, playlistId, level = 'standard', type = 'json' } = req.query;
+  const { url, playlistId, level = 'standard', type = 'json', forceRefresh = '0', includeArchivePool = '1' } = req.query;
   const userAgent = req.headers['user-agent'] || '未知';
   const clientIP = req.headers['x-forwarded-for'] || 
                    req.headers['x-real-ip'] || 
@@ -465,6 +573,8 @@ export default async function handler(req, res) {
 
   const normalizedPlaylistId = String(playlistId || '').trim();
   const isPlaylistMode = Boolean(normalizedPlaylistId);
+  const forceRefreshEnabled = ['1', 'true', 'yes', 'on'].includes(String(forceRefresh || '').trim().toLowerCase());
+  const includeArchivePoolEnabled = ['1', 'true', 'yes', 'on'].includes(String(includeArchivePool || '').trim().toLowerCase());
   
   if (!isPlaylistMode && !url) {
     logError('缺少必要参数', { 
@@ -497,13 +607,7 @@ export default async function handler(req, res) {
       .filter(item => item.id)
       .slice(0, PLAYLIST_MAX_TRACKS);
 
-    if (candidates.length === 0) {
-      return sendApiError(res, 404, {
-        error: '歌单中没有可用歌曲',
-        code: 'EMPTY_PLAYLIST',
-        requestId
-      });
-    }
+
   } else {
     candidates = String(url)
       .split(',')
@@ -540,12 +644,31 @@ export default async function handler(req, res) {
   });
 
   try {
+    const audioMetaMaps = hasAudioMetaSourceConfigured()
+      ? await getAudioMetaMaps({ strict: false })
+      : null
+    const archivePlaylistCandidates = isPlaylistMode && includeArchivePoolEnabled
+      ? (audioMetaMaps?.archivePlaylist || [])
+      : []
+
+    if (isPlaylistMode && candidates.length === 0 && archivePlaylistCandidates.length === 0) {
+      return sendApiError(res, 404, {
+        error: '歌单中没有可用歌曲',
+        code: 'EMPTY_PLAYLIST',
+        requestId
+      })
+    }
+
     const results = await Promise.all(
       candidates.map(async candidate => {
         const id = candidate.id;
         const cacheKey = buildMetingCacheKey({ id, level, type });
-        
-        const cachedData = await getCacheEntry(cache, cacheKey, CACHE_TTL);
+
+        if (forceRefreshEnabled && typeof cache.delete === 'function') {
+          await cache.delete(cacheKey);
+        }
+
+        const cachedData = forceRefreshEnabled ? null : await getCacheEntry(cache, cacheKey, CACHE_TTL);
         if (cachedData) {
           requestCacheHits++;
           cacheStats.hits++;
@@ -554,7 +677,7 @@ export default async function handler(req, res) {
             hitRate,
             clientIP 
           });
-          return normalizeTrack(cachedData.data, candidate);
+          return applyAudioMetaToTrack(cachedData.data, candidate, audioMetaMaps);
         }
         
         if (pendingRequests.has(cacheKey)) {
@@ -566,7 +689,7 @@ export default async function handler(req, res) {
             clientIP
           });
           const pendingTrack = await pendingRequests.get(cacheKey);
-          return pendingTrack ? normalizeTrack(pendingTrack, candidate) : null;
+          return pendingTrack ? applyAudioMetaToTrack(pendingTrack, candidate, audioMetaMaps) : null;
         }
         
         cacheStats.misses++;
@@ -583,16 +706,19 @@ export default async function handler(req, res) {
               clientIP,
               ttl: CACHE_TTL
             });
-            return normalizeTrack(track, candidate);
+            return applyAudioMetaToTrack(track, candidate, audioMetaMaps);
           }
-          return isPlaylistMode ? normalizeTrack(null, candidate) : null;
+          return isPlaylistMode ? applyAudioMetaToTrack(null, candidate, audioMetaMaps) : null;
         } finally {
           pendingRequests.delete(cacheKey);
         }
       })
     );
     
-    const tracks = results.filter(track => track?.url || isPlaylistMode);
+    const playlistTracks = results.filter(track => track?.url || isPlaylistMode);
+    const tracks = isPlaylistMode
+      ? mergePlaylistTracksWithArchivePool(playlistTracks, archivePlaylistCandidates, audioMetaMaps)
+      : playlistTracks;
     const totalDuration = Date.now() - requestStart;
     
     if (tracks.length === 0) {
@@ -625,6 +751,11 @@ export default async function handler(req, res) {
         total: tracks.length,
         cacheHits: requestCacheHits,
         retries: requestRetries,
+        forceRefresh: forceRefreshEnabled,
+        audioArchiveEnabled: Boolean(audioMetaMaps),
+        audioArchiveMatched: tracks.filter(track => track?.meta?.audioArchive?.matched).length,
+        archivePoolEnabled: Boolean(isPlaylistMode && includeArchivePoolEnabled && archivePlaylistCandidates.length),
+        archivePoolMerged: Math.max(0, tracks.length - playlistTracks.length),
         ...(playlistMeta ? { playlist: playlistMeta } : {})
       }
     };

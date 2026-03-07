@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>灵动岛播放器 - 独立播放器示例</title>
+  <link rel="stylesheet" href="../vanilla/dynamic-island-player.css">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f5f5f7 0%, #e5e5e7 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      text-align: center;
+      padding: 40px;
+      max-width: 600px;
+    }
+
+    .title {
+      font-size: 2.5em;
+      color: #1d1d1f;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 1.2em;
+      color: #6b7280;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .player-info {
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      margin-bottom: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid #f5f5f7;
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #1d1d1f;
+      width: 100px;
+      text-align: left;
+    }
+
+    .info-value {
+      flex: 1;
+      color: #6b7280;
+      text-align: left;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      background: #0071e3;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #0051a8;
+    }
+
+    .btn-secondary {
+      background: #f5f5f7;
+      color: #1d1d1f;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e5e7;
+    }
+
+    .status {
+      padding: 16px;
+      background: white;
+      border-radius: 16px;
+      font-family: monospace;
+      color: #1d1d1f;
+      margin-top: 20px;
+    }
+
+    .note {
+      font-size: 0.9em;
+      color: #6b7280;
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: linear-gradient(135deg, #1d1d1f 0%, #000000 100%);
+      }
+
+      .title {
+        color: white;
+      }
+
+      .subtitle {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .player-info {
+        background: #2d2d2f;
+      }
+
+      .info-label {
+        color: white;
+      }
+
+      .info-value {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .info-item {
+        border-bottom-color: #3d3d3f;
+      }
+
+      .status {
+        background: #2d2d2f;
+        color: white;
+      }
+
+      .btn-secondary {
+        background: #3d3d3f;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #4d4d4f;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .title {
+        font-size: 2em;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      .player-info {
+        padding: 24px;
+      }
+
+      .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .info-label {
+        margin-bottom: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">🎵 灵动岛播放器</h1>
+    <p class="subtitle">这是一个独立的灵动岛播放器示例，展示如何在页面中集成和使用</p>
+
+    <div class="player-info">
+      <div class="info-item">
+        <div class="info-label">当前状态：</div>
+        <div class="info-value" id="playStatus">准备就绪</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">当前歌曲：</div>
+        <div class="info-value" id="currentTrack">-</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">播放时间：</div>
+        <div class="info-value" id="playTime">00:00 / 00:00</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">音量：</div>
+        <div class="info-value" id="volume">100%</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">歌词状态：</div>
+        <div class="info-value" id="lrcStatus">显示</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" onclick="togglePlay()">播放/暂停</button>
+      <button class="btn" onclick="nextTrack()">下一首</button>
+      <button class="btn" onclick="prevTrack()">上一首</button>
+      <button class="btn-secondary" onclick="toggleLrc()">歌词</button>
+      <button class="btn-secondary" onclick="toggleExpand()">展开/收起</button>
+      <button class="btn-secondary" onclick="setRandomVolume()">随机音量</button>
+    </div>
+
+    <div class="status" id="status">
+      等待播放器初始化...
+    </div>
+
+    <div class="note">
+      <p>💡 提示：灵动岛播放器固定在屏幕左下角，鼠标悬停或点击可以展开查看更多控制选项</p>
+      <p>🎨 自动适配系统暗色/亮色模式</p>
+      <p>🎵 支持歌词弹幕显示</p>
+    </div>
+  </div>
+
+  <script src="../vanilla/dynamic-island-player.js"></script>
+  <script>
+    let player = null;
+    let updateInterval = null;
+
+    // 示例音频
+    const audioList = [
+      {
+        name: '夜曲',
+        artist: '周杰伦',
+        url: 'https://music.163.com/song/media/outer/url?id=1867217766.mp3',
+        cover: 'https://p2.music.126.net/34YW1QtKxJ_3YnX9ZzKhzw==/109951163480593680.jpg',
+        lrc: `[00:00.00] 为你弹奏萧邦的夜曲
+[00:02.50] 纪念我逝去的爱情
+[00:05.00] 而我为你隐姓埋名
+[00:07.50] 在月光下等你
+[00:10.00] 故事的小黄花
+[00:12.50] 从出生那年就飘着`
+      },
+      {
+        name: '晴天',
+        artist: '周杰伦',
+        url: 'https://music.163.com/song/media/outer/url?id=1867217765.mp3',
+        cover: 'https://p2.music.126.net/34YW1QtKxJ_3YnX9ZzKhzw==/109951163480593680.jpg'
+      },
+      {
+        name: '稻香',
+        artist: '周杰伦',
+        url: 'https://music.163.com/song/media/outer/url?id=1867217764.mp3',
+        cover: 'https://p2.music.126.net/34YW1QtKxJ_3YnX9ZzKhzw==/109951163480593680.jpg'
+      }
+    ];
+
+    // 初始化播放器
+    function initPlayer() {
+      player = new DynamicIslandPlayer({
+        audio: audioList,
+        autoPlay: false,
+        showLrc: true,
+        position: 'bottom-left'
+      });
+
+      // 事件监听
+      player.on('ready', () => {
+        updateStatus('播放器准备就绪');
+        startUpdateInterval();
+      });
+
+      player.on('play', () => {
+        updatePlayStatus('playing');
+        updateCurrentTrack();
+      });
+
+      player.on('pause', () => {
+        updatePlayStatus('paused');
+      });
+
+      player.on('trackchange', () => {
+        updateCurrentTrack();
+      });
+
+      player.on('timeupdate', (time) => {
+        updatePlayTime(time);
+      });
+
+      player.on('volumechange', (volume) => {
+        updateVolume(volume);
+      });
+
+      player.on('error', (error) => {
+        updateStatus('错误: ' + error.message);
+        console.error('播放错误:', error);
+      });
+    }
+
+    // 更新状态
+    function updateStatus(status) {
+      document.getElementById('status').textContent = status;
+    }
+
+    // 更新播放状态
+    function updatePlayStatus(status) {
+      const statusEl = document.getElementById('playStatus');
+      switch(status) {
+        case 'playing':
+          statusEl.textContent = '正在播放';
+          statusEl.style.color = '#0071e3';
+          break;
+        case 'paused':
+          statusEl.textContent = '已暂停';
+          statusEl.style.color = '#6b7280';
+          break;
+      }
+    }
+
+    // 更新当前歌曲
+    function updateCurrentTrack() {
+      if (!player) return;
+      const track = player.getCurrentTrack();
+      const trackEl = document.getElementById('currentTrack');
+      if (track && track.name) {
+        trackEl.textContent = `${track.name} - ${track.artist}`;
+      } else {
+        trackEl.textContent = '-';
+      }
+    }
+
+    // 更新播放时间
+    function updatePlayTime(currentTime) {
+      if (!player) return;
+      const duration = player.getDuration();
+      const timeEl = document.getElementById('playTime');
+      timeEl.textContent = `${player.formatTime(currentTime)} / ${player.formatTime(duration)}`;
+    }
+
+    // 更新音量
+    function updateVolume(volume) {
+      const volumeEl = document.getElementById('volume');
+      volumeEl.textContent = Math.round(volume * 100) + '%';
+    }
+
+    // 切换播放/暂停
+    function togglePlay() {
+      if (!player) return;
+      player.togglePlay();
+    }
+
+    // 下一首
+    function nextTrack() {
+      if (!player) return;
+      player.next();
+    }
+
+    // 上一首
+    function prevTrack() {
+      if (!player) return;
+      player.prev();
+    }
+
+    // 切换歌词显示
+    function toggleLrc() {
+      if (!player) return;
+      player.toggleLrc();
+      const lrcStatus = player.isLrcVisible() ? '显示' : '隐藏';
+      document.getElementById('lrcStatus').textContent = lrcStatus;
+    }
+
+    // 展开/收起
+    function toggleExpand() {
+      if (!player) return;
+      player.toggleExpand();
+    }
+
+    // 设置随机音量
+    function setRandomVolume() {
+      if (!player) return;
+      const volume = Math.random();
+      player.setVolume(volume);
+      updateVolume(volume);
+    }
+
+    // 启动更新定时器
+    function startUpdateInterval() {
+      updateInterval = setInterval(() => {
+        if (player && player.isPlaying()) {
+          updatePlayTime(player.getCurrentTime());
+        }
+      }, 1000);
+    }
+
+    // 停止更新定时器
+    function stopUpdateInterval() {
+      if (updateInterval) {
+        clearInterval(updateInterval);
+        updateInterval = null;
+      }
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      initPlayer();
+    });
+
+    // 页面卸载时清理
+    window.addEventListener('beforeunload', function() {
+      if (player) {
+        player.destroy();
+      }
+      stopUpdateInterval();
+    });
+  </script>
+</body>
+</html>

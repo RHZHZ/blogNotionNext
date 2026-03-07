@@ -1,37 +1,41 @@
-# 百度蜘蛛
-User-agent: Baiduspider
-Allow: /
-Crawl-delay: 1
 
-# 百度移动端蜘蛛
-User-agent: Baiduspider-mobile
-Allow: /
-Crawl-delay: 1
-
-# 谷歌蜘蛛
-User-agent: Googlebot
-Allow: /
-
-# 必应蜘蛛
-User-agent: Bingbot
-Allow: /
-
-# 普通爬虫
-User-agent: *
-Allow: /
-Disallow: /api/
-Disallow: /_next/
-Disallow: /admin/
-Disallow: /private/
-
-# 禁止抓取搜索接口
-Disallow: */search*
-
-# 爬取延迟,避免服务器压力
-Crawl-delay: 1
-
-# 主域名 (百度专用)
-Host: https://rhzhz.cn
-
-# 站点地图
-Sitemap: https://rhzhz.cn/sitemap.xml
+    # 百度蜘蛛
+    User-agent: Baiduspider
+    Allow: /
+    Crawl-delay: 1
+    
+    # 百度移动端蜘蛛
+    User-agent: Baiduspider-mobile
+    Allow: /
+    Crawl-delay: 1
+    
+    # 谷歌蜘蛛
+    User-agent: Googlebot
+    Allow: /
+    
+    # 必应蜘蛛
+    User-agent: Bingbot
+    Allow: /
+    
+    # 普通爬虫
+    User-agent: *
+    Allow: /
+    Disallow: /api/
+    Disallow: /_next/
+    Disallow: /admin/
+    Disallow: /private/
+    
+    # 禁止抓取搜索接口
+    Disallow: */search*
+    
+    # 爬取延迟,避免服务器压力
+    Crawl-delay: 1
+  
+    # 主域名 (百度专用)
+    Host: http://www.rhzhz.cn
+  
+    # 站点地图
+    Sitemap: http://www.rhzhz.cn/sitemap.xml
+    Sitemap: http://www.rhzhz.cn/sitemap.xml
+  
+    

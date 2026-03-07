@@ -45,14 +45,14 @@
     "test:ci": "jest --ci --coverage --watchAll=false",
     "health-check": "node scripts/health-check.js",
     "validate": "npm run health-check",
-    "final-validation": "node scripts/final-validation.js"
+    "final-validation": "node scripts/final-validation.js",
+    "archive-audio-notion": "node scripts/archive-audio-to-notion-standalone.js"
   },
   "dependencies": {
     "@clerk/localizations": "^3.17.1",
     "@clerk/nextjs": "^5.7.5",
     "@headlessui/react": "^1.7.19",
     "@next/bundle-analyzer": "^12.3.7",
-    "@notionhq/client": "^5.11.1",
     "@vercel/analytics": "^1.5.0",
     "algoliasearch": "^4.25.2",
     "axios": "^1.7.2",

@@ -1,0 +1,28 @@
+PASS __tests__/lib/server/archiveExecutor.test.js
+  lib/server/archiveExecutor
+    √ normalizes archive task options (2 ms)
+    √ resolves task mode by priority (1 ms)
+    √ delegates execution to injected runner with normalized options (1 ms)
+    √ throws clear error when runner is unavailable (4 ms)
+
+PASS __tests__/lib/server/archiveCore.test.js
+  lib/server/archiveCore
+    √ exposes unified archive status constants (1 ms)
+    √ detects whether archive target exists
+    √ builds archive execution meta
+    √ validates archive task options (2 ms)
+
+PASS __tests__/pages/api/archive-schedule.test.js
+  pages/api/archive/schedule
+    √ returns 405 for non-POST methods (6 ms)
+    √ returns 400 when schedule target is missing (1 ms)
+    √ accepts and executes a new archive job (2 ms)
+    √ deduplicates repeated archive jobs within ttl window (2 ms)
+    √ returns failed job state when archive execution throws (2 ms)
+    √ supports stringified JSON body (2 ms)
+
+Test Suites: 3 passed, 3 total
+Tests:       14 passed, 14 total
+Snapshots:   0 total
+Time:        0.608 s, estimated 1 s
+Ran all test suites matching /__tests__\\lib\\server\\archiveCore.test.js|__tests__\\lib\\server\\archiveExecutor.test.js|__tests__\\pages\\api\\archive-schedule.test.js/i.

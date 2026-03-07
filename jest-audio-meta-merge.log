@@ -1,0 +1,33 @@
+PASS __tests__/pages/api/meting.test.js
+  pages/api/meting
+    √ returns 400 when url query param is missing (41 ms)
+    √ returns cached data on repeated requests (7 ms)
+    √ merges duplicate concurrent track requests into one upstream fetch (13 ms)
+    √ retries retryable upstream failures and returns recovered track (12 ms)
+    √ releases pending request after failure so the next request can refetch (6 ms)
+    √ prefers archived audio url from audio meta when track id matches (6 ms)
+    √ supports playlistId mode and preserves playlist order (5 ms)
+    √ merges archive playlist supplement tracks in playlist mode and deduplicates overlaps (6 ms)
+    √ enriches manual archive supplement tracks with AudioMeta fields by audioKey (5 ms)
+    √ falls back to playlist metadata when song detail fetch fails in playlist mode (5 ms)
+    √ returns 404 when playlistId mode yields no tracks (5 ms)
+    √ sets provider debug headers when debug badge is enabled (5 ms)
+    √ returns 502 when upstream fetch yields no valid tracks (6 ms)
+
+PASS __tests__/pages/api/audio-meta.test.js
+  pages/api/audio-meta
+    √ returns 500 when audio meta database id is missing (6 ms)
+    √ returns 503 when NOTION_ACCESS_TOKEN is missing (2 ms)
+    √ returns 502 when Notion responds with a non-2xx status (3 ms)
+    √ reuses cached result for subsequent requests (3 ms)
+    √ uses shared audio-meta module result when available (1 ms)
+    √ aggregates paginated Notion results into one meta map (3 ms)
+    √ returns track-indexed archived audio metadata through shared module (2 ms)
+    √ sets provider debug headers when debug badge is enabled (2 ms)
+    √ reuses the same pending promise for concurrent requests (10 ms)
+
+Test Suites: 2 passed, 2 total
+Tests:       22 passed, 22 total
+Snapshots:   0 total
+Time:        0.987 s, estimated 1 s
+Ran all test suites matching /__tests__\\pages\\api\\meting.test.js|__tests__\\pages\\api\\audio-meta.test.js/i.

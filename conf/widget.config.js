@@ -87,6 +87,10 @@ module.exports = {
       : process.env.NEXT_PUBLIC_MUSIC_PLAYER_AUDIO_META_STRICT_ERROR, // audio-meta 拉取失败时是否保持严格错误返回
   MUSIC_PLAYER_DEBUG_BADGE:
     process.env.NEXT_PUBLIC_MUSIC_PLAYER_DEBUG_BADGE || false, // 是否显示灵动岛播放器调试信息徽标/诊断信息
+  MUSIC_PLAYER_SOURCE_BADGE:
+    process.env.NEXT_PUBLIC_MUSIC_PLAYER_SOURCE_BADGE === undefined
+      ? true
+      : process.env.NEXT_PUBLIC_MUSIC_PLAYER_SOURCE_BADGE, // 是否显示播放器 source 徽章（REMOTE/FALLBACK/UNKNOWN）
 
   // 文章内音频卡片（Notion 音频块）配置
   MUSIC_PLAYER_ARTICLE_AUDIO_CONVERT:
