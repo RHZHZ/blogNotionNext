@@ -1,11 +1,24 @@
-const Card = ({ children, headerSlot, className, ...rest }) => {
+const Card = ({
+  children,
+  headerSlot,
+  className,
+  bodyClassName,
+  ...rest
+}) => {
+  const cardClassName = ['heo-card card', 'border rounded-xl p-4 lg:p-6', className]
+    .filter(Boolean)
+    .join(' ')
+
+  const contentClassName = ['heo-card__body', bodyClassName]
+    .filter(Boolean)
+    .join(' ')
+
   return (
-    <div
-      {...rest}
-      className={`${className || ''} card border dark:border-gray-700 rounded-xl lg:p-6 p-4`}>
+    <div {...rest} className={cardClassName}>
       <>{headerSlot}</>
-      <section>{children}</section>
+      <section className={contentClassName}>{children}</section>
     </div>
   )
 }
+
 export default Card

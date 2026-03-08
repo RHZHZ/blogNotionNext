@@ -45,15 +45,14 @@ export const MenuListTop = props => {
   }
 
   return (
-    <>
-      <nav
-        id='nav-mobile'
-        className='leading-8 justify-center font-light w-full flex'>
-        {links?.map(
-          (link, index) =>
-            link && link.show && <MenuItemDrop key={index} link={link} />
-        )}
-      </nav>
-    </>
+    <nav
+      id='nav-mobile'
+      aria-label='顶部导航'
+      className='heo-nav-menu flex w-full items-center justify-center gap-2 leading-8 font-light'>
+      {links?.map(
+        (link, index) =>
+          link && link.show && <MenuItemDrop key={link.id || index} link={link} />
+      )}
+    </nav>
   )
 }

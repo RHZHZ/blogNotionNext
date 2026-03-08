@@ -24,20 +24,20 @@ const HexoRecentComments = props => {
   }, [])
 
   return (
-    <section className='card shadow-md hover:shadow-md dark:text-gray-300 border dark:border-black rounded-xl lg:p-6 p-4 bg-white dark:bg-hexo-black-gray lg:duration-100'>
-      <div className=' mb-2 px-1 justify-between'>
-        <i className='mr-2 fas fas fa-comment' />
+    <section className='heo-card heo-card--interactive heo-recent-comments-card lg:p-6 p-4'>
+      <div className='mb-2 flex items-center px-1 text-sm font-semibold text-slate-800 dark:text-slate-100'>
+        <i className='mr-2 fas fa-comment text-[0.95rem]' />
         {locale.COMMON.RECENT_COMMENTS}
       </div>
 
       {onLoading && (
-        <div>
+        <div className='px-1 text-sm text-slate-500 dark:text-slate-300'>
           Loading...
           <i className='ml-2 fas fa-spinner animate-spin' />
         </div>
       )}
       {!onLoading && comments && comments.length === 0 && (
-        <div>No Comments</div>
+        <div className='px-1 text-sm text-slate-500 dark:text-slate-300'>No Comments</div>
       )}
       {!onLoading &&
         comments &&
@@ -45,10 +45,10 @@ const HexoRecentComments = props => {
         comments.map(comment => (
           <div key={comment.objectId} className='pb-2 pl-1'>
             <div
-              className='dark:text-gray-200 text-sm waline-recent-content wl-content'
+              className='waline-recent-content wl-content text-sm text-slate-700 dark:text-slate-200'
               dangerouslySetInnerHTML={{ __html: comment.comment }}
             />
-            <div className='dark:text-gray-400 text-gray-400  text-sm text-right cursor-pointer hover:text-red-500 hover:underline pt-1 pr-2'>
+            <div className='pt-1 pr-2 text-right text-sm text-slate-400 transition-colors duration-200 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400'>
               <SmartLink
                 href={{
                   pathname: comment.url,

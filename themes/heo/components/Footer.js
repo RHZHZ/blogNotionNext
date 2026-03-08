@@ -12,27 +12,27 @@ const Footer = () => {
   const BEI_AN_LINK = siteConfig('BEI_AN_LINK')
   const BIO = siteConfig('BIO')
   return (
-    <footer className='relative flex-shrink-0 bg-white dark:bg-[#1a191d] justify-center text-center m-auto w-full leading-6  text-gray-600 dark:text-gray-100 text-sm'>
+    <footer className='relative m-auto flex w-full flex-col flex-shrink-0 justify-center text-center text-sm leading-6 text-slate-500 dark:text-slate-200'>
       {/* 颜色过度区 */}
       <div
         id='color-transition'
-        className='h-32 bg-gradient-to-b from-[#f7f9fe] to-white  dark:bg-[#1a191d] dark:from-inherit dark:to-inherit'
+        className='h-32 w-full'
       />
 
       {/* 底部页面信息 */}
       <div
         id='footer-bottom'
-        className='w-full h-20 flex flex-col p-3 lg:flex-row justify-between px-6 items-center bg-[#f1f3f7] dark:bg-[#21232A] border-t dark:border-t-[#3D3D3F]'>
+        className='w-full items-center px-6 py-4'>
         <div id='footer-bottom-left' className='text-center lg:text-start'>
           <PoweredBy />
-          <div className='flex gap-x-1'>
+          <div className='flex flex-wrap items-center justify-center gap-x-1 lg:justify-start'>
             <CopyRightDate />
             <a
               href={'/about'}
-              className='underline font-semibold dark:text-gray-300 '>
+              className='font-semibold text-slate-700 dark:text-slate-200'>
               {siteConfig('AUTHOR')}
             </a>
-            {BIO && <span className='mx-1'> | {BIO}</span>}
+            {BIO && <span className='mx-1 text-slate-400 dark:text-slate-400'> | {BIO}</span>}
           </div>
         </div>
 
@@ -40,7 +40,7 @@ const Footer = () => {
           <SocialButton />
         </div>
 
-        <div id='footer-bottom-right'>
+        <div id='footer-bottom-right' className='text-center lg:text-right'>
           {BEI_AN && (
             <>
               <i className='fas fa-shield-alt' />{' '}

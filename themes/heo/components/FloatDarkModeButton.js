@@ -21,12 +21,17 @@ export default function FloatDarkModeButton () {
   }
 
   return (
-    <div
+    <button
+      type='button'
+      aria-label='切换深色模式'
+      title='切换深色模式'
       onClick={handleChangeDarkMode}
-      className={'justify-center items-center w-7 h-7 text-center transform hover:scale-105 duration-200'
-      }
+      className='heo-float-widget-btn heo-float-widget-btn--icon-only'
     >
-      <i id="darkModeButton" className={`${isDarkMode ? 'fa-sun' : 'fa-moon'} fas text-xs`}/>
-    </div>
+      <i
+        id='darkModeButton'
+        className={`heo-float-widget-btn__icon ${isDarkMode ? 'fa-sun' : 'fa-moon'} fas`}
+      />
+    </button>
   )
 }

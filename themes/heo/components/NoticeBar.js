@@ -18,14 +18,16 @@ export function NoticeBar() {
   }
 
   return (
-    <div className='max-w-[86rem] w-full mx-auto flex h-12 mb-4 px-5 font-bold'>
-      <div className='animate__animated animate__fadeIn animate__fast group cursor-pointer bg-white dark:bg-[#1e1e1e] dark:text-white hover:border-indigo-600 dark:hover:border-yellow-600 border dark:border-gray-700  duration-200 hover:shadow-md transition-all rounded-xl w-full h-full flex items-center justify-between px-5'>
-        <span className='whitespace-nowrap'>{locale.COMMON.NOW}</span>
-        <div className='w-full h-full hover:text-indigo-600 dark:hover:text-yellow-600 flex justify-center items-center'>
+    <div className='max-w-[86rem] w-full mx-auto mb-4 px-5'>
+      <div className='heo-notice-card heo-card heo-card--interactive animate__animated animate__fadeIn animate__fast group cursor-pointer w-full min-h-[3.25rem] flex items-center gap-4 px-5 py-3'>
+        <div className='heo-notice-card__label shrink-0 whitespace-nowrap'>
+          {locale.COMMON.NOW}
+        </div>
+        <div className='heo-notice-card__content flex-1 min-w-0 h-full flex items-center justify-center'>
           <Swipe items={notices} />
         </div>
-        <div>
-          <ArrowRightCircle className={'w-5 h-5'} />
+        <div className='heo-notice-card__icon shrink-0'>
+          <ArrowRightCircle className='w-5 h-5' />
         </div>
       </div>
     </div>

@@ -86,17 +86,21 @@ function Banner(props) {
     <div
       id='banners'
       onClick={handleClickBanner}
-      className='hidden xl:flex xl:flex-col group h-full bg-white dark:bg-[#1e1e1e] rounded-xl border dark:border-gray-700 mb-3 relative overflow-hidden'>
+      className='heo-card heo-card--interactive hidden xl:flex xl:flex-col group h-full mb-3 relative overflow-hidden'>
       <div
         id='banner-title'
-        className='z-10 flex flex-col absolute top-10 left-10'>
-        <div className='text-4xl font-bold mb-3  dark:text-white'>
-          {siteConfig('HEO_HERO_TITLE_1', null, CONFIG)}
-          <br />
-          {siteConfig('HEO_HERO_TITLE_2', null, CONFIG)}
+        className='heo-hero-banner__title z-10 flex flex-col absolute top-10 left-10'>
+        <div className='heo-hero-banner__title-pill mb-4 w-fit'>
+          <div className='heo-hero-banner__headline text-4xl font-bold dark:text-white'>
+            {siteConfig('HEO_HERO_TITLE_1', null, CONFIG)}
+            <br />
+            {siteConfig('HEO_HERO_TITLE_2', null, CONFIG)}
+          </div>
         </div>
-        <div className='text-xs text-gray-600  dark:text-gray-200'>
-          {siteConfig('HEO_HERO_TITLE_3', null, CONFIG)}
+        <div className='heo-hero-banner__subtitle-wrap'>
+          <div className='heo-hero-banner__subtitle text-xs text-gray-600 dark:text-gray-200'>
+            {siteConfig('HEO_HERO_TITLE_3', null, CONFIG)}
+          </div>
         </div>
       </div>
 
@@ -107,12 +111,10 @@ function Banner(props) {
       <div
         id='banner-cover'
         style={{ backdropFilter: 'blur(15px)' }}
-        className={
-          'z-20 rounded-xl overflow-hidden opacity-0 group-hover:opacity-100 duration-300 transition-all bg-[#4259efdd] dark:bg-[#dca846] dark:text-white cursor-pointer absolute w-full h-full top-0 flex justify-start items-center'
-        }>
-        <div className='ml-12 -translate-x-32 group-hover:translate-x-0 duration-300 transition-all ease-in'>
-          <div className='text-7xl text-white font-extrabold'>{coverTitle}</div>
-          <div className='-ml-3 text-gray-300'>
+        className='heo-hero-banner__cover z-20 rounded-xl overflow-hidden opacity-0 group-hover:opacity-100 duration-300 transition-all cursor-pointer absolute w-full h-full top-0 flex justify-start items-center'>
+        <div className='heo-hero-banner__cover-content ml-12 -translate-x-32 group-hover:translate-x-0 duration-300 transition-all ease-in'>
+          <div className='heo-hero-banner__cover-title text-7xl text-white font-extrabold'>{coverTitle}</div>
+          <div className='heo-hero-banner__cover-arrow -ml-3 text-gray-300'>
             <ArrowSmallRight className={'w-24 h-24 stroke-2'} />
           </div>
         </div>
@@ -184,30 +186,30 @@ function GroupMenu() {
     <div className='h-[165px] select-none xl:h-20 flex flex-col justify-between xl:space-y-0 xl:flex-row w-28 lg:w-48 xl:w-full xl:flex-nowrap xl:space-x-3'>
       <SmartLink
         href={url_1}
-        className='group relative overflow-hidden bg-gradient-to-r from-blue-500 to-blue-400 flex h-20 justify-start items-center text-white rounded-xl xl:hover:w-1/2 xl:w-1/3 transition-all duration-500 ease-in'>
-        <div className='font-bold lg:text-lg  pl-5 relative -mt-2'>
+        className='heo-hero-menu-card heo-hero-menu-card--blue heo-hero-menu-card--primary group relative overflow-hidden flex h-20 justify-start items-center text-white rounded-xl xl:w-[38%] transition-all duration-500 ease-in'>
+        <div className='font-bold lg:text-lg pl-5 relative -mt-2'>
           {title_1}
           <span className='absolute -bottom-0.5 left-5 w-5 h-0.5 bg-white rounded-full'></span>
         </div>
-        <div className='hidden lg:block absolute right-6  duration-700 ease-in-out transition-all scale-[2] translate-y-6 rotate-12 opacity-20 group-hover:opacity-80 group-hover:scale-100 group-hover:translate-y-0 group-hover:rotate-0'>
+        <div className='hidden lg:block absolute right-6 duration-700 ease-in-out transition-all scale-[2] translate-y-6 rotate-12 opacity-20 group-hover:opacity-80 group-hover:scale-100 group-hover:translate-y-0 group-hover:rotate-0'>
           <i className='fa-solid fa-star text-4xl'></i>
         </div>
       </SmartLink>
       <SmartLink
         href={url_2}
-        className='group relative overflow-hidden bg-gradient-to-r from-red-500 to-yellow-500 flex h-20 justify-start items-center text-white rounded-xl xl:hover:w-1/2 xl:w-1/3 transition-all duration-500 ease-in'>
+        className='heo-hero-menu-card heo-hero-menu-card--amber group relative overflow-hidden flex h-20 justify-start items-center text-white rounded-xl xl:hover:w-1/2 xl:w-1/3 transition-all duration-500 ease-in'>
         <div className='font-bold lg:text-lg pl-5 relative -mt-2'>
           {title_2}
           <span className='absolute -bottom-0.5 left-5 w-5 h-0.5 bg-white rounded-full'></span>
         </div>
-        <div className='hidden lg:block absolute right-6  duration-700 ease-in-out transition-all scale-[2] translate-y-6 rotate-12 opacity-20 group-hover:opacity-80 group-hover:scale-100 group-hover:translate-y-0 group-hover:rotate-0'>
+        <div className='hidden lg:block absolute right-6 duration-700 ease-in-out transition-all scale-[2] translate-y-6 rotate-12 opacity-20 group-hover:opacity-80 group-hover:scale-100 group-hover:translate-y-0 group-hover:rotate-0'>
           <i className='fa-solid fa-fire-flame-curved text-4xl'></i>
         </div>
       </SmartLink>
       {/* 第三个标签在小屏上不显示 */}
       <SmartLink
         href={url_3}
-        className='group relative overflow-hidden bg-gradient-to-r from-teal-300 to-cyan-300 hidden h-20 xl:flex justify-start items-center text-white rounded-xl xl:hover:w-1/2 xl:w-1/3 transition-all duration-500 ease-in'>
+        className='heo-hero-menu-card heo-hero-menu-card--teal heo-hero-menu-card--tertiary group relative overflow-hidden hidden h-20 xl:flex justify-start items-center text-white rounded-xl xl:w-[31%] transition-all duration-500 ease-in'>
         <div className='font-bold text-lg pl-5 relative -mt-2'>
           {title_3}
           <span className='absolute -bottom-0.5 left-5 w-5 h-0.5 bg-white rounded-full'></span>
@@ -246,7 +248,7 @@ function TopGroup(props) {
         {topPosts?.map((p, index) => {
           return (
             <SmartLink href={`${siteConfig('SUB_PATH', '')}/${p?.slug}`} key={index}>
-              <div className='cursor-pointer h-[164px] group relative flex flex-col w-52 xl:w-full overflow-hidden shadow bg-white dark:bg-black dark:text-white rounded-xl'>
+              <div className='heo-card heo-card--interactive cursor-pointer h-[164px] group relative flex flex-col w-52 xl:w-full overflow-hidden dark:text-white'>
                 <LazyImage
                   priority={index === 0}
                   className='h-24 object-cover'
@@ -376,7 +378,7 @@ function TodayCard({ cRef, siteInfo }) {
       id='today-card'
       className={`${
         isCoverUp ? ' ' : 'pointer-events-none'
-      } overflow-hidden absolute hidden xl:flex flex-1 flex-col h-full top-0 w-full`}>
+      } heo-today-card-shell overflow-hidden absolute hidden xl:flex flex-1 flex-col h-full top-0 w-full`}>
       <div
         id='card-body'
         onClick={handleCardClick}
@@ -384,40 +386,40 @@ function TodayCard({ cRef, siteInfo }) {
           isCoverUp
             ? 'opacity-100 cursor-pointer'
             : 'opacity-0 transform scale-110 pointer-events-none'
-        } shadow transition-all duration-200 today-card h-full bg-black rounded-xl relative overflow-hidden flex items-end`}>
-        {/* 卡片文字信息 */}
+        } heo-card heo-card--interactive heo-today-card shadow transition-all duration-200 today-card h-full relative flex items-end`}>
+        <div className='heo-today-card__badge absolute right-8 top-7 z-20'>
+          {locale.COMMON.RECOMMEND_BADGES}
+        </div>
+
         <div
           id='today-card-info'
-          className='flex justify-between w-full relative text-white p-10 items-end'>
-          <div className='flex flex-col'>
-            <div className='text-xs font-light'>
+          className='heo-today-card__info flex justify-between w-full relative text-white p-10 items-end'>
+          <div className='heo-today-card__copy flex flex-col'>
+            <div className='heo-today-card__eyebrow text-xs font-light'>
               {siteConfig('HEO_HERO_TITLE_4', null, CONFIG)}
             </div>
-            <div className='text-3xl font-bold'>
+            <div className='heo-today-card__title text-3xl font-bold'>
               {siteConfig('HEO_HERO_TITLE_5', null, CONFIG)}
             </div>
           </div>
-          {/* 查看更多的按钮 */}
           <div
             onClick={handleClickShowMore}
-            className={`'${isCoverUp ? '' : 'hidden pointer-events-none'} z-10 group flex items-center px-3 h-10 justify-center  rounded-3xl
-            glassmorphism transition-colors duration-100 `}>
+            className={`${isCoverUp ? '' : 'hidden pointer-events-none'} heo-today-card__more z-10 group flex items-center px-3 h-10 justify-center rounded-3xl transition-colors duration-100`}>
             <PlusSmall
               className={
-                'group-hover:rotate-180 duration-500 transition-all w-6 h-6 mr-2 bg-white rounded-full stroke-black'
+                'heo-today-card__more-icon group-hover:rotate-180 duration-500 transition-all w-6 h-6 mr-2 bg-white rounded-full stroke-black'
               }
             />
-            <div id='more' className='select-none'>
+            <div className='heo-today-card__more-label select-none'>
               {locale.COMMON.RECOMMEND_POSTS}
             </div>
           </div>
         </div>
 
-        {/* 封面图 */}
-       <LazyImage
+        <LazyImage
           priority={true}
           src={isDark ? 'https://s41.ax1x.com/2026/03/06/peCucY6.webp' : 'https://s41.ax1x.com/2026/03/06/peCugfK.webp'}
-          alt="Today card cover"
+          alt='Today card cover'
           id='today-card-cover'
           className={`${
             isCoverUp ? '' : ' pointer-events-none'

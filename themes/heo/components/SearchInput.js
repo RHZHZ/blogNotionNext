@@ -40,6 +40,7 @@ const SearchInput = props => {
   }
   const cleanSearch = () => {
     searchInputRef.current.value = ''
+    setShowClean(false)
   }
 
   const [showClean, setShowClean] = useState(false)
@@ -64,41 +65,43 @@ const SearchInput = props => {
   }
 
   return (
-    <div className={'flex w-full rounded-lg ' + className}>
-      <input
-        ref={searchInputRef}
-        type="text"
-        className={
-          'outline-none w-full text-sm pl-5 rounded-lg transition focus:shadow-lg dark:text-gray-300 font-light leading-10 text-black bg-white dark:bg-gray-500'
-        }
-        onKeyUp={handleKeyUp}
-        onCompositionStart={lockSearchInput}
-        onCompositionUpdate={lockSearchInput}
-        onCompositionEnd={unLockSearchInput}
-        placeholder={locale.SEARCH.ARTICLES}
-        onChange={e => updateSearchKey(e.target.value)}
-        defaultValue={currentSearch || ''}
-      />
-
-      <div
-        className="-ml-8 cursor-pointer  float-right items-center justify-center py-2"
-        onClick={handleSearch}
-      >
-        <i
-          className={`hover:text-black transform duration-200 text-gray-500 dark:text-gray-200 cursor-pointer fas ${
-            onLoading ? 'fa-spinner animate-spin' : 'fa-search'
-          }`}
+    <div className={`heo-search-input ${className || ''}`}>
+      <div className='group relative flex w-full items-center'>
+        <input
+          ref={searchInputRef}
+          type='text'
+          className='w-full pl-5 pr-20 text-sm font-light outline-none transition'
+          onKeyUp={handleKeyUp}
+          onCompositionStart={lockSearchInput}
+          onCompositionUpdate={lockSearchInput}
+          onCompositionEnd={unLockSearchInput}
+          placeholder={locale.SEARCH.ARTICLES}
+          onChange={e => updateSearchKey(e.target.value)}
+          defaultValue={currentSearch || ''}
         />
-      </div>
 
-      {showClean && (
-        <div className="-ml-12 cursor-pointer float-right items-center justify-center py-2">
+        <button
+          type='button'
+          className='absolute right-3 inline-flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 transition-colors duration-200 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/40 dark:text-slate-300 dark:hover:text-white dark:focus-visible:ring-amber-400/30'
+          onClick={handleSearch}
+          title={locale.SEARCH.ARTICLES}>
           <i
-            className="hover:text-black transform duration-200 text-gray-400 dark:text-gray-300 cursor-pointer fas fa-times"
-            onClick={cleanSearch}
+            className={`fas ${
+              onLoading ? 'fa-spinner animate-spin' : 'fa-search'
+            }`}
           />
-        </div>
-      )}
+        </button>
+
+        {showClean && (
+          <button
+            type='button'
+            className='absolute right-11 inline-flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 transition-colors duration-200 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/40 dark:text-slate-400 dark:hover:text-slate-200 dark:focus-visible:ring-amber-400/30'
+            onClick={cleanSearch}
+            title={locale.COMMON.CLOSE}>
+            <i className='fas fa-times' />
+          </button>
+        )}
+      </div>
     </div>
   )
 }

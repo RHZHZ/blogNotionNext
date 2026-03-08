@@ -11,20 +11,17 @@ export default function WavesArea() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 800) {
+      if (window.innerWidth < 1024) {
         setShowWave(false)
       } else {
         setShowWave(true)
       }
     }
 
-    // Initial check
     handleResize()
 
-    // Add event listener for window resize
     window.addEventListener('resize', handleResize)
 
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener('resize', handleResize)
     }
@@ -35,9 +32,9 @@ export default function WavesArea() {
   }
 
   return (
-    <section className='main-hero-waves-area waves-area w-full absolute left-0 z-10 bottom-0'>
+    <section className='main-hero-waves-area pointer-events-none absolute bottom-0 left-0 z-10 w-full opacity-55'>
       <svg
-        className='waves-svg w-full h-[60px]'
+        className='waves-svg h-[44px] w-full'
         xmlns='http://www.w3.org/2000/svg'
         xlink='http://www.w3.org/1999/xlink'
         viewBox='0 24 150 28'
@@ -57,8 +54,6 @@ export default function WavesArea() {
       </svg>
       <style jsx global>
         {`
-          /* Animation */
-
           .parallax > use {
             animation: move-forever 30s cubic-bezier(0.55, 0.5, 0.45, 0.5)
               infinite;
@@ -67,24 +62,25 @@ export default function WavesArea() {
             animation-delay: -2s;
             animation-duration: 7s;
             fill: ${color};
-            opacity: 0.5;
+            opacity: 0.24;
           }
           .parallax > use:nth-child(2) {
             animation-delay: -3s;
             animation-duration: 10s;
             fill: ${color};
-            opacity: 0.6;
+            opacity: 0.3;
           }
           .parallax > use:nth-child(3) {
             animation-delay: -4s;
             animation-duration: 13s;
             fill: ${color};
-            opacity: 0.7;
+            opacity: 0.38;
           }
           .parallax > use:nth-child(4) {
             animation-delay: -5s;
             animation-duration: 20s;
             fill: ${color};
+            opacity: 0.46;
           }
 
           @keyframes move-forever {

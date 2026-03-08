@@ -8,7 +8,6 @@ import { siteConfig } from '@/lib/config'
 import { formatDateFmt } from '@/lib/utils/formatDate'
 import SmartLink from '@/components/SmartLink'
 import WavesArea from './WavesArea'
-import AISummary from '@/components/AISummary'
 
 /**
  * 文章页头
@@ -60,6 +59,8 @@ export default function PostHeader({ post, siteInfo, isDarkMode }) {
     return adjustColor(headerBgColor, { lightenRatio: 0.12 })
   }, [headerBgColor])
 
+  const visibleTags = post?.tagItems?.slice(0, 4) || []
+
   useEffect(() => {
     if (typeof window === 'undefined') return
 
@@ -74,125 +75,126 @@ export default function PostHeader({ post, siteInfo, isDarkMode }) {
     )
   }, [headerBgColor, coverShadowColor])
 
-  // 调试信息
-  console.log('PostHeader 渲染 - AI摘要:', post?.aiSummary)
-
   return (
     <div
       id='post-bg'
-      className='md:mb-0 -mb-5 w-full h-[30rem] relative md:flex-shrink-0 overflow-hidden bg-cover bg-center bg-no-repeat z-10'>
+      className='relative z-10 -mb-5 w-full overflow-hidden bg-cover bg-center bg-no-repeat md:mb-0 md:flex-shrink-0 min-h-[22rem] sm:min-h-[24rem] lg:min-h-[30rem]'>
       <style jsx>{`
         .coverdiv:after {
           position: absolute;
           content: '';
-          width: 100%;
-          height: 100%;
-          top: 0;
-          left: 0;
-          box-shadow: 110px -130px 500px 100px ${coverShadowColor} inset;
+          inset: 0;
+          background: linear-gradient(
+            180deg,
+            rgba(15, 23, 42, 0.16) 0%,
+            rgba(15, 23, 42, 0.22) 24%,
+            rgba(15, 23, 42, 0.52) 68%,
+            rgba(15, 23, 42, 0.78) 100%
+          );
+          box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+            0 -110px 220px -120px ${coverShadowColor} inset;
         }
       `}</style>
 
       <div
         style={{ backgroundColor: headerBgColor }}
-        className='absolute top-0 w-full h-full py-10 flex justify-center items-center'>
-        {/* 文章背景图 */}
-        <div
-          id='post-cover-wrapper'
-          style={{
-            filter: 'blur(15px)'
-          }}
-          className='coverdiv lg:opacity-50 lg:translate-x-96 lg:rotate-12'>
-          <LazyImage
-            id='post-cover'
-            className='w-full h-full object-cover max-h-[50rem] min-w-[50vw] min-h-[20rem]'
-            src={headerImage}
-          />
-        </div>
+        className='absolute inset-0 flex items-stretch justify-center overflow-hidden'>
+        <div className='absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),transparent_46%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.22)_58%,rgba(15,23,42,0.38))]' />
 
-        {/* 文章文字描述 */}
-        <div
-          id='post-info'
-          className='absolute top-48 z-10 flex flex-col space-y-4 lg:-mt-12 w-full max-w-[86rem] px-5'>
-          {/* 分类+标签 */}
-          <div className='flex justify-center md:justify-start items-center gap-4'>
-            {post.category && (
-              <>
-                <SmartLink
-                  href={`/category/${post.category}`}
-                  className='mr-4'
-                  passHref
-                  legacyBehavior>
-                  <div className='cursor-pointer font-sm font-bold px-3 py-1 rounded-lg  hover:bg-white text-white bg-blue-500 dark:bg-yellow-500 hover:text-blue-500 duration-200 '>
-                    {post.category}
-                  </div>
-                </SmartLink>
-              </>
-            )}
+        {headerImage && (
+          <div
+            id='post-cover-wrapper'
+            style={{
+              filter: 'blur(10px)'
+            }}
+            className='coverdiv absolute inset-y-0 right-[-8%] w-[88%] opacity-45 scale-105 sm:right-[-4%] sm:w-[78%] sm:opacity-50 lg:right-[-2%] lg:w-[66%] lg:translate-x-12 lg:rotate-3'>
+            <LazyImage
+              id='post-cover'
+              className='h-full w-full object-cover min-h-[20rem]'
+              src={headerImage}
+            />
+          </div>
+        )}
 
-            {post.tagItems && (
-              <div className='hidden md:flex justify-center flex-nowrap overflow-x-auto'>
-                {post.tagItems.map((tag, index) => (
-                  <SmartLink
-                    key={index}
-                    href={`/tag/${encodeURIComponent(tag.name)}`}
-                    passHref
-                    className={
-                      'cursor-pointer inline-block text-gray-50 hover:text-white duration-200 py-0.5 px-1 whitespace-nowrap '
-                    }>
-                    <div className='font-light flex items-center'>
-                      <HashTag className='text-gray-200 stroke-2 mr-0.5 w-3 h-3' />{' '}
-                      {tag.name + (tag.count ? `(${tag.count})` : '')}{' '}
+        <div className='relative z-10 flex min-h-inherit w-full items-end'>
+          <div
+            id='post-bg-content'
+            className='mx-auto flex w-full max-w-[86rem] px-4 sm:px-6 lg:px-8'>
+            <div
+              id='post-info'
+              className='w-full max-w-5xl rounded-[1.5rem] border border-white/12 bg-white/8 p-4 text-white shadow-[0_20px_70px_rgba(15,23,42,0.16)] backdrop-blur-[14px] sm:rounded-[1.75rem] sm:p-5 lg:rounded-[2rem] lg:p-8'>
+              <div className='flex flex-col gap-4'>
+                <div className='flex flex-wrap items-center justify-center gap-2.5 md:justify-start'>
+                  {post.category && (
+                    <SmartLink
+                      href={`/category/${post.category}`}
+                      className='inline-flex items-center rounded-full border border-white/18 bg-white/14 px-3 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-white/92 transition duration-200 hover:bg-white/22 hover:text-white'>
+                      {post.category}
+                    </SmartLink>
+                  )}
+
+                  {visibleTags.length > 0 && (
+                    <div className='hidden flex-wrap items-center gap-2 md:flex'>
+                      {visibleTags.map((tag, index) => (
+                        <SmartLink
+                          key={index}
+                          href={`/tag/${encodeURIComponent(tag.name)}`}
+                          className='inline-flex items-center rounded-full border border-white/10 bg-black/10 px-2.5 py-1 text-xs font-medium text-white/78 transition duration-200 hover:border-white/20 hover:bg-white/12 hover:text-white'>
+                          <HashTag className='mr-1 h-3 w-3 stroke-2 text-white/60' />
+                          {tag.name}
+                        </SmartLink>
+                      ))}
                     </div>
-                  </SmartLink>
-                ))}
-              </div>
-            )}
-          </div>
+                  )}
+                </div>
 
-          {/* 文章Title */}
-          <div className='max-w-5xl font-bold text-3xl lg:text-5xl md:leading-snug shadow-text-md flex  justify-center md:justify-start text-white'>
-            {siteConfig('POST_TITLE_ICON') && (
-              <NotionIcon icon={post.pageIcon} />
-            )}
-            {post.title}
-          </div>
+                <div className='max-w-4xl text-center md:text-left'>
+                  <div className='inline-flex items-start justify-center md:justify-start'>
+                    <div className='flex items-center text-[2rem] font-bold leading-[1.2] text-white drop-shadow-[0_10px_30px_rgba(15,23,42,0.28)] sm:text-[2.4rem] lg:text-[3.45rem] lg:leading-[1.12]'>
+                      {siteConfig('POST_TITLE_ICON') && (
+                        <span className='mr-2 inline-flex translate-y-[0.08em] items-center text-[0.92em]'>
+                          <NotionIcon icon={post.pageIcon} />
+                        </span>
+                      )}
+                      <span>{post.title}</span>
+                    </div>
+                  </div>
+                </div>
 
-          {/* 标题底部补充信息 */}
-          <section className='flex-wrap dark:text-gray-200 text-opacity-70 shadow-text-md flex text-sm  justify-center md:justify-start mt-4 text-white font-light leading-8'>
-            <div className='flex justify-center '>
-              <div className='mr-2'>
-                <WordCount
-                  wordCount={post.wordCount}
-                  readTime={post.readTime}
-                />
-              </div>
-              {post?.type !== 'Page' && (
-                <>
-                  <SmartLink
-                    href={`/archive#${formatDateFmt(post?.publishDate, 'yyyy-MM')}`}
-                    passHref
-                    className='pl-1 mr-2 cursor-pointer hover:underline'>
-                    <i className='fa-regular fa-calendar'></i>{' '}
-                    {post?.publishDay}
-                  </SmartLink>
-                </>
-              )}
+                <section className='flex flex-wrap items-center justify-center gap-2.5 text-center md:justify-start md:text-left'>
+                  <div className='inline-flex min-h-[2.5rem] items-center rounded-full border border-white/12 bg-black/12 px-3.5 py-2 text-sm font-medium text-white/78'>
+                    <WordCount
+                      wordCount={post.wordCount}
+                      readTime={post.readTime}
+                    />
+                  </div>
 
-              <div className='pl-1 mr-2'>
-                <i className='fa-regular fa-calendar-check'></i>{' '}
-                {post.lastEditedDay}
+                  {post?.type !== 'Page' && (
+                    <SmartLink
+                      href={`/archive#${formatDateFmt(post?.publishDate, 'yyyy-MM')}`}
+                      passHref
+                      className='inline-flex min-h-[2.5rem] items-center rounded-full border border-white/12 bg-black/12 px-3.5 py-2 text-sm font-medium text-white/78 transition duration-200 hover:border-white/24 hover:bg-white/12 hover:text-white'>
+                      <i className='fa-regular fa-calendar mr-2' />
+                      {post?.publishDay}
+                    </SmartLink>
+                  )}
+
+                  <div className='inline-flex min-h-[2.5rem] items-center rounded-full border border-white/12 bg-black/12 px-3.5 py-2 text-sm font-medium text-white/72'>
+                    <i className='fa-regular fa-calendar-check mr-2' />
+                    {post.lastEditedDay}
+                  </div>
+
+                  {ANALYTICS_BUSUANZI_ENABLE && (
+                    <div className='busuanzi_container_page_pv inline-flex min-h-[2.5rem] items-center rounded-full border border-white/12 bg-black/12 px-3.5 py-2 text-sm font-medium text-white/72'>
+                      <i className='fa-solid fa-fire-flame-curved mr-2' />
+                      <span className='mr-1'>热度</span>
+                      <span className='busuanzi_value_page_pv' />
+                    </div>
+                  )}
+                </section>
               </div>
             </div>
-
-            {/* 阅读统计 */}
-            {ANALYTICS_BUSUANZI_ENABLE && (
-              <div className='busuanzi_container_page_pv font-light mr-2'>
-                <i className='fa-solid fa-fire-flame-curved'></i>{' '}
-                <span className='mr-2 busuanzi_value_page_pv' />
-              </div>
-            )}
-          </section>
+          </div>
         </div>
 
         <WavesArea />

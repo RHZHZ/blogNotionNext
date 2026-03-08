@@ -1,4 +1,3 @@
-import { ArrowRightCircle } from '@/components/HeroIcons'
 import LazyImage from '@/components/LazyImage'
 import { siteConfig } from '@/lib/config'
 import SmartLink from '@/components/SmartLink'
@@ -15,7 +14,7 @@ import Card from './Card'
  * @returns
  */
 export function InfoCard(props) {
-  const { siteInfo, notice, post } = props
+  const { siteInfo, notice, post, className } = props
   const { isDarkMode } = useGlobal()
   const router = useRouter()
   // 在文章详情页特殊处理
@@ -30,8 +29,7 @@ export function InfoCard(props) {
   const [cardColor, setCardColor] = useState(fallbackColor)
 
   useEffect(() => {
-    const applyGlobalColor = (colorFromEvent) => {
-      // 仅在文章详情页（Slug页面）且有封面图时才启用动态取色
+    const applyGlobalColor = colorFromEvent => {
       if (!isSlugPage || !post?.pageCover) {
         setCardColor(fallbackColor)
         return
@@ -40,7 +38,8 @@ export function InfoCard(props) {
       const rootColor =
         colorFromEvent ||
         (typeof window !== 'undefined'
-          ? window.getComputedStyle(document.documentElement)
+          ? window
+              .getComputedStyle(document.documentElement)
               .getPropertyValue('--heo-cover-color')
               .trim()
           : '')
@@ -68,23 +67,15 @@ export function InfoCard(props) {
   return (
     <Card
       style={{ '--heo-infocard-bg': cardColor }}
-      className='text-white flex flex-col w-72 overflow-hidden relative heo-infocard-v2'>
-      
-      {/* 1. Header 头部区域 - 固定问候语 */}
+      className={`${isDarkMode ? 'text-white' : 'text-slate-800'} flex flex-col w-72 overflow-hidden relative heo-infocard-v2 heo-card--interactive ${className || ''}`}
+      bodyClassName='flex flex-1 flex-col'>
       <div className='heo-info-header'>
         <GreetingsWords />
       </div>
 
-      {/* 2. Body 身体区域 - 切换头像与公告 */}
       <div className='heo-info-body'>
-        {/* 默认显示的头像 */}
         <div className='heo-info-avatar-wrap'>
-          <div
-            className={`${
-              isSlugPage
-                ? 'cursor-pointer'
-                : 'cursor-pointer'
-            } justify-center items-center flex dark:text-gray-100 transform transition-all duration-200 relative`}>
+          <div className='cursor-pointer relative flex items-center justify-center transform transition-all duration-200 dark:text-gray-100'>
             <LazyImage
               src={siteInfo?.icon}
               className='rounded-full'
@@ -92,35 +83,28 @@ export function InfoCard(props) {
               height={120}
               alt={siteConfig('AUTHOR')}
             />
-            {/* 状态图标 */}
             {statusIcon && (
               <div className='author-status'>
                 <LazyImage
                   src={statusIcon}
                   width={32}
                   height={32}
-                  alt="status"
+                  alt='status'
                 />
               </div>
             )}
           </div>
         </div>
 
-        {/* Hover显示的公告内容 */}
         <div className='heo-info-announcement-wrap'>
-          {/* <div className='heo-info-welcome-title'>
-            <span className='heo-info-emoji'>👋</span>
-            <span>欢迎来访!</span>
-          </div> */}
           <Announcement post={notice} style={{ color: 'white !important' }} />
         </div>
       </div>
 
-      {/* 3. Footer 底部区域 - 固定作者名与按钮 */}
       <div className='heo-info-footer'>
         <div className='heo-info-footer-text'>
-          <div className="author-info__name text-2xl font-bold">{siteConfig('AUTHOR')}</div>
-          <div className="author-info__desc text-xs opacity-80 mt-1">{siteConfig('BIO')}</div>
+          <div className='author-info__name text-2xl font-bold'>{siteConfig('AUTHOR')}</div>
+          <div className='author-info__desc mt-1 text-xs opacity-80'>{siteConfig('BIO')}</div>
         </div>
 
         <div className='flex items-center space-x-2'>
@@ -140,34 +124,11 @@ export function InfoCard(props) {
               </div>
             )}
           </div>
-          {/* <MoreButton /> */}
         </div>
       </div>
-
     </Card>
   )
 }
-
-/**
- * 了解更多按鈕
- * @returns
- */
-function MoreButton() {
-  const url3 = siteConfig('HEO_INFO_CARD_URL3', null, CONFIG)
-  const text3 = siteConfig('HEO_INFO_CARD_TEXT3', null, CONFIG)
-  if (!url3) {
-    return <></>
-  }
-  return (
-    <SmartLink href={url3}>
-      <div className='heo-info-more-btn'>
-        <ArrowRightCircle className={'w-6 h-6'} />
-        <div className='font-bold hidden'>{text3}</div>
-      </div>
-    </SmartLink>
-  )
-}
-
 
 /**
  * 欢迎语

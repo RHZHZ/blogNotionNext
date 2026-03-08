@@ -1,51 +1,69 @@
+import { Dialog, Transition } from '@headlessui/react'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { Fragment, useEffect } from 'react'
 
 /**
  * 侧边栏抽屉面板，可以从侧面拉出
  * @returns {JSX.Element}
  * @constructor
  */
-const SideBarDrawer = ({ children, isOpen, onOpen, onClose, className }) => {
+const SideBarDrawer = ({ children, isOpen, onOpen, onClose, className = '' }) => {
   const router = useRouter()
+
   useEffect(() => {
     const sideBarDrawerRouteListener = () => {
-      switchSideDrawerVisible(false)
+      onClose && onClose()
     }
     router.events.on('routeChangeComplete', sideBarDrawerRouteListener)
     return () => {
       router.events.off('routeChangeComplete', sideBarDrawerRouteListener)
     }
-  }, [router.events])
+  }, [onClose, router.events])
 
-  // 点击按钮更改侧边抽屉状态
-  const switchSideDrawerVisible = (showStatus) => {
-    if (showStatus) {
+  useEffect(() => {
+    if (isOpen) {
       onOpen && onOpen()
-    } else {
-      onClose && onClose()
     }
-    const sideBarDrawer = window.document.getElementById('sidebar-drawer')
-    const sideBarDrawerBackground = window.document.getElementById('sidebar-drawer-background')
+  }, [isOpen, onOpen])
 
-    if (showStatus) {
-      sideBarDrawer?.classList.replace('-mr-72', 'mr-0')
-      sideBarDrawerBackground?.classList.replace('hidden', 'block')
-    } else {
-      sideBarDrawer?.classList.replace('mr-0', '-mr-72')
-      sideBarDrawerBackground?.classList.replace('block', 'hidden')
-    }
-  }
+  return (
+    <Transition.Root show={!!isOpen} as={Fragment}>
+      <Dialog as='div' className='relative z-30 md:hidden' onClose={onClose || (() => {})}>
+        <Transition.Child
+          as={Fragment}
+          enter='ease-in-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+          leave='ease-in-out duration-300'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'>
+          <div className='fixed inset-0 bg-slate-950/50 backdrop-blur-md dark:bg-black/65' />
+        </Transition.Child>
 
-  return <div id='sidebar-wrapper' className={' block md:hidden top-0 ' + className }>
-
-    <div id="sidebar-drawer" className={`${isOpen ? 'mr-0 w-72 visible' : '-mr-72 max-w-side invisible'} bg-gray-50 right-0 top-0 dark:bg-hexo-black-gray shadow-black shadow-lg flex flex-col duration-300 fixed h-full overflow-y-scroll scroll-hidden z-30`}>
-      {children}
-    </div>
-
-    {/* 背景蒙版 */}
-    <div id='sidebar-drawer-background' onClick={() => { switchSideDrawerVisible(false) }}
-      className={`${isOpen ? 'block' : 'hidden'} animate__animated animate__fadeIn fixed top-0 duration-300 left-0 z-20 w-full h-full bg-black/70`}/>
-  </div>
+        <div className='fixed inset-0 overflow-hidden'>
+          <div className='absolute inset-0 overflow-hidden'>
+            <div className='pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-8'>
+              <Transition.Child
+                as={Fragment}
+                enter='transform transition ease-[cubic-bezier(0.22,1,0.36,1)] duration-500'
+                enterFrom='translate-x-full opacity-0 scale-[0.985]'
+                enterTo='translate-x-0 opacity-100 scale-100'
+                leave='transform transition ease-in-out duration-300'
+                leaveFrom='translate-x-0 opacity-100 scale-100'
+                leaveTo='translate-x-full opacity-0 scale-[0.99]'>
+                <Dialog.Panel
+                  className={`pointer-events-auto relative h-full w-[86vw] max-w-sm overflow-hidden rounded-l-[2rem] border-l border-slate-200/70 bg-gradient-to-b from-[#f8fafc] via-[#f8fafc] to-[#eef2f7] shadow-[0_24px_80px_rgba(15,23,42,0.16)] backdrop-blur-2xl dark:border-slate-700/40 dark:from-[#0f172a] dark:via-[#111827] dark:to-[#0b1120] dark:shadow-[0_24px_72px_rgba(0,0,0,0.4)] ${className}`}>
+                  <div className='h-full overflow-y-auto px-4 py-4 sm:px-5'>
+                    {children}
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
+  )
 }
+
 export default SideBarDrawer

@@ -20,26 +20,30 @@ const SocialButton = () => {
   const CONTACT_YOUTUBE = siteConfig('CONTACT_YOUTUBE')
 
   const emailIcon = useRef(null)
+  const itemClassName =
+    'inline-flex h-9 w-9 items-center justify-center rounded-2xl text-[1.1rem] text-slate-500 transition-all duration-200 hover:-translate-y-0.5 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/35 dark:text-slate-300 dark:hover:text-white dark:focus-visible:ring-amber-400/30'
 
   return (
-    <div className='w-full justify-center flex-wrap flex'>
-      <div className='space-x-12 text-3xl text-gray-600 dark:text-gray-300 '>
+    <div className='social-button-group flex w-full flex-wrap justify-center'>
+      <div className='flex flex-wrap items-center justify-center gap-3'>
         {CONTACT_GITHUB && (
           <a
             target='_blank'
             rel='noreferrer'
-            title={'github'}
-            href={CONTACT_GITHUB}>
-            <i className='transform hover:scale-125 duration-150 fab fa-github dark:hover:text-indigo-400 hover:text-indigo-600' />
+            title='github'
+            href={CONTACT_GITHUB}
+            className={itemClassName}>
+            <i className='fab fa-github' />
           </a>
         )}
         {CONTACT_TWITTER && (
           <a
             target='_blank'
             rel='noreferrer'
-            title={'twitter'}
-            href={CONTACT_TWITTER}>
-            <i className='transform hover:scale-125 duration-150 fab fa-twitter dark:hover:text-indigo-400 hover:text-indigo-600' />
+            title='twitter'
+            href={CONTACT_TWITTER}
+            className={itemClassName}>
+            <i className='fab fa-twitter' />
           </a>
         )}
         {CONTACT_TELEGRAM && (
@@ -47,8 +51,9 @@ const SocialButton = () => {
             target='_blank'
             rel='noreferrer'
             href={CONTACT_TELEGRAM}
-            title={'telegram'}>
-            <i className='transform hover:scale-125 duration-150 fab fa-telegram dark:hover:text-indigo-400 hover:text-indigo-600' />
+            title='telegram'
+            className={itemClassName}>
+            <i className='fab fa-telegram' />
           </a>
         )}
         {CONTACT_LINKEDIN && (
@@ -56,62 +61,68 @@ const SocialButton = () => {
             target='_blank'
             rel='noreferrer'
             href={CONTACT_LINKEDIN}
-            title={'linkIn'}>
-            <i className='transform hover:scale-125 duration-150 fab fa-linkedin dark:hover:text-indigo-400 hover:text-indigo-600' />
+            title='linkIn'
+            className={itemClassName}>
+            <i className='fab fa-linkedin' />
           </a>
         )}
         {CONTACT_WEIBO && (
           <a
             target='_blank'
             rel='noreferrer'
-            title={'weibo'}
-            href={CONTACT_WEIBO}>
-            <i className='transform hover:scale-125 duration-150 fab fa-weibo dark:hover:text-indigo-400 hover:text-indigo-600' />
+            title='weibo'
+            href={CONTACT_WEIBO}
+            className={itemClassName}>
+            <i className='fab fa-weibo' />
           </a>
         )}
         {CONTACT_INSTAGRAM && (
           <a
             target='_blank'
             rel='noreferrer'
-            title={'instagram'}
-            href={CONTACT_INSTAGRAM}>
-            <i className='transform hover:scale-125 duration-150 fab fa-instagram dark:hover:text-indigo-400 hover:text-indigo-600' />
+            title='instagram'
+            href={CONTACT_INSTAGRAM}
+            className={itemClassName}>
+            <i className='fab fa-instagram' />
           </a>
         )}
         {CONTACT_EMAIL && (
           <a
             onClick={e => handleEmailClick(e, emailIcon, CONTACT_EMAIL)}
             title='email'
-            className='cursor-pointer'
+            className={`${itemClassName} cursor-pointer`}
             ref={emailIcon}>
-            <i className='transform hover:scale-125 duration-150 fas fa-envelope dark:hover:text-indigo-400 hover:text-indigo-600' />
+            <i className='fas fa-envelope' />
           </a>
         )}
         {ENABLE_RSS && (
           <a
             target='_blank'
             rel='noreferrer'
-            title={'RSS'}
-            href={'/rss/feed.xml'}>
-            <i className='transform hover:scale-125 duration-150 fas fa-rss dark:hover:text-indigo-400 hover:text-indigo-600' />
+            title='RSS'
+            href='/rss/feed.xml'
+            className={itemClassName}>
+            <i className='fas fa-rss' />
           </a>
         )}
         {CONTACT_BILIBILI && (
           <a
             target='_blank'
             rel='noreferrer'
-            title={'bilibili'}
-            href={CONTACT_BILIBILI}>
-            <i className='transform hover:scale-125 duration-150 fab fa-bilibili dark:hover:text-indigo-400 hover:text-indigo-600' />
+            title='bilibili'
+            href={CONTACT_BILIBILI}
+            className={itemClassName}>
+            <i className='fab fa-bilibili' />
           </a>
         )}
         {CONTACT_YOUTUBE && (
           <a
             target='_blank'
             rel='noreferrer'
-            title={'youtube'}
-            href={CONTACT_YOUTUBE}>
-            <i className='transform hover:scale-125 duration-150 fab fa-youtube dark:hover:text-indigo-400 hover:text-indigo-600' />
+            title='youtube'
+            href={CONTACT_YOUTUBE}
+            className={itemClassName}>
+            <i className='fab fa-youtube' />
           </a>
         )}
       </div>

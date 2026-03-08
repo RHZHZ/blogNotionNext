@@ -34,29 +34,25 @@ const MenuGroupCard = props => {
   ]
 
   return (
-    <nav id='nav' className='dark:text-gray-200 w-full px-5'>
-      {links.map((link, index) => {
-        if (link.show) {
-          return (
-            <div key={index} className=''>
+    <nav className='heo-menu-group-card heo-card w-full px-3 py-3'>
+      <div className='heo-menu-group-card__list flex flex-col gap-2'>
+        {links.map((link, index) => {
+          if (link.show) {
+            return (
               <SmartLink
+                key={index}
                 title={link.href}
                 href={link.href}
                 target={link?.target}
-                className={
-                  'w-full flex items-center justify-between py-1 hover:scale-105 duration-200 transform dark:hover:text-indigo-400 hover:text-indigo-600 px-2 cursor-pointer'
-                }>
-                <>
-                  <div>{link.name} :</div>
-                  <div className='font-semibold'>{link.slot}</div>
-                </>
+                className='heo-menu-group-card__link w-full flex items-center justify-between px-3 py-2'>
+                <span className='heo-menu-group-card__label'>{link.name}</span>
+                <span className='heo-menu-group-card__count font-semibold'>{link.slot}</span>
               </SmartLink>
-            </div>
-          )
-        } else {
+            )
+          }
           return null
-        }
-      })}
+        })}
+      </div>
     </nav>
   )
 }

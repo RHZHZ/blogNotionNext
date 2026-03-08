@@ -9,8 +9,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
  * @returns {JSX.Element}
  * @constructor
  */
-const Catalog = ({ toc }) => {
-  const { locale } = useGlobal()
+const Catalog = ({ toc, showHeader = true, variant = 'default' }) => {
+  const { locale, isDarkMode } = useGlobal()
   // 监听滚动事件
   useEffect(() => {
     window.addEventListener('scroll', actionSectionScrollSpy)
@@ -61,31 +61,72 @@ const Catalog = ({ toc }) => {
     return <></>
   }
 
+  const isDrawerVariant = variant === 'drawer'
+
   return (
     <div className='px-3 py-1 dark:text-white text-black'>
-      <div className='w-full'>
-        <i className='mr-1 fas fa-stream' />
-        {locale.COMMON.TABLE_OF_CONTENTS}
-      </div>
+      {showHeader && (
+        <div className='w-full'>
+          <i className='mr-1 fas fa-stream' />
+          {locale.COMMON.TABLE_OF_CONTENTS}
+        </div>
+      )}
       <div
-        className='overflow-y-auto max-h-36 lg:max-h-96 overscroll-none scroll-hidden'
+        className={`overflow-y-auto overscroll-none scroll-hidden ${isDrawerVariant ? 'max-h-[min(50vh,24rem)] pr-1' : 'max-h-36 lg:max-h-96'}`}
         ref={tRef}>
-        <nav className='h-full'>
+        <nav className={isDrawerVariant ? 'flex flex-col gap-1.5' : 'h-full'}>
           {toc?.map(tocItem => {
             const id = uuidToId(tocItem.id)
+            const isActive = activeSection === id
             tocIds.push(id)
+            const itemStyle = isDrawerVariant
+              ? {
+                  marginLeft: `${tocItem.indentLevel * 14}px`,
+                  borderColor: isActive
+                    ? isDarkMode
+                      ? 'rgba(96,165,250,0.26)'
+                      : 'rgba(191,219,254,0.9)'
+                    : isDarkMode
+                      ? 'rgba(71,85,105,0.18)'
+                      : 'rgba(226,232,240,0.92)',
+                  background: isActive
+                    ? isDarkMode
+                      ? 'rgba(30,58,138,0.22)'
+                      : 'rgba(239,246,255,0.92)'
+                    : isDarkMode
+                      ? 'rgba(15,23,42,0.18)'
+                      : 'rgba(255,255,255,0.82)',
+                  boxShadow: isActive
+                    ? isDarkMode
+                      ? '0 10px 24px rgba(0,0,0,0.14)'
+                      : '0 10px 24px rgba(59,130,246,0.08)'
+                    : 'none'
+                }
+              : undefined
+            const textStyle = isDrawerVariant
+              ? {
+                  color: isActive
+                    ? isDarkMode
+                      ? '#93C5FD'
+                      : '#6366F1'
+                    : isDarkMode
+                      ? '#E2E8F0'
+                      : '#334155'
+                }
+              : {
+                  display: 'inline-block',
+                  marginLeft: tocItem.indentLevel * 16
+                }
+
             return (
               <a
                 key={id}
                 href={`#${id}`}
-                className={`notion-table-of-contents-item duration-300 transform dark:text-gray-200
-            notion-table-of-contents-item-indent-level-${tocItem.indentLevel} catalog-item `}>
+                style={itemStyle}
+                className={`notion-table-of-contents-item notion-table-of-contents-item-indent-level-${tocItem.indentLevel} duration-300 transform ${isDrawerVariant ? 'block rounded-2xl border px-3 py-2.5 no-underline' : 'catalog-item dark:text-gray-200'}`}>
                 <span
-                  style={{
-                    display: 'inline-block',
-                    marginLeft: tocItem.indentLevel * 16
-                  }}
-                  className={`truncate ${activeSection === id ? 'font-bold text-indigo-600' : ''}`}>
+                  style={textStyle}
+                  className={`truncate ${isDrawerVariant ? 'block text-[15px] leading-7 font-medium' : activeSection === id ? 'font-bold text-indigo-600' : ''}`}>
                   {tocItem.text}
                 </span>
               </a>

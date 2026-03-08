@@ -17,6 +17,7 @@ import SlideOver from './SlideOver'
  * @returns
  */
 const Header = props => {
+  const { post } = props
   const [fixedNav, setFixedNav] = useState(false)
   const [textWhite, setTextWhite] = useState(false)
   const [navBgWhite, setBgWhite] = useState(false)
@@ -98,90 +99,80 @@ const Header = props => {
     }
   }, [])
 
+  const hasPostBg = isBrowser && !!document.querySelector('#post-bg')
+
   return (
     <>
-      <style jsx>{`
-        @keyframes fade-in-down {
-          0% {
-            opacity: 0.5;
-            transform: translateY(-30%);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fade-in-up {
-          0% {
-            opacity: 0.5;
-            transform: translateY(30%);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .fade-in-down {
-          animation: fade-in-down 0.3s ease-in-out;
-        }
-
-        .fade-in-up {
-          animation: fade-in-up 0.3s ease-in-out;
-        }
-      `}</style>
 
       {/* fixed时留白高度 */}
-      {fixedNav && !document?.querySelector('#post-bg') && (
+      {fixedNav && !hasPostBg && (
         <div className='h-16'></div>
       )}
 
       {/* 顶部导航菜单栏 */}
       <nav
         id='nav'
-        className={`z-20 h-16 top-0 w-full duration-300 transition-all
+        className={`heo-top-nav z-20 h-16 top-0 w-full duration-300 transition-all
             ${fixedNav ? 'fixed' : 'relative bg-transparent'} 
             ${fixedNav ? 'fixed' : ''}
-            ${textWhite ? 'text-white ' : 'text-black dark:text-white'}  
-            ${navBgWhite ? 'bg-white dark:bg-[#18171d] shadow' : 'bg-transparent'}`}>
-        <div className='flex h-full mx-auto justify-between items-center max-w-[86rem] px-6'>
-          {/* 左侧logo */}
-          <Logo {...props} />
+            ${hasPostBg ? 'heo-top-nav--post' : 'heo-top-nav--page'}
+            ${navBgWhite ? 'heo-top-nav--floating' : 'heo-top-nav--flat'}
+            ${textWhite ? 'text-white ' : 'text-black dark:text-white'} bg-transparent`}>
+        <div className='heo-top-nav__inner flex h-full mx-auto items-center max-w-[86rem] px-6'>
+          <div className='heo-top-nav__rail heo-top-nav__rail--brand flex items-center justify-start'>
+            {/* 左侧logo */}
+            <div className='heo-top-nav__brand hidden lg:flex'>
+              <Logo {...props} />
+            </div>
+            <div className='heo-top-nav__brand heo-top-nav__brand--mobile flex lg:hidden'>
+              <Logo {...props} />
+            </div>
+          </div>
 
           {/* 中间菜单 */}
           <div
             id='nav-bar-swipe'
-            className={`hidden lg:flex flex-grow flex-col items-center justify-center h-full relative w-full`}>
+            className='heo-top-nav__center hidden lg:flex flex-1 flex-col items-center justify-center h-full relative min-w-0'>
             <div
               className={`absolute transition-all duration-700 ${activeIndex === 0 ? 'opacity-100 mt-0' : '-mt-20 opacity-0 invisible'}`}>
               <MenuListTop {...props} />
             </div>
             <div
-              className={`absolute transition-all duration-700 ${activeIndex === 1 ? 'opacity-100 mb-0' : '-mb-20 opacity-0 invisible'}`}>
-              <h1 className='font-bold text-center text-light-400 dark:text-gray-400'>
-                {siteConfig('AUTHOR') || siteConfig('TITLE')}{' '}
-                {siteConfig('BIO') && <>|</>} {siteConfig('BIO')}
-              </h1>
+              className={`heo-top-nav__headline absolute transition-all duration-700 ${activeIndex === 1 ? 'opacity-100 mb-0' : '-mb-20 opacity-0 invisible'}`}>
+              <div className='heo-top-nav__headline-pill' title={hasPostBg ? (post?.title || siteConfig('TITLE')) : undefined}>
+                <h1 className='font-bold text-center text-light-400 dark:text-gray-400'>
+                  {hasPostBg ? (post?.title || siteConfig('TITLE')) : (
+                    <>
+                      {siteConfig('AUTHOR') || siteConfig('TITLE')}{' '}
+                      {siteConfig('BIO') && <>|</>} {siteConfig('BIO')}
+                    </>
+                  )}
+                </h1>
+              </div>
             </div>
           </div>
 
-          {/* 右侧固定 */}
-          <div className='flex flex-shrink-0 justify-end items-center w-48'>
-            <RandomPostButton {...props} />
-            <SearchButton {...props} />
-            {!JSON.parse(siteConfig('THEME_SWITCH')) && (
-              <div className='hidden md:block'>
-                <DarkModeButton {...props} />
-              </div>
-            )}
-            <ReadingProgress />
+          <div className='heo-top-nav__rail heo-top-nav__rail--actions flex items-center justify-end'>
+            {/* 右侧固定 */}
+            <div className='heo-header-action-group heo-header-action-group--desktop hidden lg:flex'>
+              <RandomPostButton {...props} />
+              <SearchButton {...props} />
+              {!JSON.parse(siteConfig('THEME_SWITCH')) && <DarkModeButton {...props} />}
+              <ReadingProgress />
+            </div>
 
-            {/* 移动端菜单按钮 */}
-            <div
-              onClick={toggleMenuOpen}
-              className='flex lg:hidden w-8 justify-center items-center h-8 cursor-pointer'>
-              <i className='fas fa-bars' />
+            <div className='heo-header-action-group heo-header-action-group--mobile flex lg:hidden'>
+              <RandomPostButton {...props} />
+              <SearchButton {...props} />
+              <ReadingProgress />
+              <button
+                type='button'
+                onClick={toggleMenuOpen}
+                aria-label='打开菜单'
+                title='打开菜单'
+                className='heo-header-action-btn heo-header-action-btn--menu'>
+                <i className='fas fa-bars' />
+              </button>
             </div>
           </div>
 

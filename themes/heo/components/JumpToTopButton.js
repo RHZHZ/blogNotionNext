@@ -16,10 +16,19 @@ const JumpToTopButton = ({ showPercent = true, percent }) => {
   if (!siteConfig('HEO_WIDGET_TO_TOP', null, CONFIG)) {
     return <></>
   }
-  return (<div className='space-x-1 items-center justify-center transform hover:scale-105 duration-200 w-7 h-auto pb-1 text-center' onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} >
-        <div title={locale.POST.TOP} ><i className='fas fa-arrow-up text-xs' /></div>
-        {showPercent && (<div className='text-xs hidden lg:block'>{percent}</div>)}
-    </div>)
+  return (
+    <button
+      type='button'
+      title={locale.POST.TOP}
+      aria-label={locale.POST.TOP}
+      className='heo-float-widget-btn heo-float-widget-btn--stack'
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+      <span className='heo-float-widget-btn__icon-wrap'>
+        <i className='heo-float-widget-btn__icon fas fa-arrow-up' />
+      </span>
+      {showPercent && <span className='heo-float-widget-btn__meta hidden lg:block'>{percent}</span>}
+    </button>
+  )
 }
 
 export default JumpToTopButton

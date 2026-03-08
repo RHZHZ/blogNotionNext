@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { useRouter } from 'next/router'
+import { Fragment, useEffect, useState } from 'react'
 import Catalog from './Catalog'
 
 /**
@@ -6,39 +8,93 @@ import Catalog from './Catalog'
  */
 export default function FloatTocButton(props) {
   const [tocVisible, changeTocVisible] = useState(false)
-
   const { post } = props
+  const router = useRouter()
 
   const toggleToc = () => {
-    changeTocVisible(!tocVisible)
+    changeTocVisible(prev => !prev)
   }
 
-  //   没有目录就隐藏该按钮
+  useEffect(() => {
+    const closeToc = () => changeTocVisible(false)
+    router.events.on('routeChangeComplete', closeToc)
+    return () => {
+      router.events.off('routeChangeComplete', closeToc)
+    }
+  }, [router.events])
+
   if (!post || !post.toc || post.toc.length < 1) {
     return <></>
   }
 
-  return (<div className='fixed lg:hidden right-4 bottom-24'>
-        {/* 按钮 */}
-        <div onClick={toggleToc} className={'w-11 h-11 select-none hover:scale-110 transform duration-200 text-black dark:text-gray-200 rounded-full bg-white drop-shadow-lg flex justify-center items-center dark:bg-hexo-black-gray py-2 px-2'}>
-            <button id="toc-button" className={'fa-list-ol cursor-pointer fas'} />
-        </div>
+  return (
+    <>
+      <div className='fixed bottom-24 right-4 z-30 lg:hidden'>
+        <button
+          type='button'
+          onClick={toggleToc}
+          aria-label='打开文章目录'
+          title='打开文章目录'
+          className='heo-float-widget-btn heo-float-widget-btn--icon-only'>
+          <i className='fas fa-list-ol heo-float-widget-btn__icon' />
+        </button>
+      </div>
 
-        {/* 目录Modal */}
-        <div className='fixed top-0 right-0 z-40 '>
-            {/* 侧边菜单 */}
-            <div
-                className={`${tocVisible ? 'shadow-card ' : ' -mr-72  opacity-0'} dark:bg-black w-60 duration-200 fixed right-4 bottom-12 rounded-xl py-2 bg-white dark:bg-gray-900'`}>
-                {post && <>
-                    <div className='dark:text-gray-400 text-gray-600'>
-                        <Catalog toc={post.toc} />
+      <Transition.Root show={tocVisible} as={Fragment}>
+        <Dialog as='div' className='relative z-40 lg:hidden' onClose={changeTocVisible}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-in-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in-out duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'>
+            <div className='heo-toc-drawer__overlay fixed inset-0' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-hidden'>
+            <div className='absolute inset-0 overflow-hidden'>
+              <div className='pointer-events-none fixed inset-x-0 bottom-0 flex justify-end px-4 pb-[5.5rem]'>
+                <Transition.Child
+                  as={Fragment}
+                  enter='transform transition ease-[cubic-bezier(0.22,1,0.36,1)] duration-400'
+                  enterFrom='translate-y-6 opacity-0 scale-[0.985]'
+                  enterTo='translate-y-0 opacity-100 scale-100'
+                  leave='transform transition ease-in-out duration-250'
+                  leaveFrom='translate-y-0 opacity-100 scale-100'
+                  leaveTo='translate-y-4 opacity-0 scale-[0.985]'>
+                  <Dialog.Panel className='heo-toc-drawer__panel pointer-events-auto w-full max-w-xs overflow-hidden'>
+                    <div className='heo-toc-drawer__header'>
+                      <div className='flex items-center justify-between gap-3'>
+                        <div>
+                          <div className='heo-toc-drawer__eyebrow'>TABLE OF CONTENTS</div>
+                          <div className='heo-toc-drawer__title'>文章目录</div>
+                        </div>
+                        <button
+                          type='button'
+                          onClick={() => changeTocVisible(false)}
+                          aria-label='关闭文章目录'
+                          title='关闭文章目录'
+                          className='heo-toc-drawer__close'>
+                          <i className='fa-solid fa-xmark text-sm'></i>
+                        </button>
+                      </div>
                     </div>
-                </>
-                }
+                    <div className='heo-toc-drawer__content'>
+                      <div className='heo-toc-drawer__content-card'>
+                        <div className='dark:text-slate-200'>
+                          <Catalog toc={post.toc} showHeader={false} variant='drawer' />
+                        </div>
+                      </div>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
             </div>
-        </div>
-        {/* 背景蒙版 */}
-        <div id='right-drawer-background' className={(tocVisible ? 'block' : 'hidden') + ' fixed top-0 left-0 z-30 w-full h-full'}
-            onClick={toggleToc} />
-    </div>)
+          </div>
+        </Dialog>
+      </Transition.Root>
+    </>
+  )
 }

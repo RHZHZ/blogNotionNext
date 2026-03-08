@@ -2,6 +2,7 @@ import styles from './AISummary.module.css'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useGlobal } from '@/lib/global'
 import { isAiSummaryEnabled, isValidAiSummary } from '@/lib/utils'
+import { countWords } from '@/lib/plugins/wordCount'
 
 const DESKTOP_COLLAPSE_LINES = 5
 const MOBILE_COLLAPSE_LINES = 4
@@ -103,10 +104,10 @@ const AISummary = ({ aiSummary, post }) => {
   }, [measureCollapseState])
 
   const calculateStats = () => {
-    if (!aiSummary || !post?.content) return null
+    if (!aiSummary) return null
 
-    const originalLength = post.content.length
-    const summaryLength = aiSummary.length
+    const originalLength = Number(post?.wordCount) || 0
+    const summaryLength = countWords(aiSummary).wordCount
     const ratio = originalLength > 0 ? (1 - summaryLength / originalLength) * 100 : 0
     const compressionRatio = Math.max(0, ratio).toFixed(1)
 
@@ -118,6 +119,16 @@ const AISummary = ({ aiSummary, post }) => {
   }
 
   const stats = calculateStats()
+
+  const handleToggleStats = () => {
+    setShowStats(prev => {
+      const next = !prev
+      if (next && shouldCollapse && !expanded) {
+        setExpanded(true)
+      }
+      return next
+    })
+  }
 
   if (!shouldRender) {
     return null
@@ -155,7 +166,7 @@ const AISummary = ({ aiSummary, post }) => {
               <div className={styles['ai-tag']}>RHZ-Claude</div>
               {stats && (
                 <button
-                  onClick={() => setShowStats(!showStats)}
+                  onClick={handleToggleStats}
                   className={styles['ai-stats-btn']}
                   aria-label='显示摘要统计信息'>
                   {showStats ? '收起数据' : '查看数据'}
@@ -176,7 +187,7 @@ const AISummary = ({ aiSummary, post }) => {
               )}
             </div>
 
-            {shouldCollapse && !expanded && <div className={styles['ai-fade-mask']} aria-hidden='true' />}
+            {shouldCollapse && !expanded && !showStats && <div className={styles['ai-fade-mask']} aria-hidden='true' />}
 
             {shouldCollapse && (
               <div className={styles['ai-expand-wrap']}>

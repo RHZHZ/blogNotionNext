@@ -19,11 +19,19 @@ const JumpToCommentButton = () => {
     // const commentElement = document.getElementById('comment')
     // if (commentElement) {
     // commentElement?.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' })
+    // }
   }
 
-  return (<div className='flex space-x-1 items-center justify-center transform hover:scale-105 duration-200 w-7 h-7 text-center' onClick={navToComment} >
-    <i className='fas fa-comment text-xs' />
-  </div>)
+  return (
+    <button
+      type='button'
+      aria-label='跳转到评论区'
+      title='跳转到评论区'
+      className='heo-float-widget-btn heo-float-widget-btn--icon-only'
+      onClick={navToComment}>
+      <i className='heo-float-widget-btn__icon fas fa-comment' />
+    </button>
+  )
 }
 
 export default JumpToCommentButton

@@ -13,7 +13,6 @@ import LazyImage from '@/components/LazyImage'
 import LoadingCover from '@/components/LoadingCover'
 import replaceSearchResult from '@/components/Mark'
 import NotionPage from '@/components/NotionPage'
-import ShareBar from '@/components/ShareBar'
 import WWAds from '@/components/WWAds'
 import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
@@ -40,6 +39,7 @@ import { PostLock } from './components/PostLock'
 import PostRecommend from './components/PostRecommend'
 import SearchNav from './components/SearchNav'
 import SideRight from './components/SideRight'
+import ShareBar from '@/components/ShareBar'
 import CONFIG from './config'
 import { Style } from './style'
 
@@ -352,34 +352,48 @@ const LayoutSlug = props => {
                 <WWAds orientation='horizontal' className='w-full' />
               </section>
 
-              {/* 上一篇\下一篇文章 */}
-              <PostAdjacent {...props} />
-
-              {/* 分享 */}
-              <ShareBar post={post} />
               {post?.type === 'Post' && (
-                <div className='px-5'>
-                  {/* 版权 */}
-                  <PostCopyright {...props} />
-                  {/* 文章推荐 */}
-                  <PostRecommend {...props} />
+                <div className='heo-post-footer px-5 pb-4 pt-6'>
+                  <div className='heo-post-footer__inner space-y-6'>
+                    <div className='heo-post-footer__share'>
+                      <ShareBar post={post} />
+                    </div>
+
+                    {/* 版权 */}
+                    <PostCopyright {...props} />
+
+                    {/* 上一篇\下一篇文章 */}
+                    <PostAdjacent {...props} />
+
+                    <div className='heo-post-footer__divider h-px bg-gradient-to-r from-transparent via-slate-200/80 to-transparent dark:via-slate-700/70' />
+
+                    {/* 文章推荐 */}
+                    <PostRecommend {...props} />
+                  </div>
                 </div>
               )}
             </article>
 
             {/* 评论区 */}
             {fullWidth ? null : (
-              <div className={`${commentEnable && post ? '' : 'hidden'}`}>
-                <hr className='my-4 border-dashed' />
+              <div className={`${commentEnable && post ? '' : 'hidden'} px-5 pb-4 pt-4`}>
+                <div className='mb-5 h-px bg-gradient-to-r from-transparent via-slate-200/80 to-transparent dark:via-slate-700/70' />
                 {/* 评论区上方广告 */}
                 <div className='py-2'>
                   <AdSlot />
                 </div>
                 {/* 评论互动 */}
-                <div className='duration-200 overflow-x-auto px-5'>
-                  <div className='text-2xl dark:text-white'>
-                    <i className='fas fa-comment mr-1' />
-                    {locale.COMMON.COMMENTS}
+                <div className='overflow-hidden rounded-[1.9rem] border border-slate-200/80 bg-white/96 p-5 shadow-[0_18px_48px_rgba(15,23,42,0.05)] transition-all duration-200 dark:border-slate-700/60 dark:bg-[#1f2026]'>
+                  <div className='mb-4 flex items-end justify-between gap-4'>
+                    <div>
+                      <div className='text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500'>
+                        Comments
+                      </div>
+                      <div className='mt-1 text-2xl font-semibold text-slate-800 dark:text-slate-100'>
+                        <i className='fas fa-comment mr-2 text-base text-slate-400 dark:text-slate-500' />
+                        {locale.COMMON.COMMENTS}
+                      </div>
+                    </div>
                   </div>
                   <Comment frontMatter={post} className='' />
                 </div>

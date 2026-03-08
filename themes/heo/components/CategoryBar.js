@@ -1,6 +1,6 @@
 import { ChevronDoubleLeft, ChevronDoubleRight } from '@/components/HeroIcons'
-import { useGlobal } from '@/lib/global'
 import SmartLink from '@/components/SmartLink'
+import { useGlobal } from '@/lib/global'
 import { useRouter } from 'next/router'
 import { useRef, useState } from 'react'
 
@@ -13,10 +13,8 @@ export default function CategoryBar(props) {
   const { categoryOptions, border = true } = props
   const { locale } = useGlobal()
   const [scrollRight, setScrollRight] = useState(false)
-  // 创建一个ref引用
   const categoryBarItemsRef = useRef(null)
 
-  // 点击#right时，滚动#category-bar-items到最右边
   const handleToggleScroll = () => {
     if (categoryBarItemsRef.current) {
       const { scrollWidth, clientWidth } = categoryBarItemsRef.current
@@ -32,32 +30,43 @@ export default function CategoryBar(props) {
   return (
     <div
       id='category-bar'
-      className={`wow fadeInUp flex flex-nowrap justify-between items-center h-12 mb-4 space-x-2 w-full lg:bg-white dark:lg:bg-[#1e1e1e]  
-            ${border ? 'lg:border lg:hover:border dark:lg:border-gray-800 hover:border-indigo-600 dark:hover:border-yellow-600 ' : ''}  py-2 lg:px-2 rounded-xl transition-colors duration-200`}>
+      style={
+        border
+          ? undefined
+          : {
+              background: 'transparent',
+              border: 'none',
+              boxShadow: 'none',
+              backdropFilter: 'none',
+              WebkitBackdropFilter: 'none'
+            }
+      }
+      className={`wow fadeInUp mb-4 flex h-auto min-h-[3.5rem] w-full items-center justify-between gap-2 rounded-[1.75rem] py-2 transition-all duration-300 ${border ? 'px-2.5' : 'px-0'}`}>
       <div
         id='category-bar-items'
         ref={categoryBarItemsRef}
-        className='scroll-smooth max-w-4xl rounded-lg scroll-hidden flex justify-start flex-nowrap items-center overflow-x-scroll'>
+        className='scroll-hidden flex max-w-4xl flex-1 items-center gap-1 overflow-x-auto scroll-smooth'>
         <MenuItem href='/' name={locale.NAV.INDEX} />
         {categoryOptions?.map((c, index) => (
           <MenuItem key={index} href={`/category/${c.name}`} name={c.name} />
         ))}
       </div>
 
-      <div id='category-bar-next' className='flex items-center justify-center'>
-        <div
+      <div id='category-bar-next' className='flex flex-shrink-0 items-center gap-1'>
+        <button
           id='right'
-          className='cursor-pointer mx-2 dark:text-gray-300 dark:hover:text-yellow-600 hover:text-indigo-600'
+          type='button'
+          className='inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-slate-200/70 bg-white/80 text-slate-500 transition-all duration-300 hover:-translate-y-0.5 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/35 dark:border-slate-700/40 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:text-slate-100 dark:focus-visible:ring-amber-400/30'
           onClick={handleToggleScroll}>
           {scrollRight ? (
-            <ChevronDoubleLeft className={'w-5 h-5'} />
+            <ChevronDoubleLeft className='h-4 w-4' />
           ) : (
-            <ChevronDoubleRight className={'w-5 h-5'} />
+            <ChevronDoubleRight className='h-4 w-4' />
           )}
-        </div>
+        </button>
         <SmartLink
           href='/category'
-          className='whitespace-nowrap font-bold text-gray-900 dark:text-white transition-colors duration-200 hover:text-indigo-600 dark:hover:text-yellow-600'>
+          className='inline-flex h-9 items-center rounded-[1.1rem] px-2.5 text-sm font-semibold whitespace-nowrap text-slate-800 transition-colors duration-200 hover:text-slate-600 dark:text-slate-100 dark:hover:text-slate-200'>
           {locale.MENU.CATEGORY}
         </SmartLink>
       </div>
@@ -73,11 +82,15 @@ export default function CategoryBar(props) {
 const MenuItem = ({ href, name }) => {
   const router = useRouter()
   const { category } = router.query
-  const selected = category === name
+  const selected = category === name || (href === '/' && !category)
+
   return (
-    <div
-      className={`whitespace-nowrap mr-2 duration-200 transition-all font-bold px-2 py-0.5 rounded-md text-gray-900 dark:text-white hover:text-white hover:bg-indigo-600 dark:hover:bg-yellow-600 ${selected ? 'text-white bg-indigo-600 dark:bg-yellow-600' : ''}`}>
-      <SmartLink href={href}>{name}</SmartLink>
-    </div>
+    <SmartLink
+      href={href}
+      className={`category-bar-item inline-flex flex-shrink-0 items-center rounded-xl border px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 ${
+        selected ? 'selected' : ''
+      }`}>
+      {name}
+    </SmartLink>
   )
 }

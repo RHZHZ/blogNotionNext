@@ -31,8 +31,17 @@ const DarkModeButton = (props) => {
     htmlElement.classList?.add(newStatus ? 'dark' : 'light')
   }
 
-  return <div onClick={handleChangeDarkMode} className={`${className || ''} cursor-pointer hover: scale-100 hover:bg-black hover:bg-opacity-10 rounded-full w-10 h-10 flex justify-center items-center duration-200 transition-all`}>
-    <div id='darkModeButton' className=' cursor-pointer hover: scale-50 w-10 h-10 '> {isDarkMode ? <Sun /> : <Moon />}</div>
-  </div>
+  return (
+    <button
+      type='button'
+      onClick={handleChangeDarkMode}
+      aria-label={isDarkMode ? '切换到浅色模式' : '切换到深色模式'}
+      title={isDarkMode ? '切换到浅色模式' : '切换到深色模式'}
+      className={`heo-header-action-btn ${className || ''}`}>
+      <span id='darkModeButton' className='flex items-center justify-center'>
+        {isDarkMode ? <Sun /> : <Moon />}
+      </span>
+    </button>
+  )
 }
 export default DarkModeButton

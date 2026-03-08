@@ -4,7 +4,7 @@ import CONFIG from '../config'
 import { MenuItemCollapse } from './MenuItemCollapse'
 
 export const MenuListSide = props => {
-  const { customNav, customMenu } = props
+  const { customNav, customMenu, accentColor, isDarkMode } = props
   const { locale } = useGlobal()
 
   let links = [
@@ -48,9 +48,14 @@ export const MenuListSide = props => {
   }
 
   return (
-    <nav className='flex-col space-y-1'>
+    <nav className='flex flex-col gap-1.5'>
       {links?.map((link, index) => (
-        <MenuItemCollapse key={index} link={link} />
+        <MenuItemCollapse
+          key={index}
+          link={link}
+          accentColor={accentColor}
+          isDarkMode={isDarkMode}
+        />
       ))}
     </nav>
   )
