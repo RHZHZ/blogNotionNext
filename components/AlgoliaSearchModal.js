@@ -12,6 +12,7 @@ import {
   useRef,
   useState
 } from 'react'
+import { createPortal } from 'react-dom'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 const ShortCutActions = [
@@ -242,17 +243,23 @@ export default function AlgoliaSearchModal({ cRef }) {
   if (!siteConfig('ALGOLIA_APP_ID')) {
     return <></>
   }
-  return (
+  const modalContent = (
     <div
       id='search-wrapper'
       className={`${
         isModalOpen ? 'opacity-100' : 'invisible opacity-0 pointer-events-none'
-      } z-30 fixed h-screen w-screen left-0 top-0 sm:mt-[10vh] flex items-start justify-center mt-0`}>
+      } fixed inset-0 z-[120] flex items-start justify-center overflow-y-auto bg-transparent px-3 py-3 sm:px-4 sm:py-[10vh]`}>
+      {/* 遮罩 */}
+      <div
+        onClick={closeModal}
+        className='absolute inset-0 z-0 glassmorphism'
+      />
+
       {/* 模态框 */}
       <div
         className={`${
-          isModalOpen ? 'opacity-100' : 'invisible opacity-0 translate-y-10'
-        } max-h-[80vh] flex flex-col justify-between w-full min-h-[10rem] h-full md:h-fit max-w-xl dark:bg-hexo-black-gray dark:border-gray-800 bg-white dark:bg- p-5 rounded-lg z-50 shadow border hover:border-blue-600 duration-300 transition-all `}>
+          isModalOpen ? 'opacity-100 translate-y-0' : 'invisible opacity-0 translate-y-6'
+        } relative z-10 flex min-h-[10rem] w-full max-w-xl flex-col justify-between rounded-2xl border bg-white p-4 shadow duration-300 transition-all hover:border-blue-600 dark:border-gray-800 dark:bg-hexo-black-gray sm:max-h-[80vh] sm:rounded-lg sm:p-5`}>
         <div className='flex justify-between items-center'>
           <div className='text-2xl text-blue-600 dark:text-yellow-600 font-bold'>
             搜索
@@ -268,8 +275,8 @@ export default function AlgoliaSearchModal({ cRef }) {
           type='text'
           placeholder='在这里输入搜索关键词...'
           onChange={e => handleInputChange(e)}
-          onFocus={() => setIsInputFocused(true)} // 聚焦时
-          onBlur={() => setIsInputFocused(false)} // 失去焦点时
+          onFocus={() => setIsInputFocused(true)}
+          onBlur={() => setIsInputFocused(false)}
           className='text-black dark:text-gray-200 bg-gray-50 dark:bg-gray-600 outline-blue-500 w-full px-4 my-2 py-1 mb-4 border rounded-md'
           ref={inputRef}
         />
@@ -287,7 +294,7 @@ export default function AlgoliaSearchModal({ cRef }) {
             </p>
           </div>
         )}
-        <ul className='flex-1 overflow-auto'>
+        <ul className='min-h-0 flex-1 overflow-y-auto'>
           {searchResults.map((result, index) => (
             <li
               key={result.objectID}
@@ -335,14 +342,10 @@ export default function AlgoliaSearchModal({ cRef }) {
           </div>
         </div>
       </div>
-
-      {/* 遮罩 */}
-      <div
-        onClick={closeModal}
-        className='z-30 fixed top-0 left-0 w-full h-full flex items-center justify-center glassmorphism'
-      />
     </div>
   )
+
+  return createPortal(modalContent, document.body)
 }
 
 /**
