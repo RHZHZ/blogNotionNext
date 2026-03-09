@@ -4,6 +4,7 @@ import throttle from 'lodash.throttle'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import DarkModeButton from './DarkModeButton'
+import EyeCareButton from './EyeCareButton'
 import Logo from './Logo'
 import { MenuListTop } from './MenuListTop'
 import RandomPostButton from './RandomPostButton'
@@ -182,6 +183,7 @@ const Header = props => {
             <div className='heo-header-action-group heo-header-action-group--desktop hidden lg:flex'>
               <RandomPostButton {...props} />
               <SearchButton {...props} />
+              <EyeCareButton />
               {!JSON.parse(siteConfig('THEME_SWITCH')) && <DarkModeButton {...props} />}
               <ReadingProgress />
             </div>

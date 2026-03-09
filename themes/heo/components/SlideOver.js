@@ -1,3 +1,4 @@
+import { Eye, EyeSlash } from '@/components/HeroIcons'
 import DarkModeButton from '@/components/DarkModeButton'
 import { useGlobal } from '@/lib/global'
 import { Dialog, Transition } from '@headlessui/react'
@@ -27,7 +28,7 @@ export default function SlideOver(props) {
   const { cRef, tagOptions } = props
   const [open, setOpen] = useState(false)
   const [coverColor, setCoverColor] = useState(null)
-  const { locale, isDarkMode } = useGlobal()
+  const { locale, isDarkMode, isEyeCareMode, toggleEyeCareMode } = useGlobal()
   const router = useRouter()
 
   useImperativeHandle(cRef, () => ({
@@ -162,8 +163,14 @@ export default function SlideOver(props) {
                       </div>
                     </div>
 
-                    <div className='mx-5 mb-4'>
+                    <div className='mx-5 mb-4 grid grid-cols-2 gap-3'>
                       <DarkModeBlockButton accentColor={accentColor} isDarkMode={isDarkMode} />
+                      <EyeCareBlockButton
+                        accentColor={accentColor}
+                        isDarkMode={isDarkMode}
+                        isEyeCareMode={isEyeCareMode}
+                        toggleEyeCareMode={toggleEyeCareMode}
+                      />
                     </div>
 
                     <div className='flex-1 overflow-y-auto px-5 pb-6 dark:text-white'>
@@ -225,18 +232,26 @@ function DarkModeBlockButton({ accentColor, isDarkMode }) {
   }
 
   const iconStyle = {
-    background: isDarkMode
-      ? `color-mix(in srgb, ${accentColor} 10%, rgba(255,255,255,0.08))`
-      : `color-mix(in srgb, ${accentColor} 8%, #F8FAFC)`,
-    color: isDarkMode
-      ? `color-mix(in srgb, ${accentColor} 35%, #E2E8F0)`
-      : `color-mix(in srgb, ${accentColor} 30%, #475569)`
+    background: currentDarkMode
+      ? isDarkMode
+        ? `color-mix(in srgb, ${accentColor} 26%, rgba(255,255,255,0.12))`
+        : `color-mix(in srgb, ${accentColor} 18%, #EFF6FF)`
+      : isDarkMode
+        ? `color-mix(in srgb, ${accentColor} 10%, rgba(255,255,255,0.08))`
+        : `color-mix(in srgb, ${accentColor} 8%, #F8FAFC)`,
+    color: currentDarkMode
+      ? isDarkMode
+        ? '#FCD34D'
+        : `color-mix(in srgb, ${accentColor} 60%, #1D4ED8)`
+      : isDarkMode
+        ? `color-mix(in srgb, ${accentColor} 35%, #E2E8F0)`
+        : `color-mix(in srgb, ${accentColor} 30%, #475569)`
   }
 
   return (
     <button
       onClick={handleChangeDarkMode}
-      className={drawerActionClassName}>
+      className={`${drawerActionClassName} ${currentDarkMode ? 'border-blue-200/80 bg-blue-50/95 text-blue-700 shadow-[0_12px_28px_rgba(37,99,235,0.14)] dark:border-amber-400/30 dark:bg-amber-500/10 dark:text-amber-100 dark:shadow-[0_12px_28px_rgba(245,158,11,0.14)]' : ''}`}>
       <span className='flex items-center gap-3'>
         <span
           style={iconStyle}
@@ -245,10 +260,49 @@ function DarkModeBlockButton({ accentColor, isDarkMode }) {
         </span>
         <span>{currentDarkMode ? locale.MENU.LIGHT_MODE : locale.MENU.DARK_MODE}</span>
       </span>
-      <i className='fas fa-angle-right text-xs text-slate-400 transition-transform duration-300 group-hover:translate-x-0.5'></i>
+      <i className={`fas fa-angle-right text-xs transition-transform duration-300 group-hover:translate-x-0.5 ${currentDarkMode ? 'text-blue-500 dark:text-amber-300' : 'text-slate-400'}`}></i>
     </button>
   )
 }
+
+
+
+function EyeCareBlockButton({ accentColor, isDarkMode, isEyeCareMode, toggleEyeCareMode }) {
+  const iconStyle = {
+    background: isEyeCareMode
+      ? isDarkMode
+        ? `color-mix(in srgb, ${accentColor} 26%, rgba(255,255,255,0.12))`
+        : `color-mix(in srgb, ${accentColor} 18%, #EFF6FF)`
+      : isDarkMode
+        ? `color-mix(in srgb, ${accentColor} 10%, rgba(255,255,255,0.08))`
+        : `color-mix(in srgb, ${accentColor} 8%, #F8FAFC)`,
+    color: isEyeCareMode
+      ? isDarkMode
+        ? '#FCD34D'
+        : `color-mix(in srgb, ${accentColor} 60%, #1D4ED8)`
+      : isDarkMode
+        ? `color-mix(in srgb, ${accentColor} 35%, #E2E8F0)`
+        : `color-mix(in srgb, ${accentColor} 30%, #475569)`
+  }
+
+  return (
+    <button
+      type='button'
+      onClick={toggleEyeCareMode}
+      className={`${drawerActionClassName} ${isEyeCareMode ? 'border-blue-200/80 bg-blue-50/95 text-blue-700 shadow-[0_12px_28px_rgba(37,99,235,0.14)] dark:border-amber-400/30 dark:bg-amber-500/10 dark:text-amber-100 dark:shadow-[0_12px_28px_rgba(245,158,11,0.14)]' : ''}`}>
+      <span className='flex items-center gap-3'>
+        <span
+          style={iconStyle}
+          className='flex h-9 w-9 items-center justify-center rounded-[1.1rem] transition-colors duration-300'>
+          {isEyeCareMode ? <EyeSlash /> : <Eye />}
+        </span>
+        <span>{isEyeCareMode ? '关闭护眼' : '开启护眼'}</span>
+      </span>
+      <i className={`fas fa-angle-right text-xs transition-transform duration-300 group-hover:translate-x-0.5 ${isEyeCareMode ? 'text-blue-500 dark:text-amber-300' : 'text-slate-400'}`}></i>
+    </button>
+  )
+}
+
 
 function Button({ title, url, icon, accentColor, isDarkMode }) {
   const iconStyle = {

@@ -118,6 +118,8 @@ export default function PostAdjacent({ prev, next }) {
   const { locale } = useGlobal()
 
   useEffect(() => {
+    isShowRef.current = false
+    focusLockRef.current = false
     setIsShow(false)
   }, [router])
 

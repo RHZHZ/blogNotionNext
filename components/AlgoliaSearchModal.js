@@ -97,7 +97,8 @@ export default function AlgoliaSearchModal({ cRef }) {
     'enter',
     e => {
       if (isInputFocused && searchResults.length > 0) {
-        onJumpSearchResult(index)
+        e.preventDefault()
+        onJumpSearchResult()
       }
     },
     { enableOnFormTags: true }
@@ -248,26 +249,26 @@ export default function AlgoliaSearchModal({ cRef }) {
       id='search-wrapper'
       className={`${
         isModalOpen ? 'opacity-100' : 'invisible opacity-0 pointer-events-none'
-      } fixed inset-0 z-[120] flex items-start justify-center overflow-y-auto bg-transparent px-3 py-3 sm:px-4 sm:py-[10vh]`}>
+      } heo-search-modal fixed inset-0 z-[120] flex items-start justify-center overflow-y-auto bg-transparent px-3 py-3 sm:px-4 sm:py-[10vh]`}>
       {/* 遮罩 */}
       <div
         onClick={closeModal}
-        className='absolute inset-0 z-0 bg-slate-950/18 backdrop-blur-[6px] dark:bg-black/45'
+        className='heo-search-modal__backdrop absolute inset-0 z-0 bg-slate-950/18 backdrop-blur-[6px] dark:bg-black/45'
       />
 
       {/* 模态框 */}
       <div
         className={`${
           isModalOpen ? 'opacity-100 translate-y-0' : 'invisible opacity-0 translate-y-6'
-        } relative z-10 flex min-h-[10rem] w-full max-w-xl flex-col justify-between rounded-[1.75rem] border border-slate-200/80 bg-white/95 p-4 shadow-[0_24px_64px_rgba(15,23,42,0.16)] backdrop-blur-xl duration-300 transition-all hover:border-blue-300 dark:border-white/10 dark:bg-[#111318]/88 dark:shadow-[0_24px_72px_rgba(0,0,0,0.45)] sm:max-h-[80vh] sm:rounded-[1.5rem] sm:p-5`}>
+        } heo-search-modal__panel relative z-10 flex min-h-[10rem] w-full max-w-xl flex-col justify-between rounded-[1.75rem] border border-slate-200/80 bg-white/95 p-4 shadow-[0_24px_64px_rgba(15,23,42,0.16)] backdrop-blur-xl duration-300 transition-all hover:border-blue-300 dark:border-white/10 dark:bg-[#111318]/88 dark:shadow-[0_24px_72px_rgba(0,0,0,0.45)] sm:max-h-[80vh] sm:rounded-[1.5rem] sm:p-5`}>
         <div className='flex justify-between items-center gap-3'>
-          <div className='text-2xl text-blue-600 dark:text-yellow-600 font-bold'>
+          <div className='heo-search-modal__title text-2xl text-blue-600 dark:text-yellow-600 font-bold'>
             搜索
           </div>
           <button
             type='button'
             aria-label='关闭搜索'
-            className='inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/80 text-gray-600 transition-all hover:border-blue-300 hover:text-blue-600 dark:border-white/10 dark:text-gray-300 dark:hover:border-yellow-500/50 dark:hover:text-yellow-400'
+            className='heo-search-modal__close inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/80 text-gray-600 transition-all hover:border-blue-300 hover:text-blue-600 dark:border-white/10 dark:text-gray-300 dark:hover:border-yellow-500/50 dark:hover:text-yellow-400'
             onClick={closeModal}>
             <i className='fa-solid fa-xmark' />
           </button>
@@ -279,47 +280,78 @@ export default function AlgoliaSearchModal({ cRef }) {
           onChange={e => handleInputChange(e)}
           onFocus={() => setIsInputFocused(true)}
           onBlur={() => setIsInputFocused(false)}
-          className='text-black dark:text-gray-200 bg-slate-50/90 dark:bg-white/5 outline-blue-500 w-full px-4 my-2 py-2.5 mb-4 border border-slate-200/80 dark:border-white/10 rounded-xl placeholder:text-gray-400 dark:placeholder:text-gray-500'
+          className='heo-search-modal__input text-black dark:text-gray-200 bg-slate-50/90 dark:bg-white/5 outline-blue-500 w-full px-4 my-2 py-2.5 mb-4 border border-slate-200/80 dark:border-white/10 rounded-xl placeholder:text-gray-400 dark:placeholder:text-gray-500'
           ref={inputRef}
         />
 
         {/* 标签组 */}
-        <div className='mb-4'>
+        <div className='heo-search-modal__tags mb-4'>
           <TagGroups />
         </div>
         {searchResults.length === 0 && keyword && !isLoading && (
-          <div>
-            <p className=' text-slate-600 text-center my-4 text-base'>
-              {' '}
+          <div className='heo-search-modal__empty'>
+            <p className='heo-search-modal__empty-text text-slate-600 text-center my-4 text-base'>
               无法找到相关结果
               <span className='font-semibold'>&quot;{keyword}&quot;</span>
             </p>
           </div>
         )}
-        <ul className='min-h-0 flex-1 overflow-y-auto'>
+        <ul className='heo-search-modal__results min-h-0 flex-1 overflow-y-auto'>
           {searchResults.map((result, index) => (
             <li
               key={result.objectID}
               onMouseEnter={() => setActiveIndex(index)}
               onClick={() => onJumpSearchResult(index)}
-              className={`cursor-pointer replace my-2 p-2 duration-100 
-              rounded-lg
-              ${activeIndex === index ? 'bg-blue-600 dark:bg-yellow-600' : ''}`}>
-              <a
-                className={`${activeIndex === index ? ' text-white' : ' text-black dark:text-gray-300 '}`}>
-                {result.title}
-              </a>
+              className={`heo-search-modal__result-item cursor-pointer replace my-2 rounded-xl border p-3 duration-100 ${
+                activeIndex === index ? 'is-active bg-blue-600 dark:bg-yellow-600' : ''
+              }`}>
+              <div className='heo-search-modal__result-head flex items-start justify-between gap-3'>
+                <div className='min-w-0 flex-1'>
+                  <a
+                    className={`heo-search-modal__result-link block ${activeIndex === index ? ' text-white' : ' text-black dark:text-gray-300 '}`}>
+                    {result.title}
+                  </a>
+                  {result.summary && (
+                    <p
+                      className={`heo-search-modal__result-summary mt-1 line-clamp-2 text-sm ${
+                        activeIndex === index ? 'text-white/80 dark:text-black/75' : 'text-slate-500 dark:text-slate-400'
+                      }`}>
+                      {result.summary}
+                    </p>
+                  )}
+                </div>
+                {(result.category || result.tags?.length > 0) && (
+                  <div className='heo-search-modal__result-meta hidden shrink-0 flex-col items-end gap-1 sm:flex'>
+                    {result.category && (
+                      <span
+                        className={`heo-search-modal__result-category ${
+                          activeIndex === index ? 'text-white/90 dark:text-black/75' : ''
+                        }`}>
+                        {result.category}
+                      </span>
+                    )}
+                    {result.tags?.length > 0 && (
+                      <span
+                        className={`heo-search-modal__result-tags ${
+                          activeIndex === index ? 'text-white/75 dark:text-black/65' : ''
+                        }`}>
+                        #{result.tags.slice(0, 2).join(' · #')}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
             </li>
           ))}
         </ul>
         <Pagination totalPage={totalPage} page={page} switchPage={switchPage} />
-        <div className='mt-3 flex flex-col gap-3 border-t border-slate-200/70 pt-3 text-xs text-gray-600 dark:border-white/10 dark:text-gray-300 sm:mt-2 sm:flex-row sm:items-center sm:justify-between sm:text-sm'>
+        <div className='heo-search-modal__footer mt-3 flex flex-col gap-3 border-t border-slate-200/70 pt-3 text-xs text-gray-600 dark:border-white/10 dark:text-gray-300 sm:mt-2 sm:flex-row sm:items-center sm:justify-between sm:text-sm'>
           {totalHit === 0 && (
             <div className='hidden items-center sm:flex'>
               {ShortCutActions.map((action, index) => {
                 return (
                   <Fragment key={index}>
-                    <div className='border-gray-300 dark:text-gray-300 text-gray-600 px-2 rounded border inline-block'>
+                    <div className='heo-search-modal__shortcut border-gray-300 dark:text-gray-300 text-gray-600 px-2 rounded border inline-block'>
                       {action.key}
                     </div>
                     <span className='ml-2 mr-4 text-gray-600 dark:text-gray-300'>
@@ -339,7 +371,7 @@ export default function AlgoliaSearchModal({ cRef }) {
               <p className='sm:hidden'>输入关键词开始搜索</p>
             )}
           </div>
-          <div className='text-left sm:text-right'>
+          <div className='heo-search-modal__brand text-left sm:text-right'>
             <span>
               <i className='fa-brands fa-algolia'></i> Algolia 提供搜索服务
             </span>

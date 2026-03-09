@@ -1,8 +1,30 @@
 import { ChevronDoubleLeft, ChevronDoubleRight } from '@/components/HeroIcons'
 import SmartLink from '@/components/SmartLink'
+import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import { useRouter } from 'next/router'
 import { useRef, useState } from 'react'
+
+const normalizePath = path => {
+  if (!path) return '/'
+  const cleanPath = String(path).split('?')[0].split('#')[0]
+  return cleanPath !== '/' && cleanPath.endsWith('/')
+    ? cleanPath.slice(0, -1)
+    : cleanPath
+}
+
+const stripBasePath = (path, basePath) => {
+  const normalizedPath = normalizePath(path)
+  const normalizedBasePath = normalizePath(basePath)
+
+  if (!normalizedBasePath || normalizedBasePath === '/') return normalizedPath
+  if (normalizedPath === normalizedBasePath) return '/'
+  if (normalizedPath.startsWith(`${normalizedBasePath}/`)) {
+    return normalizedPath.slice(normalizedBasePath.length) || '/'
+  }
+
+  return normalizedPath
+}
 
 /**
  * 博客列表上方嵌入条
@@ -81,8 +103,20 @@ export default function CategoryBar(props) {
  */
 const MenuItem = ({ href, name }) => {
   const router = useRouter()
-  const { category } = router.query
-  const selected = category === name || (href === '/' && !category)
+  const subPath = siteConfig('SUB_PATH', '')
+  const pathname = normalizePath(router.pathname)
+  const currentPath = stripBasePath(router.asPath || router.pathname, subPath)
+  const targetPath = stripBasePath(href, subPath)
+  const currentCategory = Array.isArray(router.query.category)
+    ? router.query.category[0]
+    : router.query.category
+
+  const selected =
+    targetPath === '/'
+      ? pathname === '/' || currentPath === '/'
+      : pathname === '/category/[category]' || pathname === '/category/[category]/page/[page]'
+        ? decodeURIComponent(currentCategory || '') === name
+        : currentPath === targetPath || currentPath.startsWith(`${targetPath}/`)
 
   return (
     <SmartLink

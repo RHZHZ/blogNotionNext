@@ -80,7 +80,7 @@ const LayoutBase = props => {
   const { children, slotTop, className } = props
 
   // 全屏模式下的最大宽度
-  const { fullWidth, isDarkMode } = useGlobal()
+  const { fullWidth, isDarkMode, isEyeCareMode, eyeCareIntensity } = useGlobal()
   const router = useRouter()
 
   const headerSlot = (
@@ -124,8 +124,11 @@ const LayoutBase = props => {
   return (
     <div
       id='theme-heo'
-      className={`${siteConfig('FONT_STYLE')} bg-[#f7f9fe] dark:bg-[#18171d] h-full min-h-screen flex flex-col scroll-smooth`}>
+      style={{ '--heo-eye-care-intensity': `${eyeCareIntensity / 100}` }}
+      className={`${siteConfig('FONT_STYLE')} ${isEyeCareMode ? 'heo-eye-care' : ''} bg-[#f7f9fe] dark:bg-[#18171d] h-full min-h-screen flex flex-col scroll-smooth`}>
+
       <Style />
+      <div className='heo-eye-care-mask' aria-hidden='true' />
 
       {/* 顶部嵌入 导航栏，首页放hero，文章页放文章详情 */}
       {headerSlot}
@@ -255,25 +258,23 @@ const LayoutSearch = props => {
  * @returns
  */
 const LayoutArchive = props => {
-  const { archivePosts } = props
-
-  // 归档页顶部显示条，如果是默认归档则不显示。分类详情页显示分类列表，标签详情页显示当前标签
+  const { archivePosts, siteInfo } = props
 
   return (
-    <div className='p-5 rounded-xl border dark:border-gray-600 max-w-6xl w-full bg-white dark:bg-[#1e1e1e]'>
-      {/* 文章分类条 */}
+    <section className='heo-archive-shell max-w-6xl w-full rounded-[1.75rem] border p-5 md:p-6'>
       <CategoryBar {...props} border={false} />
 
-      <div className='px-3'>
+      <div className='heo-archive-list px-1 md:px-2'>
         {Object.keys(archivePosts).map(archiveTitle => (
           <BlogPostArchive
             key={archiveTitle}
             posts={archivePosts[archiveTitle]}
             archiveTitle={archiveTitle}
+            siteInfo={siteInfo}
           />
         ))}
       </div>
-    </div>
+    </section>
   )
 }
 
@@ -455,7 +456,7 @@ const LayoutSlug = props => {
                           当前文章页先保留讨论区位置，后续会结合整体主题样式与部署方案统一接入评论系统。
                         </p>
                         <p className='mt-3 text-sm leading-7 text-slate-500 dark:text-slate-300'>
-                          注：绝对不是因为预算有限！(～￣(OO)￣)ブ。
+                          注：绝对不是因为懒~~~(～￣(OO)￣)ブ。
                         </p>
                       </div>
 
@@ -551,37 +552,44 @@ const LayoutCategoryIndex = props => {
   const { locale } = useGlobal()
 
   return (
-    <div id='category-outer-wrapper' className='mt-8 px-5 md:px-0'>
-      <div className='text-4xl font-extrabold dark:text-gray-200 mb-5'>
-        {locale.COMMON.CATEGORY}
+    <section id='category-outer-wrapper' className='heo-category-index mt-8 px-5 md:px-0'>
+      <div className='heo-category-index__header mb-6 flex flex-col gap-2'>
+        <div className='heo-category-index__eyebrow text-xs font-semibold uppercase tracking-[0.24em]'>
+          Discover
+        </div>
+        <div className='heo-category-index__title text-4xl font-extrabold'>
+          {locale.COMMON.CATEGORY}
+        </div>
+        <div className='heo-category-index__subtitle text-sm md:text-base'>
+          按主题快速浏览全部文章分类
+        </div>
       </div>
       <div
         id='category-list'
-        className='duration-200 flex flex-wrap m-10 justify-center'>
+        className='heo-category-index__grid grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3'>
         {categoryOptions?.map(category => {
           return (
             <SmartLink
               key={category.name}
               href={`/category/${category.name}`}
               passHref
-              legacyBehavior>
-              <div
-                className={
-                  'group mr-5 mb-5 flex flex-nowrap items-center border bg-white text-2xl rounded-xl dark:hover:text-white px-4 cursor-pointer py-3 hover:text-white hover:bg-indigo-600 transition-all hover:scale-110 duration-150'
-                }>
-                <HashTag className={'w-5 h-5 stroke-gray-500 stroke-2'} />
-                {category.name}
-                <div className='bg-[#f1f3f8] ml-1 px-2 rounded-lg group-hover:text-indigo-600 '>
-                  {category.count}
-                </div>
-              </div>
+              className='heo-category-index__item group'>
+              <span className='heo-category-index__item-icon'>
+                <HashTag className='h-4 w-4 stroke-2' />
+              </span>
+              <span className='heo-category-index__item-main'>
+                <span className='heo-category-index__item-name'>{category.name}</span>
+                <span className='heo-category-index__item-desc'>进入分类页查看相关文章</span>
+              </span>
+              <span className='heo-category-index__item-count'>{category.count}</span>
             </SmartLink>
           )
         })}
       </div>
-    </div>
+    </section>
   )
 }
+
 
 /**
  * 标签列表
@@ -593,35 +601,41 @@ const LayoutTagIndex = props => {
   const { locale } = useGlobal()
 
   return (
-    <div id='tag-outer-wrapper' className='px-5 mt-8 md:px-0'>
-      <div className='text-4xl font-extrabold dark:text-gray-200 mb-5'>
-        {locale.COMMON.TAGS}
+    <section id='tag-outer-wrapper' className='heo-tag-index px-5 mt-8 md:px-0'>
+      <div className='heo-tag-index__header mb-6 flex flex-col gap-2'>
+        <div className='heo-tag-index__eyebrow text-xs font-semibold uppercase tracking-[0.24em]'>
+          Explore
+        </div>
+        <div className='heo-tag-index__title text-4xl font-extrabold'>
+          {locale.COMMON.TAGS}
+        </div>
+        <div className='heo-tag-index__subtitle text-sm md:text-base'>
+          从标签维度快速筛选你感兴趣的内容
+        </div>
       </div>
       <div
         id='tag-list'
-        className='duration-200 flex flex-wrap space-x-5 space-y-5 m-10 justify-center'>
+        className='heo-tag-index__grid grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3'>
         {tagOptions.map(tag => {
           return (
             <SmartLink
               key={tag.name}
               href={`/tag/${tag.name}`}
               passHref
-              legacyBehavior>
-              <div
-                className={
-                  'group flex flex-nowrap items-center border bg-white text-2xl rounded-xl dark:hover:text-white px-4 cursor-pointer py-3 hover:text-white hover:bg-indigo-600 transition-all hover:scale-110 duration-150'
-                }>
-                <HashTag className={'w-5 h-5 stroke-gray-500 stroke-2'} />
-                {tag.name}
-                <div className='bg-[#f1f3f8] ml-1 px-2 rounded-lg group-hover:text-indigo-600 '>
-                  {tag.count}
-                </div>
-              </div>
+              className='heo-tag-index__item group'>
+              <span className='heo-tag-index__item-icon'>
+                <HashTag className='h-4 w-4 stroke-2' />
+              </span>
+              <span className='heo-tag-index__item-main'>
+                <span className='heo-tag-index__item-name'>{tag.name}</span>
+                <span className='heo-tag-index__item-desc'>查看该标签下的全部文章</span>
+              </span>
+              <span className='heo-tag-index__item-count'>{tag.count}</span>
             </SmartLink>
           )
         })}
       </div>
-    </div>
+    </section>
   )
 }
 

@@ -1,4 +1,3 @@
-import LazyImage from '@/components/LazyImage'
 import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import SmartLink from '@/components/SmartLink'
@@ -10,7 +9,7 @@ import { useRouter } from 'next/router'
  * @param sliceCount 截取展示的数量 默认6
  * @constructor
  */
-export default function LatestPostsGroupMini({ latestPosts, siteInfo, showHeader = true, maxItems }) {
+export default function LatestPostsGroupMini({ latestPosts, showHeader = true, maxItems }) {
   const currentPath = useRouter().asPath
   const { locale } = useGlobal()
   const SUB_PATH = siteConfig('SUB_PATH', '')
@@ -29,9 +28,6 @@ export default function LatestPostsGroupMini({ latestPosts, siteInfo, showHeader
       <div className='space-y-2'>
         {posts.map(post => {
           const selected = currentPath === `${SUB_PATH}/${post.slug}`
-          const headerImage = post?.pageCoverThumbnail
-            ? post.pageCoverThumbnail
-            : siteInfo?.pageCover
 
           return (
             <SmartLink
@@ -39,15 +35,9 @@ export default function LatestPostsGroupMini({ latestPosts, siteInfo, showHeader
               title={post.title}
               href={post?.href}
               passHref
-              className={`heo-mini-post-card flex min-h-[4.25rem] items-center gap-3 rounded-2xl border px-2.5 py-2 transition-all duration-200 ${selected ? 'is-active' : ''}`}>
-              <div className='heo-mini-post-card__cover relative h-9 w-9 flex-shrink-0 overflow-hidden rounded-lg border border-white/40 dark:border-white/10'>
-                <LazyImage
-                  src={`${headerImage}`}
-                  className='h-full w-full object-cover'
-                />
-              </div>
+              className={`heo-mini-post-card flex min-h-[3.35rem] items-start gap-0 rounded-xl px-1.5 py-1.5 transition-all duration-200 ${selected ? 'is-active' : ''}`}>
               <div className='min-w-0 flex-1'>
-                <div className='heo-mini-post-card__title truncate text-[13px] font-medium leading-5'>
+                <div className='heo-mini-post-card__title line-clamp-2 text-[13px] font-medium leading-5'>
                   {post.title}
                 </div>
                 <div className='heo-mini-post-card__date mt-1 text-[11px]'>

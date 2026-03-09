@@ -1363,9 +1363,8 @@ code[class*='language-'] {
   display: inline-flex;
   color: inherit;
   fill: inherit;
-  user-select: none;
+  user-select: text;
   border-radius: 3px;
-  transition: background 20ms ease-in 0s;
   text-align: center;
   -ms-overflow-style: none;
   overflow: -moz-scrollbars-none;
@@ -1373,9 +1372,9 @@ code[class*='language-'] {
 }
 
 .notion-equation-inline {
-  -webkit-user-select: all;
-  -moz-user-select: all;
-  user-select: all;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
 }
 
 .notion-equation-block {
@@ -1386,17 +1385,10 @@ code[class*='language-'] {
   max-width: 100%;
   padding: 4px 8px;
   margin: 4px 0;
-  cursor: pointer;
+  cursor: default;
 }
 
-.notion-equation:hover {
-  background: var(--bg-color-0);
-}
 
-.notion-equation:active,
-.notion-equation:focus {
-  background: var(--select-color-2);
-}
 
 .notion-frame .katex-display .katex {
   padding-right: 32px;

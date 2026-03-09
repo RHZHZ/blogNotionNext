@@ -28,19 +28,19 @@ const BlogPostCard = ({ index, post, showSummary, siteInfo }) => {
   )
 
   return (
-    <article className={COVER_HOVER_ENLARGE ? 'hover:transition-all duration-150' : ''}>
+    <article className={`heo-post-card-shell ${COVER_HOVER_ENLARGE ? 'hover:transition-all duration-150' : ''}`}>
       <div
         data-wow-delay='.2s'
         className={
-          (POST_TWO_COLS ? '2xl:h-96 2xl:flex-col' : '') +
-          ' heo-post-card heo-card heo-card--interactive group wow fadeInUp mb-4 flex h-[23rem] w-full flex-col justify-between overflow-hidden md:h-52 md:flex-row'
+          (POST_TWO_COLS ? '2xl:min-h-0 2xl:flex-col' : '') +
+          ' heo-post-card heo-card heo-card--interactive group wow fadeInUp mb-4 flex min-h-0 w-full flex-col overflow-hidden md:min-h-0 md:flex-row'
         }>
         {showPageCover && (
           <SmartLink href={post?.href} passHref legacyBehavior>
             <div
               className={
-                (POST_TWO_COLS ? ' 2xl:w-full' : '') +
-                ' heo-post-card__cover w-full cursor-pointer select-none overflow-hidden aspect-[16/9] md:h-full md:w-5/12 md:aspect-auto'
+                (POST_TWO_COLS ? ' 2xl:w-full 2xl:aspect-[16/8.1]' : '') +
+                ' heo-post-card__cover h-full w-full cursor-pointer select-none overflow-hidden aspect-[16/9.2] md:w-[35%] md:aspect-auto'
               }>
               <LazyImage
                 priority={index === 0}
@@ -54,8 +54,8 @@ const BlogPostCard = ({ index, post, showSummary, siteInfo }) => {
 
         <div
           className={
-            (POST_TWO_COLS ? '2xl:p-4 2xl:h-48 2xl:w-full' : '') +
-            ' heo-post-card__content flex h-48 w-full flex-col justify-between p-6 md:h-full md:w-7/12'
+            (POST_TWO_COLS ? '2xl:min-h-[9.6rem] 2xl:w-full 2xl:p-4' : '') +
+            ' heo-post-card__content flex min-h-[9.6rem] w-full flex-1 flex-col justify-start p-4 md:h-full md:w-[65%]'
           }>
           <header className='heo-post-card__header'>
             {post?.category && (
@@ -73,7 +73,7 @@ const BlogPostCard = ({ index, post, showSummary, siteInfo }) => {
             <SmartLink
               href={post?.href}
               passHref
-              className='heo-post-card__title group-hover:text-indigo-700 dark:hover:text-yellow-700 dark:group-hover:text-yellow-600 replace line-clamp-2 cursor-pointer text-xl font-extrabold leading-tight'>
+              className='heo-post-card__title replace line-clamp-2 cursor-pointer text-xl font-extrabold leading-tight'>
               {siteConfig('POST_TITLE_ICON') && (
                 <NotionIcon
                   icon={post.pageIcon}
@@ -90,8 +90,8 @@ const BlogPostCard = ({ index, post, showSummary, siteInfo }) => {
             </main>
           )}
 
-          <div className='inline-block flex-wrap md:flex-nowrap md:justify-start'>
-            <div>
+          <div className='heo-post-card__tags inline-block flex-wrap md:flex-nowrap md:justify-start'>
+            <div className='heo-post-card__tags-inner'>
               {post.tagItems?.map(tag => (
                 <TagItemMini key={tag.name} tag={tag} />
               ))}

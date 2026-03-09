@@ -81,8 +81,11 @@ export default function LoadingCover() {
             pathLength='360'
             d='M 30.2223 21.2875 C 30.5674 21.2875 30.8471 21.0195 30.8471 20.6889 V 18.92 L 31.9916 18.9675 C 32.3376 18.9833 32.628 18.7259 32.643 18.3956 C 32.658 18.0654 32.3907 17.786 32.0459 17.7717 L 30.2495 17.6969 C 30.077 17.6889 29.9133 17.7497 29.7902 17.8624 C 29.6671 17.9753 29.5976 18.1315 29.5976 18.2948 V 20.6889 C 29.5974 21.0195 29.8772 21.2875 30.2223 21.2875 Z'></path>
         </svg>
-        <div className='loading-text' data-glitch='Loading'>
-          Loading
+        <div className='loading-text' data-glitch='RHZ BLOG'>
+          RHZ BLOG
+        </div>
+        <div className='loading-text2' data-glitch='LOADING...'>
+          LOADING...
         </div>
       </div>
     </div>

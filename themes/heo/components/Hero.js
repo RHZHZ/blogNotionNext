@@ -26,12 +26,14 @@ const Hero = props => {
   return (
     <div
       id='hero-wrapper'
-      className='recent-top-post-group w-full overflow-hidden select-none px-5 mb-4'>
+      className='recent-top-post-group w-full overflow-hidden select-none px-3 md:px-5 mb-4'>
+      <MobileHero {...props} />
+
       <div
         id='hero'
         style={{ zIndex: 1 }}
         className={`${HEO_HERO_REVERSE ? 'xl:flex-row-reverse' : ''}
-           recent-post-top rounded-[12px] 2xl:px-5 recent-top-post-group max-w-[86rem] overflow-x-scroll w-full mx-auto flex-row flex-nowrap flex relative`}>
+           recent-post-top rounded-[12px] 2xl:px-5 recent-top-post-group max-w-[86rem] overflow-x-scroll w-full mx-auto flex-row flex-nowrap hidden xl:flex relative`}>
         {/* 左侧banner组 */}
         <BannerGroup {...props} />
 
@@ -44,6 +46,56 @@ const Hero = props => {
     </div>
   )
 }
+
+function MobileHero(props) {
+  const { latestPosts, allNavPages, siteInfo } = props
+  const topPosts = getTopPosts({ latestPosts, allNavPages })
+  const heroPosts = (topPosts?.length ? topPosts : latestPosts || []).slice(0, 3)
+
+  if (!heroPosts.length) {
+    return null
+  }
+
+  return (
+    <div className='heo-mobile-hero xl:hidden max-w-[86rem] mx-auto'>
+      <div className='heo-mobile-hero__slider flex gap-3 overflow-x-auto pb-2'>
+        {heroPosts.map((post, index) => {
+          const cover = post?.pageCoverThumbnail || siteInfo?.pageCover
+          return (
+            <SmartLink
+              key={post?.id || post?.slug || index}
+              href={`${siteConfig('SUB_PATH', '')}/${post?.slug}`}
+              className='heo-mobile-hero__slide group relative flex-shrink-0 overflow-hidden'>
+              <LazyImage
+                priority={index === 0}
+                src={cover}
+                alt={post?.title}
+                className='heo-mobile-hero__slide-cover absolute inset-0 h-full w-full object-cover'
+              />
+              <div className='heo-mobile-hero__slide-overlay absolute inset-0' />
+              <div className='heo-mobile-hero__slide-content relative z-10 flex h-full flex-col justify-between p-5 text-white'>
+                <div className='heo-mobile-hero__slide-badge'>精选推荐</div>
+                <div>
+                  <div className='heo-mobile-hero__slide-title line-clamp-2 text-2xl font-bold'>
+                    {post?.title}
+                  </div>
+                  <div className='heo-mobile-hero__slide-meta mt-3 flex items-center justify-between text-sm gap-3'>
+                    <span className='line-clamp-2 opacity-90'>
+                      {post?.summary || siteConfig('HEO_HERO_TITLE_3', null, CONFIG)}
+                    </span>
+                    <ArrowSmallRight className='w-5 h-5 flex-shrink-0 stroke-2' />
+                  </div>
+                </div>
+              </div>
+            </SmartLink>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+
 
 /**
  * 英雄区左侧banner组
@@ -248,18 +300,18 @@ function TopGroup(props) {
         {topPosts?.map((p, index) => {
           return (
             <SmartLink href={`${siteConfig('SUB_PATH', '')}/${p?.slug}`} key={index}>
-              <div className='heo-card heo-card--interactive cursor-pointer h-[164px] group relative flex flex-col w-52 xl:w-full overflow-hidden dark:text-white'>
+              <div className={`heo-card heo-card--interactive heo-hero-top-card ${index === 0 ? 'heo-hero-top-card--primary' : 'heo-hero-top-card--secondary'} cursor-pointer h-[164px] group relative flex flex-col w-52 xl:w-full overflow-hidden dark:text-white`}>
                 <LazyImage
                   priority={index === 0}
-                  className='h-24 object-cover'
+                  className='heo-hero-top-card__cover h-24 object-cover'
                   alt={p?.title}
                   src={p?.pageCoverThumbnail || siteInfo?.pageCover}
                 />
-                <div className='group-hover:text-indigo-600 dark:group-hover:text-yellow-600 line-clamp-2 overflow-hidden m-2 font-semibold'>
+                <div className='heo-hero-top-card__title group-hover:text-indigo-600 dark:group-hover:text-yellow-600 line-clamp-2 overflow-hidden m-2 font-semibold'>
                   {p?.title}
                 </div>
                 {/* hover 悬浮的 ‘荐’ 字 */}
-                <div className='opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 duration-200 transition-all absolute -top-2 -left-2 bg-indigo-600 dark:bg-yellow-600  text-white rounded-xl overflow-hidden pr-2 pb-2 pl-4 pt-4 text-xs'>
+                <div className='heo-hero-top-card__badge opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 duration-200 transition-all absolute -top-2 -left-2 text-white rounded-xl overflow-hidden pr-2 pb-2 pl-4 pt-4 text-xs'>
                   {locale.COMMON.RECOMMEND_BADGES}
                 </div>
               </div>

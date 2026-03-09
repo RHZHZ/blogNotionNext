@@ -16,11 +16,12 @@ const BlogPostArchive = ({ posts = [], archiveTitle, siteInfo }) => {
     return <></>
   } else {
     return (
-      <div className=''>
-        <div className='pb-4 dark:text-gray-300' id={archiveTitle}>
-          {archiveTitle}
-        </div>
-        <ul>
+      <section className='heo-archive-group'>
+        <header className='heo-archive-group__header' id={archiveTitle}>
+          <div className='heo-archive-group__eyebrow'>Archive</div>
+          <div className='heo-archive-group__title'>{archiveTitle}</div>
+        </header>
+        <ul className='heo-archive-group__list'>
           {posts?.map(post => {
             const showPreview =
               siteConfig('HEO_POST_LIST_PREVIEW', null, CONFIG) && post.blockMap
@@ -36,69 +37,55 @@ const BlogPostArchive = ({ posts = [], archiveTitle, siteInfo }) => {
               post?.pageCoverThumbnail &&
               !showPreview
             return (
-              <div
-                key={post.id}
-                className={
-                  'cursor-pointer flex flex-row mb-4 h-24 md:flex-row group w-full  dark:border-gray-600 hover:border-indigo-600  dark:hover:border-yellow-600 duration-300 transition-colors justify-between overflow-hidden'
-                }>
-                {/* 图片封面 */}
-                {showPageCover && (
-                  <div>
+              <li key={post.id} className='heo-archive-item'>
+                <article className='heo-archive-card group'>
+                  {showPageCover && (
                     <SmartLink href={post?.href} passHref legacyBehavior>
-                      <LazyImage
-                        className={'rounded-xl bg-center bg-cover w-40 h-24'}
-                        src={post?.pageCoverThumbnail}
-                      />
-                    </SmartLink>
-                  </div>
-                )}
-
-                {/* 文字区块 */}
-                <div className={'flex px-2 flex-col justify-between w-full'}>
-                  <div>
-                    {/* 分类 */}
-                    {post?.category && (
-                      <div
-                        className={`flex items-center ${showPreview ? 'justify-center' : 'justify-start'} hidden md:block flex-wrap dark:text-gray-500 text-gray-600 `}>
-                        <SmartLink
-                          passHref
-                          href={`/category/${post.category}`}
-                          className='cursor-pointer text-xs font-normal menu-link hover:text-indigo-700  dark:text-gray-600 transform'>
-                          {post.category}
-                        </SmartLink>
+                      <div className='heo-archive-card__cover-wrap'>
+                        <LazyImage
+                          className='heo-archive-card__cover'
+                          src={post?.pageCoverThumbnail}
+                        />
                       </div>
-                    )}
-
-                    {/* 标题 */}
-                    <SmartLink
-                      href={post?.href}
-                      passHref
-                      className={
-                        ' group-hover:text-indigo-700 group-hover:dark:text-indigo-400 text-black dark:text-gray-100 dark:group-hover:text-yellow-600 line-clamp-2 replace cursor-pointer text-xl font-extrabold leading-tight'
-                      }>
-                      <span className='menu-link '>{post.title}</span>
                     </SmartLink>
-                  </div>
+                  )}
 
-                  {/* 摘要 */}
-                  {/* <p className="line-clamp-1 replace my-3 2xl:my-0 text-gray-700  dark:text-gray-300 text-xs font-light leading-tight">
-                                        {post.summary}
-                                    </p> */}
+                  <div className='heo-archive-card__content'>
+                    <div className='heo-archive-card__main'>
+                      {post?.category && (
+                        <div
+                          className={`heo-archive-card__meta ${showPreview ? 'justify-center' : 'justify-start'} hidden md:block flex-wrap`}>
+                          <SmartLink
+                            passHref
+                            href={`/category/${post.category}`}
+                            className='heo-archive-card__category cursor-pointer text-xs font-normal menu-link'>
+                            {post.category}
+                          </SmartLink>
+                        </div>
+                      )}
 
-                  <div className='md:flex-nowrap flex-wrap md:justify-start inline-block'>
-                    <div>
-                      {' '}
-                      {post.tagItems?.map(tag => (
-                        <TagItemMini key={tag.name} tag={tag} />
-                      ))}
+                      <SmartLink
+                        href={post?.href}
+                        passHref
+                        className='heo-archive-card__title replace line-clamp-2 cursor-pointer text-xl font-extrabold leading-tight'>
+                        <span className='menu-link'>{post.title}</span>
+                      </SmartLink>
+                    </div>
+
+                    <div className='heo-archive-card__tags'>
+                      <div className='heo-archive-card__tags-inner'>
+                        {post.tagItems?.map(tag => (
+                          <TagItemMini key={tag.name} tag={tag} />
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                </article>
+              </li>
             )
           })}
         </ul>
-      </div>
+      </section>
     )
   }
 }
