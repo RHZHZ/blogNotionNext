@@ -287,6 +287,7 @@ const LayoutSlug = props => {
   const { locale, fullWidth } = useGlobal()
 
   const [hasCode, setHasCode] = useState(false)
+  const hasWWAds = Boolean(siteConfig('AD_WWADS_ID'))
 
   useEffect(() => {
     const hasCode = document.querySelectorAll('[class^="language-"]').length > 0
@@ -307,25 +308,26 @@ const LayoutSlug = props => {
   const router = useRouter()
   const waiting404 = siteConfig('POST_WAITING_TIME_FOR_404') * 1000
   useEffect(() => {
-    // 404
-    if (!post) {
-      setTimeout(
-        () => {
-          if (isBrowser) {
-            const article = document.querySelector(
-              '#article-wrapper #notion-article'
-            )
-            if (!article) {
-              router.push('/404').then(() => {
-                console.warn('找不到页面', router.asPath)
-              })
-            }
-          }
-        },
-        waiting404
-      )
+    if (router.isFallback || post) {
+      return
     }
-  }, [post])
+
+    const timeoutId = setTimeout(() => {
+      if (!isBrowser || router.isFallback) {
+        return
+      }
+
+      const article = document.querySelector('#article-wrapper #notion-article')
+      if (!article) {
+        router.push('/404').then(() => {
+          console.warn('找不到页面', router.asPath)
+        })
+      }
+    }, waiting404)
+
+    return () => clearTimeout(timeoutId)
+  }, [post, router, waiting404])
+
   return (
     <>
       <div
@@ -347,17 +349,28 @@ const LayoutSlug = props => {
                 data-wow-delay='.2s'>
                 <ArticleExpirationNotice post={post} />
                 {isAiSummaryEnabled(post) && (
-                  <AISummary aiSummary={post.aiSummary} post={post} />
+                  <div className='heo-article-content-width'>
+                    <AISummary aiSummary={post.aiSummary} post={post} />
+                  </div>
                 )}
-                <div className='heo-article-inline-ad'>
-                  <WWAds orientation='horizontal' className='w-full' />
-                </div>
+                {hasWWAds && (
+                  <div className='heo-article-inline-ad'>
+                    <WWAds orientation='horizontal' className='w-full' />
+                  </div>
+                )}
                 <div className='heo-article-reading-shell'>
                   {post && <NotionPage post={post} className='heo-article-body' />}
+                  <div className='heo-article-end-marker' aria-label='正文已结束'>
+                    <span className='heo-article-end-marker__line' aria-hidden='true' />
+                    <span className='heo-article-end-marker__label'>正文到这里</span>
+                    <span className='heo-article-end-marker__line' aria-hidden='true' />
+                  </div>
                 </div>
-                <div className='heo-article-inline-ad'>
-                  <WWAds orientation='horizontal' className='w-full' />
-                </div>
+                {hasWWAds && (
+                  <div className='heo-article-inline-ad'>
+                    <WWAds orientation='horizontal' className='w-full' />
+                  </div>
+                )}
               </section>
 
               {post?.type === 'Post' && (
@@ -440,6 +453,9 @@ const LayoutSlug = props => {
                         </div>
                         <p className='mt-3 text-sm leading-7 text-slate-500 dark:text-slate-300'>
                           当前文章页先保留讨论区位置，后续会结合整体主题样式与部署方案统一接入评论系统。
+                        </p>
+                        <p className='mt-3 text-sm leading-7 text-slate-500 dark:text-slate-300'>
+                          注：绝对不是因为预算有限！(～￣(OO)￣)ブ。
                         </p>
                       </div>
 

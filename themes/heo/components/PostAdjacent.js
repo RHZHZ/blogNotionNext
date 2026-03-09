@@ -3,11 +3,15 @@ import { useGlobal } from '@/lib/global'
 import SmartLink from '@/components/SmartLink'
 import LazyImage from '@/components/LazyImage'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import CONFIG from '../config'
 
 const adjacentFocusClassName =
   'focus:outline-none focus:ring-1 focus:ring-blue-300/45 focus:ring-offset-2 focus:ring-offset-white focus:border-blue-200/80 focus:bg-blue-50/[0.72] dark:focus:ring-orange-300/28 dark:focus:ring-offset-[#1f2026] dark:focus:border-orange-300/20 dark:focus:bg-orange-300/[0.06] focus-visible:ring-2 focus-visible:ring-blue-400/55 focus-visible:border-blue-300/85 focus-visible:bg-blue-50/[0.88] dark:focus-visible:ring-orange-300/45 dark:focus-visible:border-orange-300/35 dark:focus-visible:bg-orange-300/[0.1]'
+
+const adjacentFloatingFocusClassName =
+  'focus:outline-none focus:ring-0 focus:ring-offset-0 focus:border-blue-200/85 focus:bg-blue-50/[0.82] focus-visible:ring-0 focus-visible:border-blue-300/90 focus-visible:bg-blue-50/[0.9] dark:focus:border-orange-300/28 dark:focus:bg-orange-300/[0.08] dark:focus-visible:border-orange-300/34 dark:focus-visible:bg-orange-300/[0.12]'
+
 
 const adjacentInlineCardClassName =
   'group flex min-w-0 flex-1 items-center justify-between rounded-[1.45rem] border border-slate-200/80 bg-white/96 px-4 py-4 text-slate-700 shadow-[0_14px_34px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-300/90 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)] dark:border-slate-700/60 dark:bg-[#1f2026] dark:text-slate-100 dark:hover:border-slate-600/80'
@@ -16,7 +20,8 @@ const adjacentCardClassName =
   'heo-post-adjacent-card group relative flex min-h-[11.5rem] overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white/96 p-5 text-slate-700 shadow-[0_15px_36px_rgba(15,23,42,0.055)] transition-all duration-300 hover:-translate-y-0.5 dark:border-slate-700/55 dark:bg-[#1f2026] dark:text-slate-100'
 
 const pcNextPostClassName =
-  'group relative block w-80 overflow-hidden rounded-[1.55rem] border border-slate-200/75 bg-white/94 p-4 text-slate-700 shadow-[0_14px_30px_rgba(15,23,42,0.1)] transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-300/75 hover:shadow-[0_18px_38px_rgba(15,23,42,0.13)] dark:border-slate-700/50 dark:bg-[#1f2026]/90 dark:text-slate-200 dark:hover:border-slate-600/65'
+  'group relative block w-80 overflow-hidden rounded-[1.55rem] border border-slate-200/75 bg-white/94 p-4 text-slate-700 shadow-[0_14px_30px_rgba(15,23,42,0.1)] transition-[opacity,background-color,border-color,box-shadow,color] duration-300 hover:border-slate-300/75 hover:shadow-[0_18px_38px_rgba(15,23,42,0.13)] dark:border-slate-700/50 dark:bg-[#1f2026]/90 dark:text-slate-200 dark:hover:border-slate-600/65'
+
 
 function AdjacentInlineCard({ href, label, title, align = 'left' }) {
   const isRight = align === 'right'
@@ -107,6 +112,8 @@ function AdjacentCard({ href, label, title, cover, align = 'left' }) {
  */
 export default function PostAdjacent({ prev, next }) {
   const [isShow, setIsShow] = useState(false)
+  const isShowRef = useRef(false)
+  const focusLockRef = useRef(false)
   const router = useRouter()
   const { locale } = useGlobal()
 
@@ -116,6 +123,7 @@ export default function PostAdjacent({ prev, next }) {
 
   useEffect(() => {
     if (!next) {
+      isShowRef.current = false
       setIsShow(false)
       return
     }
@@ -123,35 +131,52 @@ export default function PostAdjacent({ prev, next }) {
     const articleEnd = document.getElementById('article-end')
     const footerBottom = document.getElementById('footer-bottom')
 
-    const handleIntersect = entries => {
-      entries.forEach(entry => {
-        if (entry.target === articleEnd) {
-          if (entry.isIntersecting) {
-            setIsShow(true)
-          }
-        } else if (entry.target === footerBottom) {
-          if (entry.isIntersecting) {
-            setIsShow(false)
-          }
+    const syncFloatingCard = () => {
+      if (focusLockRef.current) {
+        if (!isShowRef.current) {
+          isShowRef.current = true
+          setIsShow(true)
         }
+        return
+      }
+
+      const viewportHeight = window.innerHeight || 0
+      const articleEndTop = articleEnd?.getBoundingClientRect?.().top ?? Number.POSITIVE_INFINITY
+      const footerTop = footerBottom?.getBoundingClientRect?.().top ?? Number.POSITIVE_INFINITY
+
+      const shouldShow = isShowRef.current
+        ? articleEndTop <= viewportHeight * 1.04 && footerTop > viewportHeight + 140
+        : articleEndTop <= viewportHeight * 0.82 && footerTop > viewportHeight + 320
+
+      if (shouldShow !== isShowRef.current) {
+        isShowRef.current = shouldShow
+        setIsShow(shouldShow)
+      }
+    }
+
+    let ticking = false
+    const scheduleSync = () => {
+      if (ticking) return
+      ticking = true
+      window.requestAnimationFrame(() => {
+        ticking = false
+        syncFloatingCard()
       })
     }
 
-    const observer = new IntersectionObserver(handleIntersect, {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.1
-    })
-
-    if (articleEnd) observer.observe(articleEnd)
-    if (footerBottom) observer.observe(footerBottom)
+    syncFloatingCard()
+    window.addEventListener('scroll', scheduleSync, { passive: true })
+    window.addEventListener('resize', scheduleSync)
 
     return () => {
-      if (articleEnd) observer.unobserve(articleEnd)
-      if (footerBottom) observer.unobserve(footerBottom)
-      observer.disconnect()
+      window.removeEventListener('scroll', scheduleSync)
+      window.removeEventListener('resize', scheduleSync)
     }
   }, [next])
+
+  useEffect(() => {
+    isShowRef.current = isShow
+  }, [isShow])
 
   if (!siteConfig('HEO_ARTICLE_ADJACENT', null, CONFIG) || (!prev && !next)) {
     return <></>
@@ -226,10 +251,39 @@ export default function PostAdjacent({ prev, next }) {
       {next && (
         <div
           id='pc-next-post'
-          className={`${isShow ? 'translate-y-0 opacity-[0.9]' : 'translate-y-8 opacity-0 pointer-events-none'} hidden xl:block fixed z-40 right-8 bottom-6 transition-all duration-300`}>
+          aria-hidden={!isShow}
+          className={`${isShow ? 'opacity-[0.9] pointer-events-auto' : 'opacity-0 pointer-events-none'} hidden xl:block fixed z-40 right-8 bottom-6 transition-opacity duration-300`}>
+
           <SmartLink
             href={`/${next.slug}`}
-            className={`${pcNextPostClassName} ${adjacentFocusClassName}`}>
+            className={`${pcNextPostClassName} ${adjacentFloatingFocusClassName}`}
+            style={{ overflowAnchor: 'none' }}
+            onFocus={() => {
+              focusLockRef.current = true
+              if (!isShowRef.current) {
+                isShowRef.current = true
+                setIsShow(true)
+              }
+            }}
+            onBlur={() => {
+              window.setTimeout(() => {
+                const floatingCard = document.getElementById('pc-next-post')
+                const stillInside = floatingCard?.matches(':focus-within')
+                if (!stillInside) {
+                  focusLockRef.current = false
+                  const viewportHeight = window.innerHeight || 0
+                  const articleEnd = document.getElementById('article-end')
+                  const footerBottom = document.getElementById('footer-bottom')
+                  const articleEndTop = articleEnd?.getBoundingClientRect?.().top ?? Number.POSITIVE_INFINITY
+                  const footerTop = footerBottom?.getBoundingClientRect?.().top ?? Number.POSITIVE_INFINITY
+                  const shouldShow = articleEndTop <= viewportHeight * 1.04 && footerTop > viewportHeight + 140
+                  isShowRef.current = shouldShow
+                  setIsShow(shouldShow)
+                }
+              }, 0)
+            }}>
+
+
             {next?.pageCoverThumbnail || next?.pageCover ? (
               <div className='pointer-events-none absolute right-4 top-4 h-[4.5rem] w-[5rem] overflow-hidden rounded-[1.1rem] border border-white/22 bg-slate-100/58 backdrop-blur-[2px] dark:border-white/6 dark:bg-slate-800/30'>
                 <LazyImage

@@ -168,14 +168,13 @@ const InlineIslandAudio = (props) => {
     <div className='my-4 flex justify-center'>
       <div
         onClick={handlePlay}
-        className={`group relative flex items-center gap-4 p-3 rounded-full transition-all duration-500
+        className={`group relative flex w-auto min-w-[16rem] max-w-[22rem] items-center gap-3 rounded-full border px-4 py-3 transition-all duration-500
           ${isDark
-            ? 'bg-white/10 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
-            : 'bg-white/70 border-black/5 shadow-[0_8px_24px_rgba(0,0,0,0.08)]'}
+            ? 'border-white/8 bg-[linear-gradient(135deg,rgba(255,244,214,0.14)_0%,rgba(15,23,42,0.88)_42%,rgba(30,41,59,0.82)_100%)] shadow-[0_16px_34px_rgba(0,0,0,0.34)] ring-1 ring-inset ring-white/6'
+            : 'border-slate-200/80 bg-[linear-gradient(135deg,rgba(255,255,255,0.96)_0%,rgba(241,245,249,0.98)_46%,rgba(226,232,240,0.92)_100%)] shadow-[0_14px_30px_rgba(15,23,42,0.10)] ring-1 ring-inset ring-white/75'}
           ${isAvailable
-            ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]'
-            : 'cursor-not-allowed opacity-70'}
-          border backdrop-blur-xl w-full max-w-[400px]`}
+            ? 'cursor-pointer hover:scale-[1.01] active:scale-[0.985]'
+            : 'cursor-not-allowed opacity-70'}`}
         role='button'
         tabIndex={isAvailable ? 0 : -1}
         aria-disabled={!isAvailable}

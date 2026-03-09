@@ -83,7 +83,7 @@ export default function PostHeader({ post, siteInfo, isDarkMode }) {
   return (
     <div
       id='post-bg'
-      className='relative z-10 -mb-5 w-full overflow-hidden bg-cover bg-center bg-no-repeat md:mb-0 md:flex-shrink-0 min-h-[22rem] sm:min-h-[24rem] lg:min-h-[30rem]'>
+      className='relative z-10 mb-0 w-full overflow-hidden bg-cover bg-center bg-no-repeat md:mb-0 md:flex-shrink-0 min-h-[19rem] sm:min-h-[21rem] lg:min-h-[25rem]'>
       <style jsx>{`
         .coverdiv:after {
           position: absolute;
@@ -121,86 +121,92 @@ export default function PostHeader({ post, siteInfo, isDarkMode }) {
           </div>
         )}
 
-        <div className='relative z-10 flex min-h-inherit w-full items-end'>
+        <div className='relative z-10 flex min-h-inherit w-full items-start'>
           <div
             id='post-bg-content'
             className='mx-auto flex w-full max-w-[86rem] px-4 sm:px-6 lg:px-8'>
             <div
               id='post-info'
-              className='w-full max-w-5xl rounded-[1.5rem] border border-white/12 bg-white/8 p-4 text-white shadow-[0_20px_70px_rgba(15,23,42,0.16)] backdrop-blur-[14px] sm:rounded-[1.75rem] sm:p-5 lg:rounded-[2rem] lg:p-8'>
+              className='w-full max-w-[72rem] rounded-[1.5rem] bg-white/8 p-4 text-white shadow-[0_20px_70px_rgba(15,23,42,0.16)] backdrop-blur-[14px] sm:rounded-[1.75rem] sm:p-5 lg:rounded-[2rem] lg:p-8'>
+
               <div className='post-info-inner flex flex-col gap-4'>
-                <div className='post-info-eyebrow flex flex-wrap items-center justify-center gap-2.5 md:justify-start'>
+                <div className='post-info-head'>
+                  <div className='post-info-eyebrow flex flex-wrap items-center justify-center gap-2.5 md:justify-start'>
+                    {post.category && (
+                      <SmartLink
+                        href={`/category/${post.category}`}
+                        className='inline-flex items-center rounded-full border border-white/18 bg-white/14 px-3 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-white/92 transition duration-200 hover:bg-white/22 hover:text-white'>
+                        {post.category}
+                      </SmartLink>
+                    )}
 
-                  {post.category && (
-                    <SmartLink
-                      href={`/category/${post.category}`}
-                      className='inline-flex items-center rounded-full border border-white/18 bg-white/14 px-3 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-white/92 transition duration-200 hover:bg-white/22 hover:text-white'>
-                      {post.category}
-                    </SmartLink>
-                  )}
-
-                  {visibleTags.length > 0 && (
-                    <div className='hidden flex-wrap items-center gap-2 md:flex'>
-                      {visibleTags.map((tag, index) => (
-                        <SmartLink
-                          key={index}
-                          href={`/tag/${encodeURIComponent(tag.name)}`}
-                          className='inline-flex items-center rounded-full border border-white/10 bg-black/10 px-2.5 py-1 text-xs font-medium text-white/78 transition duration-200 hover:border-white/20 hover:bg-white/12 hover:text-white'>
-                          <HashTag className='mr-1 h-3 w-3 stroke-2 text-white/60' />
-                          {tag.name}
-                        </SmartLink>
-                      ))}
-                    </div>
-                  )}
+                    {visibleTags.length > 0 && (
+                      <div className='hidden flex-wrap items-center gap-2 md:flex'>
+                        {visibleTags.map((tag, index) => (
+                          <SmartLink
+                            key={index}
+                            href={`/tag/${encodeURIComponent(tag.name)}`}
+                            className='inline-flex items-center rounded-full border border-white/10 bg-black/10 px-2.5 py-1 text-xs font-medium text-white/78 transition duration-200 hover:border-white/20 hover:bg-white/12 hover:text-white'>
+                            <HashTag className='mr-1 h-3 w-3 stroke-2 text-white/60' />
+                            {tag.name}
+                          </SmartLink>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <div className='post-info-title-wrap max-w-4xl text-center md:text-left'>
-                  <div className='inline-flex items-start justify-center md:justify-start'>
-                    <div className='post-info-title flex items-center text-[2rem] font-bold leading-[1.2] text-white drop-shadow-[0_10px_30px_rgba(15,23,42,0.28)] sm:text-[2.4rem] lg:text-[3.45rem] lg:leading-[1.12]'>
+                <div className='post-info-title-zone'>
+                  <div className='post-info-title-wrap max-w-4xl text-center md:text-left'>
+                    <div className='post-info-title-row inline-flex items-start justify-center md:justify-start'>
+                      <div className='post-info-title text-[2rem] leading-[1.2] text-white drop-shadow-[0_10px_30px_rgba(15,23,42,0.28)] sm:text-[2.4rem] lg:text-[3.45rem] lg:leading-[1.12]'>
+                        {siteConfig('POST_TITLE_ICON') && postTitleIcon && (
+                          <span className='post-info-title-icon inline-flex translate-y-[0.08em] items-center text-[0.92em]'>
+                            <NotionIcon icon={postTitleIcon} />
+                          </span>
+                        )}
 
-                      {siteConfig('POST_TITLE_ICON') && postTitleIcon && (
-                        <span className='mr-2 inline-flex translate-y-[0.08em] items-center text-[0.92em]'>
-                          <NotionIcon icon={postTitleIcon} />
+                        <span className='post-info-title-text' title={post.title}>
+                          {post.title}
                         </span>
-                      )}
-
-                      <span>{post.title}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <section className='post-info-meta flex flex-wrap items-center justify-center gap-2.5 text-center md:justify-start md:text-left'>
-
-                  <div className='inline-flex min-h-[2.5rem] items-center rounded-full border border-white/12 bg-black/12 px-3.5 py-2 text-sm font-medium text-white/78'>
-                    <WordCount
-                      wordCount={post.wordCount}
-                      readTime={post.readTime}
-                    />
-                  </div>
-
-                  {post?.type !== 'Page' && (
-                    <SmartLink
-                      href={`/archive#${formatDateFmt(post?.publishDate, 'yyyy-MM')}`}
-                      passHref
-                      className='inline-flex min-h-[2.5rem] items-center rounded-full border border-white/12 bg-black/12 px-3.5 py-2 text-sm font-medium text-white/78 transition duration-200 hover:border-white/24 hover:bg-white/12 hover:text-white'>
-                      <i className='fa-regular fa-calendar mr-2' />
-                      {post?.publishDay}
-                    </SmartLink>
-                  )}
-
-                  <div className='inline-flex min-h-[2.5rem] items-center rounded-full border border-white/12 bg-black/12 px-3.5 py-2 text-sm font-medium text-white/72'>
-                    <i className='fa-regular fa-calendar-check mr-2' />
-                    {post.lastEditedDay}
-                  </div>
-
-                  {ANALYTICS_BUSUANZI_ENABLE && (
-                    <div className='busuanzi_container_page_pv inline-flex min-h-[2.5rem] items-center rounded-full border border-white/12 bg-black/12 px-3.5 py-2 text-sm font-medium text-white/72'>
-                      <i className='fa-solid fa-fire-flame-curved mr-2' />
-                      <span className='mr-1'>热度</span>
-                      <span className='busuanzi_value_page_pv' />
+                <div className='post-info-meta-zone'>
+                  <section className='post-info-meta flex flex-wrap items-center justify-center gap-2.5 text-center md:justify-start md:text-left'>
+                    <div className='inline-flex min-h-[2.5rem] items-center rounded-full border border-white/12 bg-black/12 px-3.5 py-2 text-sm font-medium text-white/78'>
+                      <WordCount
+                        wordCount={post.wordCount}
+                        readTime={post.readTime}
+                      />
                     </div>
-                  )}
-                </section>
+
+                    {post?.type !== 'Page' && (
+                      <SmartLink
+                        href={`/archive#${formatDateFmt(post?.publishDate, 'yyyy-MM')}`}
+                        passHref
+                        className='inline-flex min-h-[2.5rem] items-center rounded-full border border-white/12 bg-black/12 px-3.5 py-2 text-sm font-medium text-white/78 transition duration-200 hover:border-white/24 hover:bg-white/12 hover:text-white'>
+                        <i className='fa-regular fa-calendar mr-2' />
+                        {post?.publishDay}
+                      </SmartLink>
+                    )}
+
+                    <div className='inline-flex min-h-[2.5rem] items-center rounded-full border border-white/12 bg-black/12 px-3.5 py-2 text-sm font-medium text-white/72'>
+                      <i className='fa-regular fa-calendar-check mr-2' />
+                      {post.lastEditedDay}
+                    </div>
+
+                    {ANALYTICS_BUSUANZI_ENABLE && (
+                      <div className='busuanzi_container_page_pv inline-flex min-h-[2.5rem] items-center rounded-full border border-white/12 bg-black/12 px-3.5 py-2 text-sm font-medium text-white/72'>
+                        <i className='fa-solid fa-fire-flame-curved mr-2' />
+                        <span className='mr-1'>热度</span>
+                        <span className='busuanzi_value_page_pv' />
+                      </div>
+                    )}
+                  </section>
+                </div>
               </div>
             </div>
           </div>

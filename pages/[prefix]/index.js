@@ -1,4 +1,5 @@
 import BLOG from '@/blog.config'
+import Loading from '@/components/Loading'
 import useNotification from '@/components/Notification'
 import OpenWrite from '@/components/OpenWrite'
 import { siteConfig } from '@/lib/config'
@@ -23,6 +24,10 @@ const Slug = props => {
   const { post } = props
   const router = useRouter()
   const { locale } = useGlobal()
+
+  if (router.isFallback) {
+    return <Loading />
+  }
 
   // 文章锁🔐
   const [lock, setLock] = useState(post?.password && post?.password !== '')

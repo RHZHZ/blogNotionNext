@@ -152,6 +152,14 @@ const Style = () => {
             --heo-article-line-height: 1.78;
             --heo-article-paragraph-gap: 0.9em;
             --heo-article-block-gap: 1.25rem;
+            --heo-article-surface-max-width: 54rem;
+            --heo-article-media-radius: 1.3rem;
+            --heo-article-media-border: rgba(148, 163, 184, 0.14);
+            --heo-article-media-border-dark: rgba(255, 255, 255, 0.1);
+            --heo-article-media-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.84));
+            --heo-article-media-bg-dark: linear-gradient(180deg, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.58));
+            --heo-article-media-shadow: 0 18px 40px rgba(15, 23, 42, 0.07);
+            --heo-article-media-shadow-dark: 0 20px 44px rgba(0, 0, 0, 0.26);
 
             --heo-h2-size: 1.45rem;
             --heo-h3-size: 1.22rem;
@@ -206,8 +214,8 @@ const Style = () => {
 
         #theme-heo #post-bg {
             isolation: isolate;
-            --heo-post-header-offset: calc(env(safe-area-inset-top, 0px) + 4.9rem);
-            --heo-post-header-bottom: clamp(2.25rem, 7vw, 3rem);
+            --heo-post-header-offset: calc(env(safe-area-inset-top, 0px) + 4rem);
+            --heo-post-header-bottom: clamp(1rem, 3vw, 1.6rem);
         }
 
         #theme-heo #post-bg .min-h-inherit {
@@ -216,40 +224,80 @@ const Style = () => {
 
         #theme-heo #post-bg-content {
             min-height: inherit;
-            align-items: flex-end;
+            align-items: flex-start;
+            position: relative;
+            z-index: 2;
             padding-top: var(--heo-post-header-offset);
             padding-bottom: var(--heo-post-header-bottom);
         }
 
         #theme-heo #post-info {
-            border-color: rgba(255, 255, 255, 0.14) !important;
+            position: relative;
+            z-index: 2;
+            min-height: clamp(11.5rem, 16vw, 13.5rem);
+            border-color: transparent !important;
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06)) !important;
-            box-shadow: 0 18px 56px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 18px 56px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
 
         #theme-heo #post-info .post-info-inner {
+            display: grid;
+            grid-template-rows: auto minmax(0, 1fr) auto;
             gap: clamp(0.85rem, 2vw, 1.15rem);
+            min-height: inherit;
+        }
+
+        #theme-heo #post-info .post-info-head,
+        #theme-heo #post-info .post-info-meta-zone {
+            width: 100%;
+        }
+
+        #theme-heo #post-info .post-info-title-zone {
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+            min-height: clamp(5.8rem, 8.4vw, 7.9rem);
+            overflow: hidden;
         }
 
         #theme-heo #post-info .post-info-title {
             letter-spacing: -0.025em;
-            text-wrap: balance;
+            text-wrap: pretty;
+            width: 100%;
             max-width: none;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            align-items: start;
+            column-gap: 0.72rem;
+            font-weight: 700;
         }
 
         #theme-heo #post-info .post-info-title-wrap {
             width: 100%;
-            max-width: min(100%, 52rem);
+            max-width: min(100%, 42rem);
         }
 
-        #theme-heo #post-info .post-info-title {
+        #theme-heo #post-info .post-info-title-row {
+            display: inline-flex;
             width: 100%;
-            align-items: flex-start;
+            max-width: min(100%, 42rem);
         }
 
-        #theme-heo #post-info .post-info-title > span:last-child {
-            flex: 1 1 auto;
+        #theme-heo #post-info .post-info-title-icon {
+            align-self: start;
+            margin-top: 0.18rem;
+        }
+
+        #theme-heo #post-info .post-info-title-text {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+            word-break: break-word;
+            text-overflow: ellipsis;
+            width: 100%;
             min-width: 0;
+            max-height: calc(1.12em * 2);
         }
 
         #theme-heo #post-info .post-info-meta {
@@ -272,73 +320,184 @@ const Style = () => {
 
         @media (min-width: 768px) {
             #theme-heo #post-bg {
-                --heo-post-header-offset: calc(env(safe-area-inset-top, 0px) + 7rem);
-                --heo-post-header-bottom: 3.5rem;
+                --heo-post-header-offset: calc(env(safe-area-inset-top, 0px) + 5.4rem);
+                --heo-post-header-bottom: 4.5rem;
+            }
+
+            #theme-heo #post-bg-content {
+                padding-bottom: clamp(3.8rem, 5vw, 5.6rem);
+            }
+
+            #theme-heo #post-info {
+                min-height: clamp(11.2rem, 15.4vw, 13.4rem);
+            }
+
+            #theme-heo #post-info .post-info-inner {
+                gap: clamp(0.56rem, 1.15vw, 0.85rem);
+            }
+
+            #theme-heo #post-info .post-info-title-zone {
+                min-height: clamp(5.6rem, 7.6vw, 7.2rem);
+            }
+
+            #theme-heo #post-info .post-info-title-wrap,
+            #theme-heo #post-info .post-info-title-row {
+                max-width: min(100%, 58rem);
+            }
+
+            #theme-heo #post-info .post-info-meta {
+                gap: clamp(0.36rem, 0.75vw, 0.56rem);
+                row-gap: clamp(0.34rem, 0.7vw, 0.5rem);
+            }
+
+            #theme-heo #post-info .post-info-meta > a,
+            #theme-heo #post-info .post-info-meta > div {
+                min-height: clamp(1.72rem, 1.8vw, 2rem) !important;
+                padding: clamp(0.28rem, 0.42vw, 0.42rem) clamp(0.62rem, 0.82vw, 0.84rem) !important;
+                font-size: clamp(0.68rem, 0.6rem + 0.12vw, 0.8rem) !important;
+                line-height: 1.02;
+                border-radius: 999px;
+            }
+
+            #theme-heo #post-info .post-info-meta > a i,
+            #theme-heo #post-info .post-info-meta > div i,
+            #theme-heo #post-info .post-info-meta > a svg,
+            #theme-heo #post-info .post-info-meta > div svg {
+                font-size: 0.84em;
+            }
+
+            #theme-heo #article-wrapper .heo-article-section {
+                padding-top: 1.8rem;
             }
         }
 
         html.dark #theme-heo #post-info {
-            border-color: rgba(255, 255, 255, 0.08) !important;
+            border-color: transparent !important;
             background: linear-gradient(180deg, rgba(15, 23, 42, 0.28), rgba(15, 23, 42, 0.16)) !important;
-            box-shadow: 0 20px 68px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            box-shadow: 0 20px 68px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.03);
         }
 
         @media (max-width: 767px) {
             #theme-heo #post-bg {
-                min-height: clamp(20.5rem, 92svh - 0.5rem, 27rem) !important;
-                --heo-post-header-offset: calc(env(safe-area-inset-top, 0px) + 3.75rem);
-                --heo-post-header-bottom: clamp(1rem, 4vw, 1.4rem);
+                min-height: clamp(19.75rem, 78svh, 23rem) !important;
+                --heo-post-header-offset: calc(env(safe-area-inset-top, 0px) + 3.15rem);
+                --heo-post-header-bottom: 2.6rem;
+            }
+
+            #theme-heo #post-bg::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                z-index: 1;
+                background:
+                    radial-gradient(circle at 74% 28%, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.12) 14%, rgba(255, 255, 255, 0.05) 24%, rgba(255, 255, 255, 0.015) 34%, transparent 54%),
+                    radial-gradient(circle at 52% 42%, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.03) 18%, transparent 42%);
+                filter: blur(2px);
             }
 
             #theme-heo #post-bg-content {
                 padding-top: var(--heo-post-header-offset);
-                padding-bottom: var(--heo-post-header-bottom);
+                padding-bottom: max(var(--heo-post-header-bottom), 2.9rem);
             }
 
             #theme-heo #post-info {
+                min-height: 15.3rem;
                 border-radius: 1.45rem !important;
-                padding: 1rem !important;
+                padding: 0.95rem !important;
                 background: linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.05)) !important;
                 box-shadow: 0 16px 44px rgba(15, 23, 42, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             }
 
             #theme-heo #post-info .post-info-inner {
-                gap: 0.95rem;
+                grid-template-rows: auto minmax(0, 1fr) auto;
+                gap: 0.72rem;
+                padding-block: 0.1rem 0.02rem;
             }
 
             #theme-heo #post-info .post-info-eyebrow {
-                gap: 0.45rem;
+                gap: 0.42rem;
+            }
+
+            #theme-heo #post-info .post-info-title-zone {
+                min-height: 7.1rem;
+                justify-content: center;
+                align-items: center;
+                padding-block: 0.18rem;
             }
 
             #theme-heo #post-info .post-info-title-wrap {
-                max-width: none;
+                max-width: min(100%, 17.8rem);
+                text-align: center;
             }
 
-            #theme-heo #post-info .post-info-title {
-                width: auto;
-                font-size: clamp(2.1rem, 8vw, 2.7rem) !important;
-                line-height: 1.12 !important;
-                max-width: 9.5ch;
-                margin: 0 auto;
-                text-align: center;
+            #theme-heo #post-info .post-info-title-row {
+                display: flex;
+                width: 100%;
+                max-width: min(100%, 17.8rem);
+                justify-content: center;
                 align-items: center;
             }
 
-            #theme-heo #post-info .post-info-title > span:last-child {
-                display: block;
+            #theme-heo #post-info .post-info-title {
+                width: 100%;
+                font-size: clamp(1.74rem, 6.85vw, 2.18rem) !important;
+                line-height: 1.04 !important;
+                max-width: 100%;
+                margin: 0 auto;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 760;
+            }
+
+            #theme-heo #post-info .post-info-title-icon {
+                display: none;
+            }
+
+            #theme-heo #post-info .post-info-title-text {
+                -webkit-line-clamp: 3;
+                max-height: calc(1.04em * 3);
+                text-align: center;
             }
 
             #theme-heo #post-info .post-info-meta {
-                gap: 0.55rem;
+                gap: 0.42rem;
+                row-gap: 0.42rem;
                 justify-content: center;
             }
 
             #theme-heo #post-info .post-info-meta > a,
             #theme-heo #post-info .post-info-meta > div {
-                min-height: 2.15rem !important;
-                padding: 0.58rem 1rem !important;
-                font-size: 0.94rem !important;
-                line-height: 1.15;
+                min-height: 1.88rem !important;
+                padding: 0.36rem 0.72rem !important;
+                font-size: 0.76rem !important;
+                line-height: 1.05;
+            }
+
+            #theme-heo #post-info .post-info-meta > a i,
+            #theme-heo #post-info .post-info-meta > div i,
+            #theme-heo #post-info .post-info-meta > a svg,
+            #theme-heo #post-info .post-info-meta > div svg {
+                font-size: 0.82em;
+            }
+
+            #theme-heo #wrapper-outer .article.heo-post-shell {
+                margin-top: 0;
+                border-top-left-radius: 1.55rem !important;
+                border-top-right-radius: 1.55rem !important;
+            }
+
+            #theme-heo #article-wrapper .heo-article-section {
+                padding-top: 1.15rem;
+                padding-inline: 1rem;
+            }
+
+            html.dark #theme-heo #post-bg::before {
+                background:
+                    radial-gradient(circle at 74% 28%, rgba(255, 244, 214, 0.18) 0%, rgba(255, 244, 214, 0.08) 14%, rgba(255, 244, 214, 0.03) 24%, rgba(255, 244, 214, 0.012) 34%, transparent 54%),
+                    radial-gradient(circle at 52% 42%, rgba(255, 244, 214, 0.08) 0%, rgba(255, 244, 214, 0.025) 18%, transparent 42%);
             }
 
             html.dark #theme-heo #post-info {
@@ -2584,13 +2743,13 @@ const Style = () => {
 
         @media (max-width: 1023px) {
             #theme-heo #wrapper-outer .article.heo-post-shell {
-                margin-top: clamp(-1.2rem, -4vw, -0.55rem);
+                margin-top: 0;
             }
         }
 
         @media (max-width: 767px) {
             #theme-heo #wrapper-outer .article.heo-post-shell {
-                margin-top: clamp(-0.6rem, -3vw, -0.25rem);
+                margin-top: 0;
                 border-top-left-radius: 1.55rem !important;
                 border-top-right-radius: 1.55rem !important;
             }
@@ -2612,24 +2771,97 @@ const Style = () => {
             position: relative;
             display: flex;
             flex-direction: column;
-            gap: clamp(1rem, 2.6vw, 1.5rem);
+            gap: clamp(0.7rem, 1.8vw, 1.1rem);
+            padding-inline: clamp(0.85rem, 2.4vw, 1.4rem);
+        }
+
+        @media (min-width: 768px) {
+            #theme-heo #article-wrapper .heo-article-section {
+                padding-inline: clamp(0.7rem, 1.8vw, 1.05rem);
+            }
         }
 
         #theme-heo #article-wrapper .heo-article-reading-shell {
-            position: relative;
-            width: 100%;
-            padding-top: clamp(0.3rem, 1.6vw, 0.75rem);
+            padding-top: clamp(0.18rem, 1vw, 0.45rem);
+        }
+
+        #theme-heo #article-wrapper .heo-article-content-width .post-ai {
+            margin-bottom: 0.36rem;
+        }
+
+        #theme-heo #article-wrapper .heo-article-end-marker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: clamp(1.35rem, 3vw, 2rem) auto 0;
+            color: var(--heo-text-tertiary);
+            width: min(100%, 28rem);
+            opacity: 0.92;
+        }
+
+        #theme-heo #article-wrapper .heo-article-end-marker__line {
+            flex: 1;
+            height: 1px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.45), transparent);
+        }
+
+        #theme-heo #article-wrapper .heo-article-end-marker__label {
+            flex-shrink: 0;
+            padding: 0.38rem 0.92rem;
+            border-radius: 999px;
+            border: 1px solid rgba(203, 213, 225, 0.75);
+            background: rgba(255, 255, 255, 0.75);
+            color: var(--heo-text-secondary);
+            font-size: 0.76rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+        }
+
+        html.dark #theme-heo #article-wrapper .heo-article-end-marker__line {
+            background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.32), transparent);
+        }
+
+        html.dark #theme-heo #article-wrapper .heo-article-end-marker__label {
+            border-color: rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 42, 0.62);
+            color: rgba(255, 244, 214, 0.84);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        #theme-heo #article-wrapper .heo-article-layout::before {
+            content: '';
+            position: absolute;
+            top: -1.2rem;
+            left: 50%;
+            width: min(100% - 2rem, 18rem);
+            height: 2.1rem;
+            transform: translateX(-50%);
+            border-radius: 999px;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.18) 48%, rgba(255, 255, 255, 0) 78%);
+            filter: blur(10px);
+            opacity: 0.75;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        html.dark #theme-heo #article-wrapper .heo-article-layout::before {
+            background: radial-gradient(circle at center, rgba(255, 244, 214, 0.2) 0%, rgba(255, 244, 214, 0.08) 42%, rgba(255, 244, 214, 0) 76%);
+            opacity: 0.92;
         }
 
         #theme-heo #article-wrapper .heo-article-reading-shell::before {
             content: '';
             position: absolute;
-            top: -0.55rem;
+            top: -0.28rem;
             left: 50%;
-            width: min(100%, 16rem);
+            width: min(100%, 13rem);
             height: 1px;
             transform: translateX(-50%);
-            background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.42), transparent);
+            background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.36), transparent);
             pointer-events: none;
         }
 
@@ -2645,9 +2877,13 @@ const Style = () => {
             display: flex;
             flex-direction: column;
             gap: 0;
+            width: 100%;
+            max-width: var(--heo-article-surface-max-width);
+            margin: 0 auto;
         }
 
-        #theme-heo #article-wrapper #notion-article[data-heo-reading-surface='true'] {
+        #theme-heo #article-wrapper #notion-article[data-heo-reading-surface='true'],
+        #theme-heo #article-wrapper #notion-article.heo-article-surface {
             position: relative;
         }
 
@@ -2787,6 +3023,10 @@ const Style = () => {
             scroll-margin-top: 7rem;
         }
 
+        #theme-heo #article-wrapper #notion-article .heo-article-block + .heo-article-block {
+            margin-top: clamp(0.15rem, 0.6vw, 0.45rem);
+        }
+
         #theme-heo #article-wrapper #notion-article .heo-article-block--image,
         #theme-heo #article-wrapper #notion-article .heo-article-block--audio,
         #theme-heo #article-wrapper #notion-article .heo-article-block--code,
@@ -2798,17 +3038,42 @@ const Style = () => {
             position: relative;
         }
 
+        #theme-heo #article-wrapper #notion-article .heo-article-block--audio,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--bookmark,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--pdf,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--callout,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--embed,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--code,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--quote {
+            border: 1px solid var(--heo-article-media-border);
+            border-radius: calc(var(--heo-article-media-radius) + 0.08rem);
+            background: var(--heo-article-media-bg);
+            box-shadow: var(--heo-article-media-shadow);
+        }
+
+        html.dark #theme-heo #article-wrapper #notion-article .heo-article-block--audio,
+        html.dark #theme-heo #article-wrapper #notion-article .heo-article-block--bookmark,
+        html.dark #theme-heo #article-wrapper #notion-article .heo-article-block--pdf,
+        html.dark #theme-heo #article-wrapper #notion-article .heo-article-block--callout,
+        html.dark #theme-heo #article-wrapper #notion-article .heo-article-block--embed,
+        html.dark #theme-heo #article-wrapper #notion-article .heo-article-block--code,
+        html.dark #theme-heo #article-wrapper #notion-article .heo-article-block--quote {
+            border-color: var(--heo-article-media-border-dark);
+            background: var(--heo-article-media-bg-dark);
+            box-shadow: var(--heo-article-media-shadow-dark);
+        }
+
         #theme-heo #article-wrapper #notion-article blockquote,
         #theme-heo #article-wrapper #notion-article .notion-quote {
             margin: 0 0 var(--heo-article-block-gap);
-            padding: 1rem 1.2rem 1rem 1.45rem;
-            border: 1px solid rgba(99, 102, 241, 0.1);
-            border-left: 4px solid #6366f1;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(255, 255, 255, 0.8) 100%);
-            border-radius: 0 1rem 1rem 0;
+            padding: 1.12rem 1.25rem 1.12rem 1.62rem;
+            border-radius: 1.25rem;
+            border: 1px solid rgba(99, 102, 241, 0.12);
+            border-left: 3px solid rgba(79, 70, 229, 0.58);
+            background: linear-gradient(145deg, rgba(99, 102, 241, 0.06) 0%, rgba(255, 255, 255, 0.92) 52%, rgba(248, 250, 252, 0.88) 100%);
             color: var(--heo-text-secondary);
             position: relative;
-            box-shadow: 0 18px 40px rgba(99, 102, 241, 0.08);
+            box-shadow: 0 18px 38px rgba(79, 70, 229, 0.08);
             transition: transform var(--heo-dur) var(--heo-ease), box-shadow var(--heo-dur) var(--heo-ease), border-color var(--heo-dur) var(--heo-ease), background var(--heo-dur) var(--heo-ease);
         }
 
@@ -2816,39 +3081,49 @@ const Style = () => {
         #theme-heo #article-wrapper #notion-article .notion-quote::before {
             content: '“';
             position: absolute;
-            left: 0.72rem;
-            top: 0.45rem;
-            font-size: 2.35rem;
+            left: 0.74rem;
+            top: 0.52rem;
+            font-size: 2rem;
             line-height: 1;
-            color: rgba(99, 102, 241, 0.15);
+            color: rgba(99, 102, 241, 0.14);
             font-family: Georgia, serif;
             font-weight: 700;
         }
 
+        #theme-heo #article-wrapper #notion-article blockquote > :first-child,
+        #theme-heo #article-wrapper #notion-article .notion-quote > :first-child {
+            margin-top: 0;
+        }
+
+        #theme-heo #article-wrapper #notion-article blockquote > :last-child,
+        #theme-heo #article-wrapper #notion-article .notion-quote > :last-child {
+            margin-bottom: 0;
+        }
+
         #theme-heo #article-wrapper #notion-article blockquote:hover,
         #theme-heo #article-wrapper #notion-article .notion-quote:hover {
-            transform: translateX(4px);
-            box-shadow: 0 22px 48px rgba(99, 102, 241, 0.12);
-            border-color: rgba(99, 102, 241, 0.16);
+            transform: translateX(2px);
+            box-shadow: 0 22px 44px rgba(79, 70, 229, 0.1);
+            border-color: rgba(99, 102, 241, 0.18);
         }
 
         html.dark #theme-heo #article-wrapper #notion-article blockquote,
         html.dark #theme-heo #article-wrapper #notion-article .notion-quote {
             border-color: rgba(245, 158, 11, 0.14);
-            border-left-color: #f59e0b;
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(15, 23, 42, 0.72) 100%);
-            box-shadow: 0 22px 46px rgba(0, 0, 0, 0.2);
+            border-left-color: rgba(245, 158, 11, 0.62);
+            background: linear-gradient(145deg, rgba(245, 158, 11, 0.08) 0%, rgba(15, 23, 42, 0.84) 55%, rgba(15, 23, 42, 0.74) 100%);
+            box-shadow: 0 22px 46px rgba(0, 0, 0, 0.22);
         }
 
         html.dark #theme-heo #article-wrapper #notion-article blockquote::before,
         html.dark #theme-heo #article-wrapper #notion-article .notion-quote::before {
-            color: rgba(245, 158, 11, 0.22);
+            color: rgba(245, 158, 11, 0.2);
         }
 
         html.dark #theme-heo #article-wrapper #notion-article blockquote:hover,
         html.dark #theme-heo #article-wrapper #notion-article .notion-quote:hover {
-            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.28);
-            border-color: rgba(245, 158, 11, 0.2);
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.3);
+            border-color: rgba(245, 158, 11, 0.22);
         }
 
         #theme-heo #article-wrapper #notion-article code {
@@ -2857,31 +3132,47 @@ const Style = () => {
         }
 
         #theme-heo #article-wrapper #notion-article .notion-code {
-            margin: 0 0 var(--heo-article-block-gap);
+            margin: 0 0 calc(var(--heo-article-block-gap) + 0.05rem);
+            padding: 1rem 1.05rem;
             border: 1px solid rgba(148, 163, 184, 0.18);
-            border-radius: 1.3rem;
-            box-shadow: 0 20px 44px rgba(15, 23, 42, 0.08);
+            border-radius: calc(var(--heo-article-media-radius) + 0.12rem);
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(241, 245, 249, 0.92));
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
             overflow: hidden;
         }
 
         html.dark #theme-heo #article-wrapper #notion-article .notion-code {
-            border-color: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.24);
+            border-color: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.88));
+            box-shadow: 0 20px 44px rgba(0, 0, 0, 0.28);
         }
 
-        #theme-heo #article-wrapper #notion-article .notion-audio {
+        #theme-heo #article-wrapper #notion-article .notion-code pre,
+        #theme-heo #article-wrapper #notion-article .notion-code code {
+            background: transparent !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-audio,
+        #theme-heo #article-wrapper #notion-article .notion-audio.heo-article-block,
+        #theme-heo #article-wrapper #notion-article .notion-audio.island-converted,
+        #theme-heo #article-wrapper #notion-article .notion-audio.heo-article-block--audio,
+        #theme-heo #article-wrapper #notion-article .notion-audio.island-converted.heo-article-block--audio {
             margin: 0 0 calc(var(--heo-article-block-gap) + 0.15rem);
-            padding: 0.5rem;
-            border-radius: 1.4rem;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(248, 250, 252, 0.82));
-            border: 1px solid rgba(148, 163, 184, 0.12);
-            box-shadow: 0 18px 42px rgba(15, 23, 42, 0.07);
+            padding: 0 !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
         }
 
-        html.dark #theme-heo #article-wrapper #notion-article .notion-audio {
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.7));
-            border-color: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 22px 46px rgba(0, 0, 0, 0.24);
+        html.dark #theme-heo #article-wrapper #notion-article .notion-audio,
+        html.dark #theme-heo #article-wrapper #notion-article .notion-audio.heo-article-block,
+        html.dark #theme-heo #article-wrapper #notion-article .notion-audio.island-converted,
+        html.dark #theme-heo #article-wrapper #notion-article .notion-audio.heo-article-block--audio,
+        html.dark #theme-heo #article-wrapper #notion-article .notion-audio.island-converted.heo-article-block--audio {
+            background: transparent !important;
+            border-color: transparent !important;
+            box-shadow: none !important;
         }
 
         #theme-heo #article-wrapper #notion-article .heo-inline-audio-mount {
@@ -3024,19 +3315,78 @@ const Style = () => {
             border-color: rgba(245, 158, 11, 0.2);
         }
 
+        #theme-heo #article-wrapper #notion-article .heo-article-block--callout {
+            padding: 1.02rem 1.08rem;
+            background: linear-gradient(160deg, rgba(248, 250, 252, 0.98), rgba(255, 255, 255, 0.92));
+        }
+
+        #theme-heo #article-wrapper #notion-article .heo-article-block--callout .notion-callout-text {
+            min-width: 0;
+        }
+
+        #theme-heo #article-wrapper #notion-article .heo-article-block--callout .notion-page-icon {
+            margin-inline-end: 0.75rem;
+            font-size: 1.05rem;
+            opacity: 0.88;
+        }
+
+        #theme-heo #article-wrapper #notion-article .heo-article-block--bookmark {
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.94));
+        }
+
+        #theme-heo #article-wrapper #notion-article .heo-article-block--bookmark > div:first-child {
+            padding: 1rem 1.08rem !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article .heo-article-block--bookmark .notion-bookmark-title {
+            font-size: 0.98rem !important;
+            font-weight: 700 !important;
+            line-height: 1.45 !important;
+            color: var(--heo-text) !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article .heo-article-block--bookmark .notion-bookmark-description {
+            margin-top: 0.38rem !important;
+            font-size: 0.87rem !important;
+            line-height: 1.62 !important;
+            color: var(--heo-text-secondary) !important;
+            max-height: calc(1.62em * 2) !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article .heo-article-block--bookmark .notion-bookmark-link {
+            margin-top: 0.72rem !important;
+            font-size: 0.8rem !important;
+            letter-spacing: 0.01em;
+            color: var(--heo-text-tertiary) !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article .heo-article-block--embed,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--pdf {
+            padding: 0.55rem;
+            overflow: hidden;
+        }
+
         #theme-heo #article-wrapper #notion-article .heo-article-block--embed iframe,
         #theme-heo #article-wrapper #notion-article .notion-pdf {
+            display: block;
             width: 100%;
-            border-radius: 1.25rem;
+            min-height: clamp(18rem, 42vw, 28rem);
+            border: 0;
+            border-radius: calc(var(--heo-article-media-radius) - 0.05rem);
             overflow: hidden;
-            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+            box-shadow: none;
             background: rgba(255, 255, 255, 0.82);
         }
 
         html.dark #theme-heo #article-wrapper #notion-article .heo-article-block--embed iframe,
         html.dark #theme-heo #article-wrapper #notion-article .notion-pdf {
-            box-shadow: 0 22px 46px rgba(0, 0, 0, 0.24);
+            box-shadow: none;
             background: rgba(15, 23, 42, 0.72);
+        }
+
+        html.dark #theme-heo #article-wrapper #notion-article .heo-article-block--callout {
+            background: linear-gradient(160deg, rgba(30, 41, 59, 0.72), rgba(15, 23, 42, 0.9));
         }
 
         html.dark #theme-heo #wrapper-outer .article {
@@ -3238,7 +3588,8 @@ const Style = () => {
         #theme-heo .heo-catalog__scroll--drawer {
             border-radius: 0.95rem;
             background: rgba(255, 255, 255, 0.92);
-            padding: 0.1rem 0.25rem 0.15rem 0.1rem;
+            padding: 0.15rem 0.45rem 0.2rem 0.12rem;
+            overflow-x: visible;
         }
 
         html.dark #theme-heo .heo-catalog--drawer {
@@ -3253,6 +3604,7 @@ const Style = () => {
             display: flex;
             flex-direction: column;
             gap: 0.18rem;
+            padding-right: 0.4rem;
         }
 
         #theme-heo .notion-table-of-contents-item.catalog-item {
@@ -3262,9 +3614,8 @@ const Style = () => {
             transition: background var(--heo-dur-fast) var(--heo-ease),
             color var(--heo-dur-fast) var(--heo-ease),
             box-shadow var(--heo-dur-fast) var(--heo-ease),
-            transform var(--heo-dur-fast) var(--heo-ease),
             opacity var(--heo-dur-fast) var(--heo-ease) !important;
-            width: 100% !important;
+            width: calc(100% - 0.3rem) !important;
             opacity: 0.72 !important;
         }
 
@@ -3272,7 +3623,6 @@ const Style = () => {
         #theme-heo .notion-table-of-contents-item.catalog-item:has(span.font-bold.text-indigo-600) {
             background: linear-gradient(90deg, rgba(59, 130, 246, 0.96), rgba(99, 102, 241, 0.9)) !important;
             box-shadow: 0 12px 24px rgba(59, 130, 246, 0.22) !important;
-            transform: translateX(4px);
             opacity: 1 !important;
         }
 
@@ -5111,9 +5461,25 @@ const Style = () => {
         #theme-heo .notion-brown_background,
         #theme-heo .notion-gray_background,
         #theme-heo .notion-green_background {
-            border-radius: 6px !important;
-            padding: 2px 6px !important;
+            border-radius: 8px !important;
+            padding: 2px 7px !important;
             margin: 0 1px !important;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+            color: inherit;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-callout.notion-red_background,
+        #theme-heo #article-wrapper #notion-article .notion-callout.notion-pink_background,
+        #theme-heo #article-wrapper #notion-article .notion-callout.notion-blue_background,
+        #theme-heo #article-wrapper #notion-article .notion-callout.notion-purple_background,
+        #theme-heo #article-wrapper #notion-article .notion-callout.notion-teal_background,
+        #theme-heo #article-wrapper #notion-article .notion-callout.notion-yellow_background,
+        #theme-heo #article-wrapper #notion-article .notion-callout.notion-orange_background,
+        #theme-heo #article-wrapper #notion-article .notion-callout.notion-brown_background,
+        #theme-heo #article-wrapper #notion-article .notion-callout.notion-gray_background,
+        #theme-heo #article-wrapper #notion-article .notion-callout.notion-green_background {
+            background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08));
+            background-blend-mode: soft-light;
         }
 
         html.dark #theme-heo .notion-red_background,
@@ -5126,7 +5492,8 @@ const Style = () => {
         html.dark #theme-heo .notion-brown_background,
         html.dark #theme-heo .notion-gray_background,
         html.dark #theme-heo .notion-green_background {
-            opacity: 0.9 !important;
+            opacity: 0.96 !important;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
         }
 
         /* ===== 响应式细节优化 ===== */

@@ -1,7 +1,9 @@
 import {
   applyArticleMediaDecorations,
+  applyArticleReadingEnhancements,
   applyImageGalleryLayoutToArticle
 } from '@/components/NotionPage'
+
 
 jest.mock('next/dynamic', () => () => {
   const DynamicComponent = () => null
@@ -71,7 +73,10 @@ describe('components/NotionPage helpers', () => {
     applyArticleMediaDecorations(article)
 
     expect(article).toHaveAttribute('data-heo-reading-surface', 'true')
+    expect(article).toHaveAttribute('data-heo-article-surface', 'article')
+    expect(article).toHaveClass('heo-article-surface')
     expect(article.querySelector('.notion-row')).toHaveClass('heo-image-gallery-row')
+    expect(article.querySelector('.notion-row')).toHaveAttribute('data-heo-gallery', 'true')
     expect(article.querySelector('.notion-audio')).toHaveAttribute('data-heo-block', 'audio')
     expect(article.querySelector('pre.notion-code')).toHaveAttribute('data-heo-block', 'code')
     expect(article.querySelector('blockquote')).toHaveAttribute('data-heo-block', 'quote')
@@ -83,7 +88,19 @@ describe('components/NotionPage helpers', () => {
     expect(
       article.querySelector('.notion-column > figure.notion-asset-wrapper-image')
     ).not.toBeNull()
+  })
 
+  it('applies reading enhancements through the unified entry', () => {
+    const article = createArticleDom()
+
+    applyArticleReadingEnhancements({ article, width: 1280 })
+
+    expect(article).toHaveAttribute('data-heo-reading-surface', 'true')
+    expect(article).toHaveAttribute('data-heo-article-surface', 'article')
+    expect(article).toHaveClass('heo-article-surface')
+    expect(article.querySelector('.notion-row')).toHaveClass('heo-image-gallery-row')
+    expect(article.querySelector('.notion-row')).toHaveAttribute('data-heo-gallery', 'true')
   })
 })
+
 

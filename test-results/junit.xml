@@ -1,21 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="6" failures="0" errors="0" time="1.348">
-  <testsuite name="components/NotionPage helpers" errors="0" failures="0" skipped="0" timestamp="2026-03-09T05:34:55" time="0.447" tests="1">
-    <testcase classname="components/NotionPage helpers adds heo media markers without breaking gallery structure" name="components/NotionPage helpers adds heo media markers without breaking gallery structure" time="0.019">
-    </testcase>
-  </testsuite>
-  <testsuite name="components/Tabs" errors="0" failures="0" skipped="0" timestamp="2026-03-09T05:34:56" time="0.324" tests="2">
-    <testcase classname="components/Tabs hides tab switcher when only one tab exists and config enabled" name="components/Tabs hides tab switcher when only one tab exists and config enabled" time="0.014">
-    </testcase>
-    <testcase classname="components/Tabs switches tabs and applies comment heo style variant" name="components/Tabs switches tabs and applies comment heo style variant" time="0.034">
-    </testcase>
-  </testsuite>
-  <testsuite name="components/Comment" errors="0" failures="0" skipped="0" timestamp="2026-03-09T05:34:56" time="0.136" tests="3">
-    <testcase classname="components/Comment renders heo loading state before intersection load" name="components/Comment renders heo loading state before intersection load" time="0.005">
-    </testcase>
-    <testcase classname="components/Comment renders custom loading slot before intersection load" name="components/Comment renders custom loading slot before intersection load" time="0.002">
-    </testcase>
-    <testcase classname="components/Comment returns null when frontMatter comments are hidden" name="components/Comment returns null when frontMatter comments are hidden" time="0.001">
+<testsuites name="jest tests" tests="1" failures="0" errors="0" time="0.444">
+  <testsuite name="lib/db/notion/getPageProperties" errors="0" failures="0" skipped="0" timestamp="2026-03-09T14:21:39" time="0.397" tests="1">
+    <testcase classname="lib/db/notion/getPageProperties normalizes notion title rich text into single-line plain text" name="lib/db/notion/getPageProperties normalizes notion title rich text into single-line plain text" time="0.013">
     </testcase>
   </testsuite>
 </testsuites>

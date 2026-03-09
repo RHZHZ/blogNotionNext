@@ -50,6 +50,8 @@ export const applyArticleMediaDecorations = article => {
   if (!article) return
 
   article.dataset.heoReadingSurface = 'true'
+  article.dataset.heoArticleSurface = 'article'
+  article.classList.add('heo-article-surface')
 
   const markBlocks = (selector, type, onMatch) => {
     article.querySelectorAll(selector).forEach((node, index) => {
@@ -66,7 +68,9 @@ export const applyArticleMediaDecorations = article => {
       caption.dataset.heoCaptionFor = 'image'
     }
   })
-  markBlocks('.notion-row.heo-image-gallery-row', 'gallery')
+  markBlocks('.notion-row.heo-image-gallery-row', 'gallery', node => {
+    node.dataset.heoGallery = 'true'
+  })
   markBlocks('.notion-audio', 'audio')
   markBlocks('pre.notion-code', 'code')
   markBlocks('blockquote, .notion-quote', 'quote')
@@ -80,6 +84,13 @@ export const applyArticleMediaDecorations = article => {
       wrapper.dataset.heoBlock = 'embed'
     }
   })
+}
+
+export const applyArticleReadingEnhancements = ({ article, width }) => {
+  if (!article) return
+
+  applyImageGalleryLayoutToArticle({ article, width })
+  applyArticleMediaDecorations(article)
 }
 
 const NotionPage = ({ post, className }) => {
@@ -173,76 +184,29 @@ const NotionPage = ({ post, className }) => {
   useEffect(() => {
     if (!isBrowser) return
 
-    const applyImageGalleryLayout = () => {
+    const enhanceArticleReading = () => {
       const article = document.getElementById('notion-article')
       if (!article) return
 
-      const rows = article.querySelectorAll('.notion-row')
-      const width = window.innerWidth
-
-      rows.forEach(row => {
-        row.classList.remove('heo-image-gallery-row')
-        row.style.removeProperty('--heo-gallery-cols')
-        row.style.removeProperty('--heo-gallery-gap')
-
-        const columns = Array.from(row.children).filter(child =>
-          child.classList?.contains('notion-column')
-        )
-
-        if (columns.length < 2 || width < 768) return
-
-        const imageColumns = columns.filter(column =>
-          column.querySelector(':scope > figure.notion-asset-wrapper-image')
-        )
-
-        if (imageColumns.length !== columns.length) return
-
-        const desiredCols = width >= 1440 ? 4 : width >= 1024 ? 3 : 2
-        const actualCols = Math.min(desiredCols, imageColumns.length)
-
-        row.classList.add('heo-image-gallery-row')
-        row.style.setProperty('--heo-gallery-cols', String(actualCols))
-        row.style.setProperty('--heo-gallery-gap', width >= 1024 ? '0.75rem' : '0.5rem')
+      applyArticleReadingEnhancements({
+        article,
+        width: window.innerWidth
       })
     }
 
-    const timer = setTimeout(applyImageGalleryLayout, 60)
+    const timer = setTimeout(enhanceArticleReading, 80)
     const target = document.getElementById('notion-article') || document.body
-    const observer = new MutationObserver(() => applyImageGalleryLayout())
+    const observer = new MutationObserver(() => enhanceArticleReading())
     observer.observe(target, {
       childList: true,
       subtree: true
     })
-    window.addEventListener('resize', applyImageGalleryLayout)
+    window.addEventListener('resize', enhanceArticleReading)
 
     return () => {
       clearTimeout(timer)
       observer.disconnect()
-      window.removeEventListener('resize', applyImageGalleryLayout)
-    }
-  }, [post])
-
-  useEffect(() => {
-    if (!isBrowser) return
-
-    const decorateArticle = () => {
-      const article = document.getElementById('notion-article')
-      if (!article) return
-
-      applyArticleMediaDecorations(article)
-    }
-
-    const timer = setTimeout(decorateArticle, 80)
-    const target = document.getElementById('notion-article') || document.body
-    const observer = new MutationObserver(() => decorateArticle())
-    observer.observe(target, {
-      childList: true,
-      subtree: true
-    })
-
-    return () => {
-      clearTimeout(timer)
-      observer.disconnect()
+      window.removeEventListener('resize', enhanceArticleReading)
     }
   }, [post])
 
