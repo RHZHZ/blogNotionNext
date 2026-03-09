@@ -1,4 +1,4 @@
-import { Dialog, Transition } from '@headlessui/react'
+import { Dialog, Portal, Transition } from '@headlessui/react'
 import { useRouter } from 'next/router'
 import { Fragment, useEffect, useState } from 'react'
 import Catalog from './Catalog'
@@ -41,7 +41,8 @@ export default function FloatTocButton(props) {
       </div>
 
       <Transition.Root show={tocVisible} as={Fragment}>
-        <Dialog as='div' className='relative z-40 lg:hidden' onClose={changeTocVisible}>
+        <Portal>
+        <Dialog as='div' className='relative z-[120] lg:hidden' onClose={changeTocVisible}>
           <Transition.Child
             as={Fragment}
             enter='ease-in-out duration-300'
@@ -55,7 +56,7 @@ export default function FloatTocButton(props) {
 
           <div className='fixed inset-0 overflow-hidden'>
             <div className='absolute inset-0 overflow-hidden'>
-              <div className='pointer-events-none fixed inset-x-0 bottom-0 flex justify-end px-4 pb-[5.5rem]'>
+              <div className='pointer-events-none fixed inset-x-0 bottom-0 z-[121] flex justify-end px-4 pb-[5.5rem]'>
                 <Transition.Child
                   as={Fragment}
                   enter='transform transition ease-[cubic-bezier(0.22,1,0.36,1)] duration-400'
@@ -94,6 +95,7 @@ export default function FloatTocButton(props) {
             </div>
           </div>
         </Dialog>
+        </Portal>
       </Transition.Root>
     </>
   )

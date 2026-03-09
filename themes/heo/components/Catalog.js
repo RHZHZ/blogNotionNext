@@ -64,7 +64,7 @@ const Catalog = ({ toc, showHeader = true, variant = 'default' }) => {
   const isDrawerVariant = variant === 'drawer'
 
   return (
-    <div className='px-3 py-1 dark:text-white text-black'>
+    <div className={`heo-catalog ${isDrawerVariant ? 'heo-catalog--drawer' : ''} px-3 py-1 dark:text-white text-black`}>
       {showHeader && (
         <div className='w-full'>
           <i className='mr-1 fas fa-stream' />
@@ -72,7 +72,7 @@ const Catalog = ({ toc, showHeader = true, variant = 'default' }) => {
         </div>
       )}
       <div
-        className={`overflow-y-auto overscroll-none scroll-hidden ${isDrawerVariant ? 'max-h-[min(50vh,24rem)] pr-1' : 'max-h-36 lg:max-h-96'}`}
+        className={`heo-catalog__scroll overflow-y-auto overscroll-none scroll-hidden ${isDrawerVariant ? 'heo-catalog__scroll--drawer max-h-[min(50vh,24rem)] pr-1' : 'max-h-36 lg:max-h-96'}`}
         ref={tRef}>
         <nav className={isDrawerVariant ? 'flex flex-col gap-1.5' : 'h-full'}>
           {toc?.map(tocItem => {
@@ -82,6 +82,8 @@ const Catalog = ({ toc, showHeader = true, variant = 'default' }) => {
             const itemStyle = isDrawerVariant
               ? {
                   marginLeft: `${tocItem.indentLevel * 14}px`,
+                  width: `calc(100% - ${tocItem.indentLevel * 14}px)`,
+                  boxSizing: 'border-box',
                   borderColor: isActive
                     ? isDarkMode
                       ? 'rgba(96,165,250,0.26)'

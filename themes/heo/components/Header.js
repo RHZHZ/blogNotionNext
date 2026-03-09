@@ -26,6 +26,7 @@ const Header = props => {
 
   const router = useRouter()
   const slideOverRef = useRef()
+  const isPostPage = Boolean(post)
 
   const toggleMenuOpen = () => {
     slideOverRef?.current?.toggleSlideOvers()
@@ -44,7 +45,7 @@ const Header = props => {
         setTextWhite(false)
 
         // 文章详情页特殊处理
-        if (document?.querySelector('#post-bg')) {
+        if (isPostPage) {
           setFixedNav(true)
           setTextWhite(true)
         }
@@ -58,7 +59,7 @@ const Header = props => {
   )
   useEffect(() => {
     scrollTrigger()
-  }, [router])
+  }, [router, scrollTrigger])
 
   // 监听滚动
   useEffect(() => {
@@ -99,7 +100,7 @@ const Header = props => {
       }
     }
   }, [])
-  const hasPostBg = isBrowser && !!document.querySelector('#post-bg')
+  const hasPostBg = isPostPage
 
   useEffect(() => {
     const syncCompactMobileReadingNav = () => {

@@ -1,71 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="31" failures="0" errors="0" time="1.55">
-  <testsuite name="components/Player" errors="0" failures="0" skipped="0" timestamp="2026-03-07T18:03:07" time="0.695" tests="2">
-    <testcase classname="components/Player reports playlist-low-coverage when remote archive coverage is incomplete" name="components/Player reports playlist-low-coverage when remote archive coverage is incomplete" time="0.057">
-    </testcase>
-    <testcase classname="components/Player does not reschedule archive or force refresh for archived tracks on audio error" name="components/Player does not reschedule archive or force refresh for archived tracks on audio error" time="0.027">
+<testsuites name="jest tests" tests="6" failures="0" errors="0" time="1.348">
+  <testsuite name="components/NotionPage helpers" errors="0" failures="0" skipped="0" timestamp="2026-03-09T05:34:55" time="0.447" tests="1">
+    <testcase classname="components/NotionPage helpers adds heo media markers without breaking gallery structure" name="components/NotionPage helpers adds heo media markers without breaking gallery structure" time="0.019">
     </testcase>
   </testsuite>
-  <testsuite name="pages/api/meting" errors="0" failures="0" skipped="0" timestamp="2026-03-07T18:03:07" time="0.279" tests="21">
-    <testcase classname="pages/api/meting returns 400 when url query param is missing" name="pages/api/meting returns 400 when url query param is missing" time="0.043">
+  <testsuite name="components/Tabs" errors="0" failures="0" skipped="0" timestamp="2026-03-09T05:34:56" time="0.324" tests="2">
+    <testcase classname="components/Tabs hides tab switcher when only one tab exists and config enabled" name="components/Tabs hides tab switcher when only one tab exists and config enabled" time="0.014">
     </testcase>
-    <testcase classname="pages/api/meting returns cached data on repeated requests" name="pages/api/meting returns cached data on repeated requests" time="0.007">
-    </testcase>
-    <testcase classname="pages/api/meting merges duplicate concurrent track requests into one upstream fetch" name="pages/api/meting merges duplicate concurrent track requests into one upstream fetch" time="0.015">
-    </testcase>
-    <testcase classname="pages/api/meting retries retryable upstream failures and returns recovered track" name="pages/api/meting retries retryable upstream failures and returns recovered track" time="0.008">
-    </testcase>
-    <testcase classname="pages/api/meting releases pending request after failure so the next request can refetch" name="pages/api/meting releases pending request after failure so the next request can refetch" time="0.006">
-    </testcase>
-    <testcase classname="pages/api/meting prefers archived audio url from audio meta when track id matches" name="pages/api/meting prefers archived audio url from audio meta when track id matches" time="0.006">
-    </testcase>
-    <testcase classname="pages/api/meting supports playlistId mode and preserves playlist order" name="pages/api/meting supports playlistId mode and preserves playlist order" time="0.006">
-    </testcase>
-    <testcase classname="pages/api/meting merges archive playlist supplement tracks in playlist mode and deduplicates overlaps" name="pages/api/meting merges archive playlist supplement tracks in playlist mode and deduplicates overlaps" time="0.006">
-    </testcase>
-    <testcase classname="pages/api/meting keeps non-ordered playlist tracks in original playlist order after ordered tracks" name="pages/api/meting keeps non-ordered playlist tracks in original playlist order after ordered tracks" time="0.006">
-    </testcase>
-    <testcase classname="pages/api/meting globally sorts playlist tracks by PlaylistOrder before returning playlist mode results" name="pages/api/meting globally sorts playlist tracks by PlaylistOrder before returning playlist mode results" time="0.006">
-    </testcase>
-    <testcase classname="pages/api/meting treats playlistOrder 0 as unordered and keeps it after explicitly ordered tracks" name="pages/api/meting treats playlistOrder 0 as unordered and keeps it after explicitly ordered tracks" time="0.006">
-    </testcase>
-    <testcase classname="pages/api/meting enriches manual archive supplement tracks with AudioMeta fields by audioKey" name="pages/api/meting enriches manual archive supplement tracks with AudioMeta fields by audioKey" time="0.006">
-    </testcase>
-    <testcase classname="pages/api/meting enriches manual archive supplement tracks with AudioMeta fields by explicit AudioKey" name="pages/api/meting enriches manual archive supplement tracks with AudioMeta fields by explicit AudioKey" time="0.006">
-    </testcase>
-    <testcase classname="pages/api/meting matches archive playlist lyrics when AudioKey is extensionless and track url has extension" name="pages/api/meting matches archive playlist lyrics when AudioKey is extensionless and track url has extension" time="0.005">
-    </testcase>
-    <testcase classname="pages/api/meting can disable archive playlist supplement tracks in playlist mode" name="pages/api/meting can disable archive playlist supplement tracks in playlist mode" time="0.006">
-    </testcase>
-    <testcase classname="pages/api/meting falls back to playlist metadata when song detail fetch fails in playlist mode" name="pages/api/meting falls back to playlist metadata when song detail fetch fails in playlist mode" time="0.005">
-    </testcase>
-    <testcase classname="pages/api/meting returns 404 when playlistId mode yields no tracks" name="pages/api/meting returns 404 when playlistId mode yields no tracks" time="0.006">
-    </testcase>
-    <testcase classname="pages/api/meting sets provider debug headers when debug badge is enabled" name="pages/api/meting sets provider debug headers when debug badge is enabled" time="0.005">
-    </testcase>
-    <testcase classname="pages/api/meting falls back to cached playlist data when playlist upstream request fails" name="pages/api/meting falls back to cached playlist data when playlist upstream request fails" time="0.007">
-    </testcase>
-    <testcase classname="pages/api/meting retries playlist upstream failures and returns recovered playlist data" name="pages/api/meting retries playlist upstream failures and returns recovered playlist data" time="0.005">
-    </testcase>
-    <testcase classname="pages/api/meting returns 502 when upstream fetch yields no valid tracks" name="pages/api/meting returns 502 when upstream fetch yields no valid tracks" time="0.006">
+    <testcase classname="components/Tabs switches tabs and applies comment heo style variant" name="components/Tabs switches tabs and applies comment heo style variant" time="0.034">
     </testcase>
   </testsuite>
-  <testsuite name="pages/api/archive/schedule" errors="0" failures="0" skipped="0" timestamp="2026-03-07T18:03:08" time="0.093" tests="8">
-    <testcase classname="pages/api/archive/schedule returns 405 for non-POST methods" name="pages/api/archive/schedule returns 405 for non-POST methods" time="0.007">
+  <testsuite name="components/Comment" errors="0" failures="0" skipped="0" timestamp="2026-03-09T05:34:56" time="0.136" tests="3">
+    <testcase classname="components/Comment renders heo loading state before intersection load" name="components/Comment renders heo loading state before intersection load" time="0.005">
     </testcase>
-    <testcase classname="pages/api/archive/schedule returns 400 when schedule target is missing" name="pages/api/archive/schedule returns 400 when schedule target is missing" time="0.001">
+    <testcase classname="components/Comment renders custom loading slot before intersection load" name="components/Comment renders custom loading slot before intersection load" time="0.002">
     </testcase>
-    <testcase classname="pages/api/archive/schedule accepts and executes a new archive job" name="pages/api/archive/schedule accepts and executes a new archive job" time="0.003">
-    </testcase>
-    <testcase classname="pages/api/archive/schedule deduplicates repeated archive jobs within ttl window" name="pages/api/archive/schedule deduplicates repeated archive jobs within ttl window" time="0.001">
-    </testcase>
-    <testcase classname="pages/api/archive/schedule returns failed job state when archive execution throws" name="pages/api/archive/schedule returns failed job state when archive execution throws" time="0.002">
-    </testcase>
-    <testcase classname="pages/api/archive/schedule deduplicates failed jobs during exponential backoff window" name="pages/api/archive/schedule deduplicates failed jobs during exponential backoff window" time="0.002">
-    </testcase>
-    <testcase classname="pages/api/archive/schedule allows retry after failed job backoff expires and blacklists after repeated failures" name="pages/api/archive/schedule allows retry after failed job backoff expires and blacklists after repeated failures" time="0.002">
-    </testcase>
-    <testcase classname="pages/api/archive/schedule supports stringified JSON body" name="pages/api/archive/schedule supports stringified JSON body" time="0.001">
+    <testcase classname="components/Comment returns null when frontMatter comments are hidden" name="components/Comment returns null when frontMatter comments are hidden" time="0.001">
     </testcase>
   </testsuite>
 </testsuites>

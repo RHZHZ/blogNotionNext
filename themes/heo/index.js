@@ -294,6 +294,7 @@ const LayoutSlug = props => {
   }, [])
 
   const commentEnable =
+    siteConfig('COMMENT_ARTALK_SERVER') ||
     siteConfig('COMMENT_TWIKOO_ENV_ID') ||
     siteConfig('COMMENT_WALINE_SERVER_URL') ||
     siteConfig('COMMENT_VALINE_APP_ID') ||
@@ -328,28 +329,35 @@ const LayoutSlug = props => {
   return (
     <>
       <div
-        className={`article h-full w-full ${fullWidth ? '' : 'xl:max-w-5xl'} ${hasCode ? 'xl:w-[73.15vw]' : ''}  bg-white dark:bg-[#18171d] dark:border-gray-600 lg:hover:shadow lg:border rounded-2xl lg:px-2 lg:py-4 `}>
+        className={`article heo-post-shell h-full w-full ${fullWidth ? '' : 'xl:max-w-5xl'} ${hasCode ? 'xl:w-[73.15vw]' : ''}  bg-white dark:bg-[#18171d] dark:border-gray-600 lg:hover:shadow lg:border rounded-2xl lg:px-2 lg:py-4 `}>
         {/* 文章锁 */}
         {lock && <PostLock validPassword={validPassword} />}
 
         {!lock && post && (
-          <div className='mx-auto md:w-full md:px-5'>
+          <div className='mx-auto heo-post-shell__inner md:w-full md:px-5'>
             {/* 文章主体 */}
             <article
               id='article-wrapper'
+              className='heo-article-layout'
               itemScope
               itemType='https://schema.org/Movie'>
               {/* Notion文章主体 */}
               <section
-                className='wow fadeInUp p-5 justify-center mx-auto'
+                className='heo-article-section wow fadeInUp p-5 justify-center mx-auto'
                 data-wow-delay='.2s'>
                 <ArticleExpirationNotice post={post} />
                 {isAiSummaryEnabled(post) && (
                   <AISummary aiSummary={post.aiSummary} post={post} />
                 )}
-                <WWAds orientation='horizontal' className='w-full' />
-                {post && <NotionPage post={post} />}
-                <WWAds orientation='horizontal' className='w-full' />
+                <div className='heo-article-inline-ad'>
+                  <WWAds orientation='horizontal' className='w-full' />
+                </div>
+                <div className='heo-article-reading-shell'>
+                  {post && <NotionPage post={post} className='heo-article-body' />}
+                </div>
+                <div className='heo-article-inline-ad'>
+                  <WWAds orientation='horizontal' className='w-full' />
+                </div>
               </section>
 
               {post?.type === 'Post' && (
@@ -376,29 +384,79 @@ const LayoutSlug = props => {
 
             {/* 评论区 */}
             {fullWidth ? null : (
-              <div className={`${commentEnable && post ? '' : 'hidden'} px-5 pb-4 pt-4`}>
+              <div className='px-5 pb-4 pt-4'>
                 <div className='mb-5 h-px bg-gradient-to-r from-transparent via-slate-200/80 to-transparent dark:via-slate-700/70' />
-                {/* 评论区上方广告 */}
-                <div className='py-2'>
-                  <AdSlot />
-                </div>
-                {/* 评论互动 */}
-                <div className='overflow-hidden rounded-[1.9rem] border border-slate-200/80 bg-white/96 p-5 shadow-[0_18px_48px_rgba(15,23,42,0.05)] transition-all duration-200 dark:border-slate-700/60 dark:bg-[#1f2026]'>
-                  <div className='mb-4 flex items-end justify-between gap-4'>
-                    <div>
-                      <div className='text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500'>
-                        Comments
+                {commentEnable && post ? (
+                  <>
+                    {/* 评论区上方广告 */}
+                    <div className='py-2'>
+                      <AdSlot />
+                    </div>
+                    {/* 评论互动 */}
+                    <section className='overflow-hidden rounded-[1.9rem] border border-slate-200/80 bg-white/96 p-5 shadow-[0_18px_48px_rgba(15,23,42,0.05)] transition-all duration-200 dark:border-slate-700/60 dark:bg-[#1f2026] sm:p-6'>
+                      <div className='flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between'>
+                        <div className='max-w-2xl'>
+                          <div className='text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500'>
+                            Discussion
+                          </div>
+                          <div className='mt-1 flex items-center text-2xl font-semibold text-slate-800 dark:text-slate-100'>
+                            <i className='fas fa-comment mr-2 text-base text-slate-400 dark:text-slate-500' />
+                            {locale.COMMON.COMMENTS}
+                          </div>
+                          <p className='mt-3 text-sm leading-7 text-slate-500 dark:text-slate-300'>
+                            评论模块会在进入可视区域后按需加载，保持文章收尾区的阅读节奏更轻、更稳定。
+                          </p>
+                        </div>
+
+                        <div className='rounded-[1.4rem] border border-slate-200/80 bg-slate-50/90 px-4 py-3 text-sm text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/40 dark:text-slate-300'>
+                          <div className='font-medium text-slate-700 dark:text-slate-100'>
+                            讨论区状态
+                          </div>
+                          <div className='mt-1'>
+                            已接入评论能力，进入视口后再懒加载具体评论内核。
+                          </div>
+                        </div>
                       </div>
-                      <div className='mt-1 text-2xl font-semibold text-slate-800 dark:text-slate-100'>
-                        <i className='fas fa-comment mr-2 text-base text-slate-400 dark:text-slate-500' />
-                        {locale.COMMON.COMMENTS}
+                      <Comment
+                        frontMatter={post}
+                        className='mt-6'
+                        variant='heo'
+                        tabsVariant='comment-heo'
+                      />
+                    </section>
+                  </>
+                ) : (
+                  <section
+                    id='comment'
+                    className='overflow-hidden rounded-[1.9rem] border border-slate-200/80 bg-white/96 p-5 shadow-[0_18px_48px_rgba(15,23,42,0.05)] transition-all duration-200 dark:border-slate-700/60 dark:bg-[#1f2026] sm:p-6'>
+                    <div className='flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between'>
+                      <div className='max-w-2xl'>
+                        <div className='text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500'>
+                          Discussion Reserved
+                        </div>
+                        <div className='mt-1 flex items-center text-2xl font-semibold text-slate-800 dark:text-slate-100'>
+                          <i className='fas fa-comment-slash mr-2 text-base text-slate-400 dark:text-slate-500' />
+                          评论区暂未启用
+                        </div>
+                        <p className='mt-3 text-sm leading-7 text-slate-500 dark:text-slate-300'>
+                          当前文章页先保留讨论区位置，后续会结合整体主题样式与部署方案统一接入评论系统。
+                        </p>
+                      </div>
+
+                      <div className='rounded-[1.4rem] border border-slate-200/80 bg-slate-50/90 px-4 py-3 text-sm text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/40 dark:text-slate-300'>
+                        <div className='font-medium text-slate-700 dark:text-slate-100'>
+                          备案状态
+                        </div>
+                        <div className='mt-1'>
+                          已预留入口，后续按 `Giscus` 方向接入。
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <Comment frontMatter={post} className='' />
-                </div>
+                  </section>
+                )}
               </div>
             )}
+
           </div>
         )}
       </div>

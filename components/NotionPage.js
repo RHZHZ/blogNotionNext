@@ -15,6 +15,73 @@ import ReactDOM from 'react-dom/client'
  * @param {*} param0
  * @returns
  */
+export const applyImageGalleryLayoutToArticle = ({ article, width }) => {
+  if (!article) return
+
+  const rows = article.querySelectorAll('.notion-row')
+
+  rows.forEach(row => {
+    row.classList.remove('heo-image-gallery-row')
+    row.style.removeProperty('--heo-gallery-cols')
+    row.style.removeProperty('--heo-gallery-gap')
+
+    const columns = Array.from(row.children).filter(child =>
+      child.classList?.contains('notion-column')
+    )
+
+    if (columns.length < 2 || width < 768) return
+
+    const imageColumns = columns.filter(column =>
+      column.querySelector(':scope > figure.notion-asset-wrapper-image')
+    )
+
+    if (imageColumns.length !== columns.length) return
+
+    const desiredCols = width >= 1440 ? 4 : width >= 1024 ? 3 : 2
+    const actualCols = Math.min(desiredCols, imageColumns.length)
+
+    row.classList.add('heo-image-gallery-row')
+    row.style.setProperty('--heo-gallery-cols', String(actualCols))
+    row.style.setProperty('--heo-gallery-gap', width >= 1024 ? '0.75rem' : '0.5rem')
+  })
+}
+
+export const applyArticleMediaDecorations = article => {
+  if (!article) return
+
+  article.dataset.heoReadingSurface = 'true'
+
+  const markBlocks = (selector, type, onMatch) => {
+    article.querySelectorAll(selector).forEach((node, index) => {
+      node.classList.add('heo-article-block', `heo-article-block--${type}`)
+      node.dataset.heoBlock = type
+      onMatch?.(node, index)
+    })
+  }
+
+  markBlocks('figure.notion-asset-wrapper-image', 'image', node => {
+    const caption = node.nextElementSibling
+    if (caption?.classList?.contains('notion-asset-caption')) {
+      caption.classList.add('heo-article-caption')
+      caption.dataset.heoCaptionFor = 'image'
+    }
+  })
+  markBlocks('.notion-row.heo-image-gallery-row', 'gallery')
+  markBlocks('.notion-audio', 'audio')
+  markBlocks('pre.notion-code', 'code')
+  markBlocks('blockquote, .notion-quote', 'quote')
+  markBlocks('.notion-callout', 'callout')
+  markBlocks('.notion-bookmark', 'bookmark')
+  markBlocks('.notion-pdf', 'pdf')
+  markBlocks('.notion-asset-wrapper iframe', 'embed', node => {
+    const wrapper = node.closest('.notion-asset-wrapper') || node.parentElement
+    if (wrapper) {
+      wrapper.classList.add('heo-article-block', 'heo-article-block--embed')
+      wrapper.dataset.heoBlock = 'embed'
+    }
+  })
+}
+
 const NotionPage = ({ post, className }) => {
   // 是否关闭数据库和画册的点击跳转
   const POST_DISABLE_GALLERY_CLICK = siteConfig('POST_DISABLE_GALLERY_CLICK')
@@ -156,6 +223,30 @@ const NotionPage = ({ post, className }) => {
   }, [post])
 
   useEffect(() => {
+    if (!isBrowser) return
+
+    const decorateArticle = () => {
+      const article = document.getElementById('notion-article')
+      if (!article) return
+
+      applyArticleMediaDecorations(article)
+    }
+
+    const timer = setTimeout(decorateArticle, 80)
+    const target = document.getElementById('notion-article') || document.body
+    const observer = new MutationObserver(() => decorateArticle())
+    observer.observe(target, {
+      childList: true,
+      subtree: true
+    })
+
+    return () => {
+      clearTimeout(timer)
+      observer.disconnect()
+    }
+  }, [post])
+
+  useEffect(() => {
     // Spoiler文本功能
     if (SPOILER_TEXT_TAG) {
       import('lodash/escapeRegExp').then(escapeRegExp => {
@@ -190,6 +281,7 @@ const NotionPage = ({ post, className }) => {
   return (
     <div
       id='notion-article'
+      data-heo-reading-surface='true'
       className={`mx-auto overflow-hidden ${className || ''}`}>
       {post?.blockMap?.block ? (
         <NotionRenderer
@@ -283,6 +375,12 @@ const mountInlineIslandAudio = ({ block, audioTag, url, meta }) => {
   const container = existingContainer || document.createElement('div')
   container.dataset.inlineIslandAudio = 'true'
   container.dataset.mounted = 'true'
+  container.dataset.heoBlock = 'audio-player'
+  container.classList.add('heo-inline-audio-mount')
+
+  block.classList.add('heo-article-block', 'heo-article-block--audio')
+  block.dataset.heoBlock = 'audio'
+
 
   if (!existingContainer) {
     block.appendChild(container)

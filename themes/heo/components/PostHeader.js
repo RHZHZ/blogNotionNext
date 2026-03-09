@@ -60,6 +60,11 @@ export default function PostHeader({ post, siteInfo, isDarkMode }) {
   }, [headerBgColor])
 
   const visibleTags = post?.tagItems?.slice(0, 4) || []
+  const postTitleIcon = useMemo(
+    () => getPostHeaderTitleIcon(post?.pageIcon),
+    [post?.pageIcon]
+  )
+
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -123,8 +128,9 @@ export default function PostHeader({ post, siteInfo, isDarkMode }) {
             <div
               id='post-info'
               className='w-full max-w-5xl rounded-[1.5rem] border border-white/12 bg-white/8 p-4 text-white shadow-[0_20px_70px_rgba(15,23,42,0.16)] backdrop-blur-[14px] sm:rounded-[1.75rem] sm:p-5 lg:rounded-[2rem] lg:p-8'>
-              <div className='flex flex-col gap-4'>
-                <div className='flex flex-wrap items-center justify-center gap-2.5 md:justify-start'>
+              <div className='post-info-inner flex flex-col gap-4'>
+                <div className='post-info-eyebrow flex flex-wrap items-center justify-center gap-2.5 md:justify-start'>
+
                   {post.category && (
                     <SmartLink
                       href={`/category/${post.category}`}
@@ -148,20 +154,23 @@ export default function PostHeader({ post, siteInfo, isDarkMode }) {
                   )}
                 </div>
 
-                <div className='max-w-4xl text-center md:text-left'>
+                <div className='post-info-title-wrap max-w-4xl text-center md:text-left'>
                   <div className='inline-flex items-start justify-center md:justify-start'>
-                    <div className='flex items-center text-[2rem] font-bold leading-[1.2] text-white drop-shadow-[0_10px_30px_rgba(15,23,42,0.28)] sm:text-[2.4rem] lg:text-[3.45rem] lg:leading-[1.12]'>
-                      {siteConfig('POST_TITLE_ICON') && (
+                    <div className='post-info-title flex items-center text-[2rem] font-bold leading-[1.2] text-white drop-shadow-[0_10px_30px_rgba(15,23,42,0.28)] sm:text-[2.4rem] lg:text-[3.45rem] lg:leading-[1.12]'>
+
+                      {siteConfig('POST_TITLE_ICON') && postTitleIcon && (
                         <span className='mr-2 inline-flex translate-y-[0.08em] items-center text-[0.92em]'>
-                          <NotionIcon icon={post.pageIcon} />
+                          <NotionIcon icon={postTitleIcon} />
                         </span>
                       )}
+
                       <span>{post.title}</span>
                     </div>
                   </div>
                 </div>
 
-                <section className='flex flex-wrap items-center justify-center gap-2.5 text-center md:justify-start md:text-left'>
+                <section className='post-info-meta flex flex-wrap items-center justify-center gap-2.5 text-center md:justify-start md:text-left'>
+
                   <div className='inline-flex min-h-[2.5rem] items-center rounded-full border border-white/12 bg-black/12 px-3.5 py-2 text-sm font-medium text-white/78'>
                     <WordCount
                       wordCount={post.wordCount}
@@ -203,7 +212,19 @@ export default function PostHeader({ post, siteInfo, isDarkMode }) {
   )
 }
 
+function getPostHeaderTitleIcon(icon) {
+  if (typeof icon !== 'string') return ''
+
+  const normalizedIcon = icon.trim()
+  if (!normalizedIcon) return ''
+
+  return normalizedIcon.startsWith('http') || normalizedIcon.startsWith('data:')
+    ? normalizedIcon
+    : ''
+}
+
 function clampInt(v, min, max) {
+
   return Math.max(min, Math.min(max, Math.round(v)))
 }
 

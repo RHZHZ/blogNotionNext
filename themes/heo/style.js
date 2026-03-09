@@ -222,9 +222,38 @@ const Style = () => {
         }
 
         #theme-heo #post-info {
-            border-color: rgba(255, 255, 255, 0.16) !important;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.08)) !important;
-            box-shadow: 0 24px 80px rgba(15, 23, 42, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.14) !important;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06)) !important;
+            box-shadow: 0 18px 56px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        #theme-heo #post-info .post-info-inner {
+            gap: clamp(0.85rem, 2vw, 1.15rem);
+        }
+
+        #theme-heo #post-info .post-info-title {
+            letter-spacing: -0.025em;
+            text-wrap: balance;
+            max-width: none;
+        }
+
+        #theme-heo #post-info .post-info-title-wrap {
+            width: 100%;
+            max-width: min(100%, 52rem);
+        }
+
+        #theme-heo #post-info .post-info-title {
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        #theme-heo #post-info .post-info-title > span:last-child {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        #theme-heo #post-info .post-info-meta {
+            row-gap: 0.7rem;
         }
 
         #theme-heo #post-info a,
@@ -249,16 +278,16 @@ const Style = () => {
         }
 
         html.dark #theme-heo #post-info {
-            border-color: rgba(255, 255, 255, 0.1) !important;
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0.32), rgba(15, 23, 42, 0.2)) !important;
-            box-shadow: 0 26px 86px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.28), rgba(15, 23, 42, 0.16)) !important;
+            box-shadow: 0 20px 68px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
         }
 
         @media (max-width: 767px) {
             #theme-heo #post-bg {
-                min-height: clamp(22rem, 100svh - 0.5rem, 30rem) !important;
-                --heo-post-header-offset: calc(env(safe-area-inset-top, 0px) + 4rem);
-                --heo-post-header-bottom: clamp(1.6rem, 6vw, 2.2rem);
+                min-height: clamp(20.5rem, 92svh - 0.5rem, 27rem) !important;
+                --heo-post-header-offset: calc(env(safe-area-inset-top, 0px) + 3.75rem);
+                --heo-post-header-bottom: clamp(1rem, 4vw, 1.4rem);
             }
 
             #theme-heo #post-bg-content {
@@ -267,13 +296,54 @@ const Style = () => {
             }
 
             #theme-heo #post-info {
-                border-radius: 1.5rem !important;
-                padding: 1.1rem !important;
-                background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06)) !important;
+                border-radius: 1.45rem !important;
+                padding: 1rem !important;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.05)) !important;
+                box-shadow: 0 16px 44px rgba(15, 23, 42, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            }
+
+            #theme-heo #post-info .post-info-inner {
+                gap: 0.95rem;
+            }
+
+            #theme-heo #post-info .post-info-eyebrow {
+                gap: 0.45rem;
+            }
+
+            #theme-heo #post-info .post-info-title-wrap {
+                max-width: none;
+            }
+
+            #theme-heo #post-info .post-info-title {
+                width: auto;
+                font-size: clamp(2.1rem, 8vw, 2.7rem) !important;
+                line-height: 1.12 !important;
+                max-width: 9.5ch;
+                margin: 0 auto;
+                text-align: center;
+                align-items: center;
+            }
+
+            #theme-heo #post-info .post-info-title > span:last-child {
+                display: block;
+            }
+
+            #theme-heo #post-info .post-info-meta {
+                gap: 0.55rem;
+                justify-content: center;
+            }
+
+            #theme-heo #post-info .post-info-meta > a,
+            #theme-heo #post-info .post-info-meta > div {
+                min-height: 2.15rem !important;
+                padding: 0.58rem 1rem !important;
+                font-size: 0.94rem !important;
+                line-height: 1.15;
             }
 
             html.dark #theme-heo #post-info {
-                background: linear-gradient(180deg, rgba(15, 23, 42, 0.28), rgba(15, 23, 42, 0.18)) !important;
+                background: linear-gradient(180deg, rgba(15, 23, 42, 0.24), rgba(15, 23, 42, 0.14)) !important;
+                box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.03);
             }
         }
 
@@ -482,13 +552,13 @@ const Style = () => {
             color: var(--heo-card-muted-dark);
         }
 
-        #theme-heo .heo-toc-drawer__overlay {
+        .heo-toc-drawer__overlay {
             background: rgba(15, 23, 42, 0.18);
             -webkit-backdrop-filter: blur(2px);
             backdrop-filter: blur(2px);
         }
 
-        #theme-heo .heo-toc-drawer__panel {
+        .heo-toc-drawer__panel {
             border: 1px solid rgba(226, 232, 240, 0.92);
             border-radius: 1.75rem;
             background: rgba(255, 255, 255, 0.98);
@@ -497,13 +567,13 @@ const Style = () => {
             backdrop-filter: saturate(180%) blur(18px);
         }
 
-        #theme-heo .heo-toc-drawer__header {
+        .heo-toc-drawer__header {
             padding: 0.95rem 1rem 0.9rem;
             border-bottom: 1px solid rgba(226, 232, 240, 0.88);
             background: rgba(255, 255, 255, 0.96);
         }
 
-        #theme-heo .heo-toc-drawer__eyebrow {
+        .heo-toc-drawer__eyebrow {
             color: #94a3b8;
             font-size: 0.68rem;
             font-weight: 700;
@@ -511,14 +581,14 @@ const Style = () => {
             text-transform: uppercase;
         }
 
-        #theme-heo .heo-toc-drawer__title {
+        .heo-toc-drawer__title {
             margin-top: 0.28rem;
             color: #334155;
             font-size: 0.95rem;
             font-weight: 700;
         }
 
-        #theme-heo .heo-toc-drawer__close {
+        .heo-toc-drawer__close {
             width: 2.25rem;
             height: 2.25rem;
             display: inline-flex;
@@ -534,13 +604,14 @@ const Style = () => {
             -webkit-appearance: none;
         }
 
-        #theme-heo .heo-toc-drawer__content {
+        .heo-toc-drawer__content {
             max-height: min(58vh, 28rem);
             overflow-y: auto;
             padding: 0.5rem;
+            background: rgba(248, 250, 252, 0.94);
         }
 
-        #theme-heo .heo-toc-drawer__content-card {
+        .heo-toc-drawer__content-card {
             border: 1px solid rgba(226, 232, 240, 0.88);
             border-radius: 1.35rem;
             background: #ffffff;
@@ -549,7 +620,7 @@ const Style = () => {
         }
 
         @media (hover: hover) {
-            #theme-heo .heo-toc-drawer__close:hover {
+            .heo-toc-drawer__close:hover {
                 transform: translateY(-1px);
                 border-color: rgba(191, 219, 254, 0.78);
                 background: rgba(248, 250, 252, 0.95);
@@ -558,48 +629,52 @@ const Style = () => {
             }
         }
 
-        #theme-heo .heo-toc-drawer__close:focus-visible {
+        .heo-toc-drawer__close:focus-visible {
             outline: none;
             border-color: rgba(59, 130, 246, 0.72);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16), 0 10px 20px rgba(59, 130, 246, 0.08);
         }
 
-        html.dark #theme-heo .heo-toc-drawer__overlay {
+        html.dark .heo-toc-drawer__overlay {
             background: rgba(0, 0, 0, 0.55);
             -webkit-backdrop-filter: blur(6px);
             backdrop-filter: blur(6px);
         }
 
-        html.dark #theme-heo .heo-toc-drawer__panel {
+        html.dark .heo-toc-drawer__panel {
             border-color: rgba(71, 85, 105, 0.4);
             background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.92));
             box-shadow: 0 24px 64px rgba(0, 0, 0, 0.34);
         }
 
-        html.dark #theme-heo .heo-toc-drawer__header {
+        html.dark .heo-toc-drawer__header {
             border-color: rgba(71, 85, 105, 0.3);
             background: rgba(15, 23, 42, 0.92);
         }
 
-        html.dark #theme-heo .heo-toc-drawer__title {
+        html.dark .heo-toc-drawer__content {
+            background: rgba(15, 23, 42, 0.94);
+        }
+
+        html.dark .heo-toc-drawer__title {
             color: #f8fafc;
         }
 
-        html.dark #theme-heo .heo-toc-drawer__close {
+        html.dark .heo-toc-drawer__close {
             border-color: rgba(71, 85, 105, 0.4);
             background: rgba(51, 65, 85, 0.92);
             color: #cbd5e1;
             box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
         }
 
-        html.dark #theme-heo .heo-toc-drawer__content-card {
+        html.dark .heo-toc-drawer__content-card {
             border-color: rgba(71, 85, 105, 0.24);
             background: rgba(30, 41, 59, 0.32);
             box-shadow: none;
         }
 
         @media (hover: hover) {
-            html.dark #theme-heo .heo-toc-drawer__close:hover {
+            html.dark .heo-toc-drawer__close:hover {
                 border-color: rgba(245, 158, 11, 0.24);
                 background: rgba(71, 85, 105, 0.96);
                 color: #fde68a;
@@ -607,11 +682,26 @@ const Style = () => {
             }
         }
 
-        html.dark #theme-heo .heo-toc-drawer__close:focus-visible {
+        html.dark .heo-toc-drawer__close:focus-visible {
             border-color: rgba(245, 158, 11, 0.28);
             box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18), 0 10px 24px rgba(120, 53, 15, 0.18);
         }
 
+        #theme-heo .heo-float-widget-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.38rem;
+            border: 1px solid rgba(191, 219, 254, 0.88);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.94);
+            color: #334155;
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+            -webkit-backdrop-filter: saturate(180%) blur(16px);
+            backdrop-filter: saturate(180%) blur(16px);
+            transition: transform var(--heo-dur-fast) var(--heo-ease), border-color var(--heo-dur-fast) var(--heo-ease), background var(--heo-dur-fast) var(--heo-ease), color var(--heo-dur-fast) var(--heo-ease), box-shadow var(--heo-dur-fast) var(--heo-ease);
+        }
 
         #theme-heo .heo-float-widget-btn--icon-only {
             width: 2.65rem;
@@ -2470,6 +2560,42 @@ const Style = () => {
             color: var(--heo-text);
         }
 
+        #theme-heo #wrapper-outer .article.heo-post-shell {
+            position: relative;
+            overflow: visible;
+            margin-top: clamp(-2.15rem, -3vw, -1rem);
+            z-index: 12;
+        }
+
+        #theme-heo #wrapper-outer .article.heo-post-shell::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.035) 18%, rgba(255, 255, 255, 0) 100%);
+            opacity: 0.9;
+            pointer-events: none;
+        }
+
+        #theme-heo .heo-post-shell__inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 1023px) {
+            #theme-heo #wrapper-outer .article.heo-post-shell {
+                margin-top: clamp(-1.2rem, -4vw, -0.55rem);
+            }
+        }
+
+        @media (max-width: 767px) {
+            #theme-heo #wrapper-outer .article.heo-post-shell {
+                margin-top: clamp(-0.6rem, -3vw, -0.25rem);
+                border-top-left-radius: 1.55rem !important;
+                border-top-right-radius: 1.55rem !important;
+            }
+        }
+
         #theme-heo #article-wrapper,
         #theme-heo #article-wrapper #notion-article {
             font-size: var(--heo-article-font-size);
@@ -2478,8 +2604,97 @@ const Style = () => {
             letter-spacing: 0.01em;
         }
 
+        #theme-heo #article-wrapper.heo-article-layout {
+            position: relative;
+        }
+
+        #theme-heo #article-wrapper .heo-article-section {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(1rem, 2.6vw, 1.5rem);
+        }
+
+        #theme-heo #article-wrapper .heo-article-reading-shell {
+            position: relative;
+            width: 100%;
+            padding-top: clamp(0.3rem, 1.6vw, 0.75rem);
+        }
+
+        #theme-heo #article-wrapper .heo-article-reading-shell::before {
+            content: '';
+            position: absolute;
+            top: -0.55rem;
+            left: 50%;
+            width: min(100%, 16rem);
+            height: 1px;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.42), transparent);
+            pointer-events: none;
+        }
+
+        html.dark #theme-heo #article-wrapper .heo-article-reading-shell::before {
+            background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.28), transparent);
+        }
+
+        #theme-heo #article-wrapper .heo-article-inline-ad {
+            margin: 0.2rem 0;
+        }
+
+        #theme-heo #article-wrapper #notion-article.heo-article-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        #theme-heo #article-wrapper #notion-article[data-heo-reading-surface='true'] {
+            position: relative;
+        }
+
+        #theme-heo #article-wrapper #notion-article > :first-child {
+            margin-top: 0 !important;
+        }
+
+        #theme-heo #article-wrapper #notion-article > p:first-child,
+        #theme-heo #article-wrapper #notion-article > .notion-text:first-child,
+        #theme-heo #article-wrapper #notion-article > .notion-callout:first-child,
+        #theme-heo #article-wrapper #notion-article > .notion-quote:first-child,
+        #theme-heo #article-wrapper #notion-article > blockquote:first-child {
+            position: relative;
+            padding-top: clamp(0.15rem, 0.8vw, 0.3rem);
+        }
+
+        #theme-heo #article-wrapper #notion-article > p:first-child::before,
+        #theme-heo #article-wrapper #notion-article > .notion-text:first-child::before,
+        #theme-heo #article-wrapper #notion-article > .notion-callout:first-child::before,
+        #theme-heo #article-wrapper #notion-article > .notion-quote:first-child::before,
+        #theme-heo #article-wrapper #notion-article > blockquote:first-child::before {
+            content: '';
+            display: block;
+            width: clamp(2.75rem, 8vw, 4.5rem);
+            height: 0.28rem;
+            margin-bottom: 1rem;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.95), rgba(99, 102, 241, 0.55));
+            box-shadow: 0 10px 22px rgba(59, 130, 246, 0.18);
+        }
+
+        html.dark #theme-heo #article-wrapper #notion-article > p:first-child::before,
+        html.dark #theme-heo #article-wrapper #notion-article > .notion-text:first-child::before,
+        html.dark #theme-heo #article-wrapper #notion-article > .notion-callout:first-child::before,
+        html.dark #theme-heo #article-wrapper #notion-article > .notion-quote:first-child::before,
+        html.dark #theme-heo #article-wrapper #notion-article > blockquote:first-child::before {
+            background: linear-gradient(90deg, rgba(251, 191, 36, 0.95), rgba(245, 158, 11, 0.5));
+            box-shadow: 0 10px 24px rgba(194, 65, 12, 0.22);
+        }
+
         #theme-heo #article-wrapper #notion-article p {
             margin: 0 0 var(--heo-article-paragraph-gap);
+        }
+
+        #theme-heo #article-wrapper #notion-article > :last-child,
+        #theme-heo #article-wrapper #notion-article p:last-child {
+            margin-bottom: 0;
         }
 
         #theme-heo #article-wrapper #notion-article h2 {
@@ -2523,10 +2738,9 @@ const Style = () => {
 
         #theme-heo #article-wrapper #notion-article .notion-list li::marker {
             color: var(--heo-text-tertiary);
-            font-size: 0.85em; /* 圆点小一点更精致 */
+            font-size: 0.85em;
         }
 
-        /* 链接与下划线优化：去网页化，更像 Apple 设计 */
         #theme-heo #article-wrapper #notion-article .notion-link,
         #theme-heo #article-wrapper #notion-article .notion-inline-underscore {
             text-decoration: none !important;
@@ -2543,7 +2757,6 @@ const Style = () => {
             border-bottom-color: currentColor;
         }
 
-        /* 统一普通 ul/ol 的样式，保持一致性 */
         #theme-heo #article-wrapper #notion-article ul,
         #theme-heo #article-wrapper #notion-article ol {
             padding-left: 1.5rem;
@@ -2569,71 +2782,146 @@ const Style = () => {
             font-variant-numeric: tabular-nums;
         }
 
-        #theme-heo #article-wrapper #notion-article blockquote {
+        #theme-heo #article-wrapper #notion-article .heo-article-block {
             margin: 0 0 var(--heo-article-block-gap);
-            padding: 0.8rem 1.2rem 0.8rem 1.4rem;
-            border-left: 4px solid #6366f1;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(99, 102, 241, 0.01) 100%);
-            border-radius: 0 12px 12px 0;
-            color: var(--heo-text-secondary);
-            position: relative;
-            transition: all 0.2s ease;
+            scroll-margin-top: 7rem;
         }
 
-        #theme-heo #article-wrapper #notion-article blockquote::before {
-            content: '"';
+        #theme-heo #article-wrapper #notion-article .heo-article-block--image,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--audio,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--code,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--quote,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--embed,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--bookmark,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--pdf,
+        #theme-heo #article-wrapper #notion-article .heo-article-block--callout {
+            position: relative;
+        }
+
+        #theme-heo #article-wrapper #notion-article blockquote,
+        #theme-heo #article-wrapper #notion-article .notion-quote {
+            margin: 0 0 var(--heo-article-block-gap);
+            padding: 1rem 1.2rem 1rem 1.45rem;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            border-left: 4px solid #6366f1;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(255, 255, 255, 0.8) 100%);
+            border-radius: 0 1rem 1rem 0;
+            color: var(--heo-text-secondary);
+            position: relative;
+            box-shadow: 0 18px 40px rgba(99, 102, 241, 0.08);
+            transition: transform var(--heo-dur) var(--heo-ease), box-shadow var(--heo-dur) var(--heo-ease), border-color var(--heo-dur) var(--heo-ease), background var(--heo-dur) var(--heo-ease);
+        }
+
+        #theme-heo #article-wrapper #notion-article blockquote::before,
+        #theme-heo #article-wrapper #notion-article .notion-quote::before {
+            content: '“';
             position: absolute;
-            left: 0.8rem;
-            top: 0.6rem;
-            font-size: 2rem;
+            left: 0.72rem;
+            top: 0.45rem;
+            font-size: 2.35rem;
             line-height: 1;
             color: rgba(99, 102, 241, 0.15);
             font-family: Georgia, serif;
             font-weight: 700;
         }
 
-        #theme-heo #article-wrapper #notion-article blockquote:hover {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(99, 102, 241, 0.02) 100%);
+        #theme-heo #article-wrapper #notion-article blockquote:hover,
+        #theme-heo #article-wrapper #notion-article .notion-quote:hover {
             transform: translateX(4px);
+            box-shadow: 0 22px 48px rgba(99, 102, 241, 0.12);
+            border-color: rgba(99, 102, 241, 0.16);
         }
 
-        html.dark #theme-heo #article-wrapper #notion-article blockquote {
+        html.dark #theme-heo #article-wrapper #notion-article blockquote,
+        html.dark #theme-heo #article-wrapper #notion-article .notion-quote {
+            border-color: rgba(245, 158, 11, 0.14);
             border-left-color: #f59e0b;
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.06) 0%, rgba(245, 158, 11, 0.02) 100%);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(15, 23, 42, 0.72) 100%);
+            box-shadow: 0 22px 46px rgba(0, 0, 0, 0.2);
         }
 
-        html.dark #theme-heo #article-wrapper #notion-article blockquote::before {
-            color: rgba(245, 158, 11, 0.2);
+        html.dark #theme-heo #article-wrapper #notion-article blockquote::before,
+        html.dark #theme-heo #article-wrapper #notion-article .notion-quote::before {
+            color: rgba(245, 158, 11, 0.22);
         }
 
-        html.dark #theme-heo #article-wrapper #notion-article blockquote:hover {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.04) 100%);
+        html.dark #theme-heo #article-wrapper #notion-article blockquote:hover,
+        html.dark #theme-heo #article-wrapper #notion-article .notion-quote:hover {
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.28);
+            border-color: rgba(245, 158, 11, 0.2);
         }
-
 
         #theme-heo #article-wrapper #notion-article code {
             font-family: var(--heo-font-mono);
             font-size: 0.92em;
         }
 
-
-        /* Article Images (B-Plan: Apple-style frame) */
-        #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image {
-            margin: 0.9rem auto !important;
-            border-radius: 12px;
+        #theme-heo #article-wrapper #notion-article .notion-code {
+            margin: 0 0 var(--heo-article-block-gap);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 1.3rem;
+            box-shadow: 0 20px 44px rgba(15, 23, 42, 0.08);
             overflow: hidden;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
-            transition: transform var(--heo-dur) var(--heo-ease),
-            box-shadow var(--heo-dur) var(--heo-ease);
-            max-width: 100% !important;
-            min-width: 0 !important;
-            width: auto !important;
-            display: block;
+        }
+
+        html.dark #theme-heo #article-wrapper #notion-article .notion-code {
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.24);
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-audio {
+            margin: 0 0 calc(var(--heo-article-block-gap) + 0.15rem);
+            padding: 0.5rem;
+            border-radius: 1.4rem;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(248, 250, 252, 0.82));
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            box-shadow: 0 18px 42px rgba(15, 23, 42, 0.07);
+        }
+
+        html.dark #theme-heo #article-wrapper #notion-article .notion-audio {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.7));
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 22px 46px rgba(0, 0, 0, 0.24);
+        }
+
+        #theme-heo #article-wrapper #notion-article .heo-inline-audio-mount {
+            width: 100%;
         }
 
         #theme-heo #article-wrapper #notion-article .notion-row {
             gap: 0.75rem;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row {
+            margin: 0.1rem 0 calc(var(--heo-article-block-gap) + 0.15rem);
+            padding: 0.55rem;
+            border-radius: 1.45rem;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.86));
+            border: 1px solid rgba(203, 213, 225, 0.8);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+        }
+
+        html.dark #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.82), rgba(17, 24, 39, 0.76));
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.24);
+        }
+
+        /* Article Images */
+        #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image {
+            margin: 1rem auto calc(var(--heo-article-block-gap) + 0.1rem) !important;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 16px 38px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.03);
+            transition: transform var(--heo-dur) var(--heo-ease),
+            box-shadow var(--heo-dur) var(--heo-ease),
+            border-color var(--heo-dur) var(--heo-ease);
+            max-width: 100% !important;
+            min-width: 0 !important;
+            width: auto !important;
+            display: block;
+            background: rgba(255, 255, 255, 0.7);
         }
 
         @media (min-width: 768px) {
@@ -2660,7 +2948,7 @@ const Style = () => {
 
         #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-wrapper-image {
             margin: 0.55rem auto !important;
-            border-radius: 10px;
+            border-radius: 1rem;
             aspect-ratio: 4 / 5;
             width: 100% !important;
             overflow: hidden;
@@ -2678,7 +2966,7 @@ const Style = () => {
             max-width: none !important;
             object-fit: cover;
             object-position: center;
-            border-radius: 10px !important;
+            border-radius: 1rem !important;
         }
 
         #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-wrapper-image + .notion-asset-wrapper-image {
@@ -2704,36 +2992,51 @@ const Style = () => {
             width: auto !important;
             max-width: 100% !important;
             height: auto !important;
-        }
-
-        #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image img {
-            border-radius: 12px !important;
+            border-radius: 1.2rem !important;
             display: block;
         }
 
         html.dark #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image {
             border-color: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+            background: rgba(15, 23, 42, 0.7);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24), 0 2px 4px rgba(0, 0, 0, 0.12);
         }
 
-        /* Image Caption (Apple-style minimal) */
-        #theme-heo #article-wrapper #notion-article .notion-asset-caption {
+        #theme-heo #article-wrapper #notion-article .notion-asset-caption,
+        #theme-heo #article-wrapper #notion-article .heo-article-caption {
             margin-top: 0.75rem !important;
             padding: 0 1rem;
             font-size: 0.85rem !important;
-            line-height: 1.5;
+            line-height: 1.6;
             color: var(--heo-text-tertiary) !important;
             text-align: center !important;
             font-style: normal !important;
         }
 
         #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
+            transform: translateY(-3px);
+            box-shadow: 0 22px 44px rgba(15, 23, 42, 0.12), 0 4px 10px rgba(15, 23, 42, 0.05);
+            border-color: rgba(148, 163, 184, 0.32);
         }
 
         html.dark #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image:hover {
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), 0 2px 4px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 22px 48px rgba(0, 0, 0, 0.35), 0 4px 10px rgba(0, 0, 0, 0.18);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        #theme-heo #article-wrapper #notion-article .heo-article-block--embed iframe,
+        #theme-heo #article-wrapper #notion-article .notion-pdf {
+            width: 100%;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+            background: rgba(255, 255, 255, 0.82);
+        }
+
+        html.dark #theme-heo #article-wrapper #notion-article .heo-article-block--embed iframe,
+        html.dark #theme-heo #article-wrapper #notion-article .notion-pdf {
+            box-shadow: 0 22px 46px rgba(0, 0, 0, 0.24);
+            background: rgba(15, 23, 42, 0.72);
         }
 
         html.dark #theme-heo #wrapper-outer .article {
@@ -2860,60 +3163,141 @@ const Style = () => {
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
         }
 
-        /* 文章页目录（Catalog / TOC）适配 Heo Pro 风格 - 修正版 */
-        /* 1. 容器样式 (确保背景只在最外层，移除内层背景) */
-        #theme-heo #sideRight .px-3.py-1.dark\:text-white.text-black {
-            background: transparent !important;
-            backdrop-filter: none !important;
-            border: none !important;
-            padding: 0 !important;
-            box-shadow: none !important;
+        #theme-heo #sideRight .heo-side-right-sticky {
+            top: 5.5rem;
         }
 
-        /* 2. 目录项（链接）基础样式与动画 */
+        #theme-heo #sideRight .heo-toc-card {
+            position: relative;
+            overflow: hidden;
+            border-color: rgba(191, 219, 254, 0.42) !important;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.82)) !important;
+            box-shadow: 0 20px 50px rgba(37, 99, 235, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+        }
+
+        #theme-heo #sideRight .heo-toc-card::before {
+            content: '';
+            position: absolute;
+            inset: 0 0 auto;
+            height: 4.5rem;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.12), rgba(255, 255, 255, 0));
+            pointer-events: none;
+        }
+
+        #theme-heo #sideRight .heo-toc-card__header {
+            position: relative;
+            padding-bottom: 0.85rem;
+            margin-bottom: 0.9rem;
+        }
+
+        #theme-heo #sideRight .heo-toc-card__header::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(148, 163, 184, 0.12), transparent);
+        }
+
+        #theme-heo #sideRight .heo-toc-card__eyebrow {
+            letter-spacing: 0.22em;
+        }
+
+        #theme-heo #sideRight .heo-toc-card__title {
+            letter-spacing: -0.015em;
+        }
+
+        html.dark #theme-heo #sideRight .heo-side-right-sticky {
+            top: 5.5rem;
+        }
+
+        html.dark #theme-heo #sideRight .heo-toc-card {
+            border-color: rgba(245, 158, 11, 0.18) !important;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(17, 24, 39, 0.82)) !important;
+            box-shadow: 0 24px 56px rgba(0, 0, 0, 0.28), 0 2px 10px rgba(0, 0, 0, 0.16) !important;
+        }
+
+        html.dark #theme-heo #sideRight .heo-toc-card::before {
+            background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(15, 23, 42, 0));
+        }
+
+        html.dark #theme-heo #sideRight .heo-toc-card__header::after {
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.24), rgba(71, 85, 105, 0.22), transparent);
+        }
+
+        #theme-heo .heo-catalog {
+            position: relative;
+        }
+
+        #theme-heo .heo-catalog--drawer {
+            border-radius: 1.1rem;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.94));
+        }
+
+        #theme-heo .heo-catalog__scroll--drawer {
+            border-radius: 0.95rem;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 0.1rem 0.25rem 0.15rem 0.1rem;
+        }
+
+        html.dark #theme-heo .heo-catalog--drawer {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.82));
+        }
+
+        html.dark #theme-heo .heo-catalog__scroll--drawer {
+            background: rgba(15, 23, 42, 0.76);
+        }
+
+        #theme-heo .heo-catalog nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.18rem;
+        }
+
         #theme-heo .notion-table-of-contents-item.catalog-item {
-            border-radius: 8px !important;
-            margin: 3px 4px !important;
-            padding: 7px 10px !important;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            display: block !important;
-            text-decoration: none !important;
-            width: calc(100% - 8px) !important; /* 填满容器宽度 */
-            max-width: none !important;
-            opacity: 0.55 !important; /* 非聚焦项淡化 */
+            border-radius: 0.95rem !important;
+            margin: 0 !important;
+            padding: 0.65rem 0.85rem !important;
+            transition: background var(--heo-dur-fast) var(--heo-ease),
+            color var(--heo-dur-fast) var(--heo-ease),
+            box-shadow var(--heo-dur-fast) var(--heo-ease),
+            transform var(--heo-dur-fast) var(--heo-ease),
+            opacity var(--heo-dur-fast) var(--heo-ease) !important;
+            width: 100% !important;
+            opacity: 0.72 !important;
         }
 
-        /* 3. 亮色模式：当前选中项 (Active) 与 Hover */
         #theme-heo .notion-table-of-contents-item.catalog-item:hover,
-        #theme-heo .notion-table-of-contents-item.catalog-item a span.font-bold.text-indigo-600,
         #theme-heo .notion-table-of-contents-item.catalog-item:has(span.font-bold.text-indigo-600) {
-            background: rgba(37, 99, 235, 0.9) !important;
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25) !important;
-            transform: none !important; /* 移除位移 */
-            opacity: 1 !important; /* 聚焦项清晰 */
-            filter: none !important; /* 移除模糊 */
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.96), rgba(99, 102, 241, 0.9)) !important;
+            box-shadow: 0 12px 24px rgba(59, 130, 246, 0.22) !important;
+            transform: translateX(4px);
+            opacity: 1 !important;
         }
 
         #theme-heo .notion-table-of-contents-item.catalog-item:hover span,
         #theme-heo .notion-table-of-contents-item.catalog-item span.font-bold.text-indigo-600 {
             color: #ffffff !important;
-            font-weight: 500 !important;
+            font-weight: 600 !important;
         }
 
-        /* 4. 暗色模式：当前选中项 (Active) 与 Hover */
+        html.dark #theme-heo .notion-table-of-contents-item.catalog-item {
+            opacity: 0.78 !important;
+        }
+
         html.dark #theme-heo .notion-table-of-contents-item.catalog-item:hover,
         html.dark #theme-heo .notion-table-of-contents-item.catalog-item:has(span.font-bold.text-indigo-600) {
-            background: rgba(234, 179, 8, 0.95) !important;
-            box-shadow: 0 2px 8px rgba(234, 179, 8, 0.35) !important;
-            transform: none !important;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.98), rgba(251, 191, 36, 0.92)) !important;
+            box-shadow: 0 12px 26px rgba(245, 158, 11, 0.24) !important;
+            transform: translateX(4px);
             opacity: 1 !important;
-            filter: none !important;
         }
 
         html.dark #theme-heo .notion-table-of-contents-item.catalog-item:hover span,
         html.dark #theme-heo .notion-table-of-contents-item.catalog-item span.font-bold.text-indigo-600 {
-            color: #000000 !important;
-            font-weight: 500 !important;
+            color: #111827 !important;
+            font-weight: 600 !important;
         }
 
         #theme-heo #toc-wrapper .toc-item:hover a,
@@ -3581,6 +3965,36 @@ const Style = () => {
         html.dark #theme-heo #sideRight .heo-card--interactive:focus-within {
             border-color: rgba(245, 158, 11, 0.28) !important;
             box-shadow: 0 24px 52px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+        }
+
+        #theme-heo #sideRight .heo-card.heo-infocard-v2 {
+            background: linear-gradient(165deg,
+                    color-mix(in srgb, var(--heo-infocard-bg, #4f65f0) 14%, white 72%) 0%,
+                    color-mix(in srgb, var(--heo-infocard-bg, #4f65f0) 10%, #eff6ff 82%) 52%,
+                    color-mix(in srgb, var(--heo-infocard-bg, #4f65f0) 8%, #dbeafe 66%) 100%) !important;
+            border-color: rgba(255, 255, 255, 0.68) !important;
+            box-shadow: 0 18px 44px rgba(59, 130, 246, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+        }
+
+        #theme-heo #sideRight .heo-card.heo-infocard-v2:hover,
+        #theme-heo #sideRight .heo-card.heo-infocard-v2:focus-within {
+            border-color: rgba(191, 219, 254, 0.96) !important;
+            box-shadow: 0 22px 48px rgba(59, 130, 246, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+        }
+
+        html.dark #theme-heo #sideRight .heo-card.heo-infocard-v2 {
+            background: linear-gradient(165deg,
+                    color-mix(in srgb, var(--heo-infocard-bg, #f59e0b) 26%, #020617 74%) 0%,
+                    color-mix(in srgb, var(--heo-infocard-bg, #f59e0b) 18%, #0f172a 82%) 52%,
+                    color-mix(in srgb, var(--heo-infocard-bg, #f59e0b) 24%, #020617 76%) 100%) !important;
+            border-color: rgba(245, 158, 11, 0.18) !important;
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+        }
+
+        html.dark #theme-heo #sideRight .heo-card.heo-infocard-v2:hover,
+        html.dark #theme-heo #sideRight .heo-card.heo-infocard-v2:focus-within {
+            border-color: rgba(245, 158, 11, 0.34) !important;
+            box-shadow: 0 24px 54px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
         }
 
         @media (hover: hover) {

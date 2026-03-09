@@ -1,104 +1,151 @@
-# 🎵 灵动岛播放器一键安装包
+# DynamicIslandPlayer
 
-专为 NotionNext 项目设计的 macOS 风格灵动岛音乐播放器
+给 NotionNext/Next.js 博客使用的灵动岛播放器安装包。
 
-## ✨ 特性
+## 最小可运行接入
 
-- **灵动岛设计** - macOS 风格的悬浮岛设计，完美适配暗色/亮色模式
-- **歌词弹幕** - 创新的弹幕式歌词显示效果
-- **文章内嵌** - 支持在文章内嵌入音频卡片
-- **智能加载** - 优雅的资源加载状态处理
-- **无缝集成** - 与 APlayer 音频引擎深度集成
+默认推荐先走最小接入，只启用：
 
-## 📦 文件结构
+- 全局 `APlayer` 引擎
+- 悬浮式 `DynamicIslandPlayer` UI
+- `/api/meting` 音频代理
 
-```
+### 文件清单
+
+```text
 DynamicIslandPlayer/
 ├── components/
-│   ├── DynamicIslandPlayer.js    # 灵动岛悬浮播放器
-│   ├── Player.js                 # 音频引擎
-│   └── InlineIslandAudio.js      # 文章内嵌播放器
+│   ├── DynamicIslandPlayer.js
+│   ├── InlineIslandAudio.js
+│   └── Player.js
 ├── pages/
 │   └── api/
-│       └── meting.js             # 音频代理API
-├── install.sh                    # 一键安装脚本
-├── package.json                  # 依赖配置
-└── guide.md                      # 详细指南
+│       └── meting.js
+├── guide.md
+├── install.ps1
+├── install.sh
+└── README.md
 ```
 
-## 🚀 快速开始
+### 复制文件
 
-### 一键安装
+最小接入只需要复制：
+
+- `DynamicIslandPlayer/components/Player.js` -> `components/Player.js`
+- `DynamicIslandPlayer/components/DynamicIslandPlayer.js` -> `components/DynamicIslandPlayer.js`
+- `DynamicIslandPlayer/pages/api/meting.js` -> `pages/api/meting.js`
+
+Windows 可执行：
+
+```powershell
+./DynamicIslandPlayer/install.ps1
+```
+
+macOS / Linux 可执行：
 
 ```bash
-# 下载并运行安装脚本
-./install.sh
+bash ./DynamicIslandPlayer/install.sh
 ```
 
-### 手动安装
+### 挂载入口
 
-1. **安装依赖**
-```bash
-npm install aplayer
-```
+在 `components/ExternalPlugins.js` 中保持和主项目一致的挂载方式：
 
-2. **复制文件**
-- 将 `components/` 下的文件复制到项目的 `components/` 目录
-- 将 `pages/api/meting.js` 复制到项目的 `pages/api/` 目录
+- 动态引入 `MusicPlayer`
+- 动态引入 `DynamicIslandPlayer`
+- 在 `MUSIC_PLAYER` 开启时同时渲染它们
 
-3. **配置项目**
+如果你就是基于当前主项目仓库使用这套安装包，那么这一步通常已经就位：`components/ExternalPlugins.js` 已包含这两个动态导入，并且已在 `MUSIC_PLAYER` 条件下同时挂载；安装脚本不会改动该文件。
 
-在 `blog.config.js` 中添加配置：
+### 配置项
+
+在 `blog.config.js` 或 `conf/widget.config.js` 中配置：
+
 ```javascript
-// 音乐播放器配置
 MUSIC_PLAYER: true,
-MUSIC_PLAYER_METING_ID: '你的音乐ID',
+MUSIC_PLAYER_METING: true,
+MUSIC_PLAYER_METING_ID: '你的音乐ID,多个可逗号分隔',
+MUSIC_PLAYER_METING_API: '/api/meting?url=:id',
 MUSIC_PLAYER_AUTO_PLAY: false,
 MUSIC_PLAYER_VISIBLE: true,
 ```
 
-## 🔧 配置选项
+可选配置：
 
-### 全局配置 (blog.config.js)
+```javascript
+MUSIC_PLAYER_ORDER: 'list',
+MUSIC_PLAYER_LRC_TYPE: 0,
+MUSIC_PLAYER_CDN_URL: 'https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js',
+MUSIC_PLAYER_STYLE_CDN_URL: 'https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css',
+MUSIC_PLAYER_AUDIO_LIST: [
+  {
+    name: '本地回退歌曲',
+    artist: 'Unknown',
+    url: 'https://example.com/demo.mp3',
+    cover: '/avatar.png',
+    lrc: ''
+  }
+]
+```
 
-| 选项 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| MUSIC_PLAYER | boolean | true | 启用音乐播放器 |
-| MUSIC_PLAYER_METING_ID | string | '' | 音乐歌单ID |
-| MUSIC_PLAYER_AUTO_PLAY | boolean | false | 自动播放 |
-| MUSIC_PLAYER_VISIBLE | boolean | true | 显示播放器 |
+## meting 上游接口配置
 
-### 环境变量
+不要把上游地址写死在 `pages/api/meting.js` 里，统一通过环境变量配置：
 
-- `NOTION_ACCESS_TOKEN` - Notion API 访问令牌（用于读取元数据）
+```bash
+MUSIC_PLAYER_METING_UPSTREAM=https://你的-meting-服务地址
+```
 
-## 📖 使用指南
+如果你的上游不是默认参数名 `url / level / type`，继续配置：
 
-### 1. 在文章中使用音频
+```bash
+MUSIC_PLAYER_METING_UPSTREAM_URL_PARAM=id
+MUSIC_PLAYER_METING_UPSTREAM_LEVEL_PARAM=br
+MUSIC_PLAYER_METING_UPSTREAM_TYPE_PARAM=format
+```
 
-在 Notion 文章中插入音频块，系统会自动转换为内嵌播放器。
+例如前端请求：
 
-### 2. 自定义歌单
+```text
+/api/meting?url=123456
+```
 
-编辑 `MUSIC_PLAYER_METING_ID` 配置，支持多个ID用逗号分隔。
+可转发成：
 
-### 3. 歌词显示
+```text
+https://你的-meting-服务地址?id=123456&br=jyeffect&format=json
+```
 
-灵动岛播放器会自动显示当前播放歌曲的歌词，以弹幕形式从右向左滚动。
+## 增强接入
 
-## 🎨 自定义样式
+如果你还想把文章中的音频块也转换成统一卡片，再继续接入：
 
-所有样式都支持自动暗色模式切换，你也可以通过修改 CSS 变量来自定义外观。
+- `DynamicIslandPlayer/components/InlineIslandAudio.js`
+- `components/NotionPage.js` 中的 Audio 映射/DOM 转换逻辑
+- `pages/api/audio-meta.js`
+- `lib/server/audioMeta.js`
 
-## 📄 许可证
+增强模式还需要：
 
-MIT License
+- `MUSIC_PLAYER_ARTICLE_AUDIO_CONVERT`
+- `MUSIC_PLAYER_ARTICLE_META_ENABLE`
+- `MUSIC_PLAYER_ARTICLE_META_DB_ID`
+- `NOTION_ACCESS_TOKEN`
 
-## 🤝 贡献
+## 接入原则
 
-欢迎提交 Issue 和 Pull Request！
+- 最小接入不要求 `npm install aplayer`
+- `Player.js` 已去掉对 `@/lib/config`、`@/lib/utils` 的硬依赖
+- `DynamicIslandPlayer.js` 只依赖浏览器侧的 `window.__APPLAYER__`，不要求额外主项目私有上下文
+- `InlineIslandAudio.js` 不是最小接入必需文件
+- 最小接入链路只包含 `Player.js`、`DynamicIslandPlayer.js`、`pages/api/meting.js`
+- 文章音频增强失败时，应允许回退到普通音频块/普通卡片
 
-## 🔗 相关项目
+## 验证方式
 
-- [NotionNext](https://github.com/tangly1024/NotionNext)
-- [APlayer](https://github.com/DIYgod/APlayer)
+1. 浏览器打开页面后确认 `window.__APPLAYER__` 已创建
+2. 访问 `/api/meting?url=你的歌曲ID`，确认能返回音频数组
+3. 播放/暂停时灵动岛 UI 能同步状态
+4. 断开上游后，确认仍可回退到 `MUSIC_PLAYER_AUDIO_LIST`
+
+更多细节见 `DynamicIslandPlayer/guide.md`。

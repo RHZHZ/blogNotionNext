@@ -1,0 +1,89 @@
+import {
+  applyArticleMediaDecorations,
+  applyImageGalleryLayoutToArticle
+} from '@/components/NotionPage'
+
+jest.mock('next/dynamic', () => () => {
+  const DynamicComponent = () => null
+  DynamicComponent.displayName = 'LoadableComponent'
+  DynamicComponent.preload = jest.fn()
+  return DynamicComponent
+})
+
+jest.mock('react-notion-x', () => ({
+  NotionRenderer: () => null
+}))
+
+jest.mock('@fisch0920/medium-zoom', () =>
+  jest.fn(() => ({
+    clone: () => ({ attach: jest.fn() })
+  }))
+)
+
+jest.mock('@/lib/config', () => ({
+  siteConfig: jest.fn((key, defaultValue) => defaultValue)
+}))
+
+jest.mock('@/lib/utils', () => ({
+  isBrowser: false,
+  loadExternalResource: jest.fn(() => Promise.resolve())
+}))
+
+describe('components/NotionPage helpers', () => {
+  const createArticleDom = () => {
+    const article = document.createElement('div')
+    article.id = 'notion-article'
+    article.innerHTML = `
+      <figure class="notion-asset-wrapper-image">
+        <img alt="demo" src="https://example.com/demo.jpg" />
+      </figure>
+      <figcaption class="notion-asset-caption">Image Caption</figcaption>
+      <div class="notion-row">
+        <div class="notion-column">
+          <figure class="notion-asset-wrapper-image">
+            <img alt="gallery-1" src="https://example.com/gallery-1.jpg" />
+          </figure>
+        </div>
+        <div class="notion-column">
+          <figure class="notion-asset-wrapper-image">
+            <img alt="gallery-2" src="https://example.com/gallery-2.jpg" />
+          </figure>
+        </div>
+      </div>
+      <div class="notion-audio"><audio src="https://example.com/audio.mp3"></audio></div>
+      <pre class="notion-code language-js"><code>const value = 1</code></pre>
+      <blockquote>Quoted text</blockquote>
+      <div class="notion-callout">Callout</div>
+      <div class="notion-bookmark">Bookmark</div>
+      <div class="notion-pdf">PDF</div>
+      <div class="notion-asset-wrapper">
+        <iframe title="embed-demo" src="https://example.com/embed"></iframe>
+      </div>
+    `
+
+    return article
+  }
+
+  it('adds heo media markers without breaking gallery structure', () => {
+    const article = createArticleDom()
+
+    applyImageGalleryLayoutToArticle({ article, width: 1280 })
+    applyArticleMediaDecorations(article)
+
+    expect(article).toHaveAttribute('data-heo-reading-surface', 'true')
+    expect(article.querySelector('.notion-row')).toHaveClass('heo-image-gallery-row')
+    expect(article.querySelector('.notion-audio')).toHaveAttribute('data-heo-block', 'audio')
+    expect(article.querySelector('pre.notion-code')).toHaveAttribute('data-heo-block', 'code')
+    expect(article.querySelector('blockquote')).toHaveAttribute('data-heo-block', 'quote')
+    expect(article.querySelector('.notion-callout')).toHaveAttribute('data-heo-block', 'callout')
+    expect(article.querySelector('.notion-bookmark')).toHaveAttribute('data-heo-block', 'bookmark')
+    expect(article.querySelector('.notion-pdf')).toHaveAttribute('data-heo-block', 'pdf')
+    expect(article.querySelector('.notion-asset-wrapper')).toHaveAttribute('data-heo-block', 'embed')
+    expect(article.querySelector('.notion-asset-caption')).toHaveClass('heo-article-caption')
+    expect(
+      article.querySelector('.notion-column > figure.notion-asset-wrapper-image')
+    ).not.toBeNull()
+
+  })
+})
+

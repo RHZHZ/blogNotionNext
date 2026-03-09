@@ -63,24 +63,25 @@ export default function SideRight(props) {
     <div id='sideRight' className='hidden xl:block h-full w-72 space-y-4'>
       <InfoCard {...props} className='w-72 wow fadeInUp' />
 
-      <div className='sticky top-20 space-y-4'>
+      <div className='heo-side-right-sticky sticky top-20 space-y-4'>
         {/* 文章页显示目录 */}
         {post && post.toc && post.toc.length > 0 && (
           <Card
-            className='heo-card--interactive wow fadeInUp rounded-[1.75rem] border p-4 backdrop-blur-xl'>
-            <div className='mb-3 px-1'>
+            className='heo-card--interactive heo-toc-card wow fadeInUp rounded-[1.75rem] border p-4 backdrop-blur-xl'>
+            <div className='heo-toc-card__header mb-3 px-1'>
               <div
                 style={sectionLabelStyle}
-                className='text-[11px] font-semibold uppercase tracking-[0.24em]'>
+                className='heo-toc-card__eyebrow text-[11px] font-semibold uppercase tracking-[0.24em]'>
                 Article
               </div>
-              <div style={sectionTitleStyle} className='mt-1 text-lg font-semibold'>
+              <div style={sectionTitleStyle} className='heo-toc-card__title mt-1 text-lg font-semibold'>
                 {locale.COMMON.TABLE_OF_CONTENTS}
               </div>
             </div>
             <Catalog toc={post.toc} showHeader={false} />
           </Card>
         )}
+
 
         {/* 联系交流群 */}
         <div className='wow fadeInUp'>
