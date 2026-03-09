@@ -252,23 +252,25 @@ export default function AlgoliaSearchModal({ cRef }) {
       {/* 遮罩 */}
       <div
         onClick={closeModal}
-        className='absolute inset-0 z-0 glassmorphism'
+        className='absolute inset-0 z-0 bg-slate-950/18 backdrop-blur-[6px] dark:bg-black/45'
       />
 
       {/* 模态框 */}
       <div
         className={`${
           isModalOpen ? 'opacity-100 translate-y-0' : 'invisible opacity-0 translate-y-6'
-        } relative z-10 flex min-h-[10rem] w-full max-w-xl flex-col justify-between rounded-2xl border bg-white p-4 shadow duration-300 transition-all hover:border-blue-600 dark:border-gray-800 dark:bg-hexo-black-gray sm:max-h-[80vh] sm:rounded-lg sm:p-5`}>
-        <div className='flex justify-between items-center'>
+        } relative z-10 flex min-h-[10rem] w-full max-w-xl flex-col justify-between rounded-[1.75rem] border border-slate-200/80 bg-white/95 p-4 shadow-[0_24px_64px_rgba(15,23,42,0.16)] backdrop-blur-xl duration-300 transition-all hover:border-blue-300 dark:border-white/10 dark:bg-[#111318]/88 dark:shadow-[0_24px_72px_rgba(0,0,0,0.45)] sm:max-h-[80vh] sm:rounded-[1.5rem] sm:p-5`}>
+        <div className='flex justify-between items-center gap-3'>
           <div className='text-2xl text-blue-600 dark:text-yellow-600 font-bold'>
             搜索
           </div>
-          <div>
-            <i
-              className='text-gray-600 fa-solid fa-xmark p-1 cursor-pointer hover:text-blue-600'
-              onClick={closeModal}></i>
-          </div>
+          <button
+            type='button'
+            aria-label='关闭搜索'
+            className='inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/80 text-gray-600 transition-all hover:border-blue-300 hover:text-blue-600 dark:border-white/10 dark:text-gray-300 dark:hover:border-yellow-500/50 dark:hover:text-yellow-400'
+            onClick={closeModal}>
+            <i className='fa-solid fa-xmark' />
+          </button>
         </div>
 
         <input
@@ -277,7 +279,7 @@ export default function AlgoliaSearchModal({ cRef }) {
           onChange={e => handleInputChange(e)}
           onFocus={() => setIsInputFocused(true)}
           onBlur={() => setIsInputFocused(false)}
-          className='text-black dark:text-gray-200 bg-gray-50 dark:bg-gray-600 outline-blue-500 w-full px-4 my-2 py-1 mb-4 border rounded-md'
+          className='text-black dark:text-gray-200 bg-slate-50/90 dark:bg-white/5 outline-blue-500 w-full px-4 my-2 py-2.5 mb-4 border border-slate-200/80 dark:border-white/10 rounded-xl placeholder:text-gray-400 dark:placeholder:text-gray-500'
           ref={inputRef}
         />
 
@@ -311,16 +313,16 @@ export default function AlgoliaSearchModal({ cRef }) {
           ))}
         </ul>
         <Pagination totalPage={totalPage} page={page} switchPage={switchPage} />
-        <div className='flex items-center justify-between mt-2 sm:text-sm text-xs dark:text-gray-300'>
+        <div className='mt-3 flex flex-col gap-3 border-t border-slate-200/70 pt-3 text-xs text-gray-600 dark:border-white/10 dark:text-gray-300 sm:mt-2 sm:flex-row sm:items-center sm:justify-between sm:text-sm'>
           {totalHit === 0 && (
-            <div className='flex items-center'>
+            <div className='hidden items-center sm:flex'>
               {ShortCutActions.map((action, index) => {
                 return (
                   <Fragment key={index}>
                     <div className='border-gray-300 dark:text-gray-300 text-gray-600 px-2 rounded border inline-block'>
                       {action.key}
                     </div>
-                    <span className='ml-2 mr-4  text-gray-600 dark:text-gray-300'>
+                    <span className='ml-2 mr-4 text-gray-600 dark:text-gray-300'>
                       {action.action}
                     </span>
                   </Fragment>
@@ -328,14 +330,16 @@ export default function AlgoliaSearchModal({ cRef }) {
               })}
             </div>
           )}
-          <div>
-            {totalHit > 0 && (
+          <div className='sm:flex-1 sm:text-center'>
+            {totalHit > 0 ? (
               <p>
                 共搜索到 {totalHit} 条结果，用时 {useTime} 毫秒
               </p>
+            ) : (
+              <p className='sm:hidden'>输入关键词开始搜索</p>
             )}
           </div>
-          <div className='text-gray-600 dark:text-gray-300  text-right'>
+          <div className='text-left sm:text-right'>
             <span>
               <i className='fa-brands fa-algolia'></i> Algolia 提供搜索服务
             </span>
