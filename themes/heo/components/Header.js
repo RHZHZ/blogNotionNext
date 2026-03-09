@@ -22,6 +22,7 @@ const Header = props => {
   const [textWhite, setTextWhite] = useState(false)
   const [navBgWhite, setBgWhite] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
+  const [compactMobileReadingNav, setCompactMobileReadingNav] = useState(false)
 
   const router = useRouter()
   const slideOverRef = useRef()
@@ -98,8 +99,30 @@ const Header = props => {
       }
     }
   }, [])
-
   const hasPostBg = isBrowser && !!document.querySelector('#post-bg')
+
+  useEffect(() => {
+    const syncCompactMobileReadingNav = () => {
+      if (!isBrowser) return
+      const isSmallMobile = window.innerWidth <= 430
+      const isPostPage = !!document.querySelector('#post-bg')
+      setCompactMobileReadingNav(Boolean(isPostPage && isSmallMobile && window.scrollY > 48))
+    }
+
+    syncCompactMobileReadingNav()
+
+    if (isBrowser) {
+      window.addEventListener('scroll', syncCompactMobileReadingNav)
+      window.addEventListener('resize', syncCompactMobileReadingNav)
+    }
+
+    return () => {
+      if (isBrowser) {
+        window.removeEventListener('scroll', syncCompactMobileReadingNav)
+        window.removeEventListener('resize', syncCompactMobileReadingNav)
+      }
+    }
+  }, [router.asPath])
 
   return (
     <>
@@ -117,14 +140,15 @@ const Header = props => {
             ${fixedNav ? 'fixed' : ''}
             ${hasPostBg ? 'heo-top-nav--post' : 'heo-top-nav--page'}
             ${navBgWhite ? 'heo-top-nav--floating' : 'heo-top-nav--flat'}
+            ${compactMobileReadingNav ? 'heo-top-nav--mobile-compact' : ''}
             ${textWhite ? 'text-white ' : 'text-black dark:text-white'} bg-transparent`}>
         <div className='heo-top-nav__inner flex h-full mx-auto items-center max-w-[86rem] px-6'>
           <div className='heo-top-nav__rail heo-top-nav__rail--brand flex items-center justify-start'>
             {/* 左侧logo */}
-            <div className='heo-top-nav__brand hidden lg:flex'>
+            <div className={`heo-top-nav__brand hidden lg:flex ${compactMobileReadingNav ? 'heo-top-nav__brand--compact-hidden' : ''}`}>
               <Logo {...props} />
             </div>
-            <div className='heo-top-nav__brand heo-top-nav__brand--mobile flex lg:hidden'>
+            <div className={`heo-top-nav__brand heo-top-nav__brand--mobile flex lg:hidden ${compactMobileReadingNav ? 'heo-top-nav__brand--compact-hidden' : 'heo-top-nav__brand--mobile-compact'}`}>
               <Logo {...props} />
             </div>
           </div>
@@ -161,10 +185,10 @@ const Header = props => {
               <ReadingProgress />
             </div>
 
-            <div className='heo-header-action-group heo-header-action-group--mobile flex lg:hidden'>
-              <RandomPostButton {...props} />
+            <div className={`heo-header-action-group heo-header-action-group--mobile flex lg:hidden ${compactMobileReadingNav ? 'heo-header-action-group--mobile-compact' : ''}`}>
+              {!compactMobileReadingNav && <RandomPostButton {...props} />}
               <SearchButton {...props} />
-              <ReadingProgress />
+              {!compactMobileReadingNav && <ReadingProgress />}
               <button
                 type='button'
                 onClick={toggleMenuOpen}

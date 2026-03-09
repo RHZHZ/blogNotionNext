@@ -2062,18 +2062,37 @@ const Style = () => {
             font-weight: 600 !important;
         }
 
-        @media (hover: hover) {
-            #theme-heo #nav-bar-swipe nav#nav-mobile .heo-nav-menu__link:hover,
-            #theme-heo #nav-bar-swipe nav#nav-mobile .heo-nav-menu__trigger:hover,
-                /* 右侧图标按钮 hover (针对 SearchButton, DarkModeButton, RandomPostButton 等) */
-            #theme-heo nav#nav .flex-shrink-0 .cursor-pointer:hover {
-                border-radius: 999px;
-                background-color: rgba(248, 250, 252, 0.92) !important;
-                border: 1px solid rgba(191, 219, 254, 0.78) !important;
-                box-shadow: 0 8px 18px rgba(59, 130, 246, 0.07) !important;
-                color: #334155 !important;
-                transform: translateY(-1px);
+
+        @media (max-width: 430px) {
+            #theme-heo nav#nav.heo-top-nav.heo-top-nav--mobile-compact .heo-top-nav__inner {
+                padding-top: 0.32rem;
+                padding-bottom: 0.32rem;
+                padding-left: 0.85rem;
+                padding-right: 0.85rem;
             }
+
+            #theme-heo nav#nav.heo-top-nav.heo-top-nav--mobile-compact .heo-top-nav__rail--brand {
+                display: none;
+            }
+
+            #theme-heo nav#nav.heo-top-nav.heo-top-nav--mobile-compact .heo-top-nav__rail--actions {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            #theme-heo nav#nav.heo-top-nav.heo-top-nav--mobile-compact .heo-header-action-group--mobile {
+                margin-left: auto;
+                gap: 0.12rem;
+                min-height: 2.5rem;
+                padding: 0.18rem 0.2rem;
+            }
+
+            #theme-heo nav#nav.heo-top-nav.heo-top-nav--mobile-compact .heo-header-action-group--mobile .heo-header-action-btn {
+                width: 2.12rem;
+                height: 2.12rem;
+                font-size: 0.96rem;
+            }
+        }
 
             html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .heo-nav-menu__link:hover,
             html.dark #theme-heo #nav-bar-swipe nav#nav-mobile .heo-nav-menu__trigger:hover,
