@@ -34,10 +34,10 @@ function getHeroReadingPreviewConfig() {
   const fallbackBooks = (recentBooks.length ? recentBooks : favoriteBooks).slice(0, DESKTOP_READING_LIMIT)
 
   return {
-    title: recentBookShelf?.title || '我最近在读的书',
-    description: recentBookShelf?.description || '最近在这些书里来回切换，完整书单继续展开看。',
+    title: recentBookShelf?.title || '我最近在读',
+    description: recentBookShelf?.description || '这里会放我最近在翻的书，想看完整清单就继续点进去。',
     link: recentBookShelf?.link || bookList?.pagePath || '/booklist',
-    linkText: recentBookShelf?.linkText || '我的书单',
+    linkText: recentBookShelf?.linkText || '去看完整书单',
     shelfName: Array.isArray(profile?.wereadSync?.recentShelfNames)
       ? profile.wereadSync.recentShelfNames[0] || '最近在读'
       : '最近在读',
@@ -59,14 +59,24 @@ function normalizeHeroReadingBook(book, index) {
 
 function useHeroReadingBooks(limit) {
   const previewConfig = useMemo(() => getHeroReadingPreviewConfig(), [])
-  const [books, setBooks] = useState(previewConfig.fallbackBooks.map(normalizeHeroReadingBook).filter(Boolean).slice(0, limit))
+  const initialBooks = previewConfig.fallbackBooks.map(normalizeHeroReadingBook).filter(Boolean).slice(0, limit)
+  const [books, setBooks] = useState(initialBooks)
+  const [isLoading, setIsLoading] = useState(!initialBooks.length)
 
   useEffect(() => {
     let active = true
 
     async function loadBooks() {
+      if (active) {
+        setIsLoading(true)
+      }
+
       try {
-        const response = await fetch('/api/booklist')
+        const response = await fetch('/api/booklist', { cache: 'default' })
+        if (response.status === 304) {
+          if (active) setIsLoading(false)
+          return
+        }
         if (!response.ok) throw new Error('booklist fetch failed')
         const result = await response.json()
         if (!active) return
@@ -83,25 +93,29 @@ function useHeroReadingBooks(limit) {
 
         if (filtered.length) {
           setBooks(filtered)
+          setIsLoading(false)
           return
         }
       } catch (error) {}
 
       if (!active) return
-      setBooks(previewConfig.fallbackBooks.map(normalizeHeroReadingBook).filter(Boolean).slice(0, limit))
+      setBooks(initialBooks)
+      setIsLoading(false)
     }
 
     loadBooks()
     return () => {
       active = false
     }
-  }, [limit, previewConfig])
+  }, [initialBooks, limit, previewConfig])
 
   return {
     books,
-    config: previewConfig
+    config: previewConfig,
+    isLoading
   }
 }
+
 
 function getHeroPosts({ latestPosts, allNavPages }) {
   const sourcePosts = Array.isArray(allNavPages) && allNavPages.length ? allNavPages : latestPosts || []
@@ -216,9 +230,9 @@ function DesktopHeroSlider({ posts, siteInfo }) {
 }
 
 function DesktopHeroBooks() {
-  const { books, config } = useHeroReadingBooks(DESKTOP_READING_LIMIT)
-
-  if (!books.length) return null
+  const { books, config, isLoading } = useHeroReadingBooks(DESKTOP_READING_LIMIT)
+  const shouldRenderSkeleton = !books.length && isLoading
+  const shouldRenderEmpty = !books.length && !isLoading
 
   return (
     <aside className='heo-hero-books heo-card'>
@@ -236,35 +250,60 @@ function DesktopHeroBooks() {
       <p className='heo-hero-books__desc'>{config.description}</p>
 
       <div className='heo-hero-books__list'>
-        {books.map((book, index) => (
-          <SmartLink key={book.id || index} href={config.link} className='heo-hero-books__item'>
-            <div className='heo-hero-books__cover-wrap'>
-              {book.cover ? (
-                <LazyImage src={book.cover} alt={book.title} className='heo-hero-books__cover' />
-              ) : (
-                <div className='heo-hero-books__cover heo-hero-books__cover--placeholder'>
-                  {String(book.title || '').slice(0, 1) || '读'}
+        {shouldRenderSkeleton
+          ? Array.from({ length: DESKTOP_READING_LIMIT }).map((_, index) => (
+              <div key={`skeleton-${index}`} className='heo-hero-books__item heo-hero-books__item--skeleton'>
+                <div className='heo-hero-books__cover-wrap'>
+                  <div className='heo-hero-books__cover heo-hero-books__cover--skeleton' />
                 </div>
-              )}
-            </div>
-            <div className='heo-hero-books__meta'>
-              <div className='heo-hero-books__book-title line-clamp-2'>{book.title}</div>
-              <div className='heo-hero-books__book-author line-clamp-1'>{book.author || '微信读书'}</div>
-            </div>
-          </SmartLink>
-        ))}
+                <div className='heo-hero-books__meta'>
+                  <div className='heo-hero-books__line heo-hero-books__line--title' />
+                  <div className='heo-hero-books__line heo-hero-books__line--author' />
+                </div>
+              </div>
+            ))
+          : shouldRenderEmpty
+            ? (
+              <SmartLink href={config.link} className='heo-hero-books__empty'>
+                <div className='heo-hero-books__empty-icon'>阅</div>
+                <div className='heo-hero-books__empty-copy'>
+                  <div className='heo-hero-books__empty-title'>书单还在整理中</div>
+                  <div className='heo-hero-books__empty-text'>先去书单页看看，后续这里会展示最近在读。</div>
+                </div>
+                <div className='heo-hero-books__empty-action'>打开书单</div>
+              </SmartLink>
+            )
+            : books.map((book, index) => (
+              <SmartLink key={book.id || index} href={config.link} className='heo-hero-books__item'>
+                <div className='heo-hero-books__cover-wrap'>
+                  {book.cover ? (
+                    <LazyImage src={book.cover} alt={book.title} className='heo-hero-books__cover' />
+                  ) : (
+                    <div className='heo-hero-books__cover heo-hero-books__cover--placeholder'>
+                      {String(book.title || '').slice(0, 1) || '读'}
+                    </div>
+                  )}
+                </div>
+                <div className='heo-hero-books__meta'>
+                  <div className='heo-hero-books__book-title line-clamp-2'>{book.title}</div>
+                  <div className='heo-hero-books__book-author line-clamp-1'>{book.author || '微信读书'}</div>
+                </div>
+              </SmartLink>
+            ))}
       </div>
     </aside>
   )
 }
 
+
 function MobileHero(props) {
   const heroPosts = getHeroPosts(props).slice(0, 3)
-  const { books, config } = useHeroReadingBooks(MOBILE_READING_LIMIT)
+  const { books, config, isLoading } = useHeroReadingBooks(MOBILE_READING_LIMIT)
 
   if (!heroPosts.length) return null
 
   return (
+
     <div className='heo-mobile-hero xl:hidden max-w-[86rem] mx-auto'>
       <div className='heo-mobile-hero__slider flex gap-3 overflow-x-auto pb-2'>
         {heroPosts.map((post, index) => {
@@ -300,12 +339,17 @@ function MobileHero(props) {
         })}
       </div>
 
-      {books.length ? (
-        <section className='heo-mobile-reading-entry heo-card'>
+      <section className='heo-mobile-reading-entry heo-card'>
+
           <div className='heo-mobile-reading-entry__head'>
             <div className='heo-mobile-reading-entry__head-main'>
               <div className='heo-mobile-reading-entry__eyebrow'>Reading</div>
               <div className='heo-mobile-reading-entry__title line-clamp-2'>{config.title}</div>
+              {!books.length && !isLoading ? (
+                <div className='heo-mobile-reading-entry__empty-text line-clamp-2'>
+                  书单还在整理中，先去书单页看看最近阅读计划。
+                </div>
+              ) : null}
             </div>
             <SmartLink href={config.link} className='heo-mobile-reading-entry__link'>
               <span>{config.linkText}</span>
@@ -325,7 +369,17 @@ function MobileHero(props) {
                   </div>
                 )}
               </SmartLink>
-            ) : null}
+            ) : isLoading ? (
+              <div className='heo-mobile-reading-entry__cover-link heo-mobile-reading-entry__cover-link--primary heo-mobile-reading-entry__cover-link--skeleton'>
+                <div className='heo-mobile-reading-entry__cover heo-mobile-reading-entry__cover--skeleton' />
+              </div>
+            ) : (
+              <SmartLink
+                href={config.link}
+                className='heo-mobile-reading-entry__cover-link heo-mobile-reading-entry__cover-link--primary heo-mobile-reading-entry__cover-link--empty'>
+                <div className='heo-mobile-reading-entry__cover heo-mobile-reading-entry__cover--empty'>阅</div>
+              </SmartLink>
+            )}
             {books[1] ? (
               <SmartLink
                 href={config.link}
@@ -338,10 +392,20 @@ function MobileHero(props) {
                   </div>
                 )}
               </SmartLink>
-            ) : null}
+            ) : isLoading ? (
+              <div className='heo-mobile-reading-entry__cover-link heo-mobile-reading-entry__cover-link--peek heo-mobile-reading-entry__cover-link--skeleton'>
+                <div className='heo-mobile-reading-entry__cover heo-mobile-reading-entry__cover--skeleton' />
+              </div>
+            ) : (
+              <SmartLink
+                href={config.link}
+                className='heo-mobile-reading-entry__cover-link heo-mobile-reading-entry__cover-link--peek heo-mobile-reading-entry__cover-link--empty'>
+                <div className='heo-mobile-reading-entry__cover heo-mobile-reading-entry__cover--empty'>读</div>
+              </SmartLink>
+            )}
+
           </div>
         </section>
-      ) : null}
     </div>
   )
 }

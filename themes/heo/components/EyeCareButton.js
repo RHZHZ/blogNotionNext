@@ -5,6 +5,11 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 const MIN_EYE_CARE_INTENSITY = 72
 const MAX_EYE_CARE_INTENSITY = 100
 
+const emitModeToast = message => {
+  if (typeof window === 'undefined' || !message) return
+  window.dispatchEvent(new CustomEvent('heo-mode-toast', { detail: { message } }))
+}
+
 export default function EyeCareButton() {
   const {
     isEyeCareMode,
@@ -37,26 +42,9 @@ export default function EyeCareButton() {
   )
 
   useEffect(() => {
-    if (!isDragging) return
-
-    const handlePointerMove = e => {
-      updateIntensityFromClientX(e.clientX)
-    }
-
-    const stopDragging = () => {
-      setIsDragging(false)
-    }
-
-    window.addEventListener('pointermove', handlePointerMove)
-    window.addEventListener('pointerup', stopDragging)
-    window.addEventListener('pointercancel', stopDragging)
-
-    return () => {
-      window.removeEventListener('pointermove', handlePointerMove)
-      window.removeEventListener('pointerup', stopDragging)
-      window.removeEventListener('pointercancel', stopDragging)
-    }
-  }, [isDragging, updateIntensityFromClientX])
+    if (isEyeCareMode) return
+    setIsDragging(false)
+  }, [isEyeCareMode])
 
   const handlePanelPointerDown = e => {
     if (!isEyeCareMode) return
@@ -64,11 +52,17 @@ export default function EyeCareButton() {
     setIsDragging(true)
   }
 
+  const handleToggleEyeCareMode = () => {
+    const nextStatus = !isEyeCareMode
+    toggleEyeCareMode()
+    emitModeToast(nextStatus ? '护眼模式已经替你点亮了，慢慢调到最舒服的位置吧' : '护眼模式先轻轻退下了，页面也回到原来的光线里')
+  }
+
   return (
     <div className={`heo-eye-care-control ${isEyeCareMode ? 'is-enabled' : ''} ${isDragging ? 'is-dragging' : ''}`}>
       <button
         type='button'
-        onClick={toggleEyeCareMode}
+        onClick={handleToggleEyeCareMode}
         aria-label={isEyeCareMode ? '关闭护眼模式' : '开启护眼模式'}
         title={isEyeCareMode ? '关闭护眼模式' : '开启护眼模式'}
         className='heo-header-action-btn'>
@@ -77,40 +71,40 @@ export default function EyeCareButton() {
         </span>
       </button>
 
-      <div
-        ref={panelRef}
-        role='slider'
-        tabIndex={isEyeCareMode ? 0 : -1}
-        aria-hidden={!isEyeCareMode}
-        aria-label='护眼亮度调节'
-        aria-valuemin={MIN_EYE_CARE_INTENSITY}
-        aria-valuemax={MAX_EYE_CARE_INTENSITY}
-        aria-valuenow={eyeCareIntensity}
-        onPointerDown={handlePanelPointerDown}
-        onKeyDown={e => {
-          if (!isEyeCareMode) return
-          if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
-            e.preventDefault()
-            setEyeCareIntensity(eyeCareIntensity - 1)
-          }
-          if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
-            e.preventDefault()
-            setEyeCareIntensity(eyeCareIntensity + 1)
-          }
-          if (e.key === 'Home') {
-            e.preventDefault()
-            setEyeCareIntensity(MIN_EYE_CARE_INTENSITY)
-          }
-          if (e.key === 'End') {
-            e.preventDefault()
-            setEyeCareIntensity(MAX_EYE_CARE_INTENSITY)
-          }
-        }}
-        style={{ '--heo-eye-care-progress': progress }}
-        className='heo-eye-care-control__panel'>
-        <span className='heo-eye-care-control__label'>亮度</span>
-        <span className='heo-eye-care-control__value'>{eyeCareIntensity}%</span>
-      </div>
+      {isEyeCareMode && (
+        <div
+          ref={panelRef}
+          role='slider'
+          tabIndex={0}
+          aria-label='护眼亮度调节'
+          aria-valuemin={MIN_EYE_CARE_INTENSITY}
+          aria-valuemax={MAX_EYE_CARE_INTENSITY}
+          aria-valuenow={eyeCareIntensity}
+          onPointerDown={handlePanelPointerDown}
+          onKeyDown={e => {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+              e.preventDefault()
+              setEyeCareIntensity(eyeCareIntensity - 1)
+            }
+            if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+              e.preventDefault()
+              setEyeCareIntensity(eyeCareIntensity + 1)
+            }
+            if (e.key === 'Home') {
+              e.preventDefault()
+              setEyeCareIntensity(MIN_EYE_CARE_INTENSITY)
+            }
+            if (e.key === 'End') {
+              e.preventDefault()
+              setEyeCareIntensity(MAX_EYE_CARE_INTENSITY)
+            }
+          }}
+          style={{ '--heo-eye-care-progress': progress }}
+          className='heo-eye-care-control__panel'>
+          <span className='heo-eye-care-control__label'>亮度</span>
+          <span className='heo-eye-care-control__value'>{eyeCareIntensity}%</span>
+        </div>
+      )}
     </div>
   )
 }

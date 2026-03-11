@@ -126,8 +126,8 @@ const CONFIG = {
   // About 页面可自定义内容
   HEO_ABOUT_PROFILE: {
     hero: {
-      badge: 'About Me',
-      title: 'ABOUT ME',
+      badge: '关于我',
+      title: '关于我',
       subtitle: '代码、音乐、阅读与长期主义，组成了我现在的表达方式',
       description:
         '',
@@ -140,13 +140,13 @@ const CONFIG = {
     highlights: ['页面体验', '自动化流程', 'AI 协作', '内容沉淀', '阅读输入'],
     featureCards: [
       {
-        eyebrow: 'Now Building',
+        eyebrow: '最近在做',
         title: '正在打磨的事情',
         description: '最近主要在整理博客页面结构、内容表达和可持续维护方式',
         tags: ['Blog Design', 'Content Structure', 'Maintainability']
       },
       {
-        eyebrow: 'Creative Style',
+        eyebrow: '表达偏好',
         title: '偏爱的表达方式',
         description: '我倾向先拆清问题结构，再把过程沉淀成以后还能复用的内容',
         tags: ['结构化表达', '复盘沉淀', '长期迭代']
@@ -155,7 +155,7 @@ const CONFIG = {
     profileCards: [
       {
         type: 'personality',
-        eyebrow: 'Personality',
+        eyebrow: '性格倾向',
         title: '提倡者',
         accent: 'INFJ-A',
         description: '偏好长期主义、共情沟通与有秩序的表达，也习惯先理解全局再推进落地',
@@ -164,7 +164,7 @@ const CONFIG = {
       },
       {
         type: 'hobby',
-        eyebrow: 'Hobby',
+        eyebrow: '游戏偏好',
         title: 'CSGO',
         accent: '战术协同 / 枪感 / 地图理解',
         description: '喜欢竞技协作、残局博弈和稳定上分带来的节奏感',
@@ -174,7 +174,7 @@ const CONFIG = {
       },
       {
         type: 'reading',
-        eyebrow: 'Weread',
+        eyebrow: '阅读输入',
         title: '微信读书',
         accent: '阅读时长 1300+',
         image: 'https://images.unsplash.com/photo-1579762593175-20226054cad0?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb',
@@ -184,7 +184,7 @@ const CONFIG = {
       },
       {
         type: 'fandom-music',
-        eyebrow: 'Favorites',
+        eyebrow: '偏爱内容',
         title: '热血番与华语流行',
         accent: '七龙珠 / 火影忍者 / 海贼王',
         description: '有时候后悔自己才20几岁就看完了这些动漫',
@@ -210,7 +210,7 @@ const CONFIG = {
           title: '周杰伦',
           subtitle: '许嵩、民谣、华语流行',
           description: '跟 Jay 一起反复循环旋律和故事感，也会继续往更宽的中文音乐世界里走',
-          image: 'https://file.notion.so/f/f/b61f84c4-f972-437a-8bf5-d1e0ef13b71d/6079b12b-1e1a-422b-bbdc-5d4a94db5239/image.png?table=block&id=3209daca-95bb-8049-acb6-e347350d208c&spaceId=b61f84c4-f972-437a-8bf5-d1e0ef13b71d&expirationTimestamp=1773259200000&signature=d2qtUYJy11CuN7LUoi4f5CyhYhYh4YToHHcnY-I-Lec&downloadName=image.png'
+          image: '/images/jay.png'
         }
       }
     ],
@@ -253,8 +253,8 @@ const CONFIG = {
     ],
     contacts: [
       { label: '博客', value: 'https://rhzhz.cn', href: 'https://rhzhz.cn' },
-      { label: 'GitHub', value: 'https://rhzhz.cn', href: 'https://rhzhz.cn' },
-      { label: '邮箱', value: '请填写你的邮箱地址', href: '' }
+      { label: 'GitHub', value: 'https://github.com/RHZHZ', href: 'https://github.com/RHZHZ' },
+      { label: '邮箱', value: 'rhz@rhzhz.cn', href: '' }
     ],
     bookShelf: {
       title: '我最爱的书',

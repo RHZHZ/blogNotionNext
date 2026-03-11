@@ -25,18 +25,10 @@ const Slug = props => {
   const router = useRouter()
   const { locale } = useGlobal()
 
-  if (router.isFallback) {
-    return <Loading />
-  }
-
   // 文章锁🔐
   const [lock, setLock] = useState(post?.password && post?.password !== '')
   const { showNotification, Notification } = useNotification()
 
-  /**
-   * 验证文章密码
-   * @param {*} passInput
-   */
   const validPassword = passInput => {
     if (!post) {
       return false
@@ -87,6 +79,9 @@ const Slug = props => {
   }, [router, lock])
 
   props = { ...props, lock, validPassword }
+  if (router.isFallback) {
+    return <Loading />
+  }
   const theme = siteConfig('THEME', BLOG.THEME, props.NOTION_CONFIG)
   return (
     <>

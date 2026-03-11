@@ -66,8 +66,19 @@ const writeBookListCache = (payload, status) => {
   } catch {}
 }
 
-const fetchBookListPayload = async () => {
-  const response = await fetch('/api/booklist')
+const fetchBookListPayload = async cached => {
+  const response = await fetch('/api/booklist', { cache: 'default' })
+
+  if (response.status === 304) {
+    if (cached?.payload && hasBookListData(cached.payload)) {
+      return {
+        payload: normalizeBookListPayload(cached.payload),
+        status: normalizeRuntimeStatus({ ...(cached.status || {}), fromCache: true })
+      }
+    }
+    throw new Error('书单数据未变化，但当前没有可用缓存')
+  }
+
   if (!response.ok) throw new Error('书单数据读取失败')
   const result = await response.json()
   return {
@@ -113,7 +124,7 @@ const BookListIndex = props => {
           setLoading(true)
         }
         setError('')
-        const nextResult = await fetchBookListPayload()
+        const nextResult = await fetchBookListPayload(cached)
         if (!active) return
         setPayload(nextResult.payload)
         setRuntimeStatus(nextResult.status)

@@ -1838,11 +1838,147 @@ const Style = () => {
             font-weight: 700;
         }
 
-        #theme-heo .heo-hero-books__book-author {
-            margin-top: 0.32rem;
+        #theme-heo .heo-hero-books__item--skeleton {
+            pointer-events: none;
+        }
+
+        #theme-heo .heo-hero-books__cover--skeleton,
+        #theme-heo .heo-hero-books__line,
+        #theme-heo .heo-mobile-reading-entry__cover--skeleton {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(90deg, rgba(226, 232, 240, 0.76) 0%, rgba(241, 245, 249, 0.96) 50%, rgba(226, 232, 240, 0.76) 100%);
+            background-size: 200% 100%;
+            animation: heo-skeleton-shimmer 1.4s ease-in-out infinite;
+        }
+
+        #theme-heo .heo-hero-books__line {
+            border-radius: 999px;
+        }
+
+        #theme-heo .heo-hero-books__line--title {
+            width: 82%;
+            height: 0.92rem;
+        }
+
+        #theme-heo .heo-hero-books__line--author {
+            width: 56%;
+            height: 0.72rem;
+            margin-top: 0.45rem;
+        }
+
+        #theme-heo .heo-hero-books__empty {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 0.95rem;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 1.3rem;
+            border: 1px dashed rgba(99, 102, 241, 0.24);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(238, 242, 255, 0.78));
+            transition: transform var(--heo-dur) var(--heo-ease), border-color var(--heo-dur) var(--heo-ease), box-shadow var(--heo-dur) var(--heo-ease), background var(--heo-dur) var(--heo-ease);
+        }
+
+        #theme-heo .heo-hero-books__empty:hover {
+            transform: translateY(-2px);
+            border-color: rgba(79, 70, 229, 0.28);
+            box-shadow: 0 18px 34px rgba(79, 70, 229, 0.12);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(224, 231, 255, 0.9));
+        }
+
+        #theme-heo .heo-hero-books__empty-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.92), rgba(59, 130, 246, 0.84));
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 800;
+            box-shadow: 0 14px 26px rgba(79, 70, 229, 0.22);
+        }
+
+        #theme-heo .heo-hero-books__empty-copy {
+            min-width: 0;
+        }
+
+        #theme-heo .heo-hero-books__empty-title {
+            color: var(--heo-card-title);
+            font-size: 0.98rem;
+            line-height: 1.35;
+            font-weight: 700;
+        }
+
+        #theme-heo .heo-hero-books__empty-text {
+            margin-top: 0.28rem;
+            color: var(--heo-card-text);
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        #theme-heo .heo-hero-books__empty-action {
+            grid-column: 2;
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            margin-top: 0.12rem;
+            padding: 0.3rem 0.68rem;
+            border-radius: 999px;
+            background: rgba(79, 70, 229, 0.08);
+            color: rgba(79, 70, 229, 0.9);
+            font-size: 0.76rem;
+            font-weight: 700;
+        }
+
+        #theme-heo .heo-mobile-reading-entry__empty-text {
             color: var(--heo-card-text);
             font-size: 0.8rem;
-            line-height: 1.4;
+            line-height: 1.55;
+        }
+
+        #theme-heo .heo-mobile-reading-entry__cover--empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.88), rgba(59, 130, 246, 0.76));
+            color: #fff;
+            font-size: 0.98rem;
+            font-weight: 800;
+        }
+
+        #theme-heo .heo-mobile-reading-entry__cover-link--empty {
+            border: 1px dashed rgba(99, 102, 241, 0.24);
+        }
+
+        html.dark #theme-heo .heo-hero-books__empty {
+            border-color: rgba(245, 158, 11, 0.2);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.72), rgba(30, 41, 59, 0.82));
+        }
+
+        html.dark #theme-heo .heo-hero-books__empty:hover {
+            border-color: rgba(245, 158, 11, 0.28);
+            box-shadow: 0 18px 34px rgba(0, 0, 0, 0.28);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.84), rgba(30, 41, 59, 0.92));
+        }
+
+        html.dark #theme-heo .heo-hero-books__empty-title {
+            color: var(--heo-card-title-dark);
+        }
+
+        html.dark #theme-heo .heo-hero-books__empty-text,
+        html.dark #theme-heo .heo-mobile-reading-entry__empty-text {
+            color: var(--heo-card-text-dark);
+        }
+
+        html.dark #theme-heo .heo-hero-books__empty-action {
+            background: rgba(245, 158, 11, 0.12);
+            color: rgba(255, 230, 179, 0.94);
+        }
+
+        html.dark #theme-heo .heo-mobile-reading-entry__cover-link--empty {
+            border-color: rgba(245, 158, 11, 0.2);
         }
 
         html.dark #theme-heo .heo-hero-slider__overlay {
@@ -1943,6 +2079,15 @@ const Style = () => {
         html.dark #theme-heo .heo-hero-books__item:hover {
             border-color: rgba(245, 158, 11, 0.16);
             box-shadow: 0 16px 32px rgba(0, 0, 0, 0.28);
+        }
+
+        @keyframes heo-skeleton-shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
         }
 
         @media (max-width: 1439px) {
@@ -8490,7 +8635,7 @@ const Style = () => {
         }
 
         #theme-heo .heo-about-profile-card--hobby {
-          background-position: calc(100% + 5.2rem) calc(50% + 3.8rem);
+          background-position: 74% 30%;
           background-size: cover;
           background-repeat: no-repeat;
           background-color: rgba(0, 0, 0, 0.3);
@@ -8847,9 +8992,9 @@ const Style = () => {
         }
 
         #theme-heo .heo-about-profile-card__combo-anime-item:nth-child(3) .heo-about-profile-card__combo-anime-image {
-            transform: scale(1.14);
-            transform-origin: center center;
-            object-position: center top;
+            transform: scale(1.22);
+            transform-origin: 72% 12%;
+            object-position: 72% 10%;
         }
 
         #theme-heo .heo-about-profile-card__combo-anime-overlay {
@@ -9345,9 +9490,9 @@ const Style = () => {
             }
 
             #theme-heo .heo-about-profile-card--hobby {
-                padding-right: 1.15rem;
                 background-size: cover;
-                background-position: calc(100% + 50%) center;
+                background-position: 82% 60%;
+                padding-right: 1.15rem;
             }
 
             #theme-heo .heo-about-persona-layout__card--anime,
@@ -10024,20 +10169,21 @@ const Style = () => {
             }
 
             #theme-heo .heo-about-profile-card__media {
-                width: min(9rem, 52vw);
+                width: min(8rem, 46vw);
             }
 
             #theme-heo .heo-about-profile-card--personality {
-                min-height: 11.4rem;
+                min-height: 9.4rem;
             }
 
             #theme-heo .heo-about-profile-card--personality .heo-about-profile-card__content {
-                max-width: calc(100% - 5.6rem);
+                max-width: none;
             }
 
             #theme-heo .heo-about-profile-card--personality .heo-about-profile-card__media {
-                right: 0.15rem;
-                width: min(7rem, 38vw);
+                right: -0.22rem;
+                bottom: -0.3rem;
+                width: min(7.2rem, 38vw);
             }
 
             #theme-heo .heo-about-section-heading {
@@ -10553,9 +10699,10 @@ const Style = () => {
                 grid-template-columns: none;
                 gap: 0.75rem;
                 overflow-x: auto;
+                overflow-y: visible;
                 overscroll-behavior-x: contain;
                 scrollbar-width: thin;
-                padding-bottom: 0.15rem;
+                padding: 0 0.12rem 0.2rem;
                 -webkit-overflow-scrolling: touch;
             }
 
@@ -10699,6 +10846,7 @@ const Style = () => {
             display: flex;
             flex-direction: column;
             gap: 0.85rem;
+            min-width: 0;
         }
 
         #theme-heo .heo-booklist-hero__badge {
@@ -10727,8 +10875,8 @@ const Style = () => {
             margin-top: 0.55rem;
             font-size: 0.96rem;
             line-height: 1.65;
-            color: rgba(226, 232, 240, 0.86);
-            text-shadow: 0 4px 18px rgba(2, 6, 23, 0.22);
+            color: rgba(51, 65, 85, 0.82);
+            text-shadow: none;
         }
 
         #theme-heo .heo-booklist-hero__description {
@@ -10736,8 +10884,8 @@ const Style = () => {
             max-width: 52rem;
             font-size: 0.9rem;
             line-height: 1.7;
-            color: rgba(226, 232, 240, 0.72);
-            text-shadow: 0 4px 18px rgba(2, 6, 23, 0.18);
+            color: rgba(71, 85, 105, 0.88);
+            text-shadow: none;
         }
 
 
@@ -10774,10 +10922,8 @@ const Style = () => {
             border-color: rgba(16, 185, 129, 0.18);
         }
 
-        #theme-heo .heo-booklist-hero__runtime-tag--warm {
-            color: #b45309;
-            background: rgba(255, 251, 235, 0.92);
-            border-color: rgba(245, 158, 11, 0.18);
+        #theme-heo .heo-booklist-hero__intro-note {
+            color: rgba(71, 85, 105, 0.88);
         }
 
         #theme-heo .heo-booklist-hero__stats {
@@ -10815,6 +10961,7 @@ const Style = () => {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 0.7rem;
+            min-width: 0;
         }
 
         #theme-heo .heo-booklist-hero__highlight {
@@ -10955,15 +11102,15 @@ const Style = () => {
             min-height: 1.7rem;
             padding: 0.2rem 0.58rem;
             border-radius: 999px;
-            background: rgba(245, 158, 11, 0.14);
-            color: #b45309;
-            border: 1px solid rgba(245, 158, 11, 0.18);
+            background: rgba(245, 158, 11, 0.1);
+            color: rgba(180, 83, 9, 0.96);
+            border: 1px solid rgba(245, 158, 11, 0.16);
             font-size: 0.72rem;
             font-weight: 800;
             letter-spacing: 0.08em;
             line-height: 1;
             text-transform: uppercase;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.68);
         }
 
         #theme-heo .heo-booklist-featured__name,
@@ -11195,9 +11342,9 @@ const Style = () => {
 
         html.dark #theme-heo .heo-booklist-featured__eyebrow {
             color: #fbbf24;
-            background: rgba(245, 158, 11, 0.16);
-            border-color: rgba(245, 158, 11, 0.22);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            background: rgba(120, 53, 15, 0.28);
+            border-color: rgba(245, 158, 11, 0.24);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
 
 
@@ -11257,13 +11404,14 @@ const Style = () => {
             #theme-heo .heo-booklist-hero__highlights {
                 grid-auto-columns: minmax(8.5rem, 72%);
                 gap: 0.55rem;
-                padding-bottom: 0.15rem;
+                padding: 0 0.12rem 0.2rem;
             }
 
             #theme-heo .heo-booklist-featured__grid {
                 grid-auto-columns: minmax(15.5rem, 86%);
                 gap: 0.75rem;
-                padding-bottom: 0.15rem;
+                overflow-y: visible;
+                padding: 0 0.12rem 0.2rem;
             }
 
             #theme-heo .heo-booklist-section__head {

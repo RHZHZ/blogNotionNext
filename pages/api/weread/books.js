@@ -77,7 +77,7 @@ const mapBookPayload = payload => {
     ratingCount: bookInfo?.newRatingCount || payload?.newRatingCount || bookInfo?.ratingCount || payload?.ratingCount || 0,
     accentColor: bookInfo?.coverBoxInfo?.dominate_color?.hex || payload?.coverBoxInfo?.dominate_color?.hex || '',
     note: bookId ? `微信读书 ID：${bookId}` : '',
-    href: buildHref(bookId, infoId)
+    href: buildHref(bookId, infoId, payload?.href || bookInfo?.href || reader?.href)
   }
 }
 

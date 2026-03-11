@@ -67,7 +67,7 @@ const CreativeCard = ({ skills }) => {
   return (
     <article className='heo-about-persona-layout__card heo-about-persona-layout__card--creative'>
       <div className='heo-about-persona-layout__creative-copy'>
-        <div className='heo-about-persona-layout__creative-eyebrow'>Creative Zone</div>
+        <div className='heo-about-persona-layout__creative-eyebrow'>创作角落</div>
         <div className='heo-about-persona-layout__creative-title'>吉他 / 编曲 / 长期表达</div>
         <div className='heo-about-persona-layout__creative-desc'>纯属爱好，也确实菜得可以种菜</div>
         <div className='heo-about-persona-layout__creative-tags'>
@@ -161,9 +161,9 @@ const AboutPersona = ({ cards, skills = [] }) => {
     <section className='heo-about-section heo-about-section--persona heo-card'>
       <div className='heo-card__body'>
         <AboutSectionHeading
-          eyebrow='Persona'
+          eyebrow='个性切片'
           title='个性与兴趣'
-          description='喜欢尝试新事物，喜欢创造有意思的东西'
+          description='喜欢尝试新东西，也喜欢把真正在意的部分长期保留下来'
         />
 
         <div className='heo-about-persona-layout'>

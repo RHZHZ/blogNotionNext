@@ -6,11 +6,9 @@ import AboutSectionHeading from './AboutSectionHeading'
 const normalizeSummary = book => book?.summary || book?.AISummary || book?.intro || ''
 const normalizeText = value => String(value || '').trim()
 const buildWereadHref = book => {
-  const infoId = normalizeText(book?.infoId)
-  if (infoId) return `https://weread.qq.com/web/reader/${infoId}`
   const href = normalizeText(book?.href)
-  if (href.includes('/web/reader/')) return href
-  return book?.bookId ? `https://weread.qq.com/web/book/info?bookId=${book.bookId}` : href
+  if (/weread\.qq\.com\/book-detail\?/i.test(href)) return href
+  return normalizeText(process.env.NEXT_PUBLIC_LINK) || '/booklist'
 }
 const isTruthy = value => ['1', 'true', 'yes', 'on'].includes(String(value || '').trim().toLowerCase())
 const formatCooldown = value => {
@@ -23,10 +21,10 @@ const formatCooldown = value => {
 }
 const sourceLabelMap = {
 
-  notion: '当前读取：Notion 持久化快照',
-  'weread+notion': '当前读取：微信读书书单刷新并已写入 Notion',
-  weread: '当前读取：微信读书书单实时结果',
-  config: '当前读取：本地配置回退'
+  notion: '当前展示：Notion 持久化快照',
+  'weread+notion': '当前展示：微信读书已刷新，并同步写入 Notion',
+  weread: '当前展示：微信读书实时结果',
+  config: '当前展示：本地配置回退'
 }
 
 const normalizeBook = book => ({
@@ -252,9 +250,9 @@ const AboutBooks = ({ bookShelf, recentBookShelf, books, recentBooks, wereadSync
         <div className='heo-about-bookshelf-overview'>
           <div className='heo-about-bookshelf-overview__top'>
             <div className='heo-about-bookshelf-overview__main'>
-              <div className='heo-about-section-heading__eyebrow'>Reading Space</div>
+              <div className='heo-about-section-heading__eyebrow'>阅读空间</div>
               <h2 className='heo-about-bookshelf-overview__title'>阅读与书架</h2>
-              <p className='heo-about-bookshelf-overview__desc'>首屏只保留阅读摘要：精选最爱与最近在读分开展示，完整书单交给后续跳转承接。</p>
+              <p className='heo-about-bookshelf-overview__desc'>首屏这里只放一小段阅读摘要：最常翻的和最近在读的分开展示，完整内容放到书单页继续看。</p>
             </div>
             <div className='heo-about-bookshelf-overview__action'>{overviewAction}</div>
           </div>

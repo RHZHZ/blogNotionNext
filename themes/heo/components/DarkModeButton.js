@@ -3,6 +3,11 @@ import { saveDarkModeToLocalStorage } from '@/themes/theme'
 import { Moon, Sun } from '@/components/HeroIcons'
 import { useImperativeHandle } from 'react'
 
+const emitModeToast = message => {
+  if (typeof window === 'undefined' || !message) return
+  window.dispatchEvent(new CustomEvent('heo-mode-toast', { detail: { message } }))
+}
+
 /**
  * 深色模式按钮
  */
@@ -29,6 +34,7 @@ const DarkModeButton = (props) => {
     const htmlElement = document.getElementsByTagName('html')[0]
     htmlElement.classList?.remove(newStatus ? 'light' : 'dark')
     htmlElement.classList?.add(newStatus ? 'dark' : 'light')
+    emitModeToast(newStatus ? '晚一点的光已经替你放轻了，安心看吧' : '天光又亮起来一点了，继续慢慢看吧')
   }
 
   return (

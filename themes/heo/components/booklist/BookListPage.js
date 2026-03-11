@@ -34,7 +34,7 @@ const BookListCard = memo(function BookListCard({ book }) {
       <div className='heo-booklist-card__mobile-title'>{book.title}</div>
       <div className='heo-booklist-card__meta'>
         <div className='heo-booklist-card__title'>{book.title}</div>
-        <div className='heo-booklist-card__author'>{book.author || '作者未标注'}</div>
+        <div className='heo-booklist-card__author'>{book.author || '作者暂未标注'}</div>
         {summary ? <div className='heo-booklist-card__summary'>{summary}</div> : null}
         <div className='heo-booklist-card__footer'>
           <span className='heo-booklist-card__cta'>查看详情</span>
@@ -165,7 +165,7 @@ const BookListPage = ({ pageConfig, sections = [], featuredSections = [], otherS
                 <AboutSectionHeading
                   eyebrow='Browse'
                   title='分组浏览'
-                  description='分组名称直接来自微信读书书架，点击可快速跳到对应 section。'
+                  description='分组名称直接来自微信读书书架，点一下就能跳到对应内容。'
                 />
                 <div className='heo-booklist-nav__summary'>
                   <span className='heo-booklist-nav__summary-value'>{sections.length}</span>
@@ -200,7 +200,7 @@ const BookListPage = ({ pageConfig, sections = [], featuredSections = [], otherS
                 title='精选分组'
                 description='先看我希望你优先浏览的几组书单，再继续往下翻全部内容。'
               />
-              <div className='heo-booklist-featured__lead'>优先入口只保留少量重点分组，避免首屏信息失焦；每张卡都可直接跳到对应 section。</div>
+              <div className='heo-booklist-featured__lead'>这里只留少量重点入口，先帮你收个焦；每张卡都可以直接跳到对应分组。</div>
               {featuredSections.length > 1 ? <div className='heo-booklist-scroll-hint'>左右滑动查看精选分组</div> : null}
               <div className='heo-booklist-featured__grid'>
                 {featuredSections.map((section, index) => (
@@ -229,7 +229,7 @@ const BookListPage = ({ pageConfig, sections = [], featuredSections = [], otherS
         <section className='heo-booklist-empty heo-card'>
           <div className='heo-card__body'>
             <AboutSectionHeading
-              eyebrow='Empty State'
+              eyebrow='暂时为空'
               title={pageConfig.emptyTitle}
               description={pageConfig.emptyDescription}
             />

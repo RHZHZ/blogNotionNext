@@ -40,10 +40,11 @@ const getCookieHeader = () => process.env.WEREAD_COOKIE || ''
 const normalizeBookId = value => String(value || '').trim()
 const normalizeText = value => String(value || '').trim()
 const normalizeName = value => String(value || '').trim().toLowerCase()
-const buildHref = (bookId, infoId = '') => {
-  const normalizedInfoId = normalizeText(infoId)
-  if (normalizedInfoId) return `https://weread.qq.com/web/reader/${normalizedInfoId}`
-  return bookId ? `https://weread.qq.com/web/book/info?bookId=${bookId}` : ''
+const isWereadShareHref = href => /weread\.qq\.com\/book-detail\?/i.test(normalizeText(href))
+const buildHref = rawHref => {
+  const normalizedRawHref = normalizeText(rawHref)
+  if (isWereadShareHref(normalizedRawHref)) return normalizedRawHref
+  return normalizeText(BLOG.LINK)
 }
 
 const splitTextList = value =>
@@ -116,7 +117,7 @@ const mapShelfBook = book => ({
   rating: book?.newRating || book?.rating || 0,
   ratingCount: book?.newRatingCount || book?.ratingCount || 0,
   readUpdateTime: book?.readUpdateTime || 0,
-  href: buildHref(normalizeBookId(book?.bookId), normalizeText(book?.infoId || book?.encodeId))
+  href: buildHref(book?.href)
 })
 
 const mapLectureBook = book => ({

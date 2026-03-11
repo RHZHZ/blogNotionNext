@@ -43,24 +43,24 @@ export const getBookListPageConfig = siteInfo => {
 
   return {
     hero: {
-      badge: bookList.hero?.badge || 'Booklist',
+      badge: bookList.hero?.badge || '阅读清单',
       title: bookList.hero?.title || '我的书单',
       subtitle:
         bookList.hero?.subtitle ||
-        '这里只展示我主动整理并愿意保留下来的书，不是完整书库，而是一份持续生长的阅读策展。',
+        '这里放的不是完整书库，而是我愿意留下来、也确实想继续回看的那部分阅读记录。',
       description:
         bookList.hero?.description ||
-        '你可以把这里当作我的个人阅读空间：有长期偏爱的书，也有最近正在读、反复想起或阶段性特别想推荐的内容。',
+        '有些书是最近在读，有些是反复重翻，还有些只是某个阶段刚好特别想记下来。总之，先按分组慢慢看。',
       icon: bookList.hero?.icon || siteInfo?.icon || ''
     },
     stats: bookList.stats || [],
     featuredShelfNames,
     sectionOrder,
     sectionDescriptions: bookList.sectionDescriptions || {},
-    emptyTitle: bookList.emptyTitle || '书单还在整理中',
+    emptyTitle: bookList.emptyTitle || '这页书单还没准备好',
     emptyDescription:
       bookList.emptyDescription ||
-      '当前还没有读取到可展示的微信读书分组，稍后再来看看，或检查分组与同步配置是否已经就绪。',
+      '暂时还没有读到可展示的分组数据，你可以晚点再来看，或者先检查一下微信读书同步配置。',
     pagePath: bookList.pagePath || '/booklist',
     navLabel: bookList.navLabel || '我的书单'
   }

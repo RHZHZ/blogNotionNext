@@ -167,23 +167,23 @@ export const getAboutPageData = ({ post, siteInfo }) => {
   return {
     profile,
     hero: {
-      badge: hero.badge || 'About Me',
-      title: hero.title || post?.title || 'ABOUT ME',
+      badge: hero.badge || '关于我',
+      title: hero.title || post?.title || '关于我',
       subtitle:
         hero.subtitle ||
-        siteConfig('BIO', '他山之石，可以攻玉', CONFIG),
+        siteConfig('BIO', '把生活、阅读、思考和代码慢慢写成自己的答案', CONFIG),
       description:
         hero.description ||
-        '有趣的灵魂在这里相遇了',
-      tagline: hero.tagline || '持续学习 / 持续输出 / 持续迭代',
+        '这里放的是我正在认真投入、也愿意长期记录的东西。',
+      tagline: hero.tagline || '持续输入 / 持续实践 / 持续整理',
       avatar: hero.avatar || siteInfo?.icon
     },
     introduction:
       profile.introduction ||
-      '你好，我是一个喜欢把想法落地成作品的人。关注前端工程、自动化流程、产品表达与效率工具，也会持续记录实践中的思考与踩坑经验。',
+      '你好，我是一个喜欢折腾、也喜欢把过程认真记录下来的人。平时会写代码、读书、做内容，也会把一路上的想法、经验和踩坑慢慢整理进这里。',
     introductionMore:
       profile.introductionMore ||
-      '我希望这个博客不仅是内容展示窗口，也是一套不断进化的个人知识系统：既能沉淀长期价值，也能对当下项目产生直接帮助。',
+      '我希望这里不只是一个展示页面，更像一块会继续生长的自留地：能留下阶段性的思考，也能沉淀真正对以后还有用的东西。',
     stats,
     profileCards: profile.profileCards?.length ? profile.profileCards : defaultProfileCards,
     skills: profile.skills?.length ? profile.skills : defaultSkills,
@@ -193,20 +193,20 @@ export const getAboutPageData = ({ post, siteInfo }) => {
     timelineSummary: limitItems(timeline, timelinePreviewLimit),
     contacts: profile.contacts?.length ? profile.contacts : defaultContacts,
     bookShelf: {
-      title: profile.bookShelf?.title || '我最爱的书',
+      title: profile.bookShelf?.title || '我常翻的那些书',
       description:
         profile.bookShelf?.description ||
-        '这些书不只是阅读清单，更是影响我思考方式、行动节奏与表达习惯的长期参考。',
-      linkText: profile.bookShelf?.linkText || '我的书单',
+        '这些书不一定最有名，但确实陪我想过很多问题，也影响了我现在看事和做事的方式。',
+      linkText: profile.bookShelf?.linkText || '去看完整书单',
       link: profile.bookShelf?.link || profile.bookList?.pagePath || '',
       previewLimit: favoritePreviewLimit
     },
     recentBookShelf: {
-      title: profile.recentBookShelf?.title || '我最近在读的书',
+      title: profile.recentBookShelf?.title || '我最近在读',
       description:
         profile.recentBookShelf?.description ||
-        '我相信多读读书总比一直刷视频好的，但是读多了以后我才发现只读不实践也没用。',
-      linkText: profile.recentBookShelf?.linkText || '我的书单',
+        '最近读得比较杂，进度也不算稳定，但只要是留在这里的，基本都是我还想继续读下去的。',
+      linkText: profile.recentBookShelf?.linkText || '去看完整书单',
       link: profile.recentBookShelf?.link || profile.bookList?.pagePath || '',
       previewLimit: recentPreviewLimit
     },

@@ -1,4 +1,5 @@
 import { siteConfig } from '@/lib/config'
+import { useGlobal } from '@/lib/global'
 import { isBrowser } from '@/lib/utils'
 import throttle from 'lodash.throttle'
 import { useRouter } from 'next/router'
@@ -24,7 +25,9 @@ const Header = props => {
   const [navBgWhite, setBgWhite] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [compactMobileReadingNav, setCompactMobileReadingNav] = useState(false)
+  const [modeToast, setModeToast] = useState({ visible: false, message: '' })
 
+  const { isDarkMode } = useGlobal()
   const router = useRouter()
   const slideOverRef = useRef()
   const isPostPage = Boolean(post)
@@ -84,24 +87,14 @@ const Header = props => {
         window.requestAnimationFrame(() => {
           const currentScrollY = window.scrollY
           if (currentScrollY > prevScrollY) {
-            setActiveIndex(1) // 向下滚动时设置activeIndex为1
+            setActiveIndex(1)
           } else {
-            setActiveIndex(0) // 向上滚动时设置activeIndex为0
+            setActiveIndex(0)
           }
           prevScrollY = currentScrollY
           ticking = false
         })
         ticking = true
-      }
-    }
-
-    if (isBrowser) {
-      window.addEventListener('scroll', handleScroll)
-    }
-
-    return () => {
-      if (isBrowser) {
-        window.removeEventListener('scroll', handleScroll)
       }
     }
 
@@ -112,21 +105,50 @@ const Header = props => {
       setCompactMobileReadingNav(Boolean(isPostBgPage && isSmallMobile && window.scrollY > 48))
     }
 
-
-    syncCompactMobileReadingNav()
-
     if (isBrowser) {
+      window.addEventListener('scroll', handleScroll)
+      syncCompactMobileReadingNav()
       window.addEventListener('scroll', syncCompactMobileReadingNav)
       window.addEventListener('resize', syncCompactMobileReadingNav)
     }
 
     return () => {
       if (isBrowser) {
+        window.removeEventListener('scroll', handleScroll)
         window.removeEventListener('scroll', syncCompactMobileReadingNav)
         window.removeEventListener('resize', syncCompactMobileReadingNav)
       }
     }
   }, [router.asPath])
+
+  useEffect(() => {
+    let timer = null
+
+    const handleModeToast = event => {
+      const message = event?.detail?.message
+      if (!message) return
+      setModeToast({ visible: true, message })
+      if (timer) window.clearTimeout(timer)
+      timer = window.setTimeout(() => {
+        setModeToast(current => ({ ...current, visible: false }))
+      }, 2200)
+    }
+
+    if (isBrowser) {
+      window.addEventListener('heo-mode-toast', handleModeToast)
+    }
+
+    return () => {
+      if (timer) window.clearTimeout(timer)
+      if (isBrowser) {
+        window.removeEventListener('heo-mode-toast', handleModeToast)
+      }
+    }
+  }, [])
+
+  const toastCardClassName = isDarkMode
+    ? 'rounded-2xl border border-white/10 bg-slate-900/82 px-4 py-3 text-sm font-medium text-slate-100 shadow-[0_18px_45px_rgba(15,23,42,0.34)] backdrop-blur-xl'
+    : 'rounded-2xl border border-slate-200/80 bg-white/88 px-4 py-3 text-sm font-medium text-slate-700 shadow-[0_18px_45px_rgba(148,163,184,0.18)] backdrop-blur-xl'
 
   return (
     <>
@@ -200,7 +222,21 @@ const Header = props => {
                 aria-label='打开菜单'
                 title='打开菜单'
                 className='heo-header-action-btn heo-header-action-btn--menu'>
-                <i className='fas fa-bars' />
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  width='20'
+                  height='20'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  stroke='currentColor'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  aria-hidden='true'>
+                  <path d='M4 7h16' />
+                  <path d='M4 12h16' />
+                  <path d='M4 17h16' />
+                </svg>
               </button>
             </div>
           </div>
@@ -209,6 +245,13 @@ const Header = props => {
           <SlideOver cRef={slideOverRef} {...props} />
         </div>
       </nav>
+
+      <div
+        className={`pointer-events-none fixed left-1/2 z-40 w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:max-w-md ${modeToast.visible ? 'bottom-5 opacity-100 blur-0 sm:bottom-6' : 'bottom-3 opacity-0 blur-[6px]'}`}>
+        <div className={`${toastCardClassName} transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${modeToast.visible ? 'translate-y-0 scale-100' : 'translate-y-2 scale-[0.985]'}`}>
+          {modeToast.message}
+        </div>
+      </div>
     </>
   )
 }

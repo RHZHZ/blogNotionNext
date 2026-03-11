@@ -1,9 +1,37 @@
 import { siteConfig } from '@/lib/config'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
+const DRAG_STORAGE_KEY = 'dynamic-island-position'
+const DRAG_VIEWPORT_PADDING = 12
+
 const getIsDark = () =>
   typeof document !== 'undefined' &&
   document.documentElement.classList.contains('dark')
+
+const getDefaultPosition = () => {
+  if (typeof window === 'undefined') {
+    return { x: 20, y: 20 }
+  }
+
+  return {
+    x: 20,
+    y: Math.max(20, window.innerHeight - 84)
+  }
+}
+
+const clampPosition = (position, size) => {
+  if (typeof window === 'undefined') return position
+
+  const width = size?.width || 320
+  const height = size?.height || 64
+  const maxX = Math.max(DRAG_VIEWPORT_PADDING, window.innerWidth - width - DRAG_VIEWPORT_PADDING)
+  const maxY = Math.max(DRAG_VIEWPORT_PADDING, window.innerHeight - height - DRAG_VIEWPORT_PADDING)
+
+  return {
+    x: Math.min(Math.max(position?.x ?? DRAG_VIEWPORT_PADDING, DRAG_VIEWPORT_PADDING), maxX),
+    y: Math.min(Math.max(position?.y ?? DRAG_VIEWPORT_PADDING, DRAG_VIEWPORT_PADDING), maxY)
+  }
+}
 
 const DEFAULT_PLAYER_META = {
   source: 'unknown',
@@ -49,6 +77,8 @@ const DynamicIslandPlayer = ({ className }) => {
   const [isDark, setIsDark] = useState(false)
   const [showLrc, setShowLrc] = useState(false)
   const [playerMeta, setPlayerMeta] = useState(DEFAULT_PLAYER_META)
+  const [position, setPosition] = useState(() => getDefaultPosition())
+  const [isDragging, setIsDragging] = useState(false)
   const sourceBadgeVisible = siteConfig(
     'MUSIC_PLAYER_SOURCE_BADGE',
     true
@@ -62,6 +92,11 @@ const DynamicIslandPlayer = ({ className }) => {
   const lastLrcIdxRef = useRef(-1)
   const lastTrackKeyRef = useRef('')
   const lrcListRef = useRef([])
+  const islandRef = useRef(null)
+  const dragOffsetRef = useRef({ x: 0, y: 0 })
+  const dragPointerIdRef = useRef(null)
+  const positionRef = useRef(getDefaultPosition())
+  const draggedRef = useRef(false)
 
   // 弹幕防重叠：轨道占用时间戳（基于同速移动，需等前一条“头部”领先安全距离后再放入同轨）
   const danmakuLaneUntilRef = useRef([])
@@ -231,6 +266,17 @@ const DynamicIslandPlayer = ({ className }) => {
     try {
       const savedLrc = localStorage.getItem('di-show-lrc')
       if (savedLrc !== null) setShowLrc(savedLrc === 'true')
+      const savedPosition = localStorage.getItem(DRAG_STORAGE_KEY)
+      if (savedPosition) {
+        const parsed = JSON.parse(savedPosition)
+        const next = clampPosition(parsed, { width: 320, height: 64 })
+        positionRef.current = next
+        setPosition(next)
+      } else {
+        const fallbackPosition = getDefaultPosition()
+        positionRef.current = fallbackPosition
+        setPosition(fallbackPosition)
+      }
     } catch (e) {
       // ignore
     }
@@ -386,6 +432,88 @@ const DynamicIslandPlayer = ({ className }) => {
     }
   }, [ap, showLrc])
 
+  useEffect(() => {
+    positionRef.current = position
+  }, [position])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const syncPosition = () => {
+      const next = clampPosition(
+        positionRef.current,
+        islandRef.current?.getBoundingClientRect?.()
+      )
+      positionRef.current = next
+      setPosition(current =>
+        current.x === next.x && current.y === next.y ? current : next
+      )
+    }
+
+    const timer = window.setTimeout(syncPosition, 0)
+    window.addEventListener('resize', syncPosition)
+
+    return () => {
+      window.clearTimeout(timer)
+      window.removeEventListener('resize', syncPosition)
+    }
+  }, [expanded])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!isDragging) return
+
+    const handlePointerMove = event => {
+      if (
+        dragPointerIdRef.current !== null &&
+        event.pointerId !== dragPointerIdRef.current
+      ) {
+        return
+      }
+
+      const rect = islandRef.current?.getBoundingClientRect?.()
+      const next = clampPosition(
+        {
+          x: event.clientX - dragOffsetRef.current.x,
+          y: event.clientY - dragOffsetRef.current.y
+        },
+        rect
+      )
+
+      if (
+        !draggedRef.current &&
+        (Math.abs(next.x - positionRef.current.x) > 3 ||
+          Math.abs(next.y - positionRef.current.y) > 3)
+      ) {
+        draggedRef.current = true
+      }
+
+      positionRef.current = next
+      setPosition(next)
+    }
+
+    const finishDrag = () => {
+      setIsDragging(false)
+      dragPointerIdRef.current = null
+
+      try {
+        localStorage.setItem(DRAG_STORAGE_KEY, JSON.stringify(positionRef.current))
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointerup', finishDrag)
+    window.addEventListener('pointercancel', finishDrag)
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointerup', finishDrag)
+      window.removeEventListener('pointercancel', finishDrag)
+    }
+  }, [isDragging])
+
   const togglePlay = () => {
     if (!ap) return
     try {
@@ -412,6 +540,30 @@ const DynamicIslandPlayer = ({ className }) => {
     } catch (e) {
       // ignore
     }
+  }
+
+  const handlePointerDown = event => {
+    if (event.button != null && event.button !== 0) return
+    if (event.target.closest('button')) return
+
+    const rect = islandRef.current?.getBoundingClientRect?.()
+    if (!rect) return
+
+    dragPointerIdRef.current = event.pointerId
+    dragOffsetRef.current = {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    }
+    draggedRef.current = false
+    setIsDragging(true)
+  }
+
+  const handleContainerClick = () => {
+    if (draggedRef.current) {
+      draggedRef.current = false
+      return
+    }
+    setExpanded(v => !v)
   }
 
   const progressPct =
@@ -466,17 +618,22 @@ const DynamicIslandPlayer = ({ className }) => {
       )}
 
       <div
+        ref={islandRef}
         className={className || ''}
         style={{
           position: 'fixed',
-          left: 20,
-          bottom: 20,
+          left: position.x,
+          top: position.y,
           zIndex: 200,
-          pointerEvents: 'auto'
+          pointerEvents: 'auto',
+          cursor: isDragging ? 'grabbing' : 'grab',
+          userSelect: isDragging ? 'none' : 'auto',
+          touchAction: 'none'
         }}
-        onMouseEnter={() => setExpanded(true)}
-        onMouseLeave={() => setExpanded(false)}
-        onClick={() => setExpanded(v => !v)}
+        onMouseEnter={() => !isDragging && setExpanded(true)}
+        onMouseLeave={() => !isDragging && setExpanded(false)}
+        onPointerDown={handlePointerDown}
+        onClick={handleContainerClick}
       >
       <div
         style={{

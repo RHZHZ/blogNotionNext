@@ -41,9 +41,9 @@ const AboutPage = ({ post, siteInfo, children }) => {
       <section className='heo-about-article-shell heo-card'>
         <div className='heo-card__body'>
           <AboutSectionHeading
-            eyebrow='Details'
-            title='更多介绍'
-            description={data.introductionMore || '以下内容继续渲染 Notion 页面正文，适合放更完整的自我介绍、项目细节与补充资料。'}
+            eyebrow='更多内容'
+            title='继续往下看'
+            description={data.introductionMore || '下面接着放更完整的正文内容，比如更细的自我介绍、项目经历、阶段想法和一些补充说明。'}
           />
           <div className='heo-about-article-content'>{children}</div>
         </div>
