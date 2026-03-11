@@ -52,6 +52,15 @@ const BLOG = {
   // 其中数据库 ID / 调试开关 / API 策略 / 歌单模式入口更适合通过环境变量注入，不建议写死在仓库中。
 
   // 图片代理（用于封面取色等场景绕过 CORS）
+  // 微信读书书籍抓取接口环境变量：
+  // WEREAD_COOKIE=登录态 Cookie（仅服务端使用，不要暴露到前端）
+  // WEREAD_X_WRPA_0=请求头 x-wrpa-0
+  // WEREAD_USER_VID=可选，微信读书用户 vid；不填时会尝试从 WEREAD_COOKIE 中解析 wr_vid
+  // WEREAD_REFERER=https://weread.qq.com/
+  // WEREAD_USER_AGENT=可选，浏览器 UA
+  // WEREAD_CACHE_TTL=缓存毫秒，默认 12 小时
+  // WEREAD_SHELF_CACHE_TTL=书架接口缓存毫秒，可单独覆盖
+  // WEREAD_CACHE_PROVIDER=缓存 provider，默认复用 MUSIC_PLAYER_METING_CACHE_PROVIDER 或 memory
   IMAGE_PROXY_ALLOW_HOSTS: (process.env.IMAGE_PROXY_ALLOW_HOSTS || 'www.notion.so,prod-files-secure.s3.us-west-2.amazonaws.com,s3.us-west-2.amazonaws.com,images.unsplash.com,s41.ax1x.com,rhzhz.cn')
     .split(',')
     .map(s => s.trim())

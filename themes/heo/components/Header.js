@@ -28,10 +28,13 @@ const Header = props => {
   const router = useRouter()
   const slideOverRef = useRef()
   const isPostPage = Boolean(post)
+  const isAboutPage = post?.slug === 'about'
+  const hasPostBg = isPostPage && !isAboutPage
 
   const toggleMenuOpen = () => {
     slideOverRef?.current?.toggleSlideOvers()
   }
+
 
   /**
    * 根据滚动条，切换导航栏样式
@@ -46,11 +49,12 @@ const Header = props => {
         setTextWhite(false)
 
         // 文章详情页特殊处理
-        if (isPostPage) {
+        if (hasPostBg) {
           setFixedNav(true)
           setTextWhite(true)
         }
       } else {
+
         // 向下滚动后的导航样式
         setFixedNav(true)
         setTextWhite(false)
@@ -100,16 +104,14 @@ const Header = props => {
         window.removeEventListener('scroll', handleScroll)
       }
     }
-  }, [])
-  const hasPostBg = isPostPage
 
-  useEffect(() => {
     const syncCompactMobileReadingNav = () => {
       if (!isBrowser) return
       const isSmallMobile = window.innerWidth <= 430
-      const isPostPage = !!document.querySelector('#post-bg')
-      setCompactMobileReadingNav(Boolean(isPostPage && isSmallMobile && window.scrollY > 48))
+      const isPostBgPage = !!document.querySelector('#post-bg')
+      setCompactMobileReadingNav(Boolean(isPostBgPage && isSmallMobile && window.scrollY > 48))
     }
+
 
     syncCompactMobileReadingNav()
 

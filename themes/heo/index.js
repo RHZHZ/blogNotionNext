@@ -22,6 +22,7 @@ import { Transition } from '@headlessui/react'
 import SmartLink from '@/components/SmartLink'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import About from './components/About'
 import BlogPostArchive from './components/BlogPostArchive'
 import BlogPostListPage from './components/BlogPostListPage'
 import BlogPostListScroll from './components/BlogPostListScroll'
@@ -77,11 +78,16 @@ import ArticleExpirationNotice from '@/components/ArticleExpirationNotice'
  * @constructor
  */
 const LayoutBase = props => {
-  const { children, slotTop, className } = props
+  const { children, slotTop, className, post } = props
 
   // 全屏模式下的最大宽度
   const { fullWidth, isDarkMode, isEyeCareMode, eyeCareIntensity } = useGlobal()
   const router = useRouter()
+
+  const isAboutPage = post?.slug === 'about'
+  const isBookListPage = router.route === '/booklist'
+  const useWidePageLayout = isAboutPage || isBookListPage
+
 
   const headerSlot = (
     <header>
@@ -95,15 +101,15 @@ const LayoutBase = props => {
           <Hero {...props} />
         </>
       ) : null}
-      {fullWidth ? null : <PostHeader {...props} isDarkMode={isDarkMode} />}
+      {fullWidth || useWidePageLayout ? null : <PostHeader {...props} isDarkMode={isDarkMode} />}
     </header>
   )
 
   // 右侧栏 用户信息+标签列表
   const slotRight =
-    router.route === '/404' || fullWidth ? null : <SideRight {...props} />
+    router.route === '/404' || fullWidth || useWidePageLayout ? null : <SideRight {...props} />
 
-  const maxWidth = fullWidth ? 'max-w-[96rem] mx-auto' : 'max-w-[86rem]' // 普通最大宽度是86rem和顶部菜单栏对齐，留空则与窗口对齐
+  const maxWidth = fullWidth || isBookListPage ? 'max-w-[96rem] mx-auto' : 'max-w-[86rem]' // 普通最大宽度是86rem和顶部菜单栏对齐，留空则与窗口对齐
 
   const HEO_HERO_BODY_REVERSE = siteConfig(
     'HEO_HERO_BODY_REVERSE',
@@ -140,7 +146,7 @@ const LayoutBase = props => {
         <div
           id='container-inner'
           className={`${HEO_HERO_BODY_REVERSE ? 'flex-row-reverse' : ''} w-full mx-auto lg:flex justify-center relative z-10`}>
-          <div className={`w-full h-auto ${className || ''}`}>
+          <div className={`w-full h-auto ${className || ''} ${isBookListPage ? 'heo-booklist-layout' : ''}`}>
             {/* 主区上部嵌入 */}
             {slotTop}
             {children}
@@ -289,6 +295,7 @@ const LayoutSlug = props => {
 
   const [hasCode, setHasCode] = useState(false)
   const hasWWAds = Boolean(siteConfig('AD_WWADS_ID'))
+  const isAboutPage = post?.slug === 'about'
 
   useEffect(() => {
     const hasCode = document.querySelectorAll('[class^="language-"]').length > 0
@@ -332,148 +339,155 @@ const LayoutSlug = props => {
   return (
     <>
       <div
-        className={`article heo-post-shell h-full w-full ${fullWidth ? '' : 'xl:max-w-5xl'} ${hasCode ? 'xl:w-[73.15vw]' : ''}  bg-white dark:bg-[#18171d] dark:border-gray-600 lg:hover:shadow lg:border rounded-2xl lg:px-2 lg:py-4 `}>
+        className={`article heo-post-shell h-full w-full ${isAboutPage ? 'heo-about-shell xl:max-w-[86rem]' : ''} ${fullWidth ? '' : isAboutPage ? '' : 'xl:max-w-5xl'} ${hasCode ? 'xl:w-[73.15vw]' : ''} ${isAboutPage ? 'bg-transparent border-0 shadow-none hover:shadow-none rounded-none lg:px-0 lg:py-0' : 'bg-white dark:bg-[#18171d] dark:border-gray-600 lg:hover:shadow lg:border rounded-2xl lg:px-2 lg:py-4'}`}>
         {/* 文章锁 */}
         {lock && <PostLock validPassword={validPassword} />}
 
         {!lock && post && (
           <div className='mx-auto heo-post-shell__inner md:w-full md:px-5'>
-            {/* 文章主体 */}
-            <article
-              id='article-wrapper'
-              className='heo-article-layout'
-              itemScope
-              itemType='https://schema.org/Movie'>
-              {/* Notion文章主体 */}
-              <section
-                className='heo-article-section wow fadeInUp p-5 justify-center mx-auto'
-                data-wow-delay='.2s'>
-                <ArticleExpirationNotice post={post} />
-                {isAiSummaryEnabled(post) && (
-                  <div className='heo-article-content-width'>
-                    <AISummary aiSummary={post.aiSummary} post={post} />
-                  </div>
-                )}
-                {hasWWAds && (
-                  <div className='heo-article-inline-ad'>
-                    <WWAds orientation='horizontal' className='w-full' />
-                  </div>
-                )}
-                <div className='heo-article-reading-shell'>
-                  {post && <NotionPage post={post} className='heo-article-body' />}
-                  <div className='heo-article-end-marker' aria-label='正文已结束'>
-                    <span className='heo-article-end-marker__line' aria-hidden='true' />
-                    <span className='heo-article-end-marker__label'>正文到这里</span>
-                    <span className='heo-article-end-marker__line' aria-hidden='true' />
-                  </div>
-                </div>
-                {hasWWAds && (
-                  <div className='heo-article-inline-ad'>
-                    <WWAds orientation='horizontal' className='w-full' />
-                  </div>
-                )}
-              </section>
-
-              {post?.type === 'Post' && (
-                <div className='heo-post-footer px-5 pb-4 pt-6'>
-                  <div className='heo-post-footer__inner space-y-6'>
-                    <div className='heo-post-footer__share'>
-                      <ShareBar post={post} />
-                    </div>
-
-                    {/* 版权 */}
-                    <PostCopyright {...props} />
-
-                    {/* 上一篇\下一篇文章 */}
-                    <PostAdjacent {...props} />
-
-                    <div className='heo-post-footer__divider h-px bg-gradient-to-r from-transparent via-slate-200/80 to-transparent dark:via-slate-700/70' />
-
-                    {/* 文章推荐 */}
-                    <PostRecommend {...props} />
-                  </div>
-                </div>
-              )}
-            </article>
-
-            {/* 评论区 */}
-            {fullWidth ? null : (
-              <div className='px-5 pb-4 pt-4'>
-                <div className='mb-5 h-px bg-gradient-to-r from-transparent via-slate-200/80 to-transparent dark:via-slate-700/70' />
-                {commentEnable && post ? (
-                  <>
-                    {/* 评论区上方广告 */}
-                    <div className='py-2'>
-                      <AdSlot />
-                    </div>
-                    {/* 评论互动 */}
-                    <section className='overflow-hidden rounded-[1.9rem] border border-slate-200/80 bg-white/96 p-5 shadow-[0_18px_48px_rgba(15,23,42,0.05)] transition-all duration-200 dark:border-slate-700/60 dark:bg-[#1f2026] sm:p-6'>
-                      <div className='flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between'>
-                        <div className='max-w-2xl'>
-                          <div className='text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500'>
-                            Discussion
-                          </div>
-                          <div className='mt-1 flex items-center text-2xl font-semibold text-slate-800 dark:text-slate-100'>
-                            <i className='fas fa-comment mr-2 text-base text-slate-400 dark:text-slate-500' />
-                            {locale.COMMON.COMMENTS}
-                          </div>
-                          <p className='mt-3 text-sm leading-7 text-slate-500 dark:text-slate-300'>
-                            评论模块会在进入可视区域后按需加载，保持文章收尾区的阅读节奏更轻、更稳定。
-                          </p>
-                        </div>
-
-                        <div className='rounded-[1.4rem] border border-slate-200/80 bg-slate-50/90 px-4 py-3 text-sm text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/40 dark:text-slate-300'>
-                          <div className='font-medium text-slate-700 dark:text-slate-100'>
-                            讨论区状态
-                          </div>
-                          <div className='mt-1'>
-                            已接入评论能力，进入视口后再懒加载具体评论内核。
-                          </div>
-                        </div>
-                      </div>
-                      <Comment
-                        frontMatter={post}
-                        className='mt-6'
-                        variant='heo'
-                        tabsVariant='comment-heo'
-                      />
-                    </section>
-                  </>
-                ) : (
+            {isAboutPage ? (
+              <About {...props}>
+                <NotionPage post={post} className='heo-article-body heo-about-article-body' />
+              </About>
+            ) : (
+              <>
+                {/* 文章主体 */}
+                <article
+                  id='article-wrapper'
+                  className='heo-article-layout'
+                  itemScope
+                  itemType='https://schema.org/Movie'>
+                  {/* Notion文章主体 */}
                   <section
-                    id='comment'
-                    className='overflow-hidden rounded-[1.9rem] border border-slate-200/80 bg-white/96 p-5 shadow-[0_18px_48px_rgba(15,23,42,0.05)] transition-all duration-200 dark:border-slate-700/60 dark:bg-[#1f2026] sm:p-6'>
-                    <div className='flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between'>
-                      <div className='max-w-2xl'>
-                        <div className='text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500'>
-                          Discussion Reserved
-                        </div>
-                        <div className='mt-1 flex items-center text-2xl font-semibold text-slate-800 dark:text-slate-100'>
-                          <i className='fas fa-comment-slash mr-2 text-base text-slate-400 dark:text-slate-500' />
-                          评论区暂未启用
-                        </div>
-                        <p className='mt-3 text-sm leading-7 text-slate-500 dark:text-slate-300'>
-                          当前文章页先保留讨论区位置，后续会结合整体主题样式与部署方案统一接入评论系统。
-                        </p>
-                        <p className='mt-3 text-sm leading-7 text-slate-500 dark:text-slate-300'>
-                          注：绝对不是因为懒~~~(～￣(OO)￣)ブ。
-                        </p>
+                    className='heo-article-section wow fadeInUp p-5 justify-center mx-auto'
+                    data-wow-delay='.2s'>
+                    <ArticleExpirationNotice post={post} />
+                    {isAiSummaryEnabled(post) && (
+                      <div className='heo-article-content-width'>
+                        <AISummary aiSummary={post.aiSummary} post={post} />
                       </div>
-
-                      <div className='rounded-[1.4rem] border border-slate-200/80 bg-slate-50/90 px-4 py-3 text-sm text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/40 dark:text-slate-300'>
-                        <div className='font-medium text-slate-700 dark:text-slate-100'>
-                          备案状态
-                        </div>
-                        <div className='mt-1'>
-                          已预留入口，后续按 `Giscus` 方向接入。
-                        </div>
+                    )}
+                    {hasWWAds && (
+                      <div className='heo-article-inline-ad'>
+                        <WWAds orientation='horizontal' className='w-full' />
+                      </div>
+                    )}
+                    <div className='heo-article-reading-shell'>
+                      {post && <NotionPage post={post} className='heo-article-body' />}
+                      <div className='heo-article-end-marker' aria-label='正文已结束'>
+                        <span className='heo-article-end-marker__line' aria-hidden='true' />
+                        <span className='heo-article-end-marker__label'>正文到这里</span>
+                        <span className='heo-article-end-marker__line' aria-hidden='true' />
                       </div>
                     </div>
+                    {hasWWAds && (
+                      <div className='heo-article-inline-ad'>
+                        <WWAds orientation='horizontal' className='w-full' />
+                      </div>
+                    )}
                   </section>
-                )}
-              </div>
-            )}
 
+                  {post?.type === 'Post' && (
+                    <div className='heo-post-footer px-5 pb-4 pt-6'>
+                      <div className='heo-post-footer__inner space-y-6'>
+                        <div className='heo-post-footer__share'>
+                          <ShareBar post={post} />
+                        </div>
+
+                        {/* 版权 */}
+                        <PostCopyright {...props} />
+
+                        {/* 上一篇\\下一篇文章 */}
+                        <PostAdjacent {...props} />
+
+                        <div className='heo-post-footer__divider h-px bg-gradient-to-r from-transparent via-slate-200/80 to-transparent dark:via-slate-700/70' />
+
+                        {/* 文章推荐 */}
+                        <PostRecommend {...props} />
+                      </div>
+                    </div>
+                  )}
+                </article>
+
+                {/* 评论区 */}
+                {fullWidth ? null : (
+                  <div className='px-5 pb-4 pt-4'>
+                    <div className='mb-5 h-px bg-gradient-to-r from-transparent via-slate-200/80 to-transparent dark:via-slate-700/70' />
+                    {commentEnable && post ? (
+                      <>
+                        {/* 评论区上方广告 */}
+                        <div className='py-2'>
+                          <AdSlot />
+                        </div>
+                        {/* 评论互动 */}
+                        <section className='overflow-hidden rounded-[1.9rem] border border-slate-200/80 bg-white/96 p-5 shadow-[0_18px_48px_rgba(15,23,42,0.05)] transition-all duration-200 dark:border-slate-700/60 dark:bg-[#1f2026] sm:p-6'>
+                          <div className='flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between'>
+                            <div className='max-w-2xl'>
+                              <div className='text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500'>
+                                Discussion
+                              </div>
+                              <div className='mt-1 flex items-center text-2xl font-semibold text-slate-800 dark:text-slate-100'>
+                                <i className='fas fa-comment mr-2 text-base text-slate-400 dark:text-slate-500' />
+                                {locale.COMMON.COMMENTS}
+                              </div>
+                              <p className='mt-3 text-sm leading-7 text-slate-500 dark:text-slate-300'>
+                                评论模块会在进入可视区域后按需加载，保持文章收尾区的阅读节奏更轻、更稳定。
+                              </p>
+                            </div>
+
+                            <div className='rounded-[1.4rem] border border-slate-200/80 bg-slate-50/90 px-4 py-3 text-sm text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/40 dark:text-slate-300'>
+                              <div className='font-medium text-slate-700 dark:text-slate-100'>
+                                讨论区状态
+                              </div>
+                              <div className='mt-1'>
+                                已接入评论能力，进入视口后再懒加载具体评论内核。
+                              </div>
+                            </div>
+                          </div>
+                          <Comment
+                            frontMatter={post}
+                            className='mt-6'
+                            variant='heo'
+                            tabsVariant='comment-heo'
+                          />
+                        </section>
+                      </>
+                    ) : (
+                      <section
+                        id='comment'
+                        className='overflow-hidden rounded-[1.9rem] border border-slate-200/80 bg-white/96 p-5 shadow-[0_18px_48px_rgba(15,23,42,0.05)] transition-all duration-200 dark:border-slate-700/60 dark:bg-[#1f2026] sm:p-6'>
+                        <div className='flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between'>
+                          <div className='max-w-2xl'>
+                            <div className='text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500'>
+                              Discussion Reserved
+                            </div>
+                            <div className='mt-1 flex items-center text-2xl font-semibold text-slate-800 dark:text-slate-100'>
+                              <i className='fas fa-comment-slash mr-2 text-base text-slate-400 dark:text-slate-500' />
+                              评论区暂未启用
+                            </div>
+                            <p className='mt-3 text-sm leading-7 text-slate-500 dark:text-slate-300'>
+                              当前文章页先保留讨论区位置，后续会结合整体主题样式与部署方案统一接入评论系统。
+                            </p>
+                            <p className='mt-3 text-sm leading-7 text-slate-500 dark:text-slate-300'>
+                              注：绝对不是因为懒~~~(～￣(OO)￣)ブ。
+                            </p>
+                          </div>
+
+                          <div className='rounded-[1.4rem] border border-slate-200/80 bg-slate-50/90 px-4 py-3 text-sm text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/40 dark:text-slate-300'>
+                            <div className='font-medium text-slate-700 dark:text-slate-100'>
+                              备案状态
+                            </div>
+                            <div className='mt-1'>
+                              已预留入口，后续按 `Giscus` 方向接入。
+                            </div>
+                          </div>
+                        </div>
+                      </section>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
       </div>

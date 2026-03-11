@@ -123,6 +123,173 @@ const CONFIG = {
     }
   ],
 
+  // About 页面可自定义内容
+  HEO_ABOUT_PROFILE: {
+    hero: {
+      badge: 'About Me',
+      title: 'ABOUT ME',
+      subtitle: '代码、音乐、阅读与长期主义，组成了我现在的表达方式',
+      description:
+        '',
+      tagline: ''
+    },
+    introduction:
+      '你好，我是 RHZ。喜欢把灵感变成页面、把经验写成文章，也喜欢把复杂问题拆解成可执行的路径。对我来说，博客不仅是展示窗口，更是一套持续生长的个人知识系统',
+    introductionMore:
+      '我喜欢折腾，经常是一抬头一个黑夜和一个白天。',
+    highlights: ['页面体验', '自动化流程', 'AI 协作', '内容沉淀', '阅读输入'],
+    featureCards: [
+      {
+        eyebrow: 'Now Building',
+        title: '正在打磨的事情',
+        description: '最近主要在整理博客页面结构、内容表达和可持续维护方式',
+        tags: ['Blog Design', 'Content Structure', 'Maintainability']
+      },
+      {
+        eyebrow: 'Creative Style',
+        title: '偏爱的表达方式',
+        description: '我倾向先拆清问题结构，再把过程沉淀成以后还能复用的内容',
+        tags: ['结构化表达', '复盘沉淀', '长期迭代']
+      }
+    ],
+    profileCards: [
+      {
+        type: 'personality',
+        eyebrow: 'Personality',
+        title: '提倡者',
+        accent: 'INFJ-A',
+        description: '偏好长期主义、共情沟通与有秩序的表达，也习惯先理解全局再推进落地',
+        image: 'https://www.16personalities.com/static/images/personality-types/avatars/infj-advocate.svg',
+        imageAlt: 'INFJ-A 提倡者插画'
+      },
+      {
+        type: 'hobby',
+        eyebrow: 'Hobby',
+        title: 'CSGO',
+        accent: '战术协同 / 枪感 / 地图理解',
+        description: '喜欢竞技协作、残局博弈和稳定上分带来的节奏感',
+        image: '/images/about/csgo-card-bg.png',
+        imageAlt: 'CSGO 游戏封面',
+        badge: '段位 B+'
+      },
+      {
+        type: 'reading',
+        eyebrow: 'Weread',
+        title: '微信读书',
+        accent: '阅读时长 1300+',
+        image: 'https://images.unsplash.com/photo-1579762593175-20226054cad0?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb',
+        imageAlt: '微信读书氛围背景',
+        description: '长期把微信读书当作日常输入入口，阅读、标注与整理已经成为稳定习惯',
+        badge: '1300+ 小时'
+      },
+      {
+        type: 'fandom-music',
+        eyebrow: 'Favorites',
+        title: '热血番与华语流行',
+        accent: '七龙珠 / 火影忍者 / 海贼王',
+        description: '有时候后悔自己才20几岁就看完了这些动漫',
+        animeTitle: '火影忍者 / 海贼王 / 七龙珠',
+        animeCovers: [
+
+          {
+            title: '火影忍者',
+            image: '/images/about/anime-naruto.jpg'
+          },
+          {
+            title: '海贼王',
+            image: '/images/about/anime-onepiece.jpg'
+          },
+          {
+            title: '七龙珠',
+            image: '/images/about/anime-dragonball.jpg'
+          }
+
+        ],
+        musicPanel: {
+          eyebrow: '音乐偏好',
+          title: '周杰伦',
+          subtitle: '许嵩、民谣、华语流行',
+          description: '跟 Jay 一起反复循环旋律和故事感，也会继续往更宽的中文音乐世界里走',
+          image: 'https://file.notion.so/f/f/b61f84c4-f972-437a-8bf5-d1e0ef13b71d/6079b12b-1e1a-422b-bbdc-5d4a94db5239/image.png?table=block&id=3209daca-95bb-8049-acb6-e347350d208c&spaceId=b61f84c4-f972-437a-8bf5-d1e0ef13b71d&expirationTimestamp=1773259200000&signature=d2qtUYJy11CuN7LUoi4f5CyhYhYh4YToHHcnY-I-Lec&downloadName=image.png'
+        }
+      }
+    ],
+    stats: [
+      { label: '核心主题', value: '3', helper: '阅读 / 音乐 / 代码' },
+      { label: '博客定位', value: '概览页', helper: '摘要优先，正文承接' },
+      { label: '持续状态', value: '长期', helper: '沉淀 / 突破 / 超越' }
+    ],
+    skills: [
+      { name: 'Java', symbol: 'JV', accent: '后端 / 工程化' },
+      { name: 'C', symbol: 'C', accent: '基础 / 性能' },
+      { name: 'C++', symbol: 'C+', accent: '算法 / 系统' },
+      { name: 'Python', symbol: 'Py', accent: '自动化 / AI' },
+      { name: 'AI', symbol: 'AI', accent: '协作 / 提效' },
+      { name: 'PR', symbol: 'PR', accent: '剪辑 / 叙事' },
+      { name: 'Vue', symbol: 'V', accent: '前端 / 组件化' },
+      { name: 'HTML', symbol: 'H5', accent: '语义 / 结构' },
+      { name: 'CSS', symbol: 'CSS', accent: '视觉 / 动效' },
+      { name: 'FL Studio', symbol: 'FL', accent: '编曲 / 混音' },
+      { name: '吉他', symbol: 'G', accent: '指弹 / 编配' },
+      { name: '音乐人', symbol: '♪', accent: '创作 / 表达' }
+    ],
+    timelinePreviewLimit: 3,
+    timeline: [
+      {
+        year: 'Now',
+        title: '持续建设个人博客与数字花园',
+        description: '围绕技术实践、学习复盘、生活感悟与认知成长，持续沉淀可复用的内容'
+      },
+      {
+        year: '2025',
+        title: '推进博客主题与交互体验升级',
+        description: '基于 NotionNext ，彻底重构 HEO 主题，开发独创微信读书和灵动岛功能，打磨视觉表达、阅读体验与页面信息结构'
+      },
+      {
+        year: '2024',
+        title: '扩展自动化与 AI 协作能力',
+        description: '将内容生产、工作流串联、数据整理与开发过程逐步自动化，提升持续创作效率'
+      }
+    ],
+    contacts: [
+      { label: '博客', value: 'https://rhzhz.cn', href: 'https://rhzhz.cn' },
+      { label: 'GitHub', value: 'https://rhzhz.cn', href: 'https://rhzhz.cn' },
+      { label: '邮箱', value: '请填写你的邮箱地址', href: '' }
+    ],
+    bookShelf: {
+      title: '我最爱的书',
+      description: '这些书我反复读多少遍都不会腻',
+      linkText: '我的书单',
+      link: '/booklist',
+      previewLimit: 4
+    },
+    recentBookShelf: {
+      title: '我最近在读的书',
+      description: '最近在读这些书，如果你看到了，请催我去读书',
+      linkText: '我的书单',
+      link: '/booklist',
+      previewLimit: 3
+    },
+    bookList: {
+      pagePath: '/booklist',
+      navLabel: '我的书单',
+      featuredShelfNames: ['我的最爱', '最近在读','读完'],
+      sectionOrder: ['我的最爱', '最近在读','读完']
+    },
+    wereadSync: {
+      enabled: true,
+      refreshOnLoad: false,
+      recentLimit: 0,
+      favoriteLimit: 0,
+      notionDbId: '',
+      favoriteShelfNames: ['我的最爱'],
+      recentShelfNames: ['最近在读']
+    },
+    books: [],
+    recentBooks: []
+  },
+
+
   HEO_SOCIAL_CARD: false, // 是否显示右侧，点击加入社群按钮
   HEO_SOCIAL_CARD_TITLE_1: '交流频道',
   HEO_SOCIAL_CARD_TITLE_2: '加入我们的社群讨论分享',
@@ -164,3 +331,4 @@ const CONFIG = {
   HEO_WIDGET_TOC: true // 移动端悬浮目录
 }
 export default CONFIG
+

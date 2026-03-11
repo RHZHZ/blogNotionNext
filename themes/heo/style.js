@@ -1536,23 +1536,504 @@ const Style = () => {
             z-index: 20;
         }
 
-        #theme-heo .heo-today-card__more-label {
-            color: inherit;
-            font-weight: 600;
-            letter-spacing: 0.01em;
+        #theme-heo .heo-hero-shell {
+            grid-template-columns: minmax(0, 2.35fr) minmax(18rem, 1fr);
+            gap: 1rem;
+            align-items: stretch;
         }
+
+        #theme-heo .heo-hero-slider,
+        #theme-heo .heo-hero-books,
+        #theme-heo .heo-mobile-reading-entry {
+            border-radius: 1.7rem !important;
+        }
+
+        #theme-heo .heo-hero-slider {
+            min-height: 31rem;
+            position: relative;
+        }
+
+        #theme-heo .heo-hero-slider__stage {
+            position: relative;
+            display: flex;
+            min-height: 23rem;
+            height: 100%;
+            isolation: isolate;
+        }
+
+        #theme-heo .heo-hero-slider__nav {
+            position: absolute;
+            inset: 50% 0.7rem auto 0.7rem;
+            transform: translateY(-50%);
+            z-index: 24;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+
+        #theme-heo .heo-hero-slider__nav-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 3.2rem;
+            height: 3.2rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            background: rgba(15, 23, 42, 0.26);
+            color: rgba(255, 255, 255, 0.98);
+            -webkit-backdrop-filter: blur(16px) saturate(160%);
+            backdrop-filter: blur(16px) saturate(160%);
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.28);
+            opacity: 0.82;
+            pointer-events: auto;
+            transition: transform var(--heo-dur) var(--heo-ease), opacity var(--heo-dur) var(--heo-ease), background var(--heo-dur) var(--heo-ease), border-color var(--heo-dur) var(--heo-ease), box-shadow var(--heo-dur) var(--heo-ease);
+        }
+
+        #theme-heo .heo-hero-slider:hover .heo-hero-slider__nav-btn {
+            opacity: 0.96;
+        }
+
+        #theme-heo .heo-hero-slider__nav-btn:hover {
+            transform: scale(1.06);
+            border-color: rgba(255, 255, 255, 0.46);
+            background: rgba(15, 23, 42, 0.4);
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.36);
+        }
+
+        #theme-heo .heo-hero-slider__overlay {
+            background:
+                linear-gradient(180deg, rgba(15, 23, 42, 0.06) 0%, rgba(15, 23, 42, 0.44) 56%, rgba(15, 23, 42, 0.82) 100%),
+                linear-gradient(135deg, rgba(79, 101, 240, 0.28), rgba(59, 130, 246, 0.1));
+        }
+
+        #theme-heo .heo-hero-slider__content {
+            min-height: 23rem;
+            padding: 1.35rem 1.45rem 1.25rem;
+        }
+
+        #theme-heo .heo-hero-slider__badge,
+        #theme-heo .heo-mobile-hero__slide-badge {
+            width: fit-content;
+            padding: 0.36rem 0.82rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.14);
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.96);
+        }
+
+        #theme-heo .heo-hero-slider__copy {
+            max-width: min(38rem, 78%);
+        }
+
+        #theme-heo .heo-hero-slider__eyebrow {
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+        #theme-heo .heo-hero-slider__title {
+            margin: 0.7rem 0 0;
+            font-size: clamp(2rem, 2.6vw, 2.85rem);
+            line-height: 1.04;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: #fff;
+            text-shadow: 0 14px 32px rgba(15, 23, 42, 0.26);
+            text-wrap: balance;
+        }
+
+        #theme-heo .heo-hero-slider__summary {
+            margin: 0.9rem 0 0;
+            max-width: 33rem;
+            font-size: 0.98rem;
+            line-height: 1.72;
+            color: rgba(255, 255, 255, 0.88);
+            text-shadow: 0 8px 24px rgba(15, 23, 42, 0.28);
+        }
+
+        #theme-heo .heo-hero-slider__thumbs {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.65rem;
+            padding: 0.9rem 1rem 1rem;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.52));
+        }
+
+        #theme-heo .heo-hero-slider__thumb {
+            display: grid;
+            gap: 0.25rem;
+            justify-items: start;
+            min-width: 0;
+            padding: 0.82rem 0.95rem;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 1.12rem;
+            background: rgba(255, 255, 255, 0.62);
+            transition: transform var(--heo-dur) var(--heo-ease), border-color var(--heo-dur) var(--heo-ease), background var(--heo-dur) var(--heo-ease), box-shadow var(--heo-dur) var(--heo-ease);
+        }
+
+        #theme-heo .heo-hero-slider__thumb:hover,
+        #theme-heo .heo-hero-slider__thumb.is-active {
+            transform: translateY(-1px);
+            border-color: rgba(79, 70, 229, 0.22);
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 14px 28px rgba(79, 70, 229, 0.1);
+        }
+
+        #theme-heo .heo-hero-slider__thumb-index {
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            color: rgba(79, 70, 229, 0.78);
+        }
+
+        #theme-heo .heo-hero-slider__thumb-title {
+            width: 100%;
+            font-size: 0.88rem;
+            line-height: 1.45;
+            font-weight: 700;
+            color: var(--heo-card-title);
+        }
+
+        #theme-heo .heo-hero-books {
+            display: flex;
+            flex-direction: column;
+            min-height: 31rem;
+            padding: 1.15rem;
+            background:
+                radial-gradient(circle at top right, rgba(99, 102, 241, 0.12), transparent 32%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.95)) !important;
+        }
+
+        #theme-heo .heo-hero-books__head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+
+        #theme-heo .heo-hero-books__eyebrow,
+        #theme-heo .heo-mobile-reading-entry__eyebrow {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.22rem 0.58rem;
+            border-radius: 999px;
+            border: 1px solid rgba(99, 102, 241, 0.16);
+            background: rgba(99, 102, 241, 0.08);
+            color: rgba(79, 70, 229, 0.88);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        #theme-heo .heo-hero-books__title {
+            margin: 0.52rem 0 0;
+            font-size: 1.18rem;
+            line-height: 1.3;
+            color: var(--heo-card-title);
+            font-weight: 800;
+        }
+
+        #theme-heo .heo-hero-books__link,
+        #theme-heo .heo-mobile-reading-entry__link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.45rem 0.76rem;
+            border-radius: 999px;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            background: rgba(255, 255, 255, 0.72);
+            color: var(--heo-card-title);
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        #theme-heo .heo-hero-books__link:hover,
+        #theme-heo .heo-mobile-reading-entry__link:hover {
+            transform: translateY(-1px);
+            border-color: rgba(79, 70, 229, 0.18);
+            color: rgb(79, 70, 229);
+        }
+
+        #theme-heo .heo-hero-books__desc {
+            margin: 0.8rem 0 1rem;
+            color: var(--heo-card-text);
+            font-size: 0.85rem;
+            line-height: 1.68;
+        }
+
+        #theme-heo .heo-hero-books__list {
+            display: grid;
+            gap: 0.72rem;
+            margin-top: auto;
+        }
+
+        #theme-heo .heo-hero-books__item {
+            display: grid;
+            grid-template-columns: 4.3rem minmax(0, 1fr);
+            gap: 0.8rem;
+            align-items: center;
+            min-width: 0;
+            padding: 0.72rem;
+            border-radius: 1.2rem;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: rgba(255, 255, 255, 0.82);
+            transition: transform var(--heo-dur) var(--heo-ease), border-color var(--heo-dur) var(--heo-ease), box-shadow var(--heo-dur) var(--heo-ease), background var(--heo-dur) var(--heo-ease);
+        }
+
+        #theme-heo .heo-hero-books__item:hover {
+            transform: translateY(-2px);
+            border-color: rgba(99, 102, 241, 0.18);
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 16px 32px rgba(79, 70, 229, 0.1);
+        }
+
+        #theme-heo .heo-hero-books__cover-wrap {
+            width: 4.3rem;
+            min-width: 4.3rem;
+            height: 5.9rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.58);
+            box-shadow: 0 16px 28px rgba(15, 23, 42, 0.12);
+        }
+
+        #theme-heo .heo-hero-books__cover,
+        #theme-heo .heo-mobile-reading-entry__cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        #theme-heo .heo-hero-books__cover--placeholder,
+        #theme-heo .heo-mobile-reading-entry__cover--placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.86), rgba(59, 130, 246, 0.72));
+            color: white;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        #theme-heo .heo-hero-books__meta {
+            min-width: 0;
+        }
+
+        #theme-heo .heo-hero-books__book-title {
+            color: var(--heo-card-title);
+            font-size: 0.96rem;
+            line-height: 1.45;
+            font-weight: 700;
+        }
+
+        #theme-heo .heo-hero-books__book-author {
+            margin-top: 0.32rem;
+            color: var(--heo-card-text);
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        html.dark #theme-heo .heo-hero-slider__overlay {
+            background:
+                linear-gradient(180deg, rgba(2, 6, 23, 0.18) 0%, rgba(2, 6, 23, 0.62) 58%, rgba(2, 6, 23, 0.9) 100%),
+                linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(30, 41, 59, 0.12));
+        }
+
+        html.dark #theme-heo .heo-hero-slider__nav-btn {
+            border-color: rgba(255, 255, 255, 0.14);
+            background: rgba(2, 6, 23, 0.42);
+            box-shadow: 0 16px 34px rgba(0, 0, 0, 0.38);
+        }
+
+        html.dark #theme-heo .heo-hero-slider__nav-btn:hover {
+            border-color: rgba(245, 158, 11, 0.28);
+            background: rgba(30, 41, 59, 0.64);
+            color: rgba(255, 230, 179, 0.98);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.42);
+        }
+
+        html.dark #theme-heo .heo-hero-slider__thumbs {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.56));
+        }
+
+        html.dark #theme-heo .heo-hero-slider__thumb {
+            border-color: rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 42, 0.42);
+        }
+
+        html.dark #theme-heo .heo-hero-slider__thumb:hover,
+        html.dark #theme-heo .heo-hero-slider__thumb.is-active {
+            border-color: rgba(245, 158, 11, 0.2);
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        html.dark #theme-heo .heo-hero-slider__thumb-index {
+            color: rgba(255, 230, 179, 0.88);
+        }
+
+        html.dark #theme-heo .heo-hero-slider__thumb-title,
+        html.dark #theme-heo .heo-hero-books__title,
+        html.dark #theme-heo .heo-hero-books__book-title {
+            color: var(--heo-card-title-dark);
+        }
+
+        html.dark #theme-heo .heo-hero-books {
+            background:
+                radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 32%),
+                linear-gradient(180deg, rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.8)) !important;
+        }
+
+        html.dark #theme-heo .heo-hero-books__eyebrow,
+        html.dark #theme-heo .heo-mobile-reading-entry__eyebrow {
+            border-color: rgba(245, 158, 11, 0.18);
+            background: rgba(245, 158, 11, 0.12);
+            color: rgba(255, 230, 179, 0.92);
+        }
+
+        html.dark #theme-heo .heo-hero-books__desc,
+        html.dark #theme-heo .heo-hero-books__book-author {
+            color: var(--heo-card-text-dark);
+        }
+
+        html.dark #theme-heo .heo-hero-books__link,
+        html.dark #theme-heo .heo-mobile-reading-entry__link {
+            border-color: rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 42, 0.36);
+            color: var(--heo-card-title-dark);
+        }
+
+        html.dark #theme-heo .heo-hero-books__link:hover,
+        html.dark #theme-heo .heo-mobile-reading-entry__link:hover {
+            border-color: rgba(245, 158, 11, 0.22);
+            color: rgba(255, 230, 179, 0.96);
+        }
+
+        #theme-heo .heo-mobile-reading-entry__link,
+        html.dark #theme-heo .heo-mobile-reading-entry__link {
+            padding: 0.4rem 0.68rem;
+            font-size: 0.74rem;
+            font-weight: 600;
+            opacity: 0.88;
+        }
+
+        #theme-heo .heo-mobile-reading-entry__link:hover,
+        html.dark #theme-heo .heo-mobile-reading-entry__link:hover {
+            opacity: 1;
+        }
+
+
+        html.dark #theme-heo .heo-hero-books__item {
+            border-color: rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 42, 0.42);
+        }
+
+        html.dark #theme-heo .heo-hero-books__item:hover {
+            border-color: rgba(245, 158, 11, 0.16);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.28);
+        }
+
+        @media (max-width: 1439px) {
+            #theme-heo .heo-hero-shell {
+                grid-template-columns: minmax(0, 2.15fr) minmax(17rem, 1fr);
+            }
+        }
+
+        @media (max-width: 1365px) {
+            #theme-heo .heo-hero-books__desc {
+                display: none;
+            }
+        }
+
 
         @media (max-width: 1279px) {
             #theme-heo .heo-hero-menu-grid {
                 gap: 0.55rem;
             }
 
-            #theme-heo #hero-wrapper {
-                overflow: visible;
+            #theme-heo .heo-mobile-hero {
+                display: flex;
+                flex-direction: column;
+                gap: 0.72rem;
             }
 
-            #theme-heo .heo-mobile-hero {
+            #theme-heo .heo-mobile-reading-entry {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.9rem;
+                padding: 0.95rem 1rem;
+                min-height: 6.5rem;
+            }
+
+            #theme-heo .heo-mobile-reading-entry__head {
+                display: flex;
+                flex: 1;
+                min-width: 0;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 0.95rem;
+            }
+
+            #theme-heo .heo-mobile-reading-entry__head-main {
+                display: flex;
+                min-width: 0;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.45rem;
+            }
+
+            #theme-heo .heo-mobile-reading-entry__title {
+                margin: 0;
+                color: var(--heo-card-title);
+                font-size: 0.98rem;
+                line-height: 1.35;
+                font-weight: 700;
+            }
+
+            #theme-heo .heo-mobile-reading-entry__covers {
+                position: relative;
+                width: 5.75rem;
+                height: 5rem;
+                flex-shrink: 0;
+            }
+
+            #theme-heo .heo-mobile-reading-entry__cover-link {
                 display: block;
+                overflow: hidden;
+                border-radius: 1rem;
+                box-shadow: 0 14px 26px rgba(15, 23, 42, 0.16);
+            }
+
+            #theme-heo .heo-mobile-reading-entry__cover-link--primary {
+                position: relative;
+                z-index: 2;
+                width: 3.55rem;
+                height: 4.92rem;
+            }
+
+            #theme-heo .heo-mobile-reading-entry__cover-link--peek {
+                position: absolute;
+                top: 0.34rem;
+                right: -0.9rem;
+                z-index: 1;
+                width: 2.7rem;
+                height: 4.06rem;
+                opacity: 0.58;
+                transform: scale(0.94);
+                filter: saturate(0.86);
             }
 
             #theme-heo .heo-mobile-hero__slider {
@@ -1588,19 +2069,6 @@ const Style = () => {
                 min-height: 16.75rem;
             }
 
-            #theme-heo .heo-mobile-hero__slide-badge {
-                width: fit-content;
-                padding: 0.36rem 0.78rem;
-                border-radius: 999px;
-                border: 1px solid rgba(255, 255, 255, 0.22);
-                background: rgba(255, 255, 255, 0.16);
-                -webkit-backdrop-filter: blur(14px);
-                backdrop-filter: blur(14px);
-                font-size: 0.72rem;
-                font-weight: 700;
-                letter-spacing: 0.08em;
-            }
-
             #theme-heo .heo-mobile-hero__slide-title {
                 font-size: 1.65rem;
                 line-height: 1.08;
@@ -1611,6 +2079,18 @@ const Style = () => {
 
             #theme-heo .heo-mobile-hero__slide-meta {
                 color: rgba(255, 255, 255, 0.92);
+            }
+
+            html.dark #theme-heo .heo-mobile-reading-entry__title {
+                color: var(--heo-card-title-dark);
+            }
+
+            html.dark #theme-heo .heo-mobile-reading-entry__cover-link {
+                box-shadow: 0 14px 26px rgba(0, 0, 0, 0.32);
+            }
+
+            html.dark #theme-heo .heo-mobile-reading-entry__cover-link--peek {
+                opacity: 0.5;
             }
 
             html.dark #theme-heo .heo-mobile-hero__slide {
@@ -7289,8 +7769,3639 @@ const Style = () => {
         html.dark #theme-heo .notion-property-checkbox:focus-visible {
             outline-color: rgba(234, 179, 8, 0.6) !important;
         }
-    `}</style>
 
+        #theme-heo .heo-about-shell {
+            border: none !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        #theme-heo #wrapper-outer .article.heo-post-shell.heo-about-shell {
+            margin-top: 1rem !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        #theme-heo #wrapper-outer .article.heo-post-shell.heo-about-shell::before {
+            display: none !important;
+        }
+
+        #theme-heo .heo-about-shell .heo-post-shell__inner {
+            padding-top: 1rem;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        #theme-heo .heo-about {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            padding: 1rem 0 0.75rem;
+        }
+
+        #theme-heo .heo-about-magazine-grid {
+            display: grid;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        #theme-heo .heo-about-magazine-grid--intro {
+            grid-template-columns: minmax(0, 1.6fr) minmax(21rem, 0.84fr);
+        }
+
+        #theme-heo .heo-about-magazine-grid--feature {
+            grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+        }
+
+        #theme-heo .heo-about-section--intro,
+        #theme-heo .heo-about-section--skills,
+        #theme-heo .heo-about-section--profile,
+        #theme-heo .heo-about-section--timeline {
+            min-height: 0;
+        }
+
+        #theme-heo .heo-about-section {
+            overflow: hidden;
+            align-self: stretch;
+        }
+
+        #theme-heo .heo-about-section--intro,
+        #theme-heo .heo-about-section--profile,
+        #theme-heo .heo-about-section--skills,
+        #theme-heo .heo-about-section--timeline {
+            transform: none;
+        }
+
+        #theme-heo .heo-about-section--books {
+            margin-top: 0;
+        }
+
+        #theme-heo .heo-about-section-heading {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.9rem;
+            margin-bottom: 1.1rem;
+        }
+
+        #theme-heo .heo-about-section-heading__eyebrow {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+
+        #theme-heo .heo-about-section-heading__title {
+            font-size: clamp(1.35rem, 2vw, 1.8rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--heo-card-title);
+        }
+
+        #theme-heo .heo-about-section-heading__extra {
+            flex-shrink: 0;
+            align-self: flex-start;
+        }
+
+        #theme-heo .heo-about-bookshelf__footnote {
+            color: var(--heo-card-muted);
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        #theme-heo .heo-about-section--books-overview::after {
+            inset: 0;
+            border-radius: inherit;
+            background:
+                radial-gradient(circle at top right, rgba(255, 255, 255, 0.28), transparent 34%),
+                linear-gradient(145deg, rgba(255, 255, 255, 0.08), transparent 42%);
+            opacity: 0.72;
+            overflow: hidden;
+        }
+
+        #theme-heo .heo-about-section--books-overview .heo-card__body {
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+            padding: 1.5rem;
+        }
+
+        #theme-heo .heo-about-bookshelf-overview {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 0;
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__top {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(16rem, 0.7fr);
+            gap: 1.25rem;
+            align-items: start;
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__main {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__action {
+            display: flex;
+            justify-content: flex-end;
+            min-width: 0;
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__title {
+            margin: 0;
+            font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+            line-height: 1.1;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            color: var(--heo-card-title);
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__desc {
+            margin: 0;
+            color: var(--heo-card-text);
+            line-height: 1.8;
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__tag {
+            display: inline-flex;
+            align-items: center;
+            min-height: 2rem;
+            padding: 0.35rem 0.8rem;
+            border-radius: 999px;
+            border: 1px solid rgba(203, 213, 225, 0.8);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--heo-card-muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__tag--brand {
+            border-color: rgba(59, 130, 246, 0.2);
+            background: rgba(239, 246, 255, 0.92);
+            color: #2563eb;
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__tag--success {
+            border-color: rgba(34, 197, 94, 0.18);
+            background: rgba(240, 253, 244, 0.92);
+            color: #15803d;
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__tag--warm {
+            border-color: rgba(245, 158, 11, 0.18);
+            background: rgba(255, 251, 235, 0.94);
+            color: #b45309;
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.85rem;
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__stat {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.35rem;
+            padding: 1rem;
+            min-height: 7rem;
+            border-radius: 1.2rem;
+            border: 1px solid rgba(203, 213, 225, 0.85);
+            background: rgba(255, 255, 255, 0.78);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__stat-value {
+            font-size: clamp(1.4rem, 2vw, 2rem);
+            font-weight: 900;
+            color: #1d4ed8;
+            line-height: 1;
+        }
+
+        #theme-heo .heo-about-bookshelf-overview__stat-label {
+            color: var(--heo-card-muted);
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        #theme-heo .heo-about-bookshelf-panel-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.25rem;
+            align-items: start;
+        }
+
+        #theme-heo .heo-about-bookshelf-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 0;
+            min-height: 0;
+            padding: 1.15rem;
+            border-radius: 1.4rem;
+            border: 1px solid rgba(203, 213, 225, 0.82);
+            background: rgba(255, 255, 255, 0.6);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+        }
+
+        #theme-heo .heo-about-bookshelf__empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 12rem;
+            padding: 1.25rem;
+            border: 1px dashed rgba(148, 163, 184, 0.5);
+            border-radius: 1.2rem;
+            background: rgba(248, 250, 252, 0.85);
+            color: var(--heo-card-muted);
+            text-align: center;
+            line-height: 1.8;
+        }
+
+
+        #theme-heo .heo-about-bookshelf__heading-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.7rem;
+        }
+
+        #theme-heo .heo-about-bookshelf__panel-count {
+            display: inline-flex;
+            align-items: center;
+            min-height: 2rem;
+            padding: 0.35rem 0.78rem;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.06);
+            color: var(--heo-card-muted);
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        #theme-heo .heo-about-bookshelf__toolbar {
+            width: min(100%, 18rem);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.65rem;
+            padding: 0.95rem 1rem;
+            border: 1px solid rgba(203, 213, 225, 0.72);
+            border-radius: 1.2rem;
+            background: rgba(255, 255, 255, 0.72);
+            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);
+        }
+
+        #theme-heo .heo-about-bookshelf__toolbar--static {
+            justify-content: center;
+        }
+
+        #theme-heo .heo-about-bookshelf__action {
+            border: 1px solid rgba(59, 130, 246, 0.18);
+            background: rgba(239, 246, 255, 0.92);
+            color: #2563eb;
+            border-radius: 999px;
+            padding: 0.55rem 0.95rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #theme-heo .heo-about-bookshelf__action:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.12);
+        }
+
+        #theme-heo .heo-about-bookshelf__action:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        #theme-heo .heo-about-bookshelf__status {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.2rem;
+            color: var(--heo-card-muted);
+            font-size: 0.8rem;
+            line-height: 1.5;
+            text-align: right;
+        }
+
+        #theme-heo .heo-about-bookshelf__status--left {
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        #theme-heo .heo-about-bookshelf__status-error {
+            color: #dc2626;
+        }
+
+        #theme-heo .heo-about-bookshelf__item {
+            display: grid;
+            grid-template-columns: 6.5rem minmax(0, 1fr);
+            gap: 1rem;
+            align-items: stretch;
+            align-self: start;
+            min-width: 0;
+            min-height: 0;
+            padding: 1rem;
+            border: 1px solid rgba(203, 213, 225, 0.88);
+            border-radius: 1.35rem;
+            background: rgba(255, 255, 255, 0.78);
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+            text-decoration: none !important;
+            overflow: hidden;
+        }
+
+        #theme-heo .heo-about-bookshelf {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            min-width: 0;
+            align-content: start;
+        }
+
+        #theme-heo .heo-about-bookshelf__cover-wrap {
+            width: 100%;
+            height: 100%;
+            min-height: 8.6rem;
+            aspect-ratio: 3 / 4;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: rgba(226, 232, 240, 0.55);
+        }
+
+        #theme-heo .heo-about-bookshelf__cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #theme-heo .heo-about-bookshelf__meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+            min-width: 0;
+            min-height: 100%;
+            align-self: stretch;
+        }
+
+        #theme-heo .heo-about-bookshelf__summary {
+            color: var(--heo-card-text);
+            line-height: 1.72;
+            font-size: 0.92rem;
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        #theme-heo .heo-about-bookshelf__footer {
+            margin-top: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+            align-items: center;
+        }
+
+        #theme-heo .heo-about-bookshelf__title {
+            color: var(--heo-card-title);
+            font-weight: 800;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        #theme-heo .heo-about-bookshelf__author {
+            color: var(--heo-card-muted);
+            font-size: 0.92rem;
+        }
+
+        #theme-heo .heo-about-bookshelf__progress {
+            margin-top: auto;
+            width: fit-content;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(239, 246, 255, 0.88);
+            color: #2563eb;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        #theme-heo .heo-about-section-heading__desc {
+            max-width: 42rem;
+            color: var(--heo-card-muted);
+            line-height: 1.75;
+        }
+
+        #theme-heo .heo-about-hero {
+            overflow: hidden;
+            position: relative;
+        }
+
+        #theme-heo .heo-about-hero::after,
+        #theme-heo .heo-about-section::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at top right, rgba(255, 255, 255, 0.34), transparent 36%),
+                linear-gradient(145deg, rgba(255, 255, 255, 0.1), transparent 42%);
+            opacity: 0.8;
+        }
+
+        #theme-heo .heo-about-hero .heo-card__body,
+        #theme-heo .heo-about-section .heo-card__body,
+        #theme-heo .heo-about-article-shell .heo-card__body {
+            padding: 1.5rem;
+        }
+
+        #theme-heo .heo-about-hero__body {
+            position: relative;
+            display: block;
+            min-height: clamp(18.5rem, 35vw, 23rem);
+            padding-right: clamp(13.8rem, 27vw, 20.2rem);
+            isolation: isolate;
+        }
+
+        #theme-heo .heo-about-hero__avatar-bg {
+            position: absolute;
+            top: clamp(1rem, 2.2vw, 1.7rem);
+            right: clamp(1rem, 2.3vw, 1.75rem);
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.78;
+            transform: rotate(3deg);
+            transform-origin: center;
+        }
+
+        #theme-heo .heo-about-hero__avatar-bg::before {
+            content: '';
+            position: absolute;
+            inset: -1.35rem;
+            border-radius: 2.9rem;
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.14), rgba(255, 255, 255, 0.03) 56%, transparent 76%);
+            filter: blur(18px);
+            opacity: 0.88;
+        }
+
+        #theme-heo .heo-about-hero__avatar-bg::after {
+            content: '';
+            position: absolute;
+            inset: -0.35rem;
+            border-radius: 2.45rem;
+            background: radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.26), transparent 54%), linear-gradient(180deg, rgba(248, 250, 252, 0.03), rgba(248, 250, 252, 0.12));
+            mix-blend-mode: screen;
+        }
+
+        #theme-heo .heo-about-hero__main {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.95rem;
+            max-width: min(100%, 44rem);
+        }
+
+        #theme-heo .heo-about-hero__badge {
+            width: fit-content;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(79, 101, 240, 0.12);
+            color: #4338ca;
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        #theme-heo .heo-about-hero__title {
+            font-size: clamp(2.2rem, 4vw, 3.6rem);
+            font-weight: 900;
+            line-height: 1.02;
+            letter-spacing: -0.05em;
+            color: var(--heo-card-title);
+        }
+
+        #theme-heo .heo-about-hero__subtitle {
+            font-size: 1.02rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        #theme-heo .heo-about-hero__description,
+        #theme-heo .heo-about-hero__intro,
+        #theme-heo .heo-about-intro__content,
+        #theme-heo .heo-about-timeline__desc,
+        #theme-heo .heo-about-side-note {
+            color: var(--heo-card-text);
+            line-height: 1.85;
+        }
+
+        #theme-heo .heo-about-hero__intro {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        #theme-heo .heo-about-hero__tagline {
+            width: fit-content;
+            padding: 0.7rem 1rem;
+            border: 1px solid rgba(191, 219, 254, 0.9);
+            border-radius: 1rem;
+            background: rgba(239, 246, 255, 0.8);
+            color: #1d4ed8;
+            font-weight: 700;
+        }
+
+        #theme-heo .heo-about-hero__avatar-ring {
+            position: relative;
+            width: clamp(10.8rem, 20.5vw, 15.2rem);
+            height: clamp(10.8rem, 20.5vw, 15.2rem);
+            padding: 0.55rem;
+            border-radius: 2.35rem;
+            background: linear-gradient(145deg, rgba(255,255,255,0.62), rgba(255,255,255,0.16));
+            border: 1px solid rgba(255, 255, 255, 0.52);
+            box-shadow: 0 30px 70px rgba(99, 102, 241, 0.1), 0 12px 26px rgba(15, 23, 42, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            opacity: 0.95;
+        }
+
+        #theme-heo .heo-about-hero__avatar-ring::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.02) 46%, transparent 72%);
+            pointer-events: none;
+        }
+
+        #theme-heo .heo-about-hero__avatar-ring::after {
+            content: '';
+            position: absolute;
+            inset: 0.55rem;
+            border-radius: 1.92rem;
+            border: 1px solid rgba(255, 255, 255, 0.34);
+            pointer-events: none;
+        }
+
+        #theme-heo .heo-about-hero__avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            border-radius: 1.92rem;
+            opacity: 0.97;
+            filter: saturate(1.05) contrast(1.05) brightness(1.03);
+        }
+
+        #theme-heo .heo-about-hero__stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+            margin-top: 1.2rem;
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        #theme-heo .heo-about-stat,
+        #theme-heo .heo-about-contact-item,
+        #theme-heo .heo-about-skill-card,
+        #theme-heo .heo-about-icon-card {
+            border: 1px solid rgba(203, 213, 225, 0.88);
+            border-radius: 1.25rem;
+            background: rgba(255, 255, 255, 0.72);
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+        }
+
+        #theme-heo .heo-about-stat {
+            padding: 1rem 1.05rem;
+        }
+
+        #theme-heo .heo-about-stat__value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--heo-card-title);
+        }
+
+        #theme-heo .heo-about-stat__label {
+            margin-top: 0.28rem;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        #theme-heo .heo-about-stat__helper {
+            margin-top: 0.22rem;
+            color: var(--heo-card-muted);
+            font-size: 0.86rem;
+        }
+
+        #theme-heo .heo-about-skills,
+        #theme-heo .heo-about-skill-list,
+        #theme-heo .heo-about-timeline,
+        #theme-heo .heo-about-contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        #theme-heo .heo-about-section--profile .heo-card__body,
+        #theme-heo .heo-about-section--timeline .heo-card__body {
+            display: flex;
+            flex-direction: column;
+            height: auto;
+        }
+
+        #theme-heo .heo-about-section--persona .heo-card__body {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        #theme-heo .heo-about-section--profile .heo-about-side-tags {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+            margin-top: 0;
+            align-content: start;
+        }
+
+        #theme-heo .heo-about-profile-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        #theme-heo .heo-about-section--persona .heo-about-profile-cards {
+            margin-bottom: 0;
+        }
+
+        #theme-heo .heo-about-profile-card {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: end;
+            gap: 1rem;
+            overflow: hidden;
+            min-height: 12rem;
+            padding: 1.1rem 1.15rem;
+            border: 1px solid rgba(203, 213, 225, 0.9);
+            border-radius: 1.35rem;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(248, 250, 252, 0.95));
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+            isolation: isolate;
+        }
+
+        #theme-heo .heo-about-profile-card--personality {
+            grid-template-columns: 1fr;
+            min-height: 12.4rem;
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.92)),
+                linear-gradient(135deg, rgba(34, 197, 94, 0.06), rgba(59, 130, 246, 0.03));
+        }
+
+        #theme-heo .heo-about-profile-card--hobby {
+          background-position: calc(100% + 5.2rem) calc(50% + 3.8rem);
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-color: rgba(0, 0, 0, 0.3);
+          padding-right: clamp(7.2rem, 18vw, 9.6rem);
+        }
+
+        #theme-heo .heo-about-profile-card--hobby .heo-about-profile-card__content,
+        #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__content {
+            max-width: min(62%, 23rem);
+        }
+
+        #theme-heo .heo-about-profile-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 40%);
+            opacity: 0.7;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        #theme-heo .heo-about-profile-card--hobby::before {
+            background:
+                linear-gradient(90deg, rgba(2, 6, 23, 0.54) 0%, rgba(2, 6, 23, 0.28) 32%, rgba(2, 6, 23, 0.08) 56%, rgba(2, 6, 23, 0.18) 100%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 38%);
+            opacity: 1;
+        }
+
+        #theme-heo .heo-about-profile-card::after {
+            content: '';
+            position: absolute;
+            inset: auto -1.5rem -1.5rem auto;
+            width: 6rem;
+            height: 6rem;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.16), transparent 68%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        #theme-heo .heo-about-profile-card--hobby::after {
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.3), transparent 68%);
+        }
+
+        #theme-heo .heo-about-profile-card,
+        #theme-heo .heo-about-profile-card__combo-anime,
+        #theme-heo .heo-about-profile-card__combo-music {
+            position: relative;
+        }
+
+        #theme-heo .heo-about-profile-card__content,
+        #theme-heo .heo-about-profile-card__media {
+            z-index: 1;
+        }
+
+        #theme-heo .heo-about-section--persona .heo-about-profile-card__content {
+            padding-right: 5.2rem;
+        }
+
+        #theme-heo .heo-about-section--persona .heo-about-profile-card__title-row {
+            justify-content: flex-start;
+        }
+
+        #theme-heo .heo-about-section--persona .heo-about-profile-card__badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 2;
+        }
+
+        #theme-heo .heo-about-profile-card__eyebrow {
+            margin-bottom: 0.4rem;
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+
+        #theme-heo .heo-about-profile-card__title {
+            color: #0f172a;
+            font-size: clamp(1.3rem, 2vw, 1.6rem);
+            font-weight: 800;
+            line-height: 1.15;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        #theme-heo .heo-about-profile-card__accent {
+            margin-top: 0.18rem;
+            color: #0f766e;
+            font-size: 0.94rem;
+            font-weight: 700;
+        }
+
+        #theme-heo .heo-about-profile-card__description {
+            margin-top: 0.75rem;
+            color: #475569;
+            line-height: 1.72;
+        }
+
+        #theme-heo .heo-about-profile-card__title-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 0.8rem;
+        }
+
+        #theme-heo .heo-about-profile-card__badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 2rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            background: rgba(255, 255, 255, 0.16);
+            color: #f8fafc;
+            font-size: 0.8rem;
+            font-weight: 800;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        #theme-heo .heo-about-profile-card__media {
+            align-self: end;
+            justify-self: end;
+            width: clamp(6.5rem, 22vw, 9.5rem);
+        }
+
+        #theme-heo .heo-about-profile-card--personality .heo-about-profile-card__content {
+            max-width: min(70%, 30rem);
+        }
+
+        #theme-heo .heo-about-profile-card--personality .heo-about-profile-card__media {
+            position: absolute;
+            right: 0.35rem;
+            bottom: -0.15rem;
+            width: clamp(7.4rem, 20vw, 10.4rem);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        #theme-heo .heo-about-profile-card--personality .heo-about-profile-card__image {
+            opacity: 0.26;
+            filter: grayscale(0.05) saturate(0.9) drop-shadow(0 10px 18px rgba(34, 197, 94, 0.08));
+        }
+
+        #theme-heo .heo-about-profile-card__image {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            object-position: bottom right;
+            display: block;
+            filter: drop-shadow(0 16px 28px rgba(34, 197, 94, 0.14));
+        }
+
+        #theme-heo .heo-about-profile-card--hobby .heo-about-profile-card__eyebrow,
+        #theme-heo .heo-about-profile-card--hobby .heo-about-profile-card__title,
+        #theme-heo .heo-about-profile-card--hobby .heo-about-profile-card__accent,
+        #theme-heo .heo-about-profile-card--hobby .heo-about-profile-card__description {
+            color: #f8fafc;
+        }
+
+        #theme-heo .heo-about-profile-card--hobby .heo-about-profile-card__accent {
+            color: #99f6e4;
+        }
+
+        #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__eyebrow {
+            color: #15803d;
+        }
+
+        #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__accent {
+            color: #059669;
+        }
+
+        #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__description {
+            color: #166534;
+            max-width: min(78%, 32rem);
+        }
+
+        #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__badge {
+            border-color: rgba(34, 197, 94, 0.18);
+            background: rgba(255, 255, 255, 0.7);
+            color: #15803d;
+            box-shadow: 0 10px 24px rgba(34, 197, 94, 0.12);
+        }
+
+        #theme-heo .heo-about-profile-card__media--reading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 4.4rem;
+            min-width: 4.4rem;
+            align-self: stretch;
+            border-radius: 1.1rem;
+            border: 1px solid rgba(34, 197, 94, 0.16);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(220, 252, 231, 0.84));
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+        }
+
+        #theme-heo .heo-about-profile-card__reading-icon {
+            width: 3rem;
+            height: 3rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #22c55e, #10b981);
+            color: #ffffff;
+            font-size: 1.15rem;
+            font-weight: 800;
+            box-shadow: 0 14px 28px rgba(16, 185, 129, 0.22);
+        }
+
+        #theme-heo .heo-about-profile-card--reading {
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: #f8fafc;
+        }
+
+        #theme-heo .heo-about-profile-card--reading::before {
+            background:
+                linear-gradient(135deg, rgba(4, 20, 14, 0.26), rgba(3, 7, 18, 0.58) 48%, rgba(3, 7, 18, 0.72)),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 38%);
+            opacity: 1;
+        }
+
+        #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__eyebrow,
+        #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__title,
+        #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__accent,
+        #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__description {
+            color: #f8fafc;
+        }
+
+        #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__accent {
+            color: #86efac;
+        }
+
+        #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__description {
+            max-width: min(78%, 32rem);
+            color: rgba(240, 253, 244, 0.92);
+            text-shadow: 0 2px 12px rgba(2, 6, 23, 0.3);
+        }
+
+        #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__badge {
+            border-color: rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.16);
+            color: #dcfce7;
+            box-shadow: 0 10px 24px rgba(2, 6, 23, 0.2);
+        }
+
+        #theme-heo .heo-about-profile-card--fandom-music {
+            grid-column: 1 / -1;
+            display: block;
+            min-height: 0;
+            padding: 0;
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            overflow: visible;
+        }
+
+        #theme-heo .heo-about-profile-card--fandom-music::before,
+        #theme-heo .heo-about-profile-card--fandom-music::after {
+            display: none;
+        }
+
+        #theme-heo .heo-about-profile-card__fandom-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+            gap: 0.95rem;
+            align-items: stretch;
+            min-width: 0;
+        }
+
+        #theme-heo .heo-about-profile-card__fandom-panel {
+            position: relative;
+            display: grid;
+            min-width: 0;
+            min-height: 100%;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        #theme-heo .heo-about-profile-card__fandom-panel::before,
+        #theme-heo .heo-about-profile-card__fandom-panel::after {
+            display: none;
+        }
+
+        #theme-heo .heo-about-profile-card__fandom-panel--anime {
+            padding: 0;
+            border: none;
+            border-radius: 1.35rem;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        #theme-heo .heo-about-profile-card__fandom-panel--music {
+            padding: 0;
+            border: none;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        #theme-heo .heo-about-profile-card__combo-anime {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.45rem;
+            min-width: 0;
+            min-height: 20rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        #theme-heo .heo-about-profile-card__combo-anime::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(180deg, rgba(2, 6, 23, 0.02) 0%, rgba(2, 6, 23, 0.16) 42%, rgba(2, 6, 23, 0.62) 100%);
+            pointer-events: none;
+        }
+
+        #theme-heo .heo-about-profile-card__combo-anime-item {
+            position: relative;
+            overflow: hidden;
+            min-height: 100%;
+            border-radius: 1rem;
+            background: rgba(15, 23, 42, 0.12);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        #theme-heo .heo-about-profile-card__combo-anime-item::after {
+            content: '';
+            position: absolute;
+            inset: auto 0 0 0;
+            height: 48%;
+            background: linear-gradient(180deg, rgba(2, 6, 23, 0), rgba(2, 6, 23, 0.72));
+            pointer-events: none;
+        }
+
+        #theme-heo .heo-about-profile-card__combo-anime-image {
+            width: 100%;
+            height: 100%;
+            min-height: 15rem;
+            object-fit: cover;
+            display: block;
+            transition: transform var(--heo-dur-fast) var(--heo-ease), object-position var(--heo-dur-fast) var(--heo-ease);
+        }
+
+        #theme-heo .heo-about-profile-card__combo-anime-item:nth-child(3) .heo-about-profile-card__combo-anime-image {
+            transform: scale(1.14);
+            transform-origin: center center;
+            object-position: center top;
+        }
+
+        #theme-heo .heo-about-profile-card__combo-anime-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1rem;
+            background: linear-gradient(180deg, rgba(2, 6, 23, 0.2) 0%, rgba(2, 6, 23, 0.12) 32%, rgba(2, 6, 23, 0.78) 100%);
+            pointer-events: none;
+        }
+
+        #theme-heo .heo-about-profile-card__combo-anime-eyebrow {
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+        #theme-heo .heo-about-profile-card__combo-anime-title,
+        #theme-heo .heo-about-profile-card__combo-music-title {
+            margin-top: 0.35rem;
+            font-size: clamp(1.68rem, 2.55vw, 2.15rem);
+            line-height: 1.04;
+            font-weight: 900;
+            text-shadow: 0 8px 24px rgba(2, 6, 23, 0.34);
+        }
+
+        #theme-heo .heo-about-profile-card__combo-anime-subtitle,
+        #theme-heo .heo-about-profile-card__combo-music-subtitle {
+            margin-top: 0.45rem;
+            font-size: 0.96rem;
+            line-height: 1.5;
+            font-weight: 700;
+        }
+
+        #theme-heo .heo-about-profile-card__combo-anime-title {
+            margin-top: auto;
+            color: #ffffff;
+        }
+
+        #theme-heo .heo-about-profile-card__combo-anime-subtitle {
+            color: rgba(110, 231, 255, 0.96);
+        }
+
+        #theme-heo .heo-about-profile-card__combo-music-title {
+            color: #ffffff;
+        }
+
+        #theme-heo .heo-about-profile-card__combo-music-subtitle {
+            color: rgba(255, 255, 255, 0.92);
+        }
+
+        #theme-heo .heo-about-profile-card__combo-music {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.15rem;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.12);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+        }
+
+        #theme-heo .heo-about-profile-card__combo-music::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(2, 6, 23, 0.48), rgba(2, 6, 23, 0.14) 46%, rgba(2, 6, 23, 0.34));
+            pointer-events: none;
+        }
+
+        #theme-heo .heo-about-profile-card__combo-music-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        #theme-heo .heo-about-profile-card__combo-music-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1rem;
+            color: #ffffff;
+        }
+
+        #theme-heo .heo-about-profile-card__combo-music-eyebrow {
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+        #theme-heo .heo-about-profile-card__combo-music-desc {
+            max-width: 18rem;
+            font-size: 0.98rem;
+            line-height: 1.64;
+            color: rgba(255, 255, 255, 0.92);
+        }
+
+        html:not(.dark) #theme-heo .heo-about-profile-card--hobby {
+            background-color: rgba(255, 255, 255, 0.88);
+        }
+
+        html:not(.dark) #theme-heo .heo-about-profile-card--hobby::before {
+            background:
+                linear-gradient(135deg, rgba(248, 250, 252, 0.16), rgba(15, 23, 42, 0.1) 38%, rgba(15, 23, 42, 0.24)),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 42%);
+        }
+
+        html:not(.dark) #theme-heo .heo-about-profile-card--reading::before {
+            background:
+                linear-gradient(135deg, rgba(12, 74, 110, 0.06), rgba(15, 23, 42, 0.18) 42%, rgba(15, 23, 42, 0.3)),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 36%);
+        }
+
+        html:not(.dark) #theme-heo .heo-about-profile-card__combo-anime::after {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(15, 23, 42, 0.08) 44%, rgba(2, 6, 23, 0.42) 100%);
+        }
+
+        html:not(.dark) #theme-heo .heo-about-profile-card__combo-anime-item::after {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0), rgba(2, 6, 23, 0.48));
+        }
+
+        html:not(.dark) #theme-heo .heo-about-profile-card__combo-anime-overlay {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(15, 23, 42, 0.06) 34%, rgba(2, 6, 23, 0.54) 100%);
+        }
+
+        html:not(.dark) #theme-heo .heo-about-profile-card__combo-music::after {
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.05), rgba(15, 23, 42, 0.1) 42%, rgba(15, 23, 42, 0.22));
+        }
+
+        html:not(.dark) #theme-heo .heo-about-hero__avatar-bg {
+            opacity: 0.92;
+            transform: rotate(1.5deg);
+        }
+
+        html:not(.dark) #theme-heo .heo-about-hero__avatar-bg::before {
+            inset: -0.95rem;
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.09), rgba(255, 255, 255, 0.02) 58%, transparent 76%);
+            filter: blur(10px);
+            opacity: 0.56;
+        }
+
+        html:not(.dark) #theme-heo .heo-about-hero__avatar-bg::after {
+            background: radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.16), transparent 52%), linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(248, 250, 252, 0.06));
+        }
+
+        html:not(.dark) #theme-heo .heo-about-hero__avatar-ring {
+            background: linear-gradient(145deg, rgba(255,255,255,0.34), rgba(255,255,255,0.08));
+            border-color: rgba(255, 255, 255, 0.34);
+            box-shadow: 0 18px 40px rgba(99, 102, 241, 0.07), 0 8px 18px rgba(15, 23, 42, 0.04);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            opacity: 0.98;
+        }
+
+        html:not(.dark) #theme-heo .heo-about-hero__avatar-ring::before {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.01) 46%, transparent 72%);
+        }
+
+        html:not(.dark) #theme-heo .heo-about-hero__avatar-ring::after {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        html:not(.dark) #theme-heo .heo-about-hero__avatar {
+            opacity: 1;
+            filter: saturate(1.08) contrast(1.08) brightness(1.02);
+        }
+
+        html:not(.dark) #theme-heo .heo-about-profile-card--personality .heo-about-profile-card__image {
+            opacity: 0.48;
+            filter: grayscale(0.02) saturate(0.98) contrast(1.03) drop-shadow(0 12px 20px rgba(34, 197, 94, 0.1));
+        }
+
+        html:not(.dark) #theme-heo .heo-about-profile-card--personality .heo-about-profile-card__media {
+            right: 0.2rem;
+            bottom: -0.05rem;
+        }
+
+        html.dark #theme-heo .heo-about-profile-card__fandom-panel {
+            border-color: rgba(71, 85, 105, 0.42);
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.84), rgba(17, 24, 39, 0.88));
+            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.3);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card__combo-anime-overlay {
+            background: linear-gradient(180deg, rgba(2, 6, 23, 0.24) 0%, rgba(2, 6, 23, 0.16) 32%, rgba(2, 6, 23, 0.84) 100%);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card__combo-anime-item,
+        html.dark #theme-heo .heo-about-profile-card__combo-music {
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.24);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card__combo-music::after {
+            background: linear-gradient(135deg, rgba(2, 6, 23, 0.56), rgba(2, 6, 23, 0.22) 46%, rgba(2, 6, 23, 0.46));
+        }
+
+        @media (max-width: 1023px) {
+            #theme-heo .heo-about-profile-card--fandom-music {
+                grid-column: auto;
+            }
+
+            #theme-heo .heo-about-profile-card__fandom-layout {
+                grid-template-columns: 1fr;
+            }
+
+            #theme-heo .heo-about-profile-card__combo-anime-image,
+            #theme-heo .heo-about-profile-card__combo-music {
+                min-height: 12.5rem;
+            }
+        }
+
+        @media (max-width: 767px) {
+            #theme-heo .heo-about-profile-card--fandom-music {
+                padding: 0;
+            }
+
+            #theme-heo .heo-about-profile-card--fandom-music .heo-about-profile-card__fandom-layout {
+                gap: 0.75rem;
+            }
+
+            #theme-heo .heo-about-profile-card--fandom-music .heo-about-profile-card__fandom-panel--anime,
+            #theme-heo .heo-about-profile-card--fandom-music .heo-about-profile-card__combo-music {
+                border-radius: 1.1rem;
+            }
+
+            #theme-heo .heo-about-profile-card__combo-anime-overlay {
+                padding: 0.82rem;
+            }
+
+            #theme-heo .heo-about-profile-card__combo-anime-eyebrow {
+                font-size: 0.68rem;
+                letter-spacing: 0.1em;
+            }
+
+            #theme-heo .heo-about-profile-card__combo-anime-title {
+                font-size: 1.18rem;
+            }
+
+            #theme-heo .heo-about-profile-card__combo-anime-subtitle {
+                margin-top: 0.3rem;
+                font-size: 0.72rem;
+                line-height: 1.45;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            #theme-heo .heo-about-profile-card__combo-anime {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 0.38rem;
+                min-height: 18.5rem;
+            }
+
+            #theme-heo .heo-about-profile-card__combo-anime-image {
+                min-height: 8.9rem;
+            }
+
+            #theme-heo .heo-about-profile-card__combo-anime-label {
+                left: 0.45rem;
+                right: 0.45rem;
+                bottom: 0.45rem;
+                font-size: 0.64rem;
+            }
+
+            #theme-heo .heo-about-profile-card__combo-music {
+                min-height: 11.2rem;
+            }
+
+            #theme-heo .heo-about-profile-card__combo-music-overlay {
+                padding: 0.82rem;
+            }
+
+            #theme-heo .heo-about-profile-card__combo-music-title {
+                font-size: 1.42rem;
+            }
+
+            #theme-heo .heo-about-profile-card__combo-music-subtitle {
+                font-size: 0.84rem;
+            }
+
+            #theme-heo .heo-about-profile-card__combo-music-desc {
+                max-width: none;
+                font-size: 0.93rem;
+                line-height: 1.58;
+            }
+        }
+
+        #theme-heo .heo-about-persona-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            grid-template-areas:
+                'personality creative'
+                'hobby reading'
+                'anime music';
+            gap: 1rem;
+            align-items: stretch;
+        }
+
+        #theme-heo .heo-about-persona-layout__slot {
+            min-width: 0;
+        }
+
+        #theme-heo .heo-about-persona-layout__slot--personality {
+            grid-area: personality;
+        }
+
+        #theme-heo .heo-about-persona-layout__slot--creative {
+            grid-area: creative;
+        }
+
+        #theme-heo .heo-about-persona-layout__slot--hobby {
+            grid-area: hobby;
+        }
+
+        #theme-heo .heo-about-persona-layout__slot--reading {
+            grid-area: reading;
+        }
+
+        #theme-heo .heo-about-persona-layout__slot--anime {
+            grid-area: anime;
+        }
+
+        #theme-heo .heo-about-persona-layout__slot--music {
+            grid-area: music;
+        }
+
+        #theme-heo .heo-about-persona-layout__card {
+            min-width: 0;
+            height: 100%;
+        }
+
+        #theme-heo .heo-about-persona-layout__card--personality,
+        #theme-heo .heo-about-persona-layout__card--creative {
+            min-height: 9.6rem;
+        }
+
+        #theme-heo .heo-about-persona-layout__card--hobby,
+        #theme-heo .heo-about-persona-layout__card--reading {
+            min-height: 8.9rem;
+        }
+
+        #theme-heo .heo-about-persona-layout__card--anime {
+            overflow: hidden;
+            border-radius: 1.35rem;
+            height: 27.6rem;
+        }
+
+        #theme-heo .heo-about-persona-layout__card--music {
+            overflow: hidden;
+            border-radius: 1.15rem;
+            height: 27.6rem;
+        }
+
+        #theme-heo .heo-about-persona-layout__card--creative {
+            position: relative;
+            display: flex;
+            align-items: stretch;
+            justify-content: flex-start;
+            gap: 0.9rem;
+            overflow: hidden;
+            min-height: 12.4rem;
+            padding: 0.88rem 0.95rem;
+            border: 1px solid rgba(203, 213, 225, 0.84);
+            border-radius: 1.35rem;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.95));
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+            isolation: isolate;
+        }
+
+        #theme-heo .heo-about-persona-layout__card--creative::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.97) 0%, rgba(255, 255, 255, 0.92) 30%, rgba(255, 255, 255, 0.4) 58%, rgba(255, 255, 255, 0.12) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #theme-heo .heo-about-persona-layout__creative-copy,
+        #theme-heo .heo-about-persona-layout__creative-figure {
+            position: relative;
+        }
+
+        #theme-heo .heo-about-persona-layout__creative-copy {
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 0.72rem;
+            max-width: min(56%, 15rem);
+        }
+
+        #theme-heo .heo-about-persona-layout__creative-eyebrow {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+
+        #theme-heo .heo-about-persona-layout__creative-title {
+            color: #0f172a;
+            font-size: clamp(1.24rem, 1.8vw, 1.48rem);
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        #theme-heo .heo-about-persona-layout__creative-desc {
+            color: #475569;
+            line-height: 1.62;
+            font-size: 0.9rem;
+        }
+
+        #theme-heo .heo-about-persona-layout__creative-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+        }
+
+        #theme-heo .heo-about-persona-layout__creative-tag {
+            display: inline-flex;
+            align-items: center;
+            min-height: 1.8rem;
+            padding: 0.26rem 0.68rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(191, 219, 254, 0.62);
+            color: #1d4ed8;
+            font-size: 0.76rem;
+            font-weight: 700;
+        }
+
+        #theme-heo .heo-about-persona-layout__creative-figure {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            border-radius: inherit;
+            background-image:
+                linear-gradient(135deg, rgba(15, 23, 42, 0.04), rgba(15, 23, 42, 0.16)),
+                var(--heo-about-creative-image, url('/images/about/guitar-card.jpg'));
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: right center;
+            pointer-events: none;
+        }
+
+        #theme-heo .heo-about-persona-layout__creative-image {
+            display: none;
+        }
+
+        #theme-heo .heo-about-persona-layout__card--personality .heo-about-profile-card__content {
+            max-width: min(62%, 24rem);
+        }
+
+        #theme-heo .heo-about-persona-layout__card--anime .heo-about-profile-card__combo-anime {
+            height: 100%;
+        }
+
+        #theme-heo .heo-about-persona-layout__card--music .heo-about-profile-card__combo-music {
+            height: 100%;
+        }
+
+        #theme-heo .heo-about-persona-layout__card--music .heo-about-profile-card__combo-music-desc {
+            max-width: 16rem;
+        }
+
+        @media (max-width: 1023px) {
+            #theme-heo .heo-about-persona-layout {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    'personality'
+                    'creative'
+                    'hobby'
+                    'reading'
+                    'anime'
+                    'music';
+            }
+
+            #theme-heo .heo-about-persona-layout__card--personality .heo-about-profile-card__content,
+            #theme-heo .heo-about-persona-layout__creative-copy,
+            #theme-heo .heo-about-profile-card--hobby .heo-about-profile-card__content,
+            #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__content {
+                max-width: none;
+            }
+
+            #theme-heo .heo-about-profile-card--hobby {
+                padding-right: 1.15rem;
+                background-size: cover;
+                background-position: calc(100% + 50%) center;
+            }
+
+            #theme-heo .heo-about-persona-layout__card--anime,
+            #theme-heo .heo-about-persona-layout__card--music {
+                height: 18rem;
+            }
+
+            #theme-heo .heo-about-persona-layout__card--anime .heo-about-profile-card__combo-anime,
+            #theme-heo .heo-about-persona-layout__card--music .heo-about-profile-card__combo-music {
+                height: 100%;
+            }
+        }
+
+        @media (max-width: 767px) {
+            #theme-heo .heo-about-persona-layout {
+                grid-template-areas:
+                    'personality'
+                    'creative'
+                    'hobby'
+                    'reading'
+                    'anime'
+                    'music';
+            }
+
+            #theme-heo .heo-about-persona-layout__card--creative {
+                min-height: 0;
+            }
+
+            #theme-heo .heo-about-persona-layout__creative-figure {
+                background-position: 74% center;
+            }
+
+            #theme-heo .heo-about-persona-layout__card--anime,
+            #theme-heo .heo-about-persona-layout__card--music {
+                height: 19.4rem;
+            }
+
+            #theme-heo .heo-about-persona-layout__card--anime .heo-about-profile-card__combo-anime,
+            #theme-heo .heo-about-persona-layout__card--music .heo-about-profile-card__combo-music {
+                height: 100%;
+            }
+        }
+
+        #theme-heo .heo-about-section--intro .heo-about-intro__content {
+            font-size: 1.02rem;
+        }
+
+        #theme-heo .heo-about-section--timeline .heo-about-timeline__item {
+            padding-right: 0.35rem;
+        }
+
+        #theme-heo .heo-about-section--skills .heo-about-icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(6.9rem, 1fr));
+            grid-auto-rows: minmax(9.25rem, auto);
+            gap: 1rem;
+        }
+
+        #theme-heo .heo-about-section--skills .heo-about-icon-card {
+            min-width: 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 0.68rem;
+            padding: 1.05rem 0.72rem 0.82rem;
+            border-radius: 1.7rem;
+            background: var(--heo-skill-bg, linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.92)));
+            border: 1px solid rgba(226, 232, 240, 0.92);
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.08), 0 6px 14px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        #theme-heo .heo-about-section--skills .heo-about-icon-card:nth-child(5n + 1),
+        #theme-heo .heo-about-section--skills .heo-about-icon-card:nth-child(4n + 2) {
+            transform: none;
+        }
+
+        #theme-heo .heo-about-section--skills .heo-about-icon-card:nth-child(7n) {
+            //background: linear-gradient(135deg, rgba(239, 246, 255, 0.98), rgba(224, 242, 254, 0.92));
+        }
+
+        #theme-heo .heo-about-section--timeline .heo-about-timeline {
+            justify-content: flex-start;
+            min-height: 0;
+        }
+
+        #theme-heo .heo-about-contact-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.24rem;
+            min-width: 0;
+            min-height: 100%;
+            padding: 0.95rem 1rem;
+            text-decoration: none !important;
+        }
+
+        #theme-heo .heo-about-contact-item__label {
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+
+        #theme-heo .heo-about-contact-item__value {
+            color: var(--heo-card-title);
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        #theme-heo .heo-about-skill-card {
+            padding: 1rem 1.05rem;
+        }
+
+        #theme-heo .heo-about-skill-card__title,
+        #theme-heo .heo-about-timeline__title,
+        #theme-heo .heo-about-icon-card__name {
+            color: var(--heo-card-title);
+            font-weight: 800;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        #theme-heo .heo-about-icon-card__name {
+            max-width: 100%;
+            font-size: 0.8rem;
+            line-height: 1.18;
+            letter-spacing: 0.01em;
+        }
+
+        #theme-heo .heo-about-skill-card__summary {
+            margin-top: 0.4rem;
+            color: var(--heo-card-text);
+            line-height: 1.7;
+        }
+
+        #theme-heo .heo-about-side-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            align-content: flex-start;
+        }
+
+        #theme-heo .heo-about-skill-card__tag,
+        #theme-heo .heo-about-side-tags__item {
+            display: inline-flex;
+            align-items: center;
+            min-height: 2rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(239, 246, 255, 0.88);
+            color: #2563eb;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        #theme-heo .heo-about-icon-card {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            min-width: 0;
+            padding: 0.8rem 0.95rem;
+            transition: transform var(--heo-dur-fast) var(--heo-ease), box-shadow var(--heo-dur-fast) var(--heo-ease), border-color var(--heo-dur-fast) var(--heo-ease);
+        }
+
+        #theme-heo .heo-about-icon-card:hover {
+            transform: translateY(-4px);
+            border-color: color-mix(in srgb, var(--heo-skill-brand, var(--heo-theme)) 26%, rgba(148, 163, 184, 0.18));
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.56);
+        }
+
+        #theme-heo .heo-about-icon-card__icon {
+            width: 4rem;
+            height: 4rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1.35rem;
+            background: rgba(255, 255, 255, 0.72);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+        }
+
+        #theme-heo .heo-about-icon-card__svg {
+            width: 2rem;
+            height: 2rem;
+            color: var(--heo-skill-brand, var(--heo-theme));
+            flex-shrink: 0;
+        }
+
+        #theme-heo .heo-about-icon-card__content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.18rem;
+            min-width: 0;
+        }
+
+        #theme-heo .heo-about-icon-card__image {
+            width: 2rem;
+            height: 2rem;
+            object-fit: contain;
+        }
+
+        #theme-heo .heo-about-timeline__item {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1.25rem minmax(0, 1fr);
+            gap: 0.9rem;
+            align-items: start;
+        }
+
+        #theme-heo .heo-about-timeline__item::after {
+            content: '';
+            position: absolute;
+            left: 0.56rem;
+            top: 1.35rem;
+            bottom: -1rem;
+            width: 1px;
+            background: rgba(148, 163, 184, 0.35);
+        }
+
+        #theme-heo .heo-about-timeline__item:last-child::after {
+            display: none;
+        }
+
+        #theme-heo .heo-about-timeline__dot {
+            width: 1.1rem;
+            height: 1.1rem;
+            margin-top: 0.2rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #4f46e5, #3b82f6);
+            box-shadow: 0 0 0 6px rgba(79, 70, 229, 0.12);
+        }
+
+        #theme-heo .heo-about-reading-flow {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        #theme-heo .heo-about-article-shell {
+            min-width: 0;
+            align-self: stretch;
+        }
+
+        #theme-heo .heo-about-feature-card--timeline .heo-about-section-heading {
+            margin-bottom: 0.2rem;
+        }
+
+        #theme-heo .heo-about-article-shell .heo-card__body {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            height: auto;
+            min-height: 0;
+        }
+
+        #theme-heo .heo-about-article-content {
+            overflow: hidden;
+            min-width: 0;
+            min-height: 0;
+        }
+
+        #theme-heo .heo-about-article-body {
+            max-width: none;
+        }
+
+        html.dark #theme-heo .heo-about-section-heading__eyebrow,
+        html.dark #theme-heo .heo-about-contact-item__label {
+            color: #94a3b8;
+        }
+
+        html.dark #theme-heo .heo-about-section-heading__title,
+        html.dark #theme-heo .heo-about-hero__title,
+        html.dark #theme-heo .heo-about-stat__value,
+        html.dark #theme-heo .heo-about-stat__label,
+        html.dark #theme-heo .heo-about-contact-item__value,
+        html.dark #theme-heo .heo-about-timeline__title,
+        html.dark #theme-heo .heo-about-icon-card__name {
+            color: var(--heo-card-title-dark);
+        }
+
+        html.dark #theme-heo .heo-about-section-heading__desc,
+        html.dark #theme-heo .heo-about-stat__helper,
+        html.dark #theme-heo .heo-about-hero__description,
+        html.dark #theme-heo .heo-about-hero__intro,
+        html.dark #theme-heo .heo-about-intro__content,
+        html.dark #theme-heo .heo-about-timeline__desc,
+        html.dark #theme-heo .heo-about-side-note {
+            color: var(--heo-card-text-dark);
+        }
+
+        html.dark #theme-heo .heo-about-hero__badge {
+            background: rgba(245, 158, 11, 0.14);
+            color: #facc15;
+        }
+
+        html.dark #theme-heo .heo-about-hero__subtitle,
+        html.dark #theme-heo .heo-about-timeline__year {
+            color: #fbbf24;
+        }
+
+        html.dark #theme-heo .heo-about-hero__tagline,
+        html.dark #theme-heo .heo-about-skill-card__tag,
+        html.dark #theme-heo .heo-about-side-tags__item,
+        html.dark #theme-heo .heo-about-bookshelf__more {
+            border-color: rgba(245, 158, 11, 0.18);
+            background: rgba(154, 52, 18, 0.18);
+            color: #fde68a;
+        }
+
+        html.dark #theme-heo .heo-about-profile-card {
+            border-color: rgba(71, 85, 105, 0.42);
+            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card::before {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 42%);
+            opacity: 0.52;
+        }
+
+        html.dark #theme-heo .heo-about-profile-card::after {
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.18), transparent 68%);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card__eyebrow {
+            color: #94a3b8;
+        }
+
+        html.dark #theme-heo .heo-about-profile-card__title {
+            color: #f8fafc;
+        }
+
+        html.dark #theme-heo .heo-about-profile-card__accent {
+            color: #67e8f9;
+        }
+
+        html.dark #theme-heo .heo-about-profile-card__description {
+            color: rgba(226, 232, 240, 0.86);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--personality {
+            border-color: rgba(100, 116, 139, 0.42);
+            background:
+                linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.78)),
+                linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.1));
+            box-shadow: 0 18px 46px rgba(0, 0, 0, 0.28);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--personality .heo-about-profile-card__accent {
+            color: #6ee7b7;
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--personality .heo-about-profile-card__image {
+            opacity: 0.34;
+            filter: grayscale(0.04) saturate(0.96) brightness(1.12) drop-shadow(0 14px 24px rgba(16, 185, 129, 0.16));
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--hobby {
+            border-color: rgba(148, 163, 184, 0.28);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--hobby::before {
+            background: linear-gradient(135deg, rgba(2, 6, 23, 0.06), rgba(2, 6, 23, 0.34) 42%, rgba(2, 6, 23, 0.58));
+            opacity: 1;
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--hobby::after {
+            background: radial-gradient(circle, rgba(45, 212, 191, 0.22), transparent 68%);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--hobby .heo-about-profile-card__eyebrow {
+            color: rgba(226, 232, 240, 0.72);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--hobby .heo-about-profile-card__title {
+            color: #ffffff;
+            text-shadow: 0 4px 14px rgba(15, 23, 42, 0.42);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--hobby .heo-about-profile-card__accent {
+            color: #99f6e4;
+            text-shadow: 0 2px 10px rgba(15, 23, 42, 0.36);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--hobby .heo-about-profile-card__description {
+            color: rgba(241, 245, 249, 0.92);
+            text-shadow: 0 2px 12px rgba(2, 6, 23, 0.42);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--hobby .heo-about-profile-card__badge {
+            border-color: rgba(255, 255, 255, 0.14);
+            background: rgba(15, 23, 42, 0.42);
+            color: #fef08a;
+            box-shadow: 0 10px 24px rgba(2, 6, 23, 0.24);
+        }
+
+        html.dark #theme-heo .heo-about-persona-layout__card--creative {
+            border-color: rgba(100, 116, 139, 0.34);
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.74));
+            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.26);
+        }
+
+        html.dark #theme-heo .heo-about-persona-layout__card--creative::before {
+            background: linear-gradient(90deg, rgba(2, 6, 23, 0.92) 0%, rgba(2, 6, 23, 0.78) 30%, rgba(2, 6, 23, 0.42) 58%, rgba(2, 6, 23, 0.22) 100%);
+        }
+
+        html.dark #theme-heo .heo-about-persona-layout__creative-eyebrow {
+            color: rgba(226, 232, 240, 0.72);
+        }
+
+        html.dark #theme-heo .heo-about-persona-layout__creative-title {
+            color: #ffffff;
+        }
+
+        html.dark #theme-heo .heo-about-persona-layout__creative-desc {
+            color: rgba(226, 232, 240, 0.9);
+        }
+
+        html.dark #theme-heo .heo-about-persona-layout__creative-tag {
+            background: rgba(15, 23, 42, 0.56);
+            border-color: rgba(125, 211, 252, 0.24);
+            color: #bfdbfe;
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__title {
+            color: #f0fdf4;
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__eyebrow {
+            color: #86efac;
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__accent {
+            color: #6ee7b7;
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__description {
+            color: rgba(220, 252, 231, 0.78);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card--reading .heo-about-profile-card__badge {
+            border-color: rgba(74, 222, 128, 0.16);
+            background: rgba(8, 51, 43, 0.78);
+            color: #bbf7d0;
+            box-shadow: 0 10px 24px rgba(2, 6, 23, 0.26);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card__media--reading {
+            border-color: rgba(74, 222, 128, 0.12);
+            background: linear-gradient(180deg, rgba(10, 60, 47, 0.82), rgba(17, 24, 39, 0.72));
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 10px 22px rgba(0, 0, 0, 0.18);
+        }
+
+        html.dark #theme-heo .heo-about-profile-card__reading-icon {
+            background: linear-gradient(135deg, #22c55e, #10b981);
+            box-shadow: 0 14px 28px rgba(16, 185, 129, 0.18);
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf-overview {
+            border: 0;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        html.dark #theme-heo .heo-about-section--books-overview::after {
+            border-radius: inherit;
+            background:
+                radial-gradient(circle at top right, rgba(96, 165, 250, 0.14), transparent 34%),
+                linear-gradient(145deg, rgba(255, 255, 255, 0.05), transparent 42%);
+            opacity: 0.78;
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf-overview__title {
+            color: var(--heo-card-title-dark);
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf-overview__desc,
+        html.dark #theme-heo .heo-about-bookshelf-overview__stat-label,
+        html.dark #theme-heo .heo-about-bookshelf__status,
+        html.dark #theme-heo .heo-about-bookshelf__panel-count {
+            color: rgba(226, 232, 240, 0.78);
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf-overview__tag,
+        html.dark #theme-heo .heo-about-bookshelf-overview__stat,
+        html.dark #theme-heo .heo-about-bookshelf__toolbar {
+            border-color: rgba(71, 85, 105, 0.7);
+            background: rgba(15, 23, 42, 0.58);
+            box-shadow: 0 12px 28px rgba(2, 6, 23, 0.2);
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf-overview__tag {
+            color: rgba(226, 232, 240, 0.78);
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf-overview__tag--brand {
+            border-color: rgba(59, 130, 246, 0.28);
+            background: rgba(30, 64, 175, 0.24);
+            color: #93c5fd;
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf-overview__tag--success {
+            border-color: rgba(34, 197, 94, 0.26);
+            background: rgba(20, 83, 45, 0.24);
+            color: #86efac;
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf-overview__tag--warm {
+            border-color: rgba(245, 158, 11, 0.26);
+            background: rgba(146, 64, 14, 0.24);
+            color: #fcd34d;
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf-overview__stat-value {
+            color: #60a5fa;
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf__panel-count {
+            background: rgba(148, 163, 184, 0.14);
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf__toolbar {
+            background: rgba(15, 23, 42, 0.7);
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf__action {
+            border-color: rgba(96, 165, 250, 0.26);
+            background: rgba(30, 64, 175, 0.18);
+            color: #bfdbfe;
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf__action:hover:not(:disabled) {
+            box-shadow: 0 10px 24px rgba(59, 130, 246, 0.2);
+        }
+
+        html.dark #theme-heo .heo-about-stat,
+        html.dark #theme-heo .heo-about-contact-item,
+        html.dark #theme-heo .heo-about-skill-card,
+        html.dark #theme-heo .heo-about-icon-card,
+        html.dark #theme-heo .heo-about-bookshelf-panel,
+        html.dark #theme-heo .heo-about-bookshelf__item {
+            border-color: var(--heo-card-dark-border);
+            background: rgba(15, 23, 42, 0.72);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf-panel {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.86), rgba(17, 24, 39, 0.82));
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 18px 40px rgba(2, 6, 23, 0.28);
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf__item {
+            background: linear-gradient(180deg, rgba(20, 26, 42, 0.92), rgba(24, 32, 54, 0.9));
+            box-shadow: 0 18px 40px rgba(2, 6, 23, 0.35);
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf__summary {
+            color: rgba(226, 232, 240, 0.82);
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf__author {
+            color: rgba(191, 219, 254, 0.72);
+        }
+
+        html.dark #theme-heo .heo-about-timeline__item::after {
+            background: rgba(71, 85, 105, 0.5);
+        }
+
+        html.dark #theme-heo .heo-about-timeline__dot {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.14);
+        }
+
+        @media (max-width: 1023px) {
+            #theme-heo .heo-about-intro {
+                grid-template-columns: 1fr;
+            }
+
+            #theme-heo .heo-about-hero__body {
+                min-height: 0;
+                padding-right: 1.15rem;
+                padding-top: clamp(6.9rem, 22vw, 8.2rem);
+            }
+
+            #theme-heo .heo-about-hero__avatar-bg {
+                top: 0.9rem;
+                right: 0.9rem;
+            }
+
+            #theme-heo .heo-about-hero__avatar-ring {
+                width: clamp(6.2rem, 26vw, 7.8rem);
+                height: clamp(6.2rem, 26vw, 7.8rem);
+                border-radius: 1.35rem;
+                opacity: 0.6;
+            }
+
+            #theme-heo .heo-about-hero__avatar {
+                border-radius: 1.05rem;
+            }
+
+            #theme-heo .heo-about-hero__stats {
+                grid-template-columns: 1fr;
+            }
+
+            #theme-heo .heo-about-section--skills .heo-about-icon-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            #theme-heo .heo-about-profile-card {
+                grid-template-columns: 1fr;
+            }
+
+            #theme-heo .heo-about-profile-card__media {
+                width: clamp(6rem, 32vw, 9rem);
+            }
+
+            #theme-heo .heo-about-profile-card--personality .heo-about-profile-card__content {
+                max-width: min(72%, 28rem);
+            }
+
+            #theme-heo .heo-about-profile-card--personality .heo-about-profile-card__media {
+                width: clamp(6.8rem, 28vw, 9rem);
+            }
+        }
+
+        @media (max-width: 1279px) {
+            #theme-heo .heo-about-magazine-grid--intro,
+            #theme-heo .heo-about-magazine-grid--feature,
+            #theme-heo .heo-about-bookshelf {
+                grid-template-columns: 1fr;
+            }
+
+            #theme-heo .heo-about-section--intro,
+            #theme-heo .heo-about-section--profile,
+            #theme-heo .heo-about-section--skills,
+            #theme-heo .heo-about-section--timeline {
+                transform: none;
+            }
+
+            #theme-heo .heo-about-section--books {
+                margin-top: 0;
+            }
+        }
+
+
+        @media (max-width: 767px) {
+            #theme-heo .heo-about {
+                gap: 1rem;
+                padding-top: 0.5rem;
+            }
+
+            #theme-heo .heo-about-section {
+                transform: none !important;
+            }
+
+            #theme-heo .heo-about-profile-card:not(.heo-about-profile-card--fandom-music) {
+                min-height: 11.2rem;
+                padding: 1rem;
+            }
+
+            #theme-heo .heo-about-profile-card__title-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            #theme-heo .heo-about-profile-card__badge {
+                margin-top: 0.55rem;
+            }
+
+            #theme-heo .heo-about-profile-card__media {
+                width: min(9rem, 52vw);
+            }
+
+            #theme-heo .heo-about-profile-card--personality {
+                min-height: 11.4rem;
+            }
+
+            #theme-heo .heo-about-profile-card--personality .heo-about-profile-card__content {
+                max-width: calc(100% - 5.6rem);
+            }
+
+            #theme-heo .heo-about-profile-card--personality .heo-about-profile-card__media {
+                right: 0.15rem;
+                width: min(7rem, 38vw);
+            }
+
+            #theme-heo .heo-about-section-heading {
+                flex-direction: column;
+            }
+
+            #theme-heo .heo-about-section-heading__extra {
+                width: 100%;
+            }
+
+            #theme-heo .heo-about-hero .heo-card__body,
+            #theme-heo .heo-about-section .heo-card__body,
+            #theme-heo .heo-about-article-shell .heo-card__body {
+                padding: 1.15rem;
+            }
+
+            #theme-heo .heo-about-hero__title {
+                font-size: clamp(1.9rem, 10vw, 2.5rem);
+            }
+
+            #theme-heo .heo-about-hero__stats {
+                padding: 0 1.15rem 1.15rem;
+            }
+
+            #theme-heo .heo-about-section--books .heo-about-section-heading {
+                flex-direction: column;
+            }
+
+            #theme-heo .heo-about-bookshelf-overview__top {
+                grid-template-columns: 1fr;
+            }
+
+            #theme-heo .heo-about-bookshelf-overview__stats {
+                grid-template-columns: 1fr;
+            }
+
+            #theme-heo .heo-about-bookshelf__heading-actions,
+            #theme-heo .heo-about-bookshelf__toolbar,
+            #theme-heo .heo-about-bookshelf__status {
+                width: 100%;
+                align-items: flex-start;
+                text-align: left;
+            }
+
+            #theme-heo .heo-about-bookshelf-panel {
+                padding: 1rem;
+            }
+
+            #theme-heo .heo-about-bookshelf__item {
+                grid-template-columns: 5.5rem minmax(0, 1fr);
+                gap: 0.85rem;
+            }
+
+            #theme-heo .heo-about-bookshelf__summary {
+                -webkit-line-clamp: 5;
+            }
+
+            #theme-heo .heo-about-bookshelf__item,
+            #theme-heo .heo-about-icon-card {
+                width: 100%;
+            }
+
+            #theme-heo .heo-about-section--skills .heo-about-icon-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.72rem;
+            }
+
+            #theme-heo .heo-about-section--skills .heo-about-icon-card {
+                padding: 0.92rem 0.62rem 0.78rem;
+                border-radius: 1.35rem;
+            }
+
+            #theme-heo .heo-about-icon-card__icon {
+                width: 3.55rem;
+                height: 3.55rem;
+                border-radius: 1.2rem;
+            }
+
+            #theme-heo .heo-about-icon-card__svg {
+                width: 1.8rem;
+                height: 1.8rem;
+            }
+
+            #theme-heo .heo-about-icon-card__name {
+                font-size: 0.74rem;
+            }
+
+            #theme-heo .heo-about-icon-card__meta {
+                display: none;
+            }
+        }
+        .heo-about-override-scope {}
+
+        #theme-heo .heo-about {
+            gap: 1.25rem;
+        }
+
+        #theme-heo .heo-about-split-grid,
+        #theme-heo .heo-about-feature-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+            align-items: start;
+        }
+
+        #theme-heo .heo-about-reading-flow {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        #theme-heo .heo-about-feature-stack {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            align-content: start;
+        }
+
+        #theme-heo .heo-about-section--persona,
+        #theme-heo .heo-about-section--skills,
+        #theme-heo .heo-about-section--focus,
+        #theme-heo .heo-about-section--books-overview,
+        #theme-heo .heo-about-article-shell,
+        #theme-heo .heo-about-feature-card {
+            transform: none;
+            margin-top: 0;
+            min-height: auto;
+        }
+
+        #theme-heo .heo-about-section--persona .heo-card__body,
+        #theme-heo .heo-about-section--skills .heo-card__body,
+        #theme-heo .heo-about-section--focus .heo-card__body,
+        #theme-heo .heo-about-feature-card .heo-card__body {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            height: auto;
+        }
+
+        #theme-heo .heo-about-contact-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+            gap: 0.85rem;
+            margin-top: 0;
+            align-items: stretch;
+        }
+
+        #theme-heo .heo-about-feature-card {
+            overflow: visible;
+            position: relative;
+        }
+
+        #theme-heo .heo-about-section--focus .heo-card__body,
+        #theme-heo .heo-about-feature-card .heo-card__body {
+            padding-left: 1.5rem;
+        }
+
+        #theme-heo .heo-about-feature-card__title {
+            margin-top: 0.2rem;
+            color: var(--heo-card-title);
+            font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+            font-weight: 800;
+            line-height: 1.2;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        #theme-heo .heo-about-feature-card__description,
+        #theme-heo .heo-about-bookshelf__summary,
+        #theme-heo .heo-about-icon-card__meta {
+            color: var(--heo-card-text);
+            line-height: 1.78;
+        }
+
+        #theme-heo .heo-about-feature-card__tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.15rem;
+        }
+
+        #theme-heo .heo-about-feature-card__tag,
+        #theme-heo .heo-about-bookshelf__note {
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            min-height: 2rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(239, 246, 255, 0.92);
+            color: #2563eb;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        #theme-heo .heo-about-section--skills .heo-about-icon-grid {
+            grid-template-columns: repeat(auto-fit, minmax(7.2rem, 1fr));
+            grid-auto-rows: minmax(8.4rem, auto);
+        }
+
+        #theme-heo .heo-about-section--skills .heo-about-icon-card {
+            align-items: center;
+            text-align: center;
+            gap: 0.75rem;
+            background: var(--heo-skill-bg, linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.95)));
+        }
+
+        #theme-heo .heo-about-icon-card__symbol {
+            color: var(--heo-skill-brand, #1d4ed8);
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+        }
+
+        #theme-heo .heo-about-icon-card__meta {
+            font-size: 0.76rem;
+        }
+
+        #theme-heo .heo-about-bookshelf {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            max-height: none;
+            overflow: visible;
+            padding-right: 0;
+        }
+
+        #theme-heo .heo-about-bookshelf__item {
+            grid-template-columns: 6.5rem minmax(0, 1fr);
+            grid-template-rows: none;
+            gap: 1rem;
+            align-items: stretch;
+        }
+
+        #theme-heo .heo-about-bookshelf__cover-wrap {
+            width: 6.5rem;
+            aspect-ratio: auto;
+            min-height: 9rem;
+        }
+
+        #theme-heo .heo-about-bookshelf__meta {
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        #theme-heo .heo-about-bookshelf__summary {
+            font-size: 0.94rem;
+            -webkit-line-clamp: 4;
+        }
+
+        #theme-heo .heo-about-profile-cards {
+            margin-bottom: 0;
+        }
+
+        #theme-heo .heo-about-contact-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+            gap: 0.85rem;
+            margin-top: 0;
+            align-items: stretch;
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf__title {
+            color: rgba(248, 250, 252, 0.96);
+            text-shadow: 0 1px 0 rgba(15, 23, 42, 0.24);
+        }
+
+        html.dark #theme-heo .heo-about-feature-card__eyebrow {
+            color: #94a3b8;
+        }
+
+        html.dark #theme-heo .heo-about-feature-card__title {
+            color: var(--heo-card-title-dark);
+        }
+
+        html.dark #theme-heo .heo-about-feature-card__description,
+        html.dark #theme-heo .heo-about-bookshelf__summary,
+        html.dark #theme-heo .heo-about-icon-card__meta {
+            color: rgba(226, 232, 240, 0.82);
+        }
+
+        html.dark #theme-heo .heo-about-bookshelf__author {
+            color: rgba(191, 219, 254, 0.72);
+        }
+
+        html.dark #theme-heo .heo-about-feature-card__tag,
+        html.dark #theme-heo .heo-about-bookshelf__note {
+            border-color: rgba(245, 158, 11, 0.18);
+            background: rgba(154, 52, 18, 0.18);
+            color: #fde68a;
+        }
+
+        html.dark #theme-heo .heo-about-section--skills .heo-about-icon-card {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.94), rgba(30, 41, 59, 0.86));
+            border-color: rgba(71, 85, 105, 0.36);
+            box-shadow: 0 18px 34px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        html.dark #theme-heo .heo-about-icon-card__icon {
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 24px rgba(0, 0, 0, 0.18);
+        }
+
+        html.dark #theme-heo .heo-about-icon-card__name {
+            color: rgba(248, 250, 252, 0.94);
+        }
+
+        @media (max-width: 1279px) {
+            #theme-heo .heo-about-split-grid,
+            #theme-heo .heo-about-feature-row,
+            #theme-heo .heo-about-reading-flow,
+            #theme-heo .heo-about-bookshelf-panel-grid,
+            #theme-heo .heo-about-bookshelf-overview__top {
+                grid-template-columns: 1fr;
+            }
+
+            #theme-heo .heo-about-bookshelf-overview__action {
+                justify-content: flex-start;
+            }
+
+            #theme-heo .heo-about-bookshelf,
+            #theme-heo .heo-about-bookshelf__toolbar,
+            #theme-heo .heo-about-bookshelf__status {
+                width: 100%;
+                align-items: flex-start;
+                text-align: left;
+            }
+
+            #theme-heo .heo-about-bookshelf {
+                max-height: none;
+                overflow: visible;
+                padding-right: 0;
+            }
+        }
+
+        @media (max-width: 767px) {
+            #theme-heo .heo-about-section--focus .heo-card__body,
+            #theme-heo .heo-about-feature-card .heo-card__body {
+                padding-left: 1.15rem;
+            }
+
+            #theme-heo .heo-about-bookshelf-overview {
+                padding: 1rem;
+            }
+
+            #theme-heo .heo-about-bookshelf-overview__stats {
+                grid-template-columns: 1fr;
+            }
+
+            #theme-heo .heo-about-bookshelf__heading-actions {
+                align-items: flex-start;
+            }
+
+            #theme-heo .heo-about-bookshelf__item {
+                grid-template-columns: 5rem minmax(0, 1fr);
+                gap: 0.8rem;
+                align-items: start;
+                padding: 0.85rem;
+            }
+
+            #theme-heo .heo-about-bookshelf__cover-wrap {
+                width: 5rem;
+                min-height: 7rem;
+                aspect-ratio: 5 / 7;
+                border-radius: 0.9rem;
+            }
+
+            #theme-heo .heo-about-bookshelf__meta {
+                min-height: 7rem;
+                gap: 0.4rem;
+            }
+
+            #theme-heo .heo-about-bookshelf__title {
+                font-size: 1rem;
+                line-height: 1.35;
+            }
+
+            #theme-heo .heo-about-bookshelf__author {
+                font-size: 0.88rem;
+            }
+
+            #theme-heo .heo-about-bookshelf__summary {
+                font-size: 0.85rem;
+                line-height: 1.65;
+                -webkit-line-clamp: 3;
+            }
+
+            #theme-heo .heo-about-bookshelf__progress {
+                font-size: 0.74rem;
+                padding: 0.28rem 0.58rem;
+            }
+
+            #theme-heo .heo-booklist {
+                gap: 1rem;
+                padding: 0.35rem 0 1.2rem;
+            }
+
+            #theme-heo .heo-booklist-hero .heo-card__body,
+            #theme-heo .heo-booklist-nav .heo-card__body,
+            #theme-heo .heo-booklist-section .heo-card__body,
+            #theme-heo .heo-booklist-empty .heo-card__body {
+                padding: 0.95rem;
+            }
+
+            #theme-heo .heo-booklist-hero__grid {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 0.85rem;
+            }
+
+            #theme-heo .heo-booklist-hero__title {
+                margin-top: 0.45rem;
+                font-size: clamp(2rem, 9vw, 2.5rem);
+                line-height: 1.02;
+                word-break: break-word;
+            }
+
+            #theme-heo .heo-booklist-hero__subtitle {
+                margin-top: 0.4rem;
+                font-size: 0.88rem;
+                line-height: 1.55;
+            }
+
+            #theme-heo .heo-booklist-hero__description {
+                margin-top: 0.35rem;
+                font-size: 0.84rem;
+                line-height: 1.65;
+            }
+
+            #theme-heo .heo-booklist-hero__aside {
+                gap: 0.7rem;
+            }
+
+            #theme-heo .heo-booklist-hero__stats {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 0.55rem;
+            }
+
+            #theme-heo .heo-booklist-hero__stat {
+                padding: 0.72rem 0.68rem;
+            }
+
+            #theme-heo .heo-booklist-hero__stat-value {
+                font-size: 1.15rem;
+            }
+
+            #theme-heo .heo-booklist-hero__stat-label {
+                font-size: 0.74rem;
+                line-height: 1.35;
+            }
+
+            #theme-heo .heo-booklist-hero__highlights {
+                display: grid;
+                grid-auto-flow: column;
+                grid-auto-columns: minmax(8.5rem, 72%);
+                gap: 0.55rem;
+                overflow-x: auto;
+                overscroll-behavior-x: contain;
+                scrollbar-width: thin;
+                padding-bottom: 0.15rem;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            #theme-heo .heo-booklist-hero__highlight {
+                min-height: 4.2rem;
+                padding: 0.78rem 0.82rem;
+            }
+
+            #theme-heo .heo-booklist-nav__header {
+                position: relative;
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 0.45rem;
+                margin-bottom: 0.7rem;
+                padding-right: 0;
+                padding-top: 0;
+                min-height: 0;
+            }
+
+            #theme-heo .heo-booklist-nav__summary {
+                position: absolute;
+                top: 0;
+                right: 0;
+                z-index: 2;
+                display: inline-flex;
+                align-items: baseline;
+                justify-content: flex-end;
+                gap: 0.3rem;
+                text-align: right;
+                white-space: nowrap;
+            }
+
+            #theme-heo .heo-booklist-nav__chips {
+                gap: 0.55rem;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                overscroll-behavior-x: contain;
+                scrollbar-width: thin;
+                padding-bottom: 0.1rem;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            #theme-heo .heo-booklist-nav__chip {
+                flex: 0 0 auto;
+                white-space: nowrap;
+            }
+
+            #theme-heo .heo-booklist-featured__grid {
+                display: grid;
+                grid-auto-flow: column;
+                grid-auto-columns: minmax(15.5rem, 86%);
+                grid-template-columns: none;
+                gap: 0.75rem;
+                overflow-x: auto;
+                overscroll-behavior-x: contain;
+                scrollbar-width: thin;
+                padding-bottom: 0.15rem;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            #theme-heo .heo-booklist-section__grid {
+                grid-template-columns: 1fr;
+            }
+
+            #theme-heo .heo-booklist-card {
+                grid-template-columns: 4.35rem minmax(0, 1fr);
+                padding: 0.72rem;
+                gap: 0.62rem;
+                border-radius: 1.1rem;
+            }
+
+            #theme-heo .heo-booklist-card__cover-wrap {
+                width: 4.35rem;
+                min-height: 6.1rem;
+                border-radius: 0.82rem;
+            }
+
+            #theme-heo .heo-booklist-card__meta {
+                gap: 0.24rem;
+            }
+
+            #theme-heo .heo-booklist-card__tag {
+                padding: 0.34rem 0.62rem;
+                font-size: 0.74rem;
+            }
+
+            #theme-heo .heo-booklist-card__title {
+                font-size: 0.92rem;
+                line-height: 1.34;
+            }
+
+            #theme-heo .heo-booklist-card__author {
+                font-size: 0.8rem;
+            }
+
+            #theme-heo .heo-booklist-card__summary {
+                font-size: 0.82rem;
+                line-height: 1.56;
+                -webkit-line-clamp: 2;
+            }
+
+            #theme-heo .heo-booklist-card__footer {
+                padding-top: 0.08rem;
+            }
+
+            #theme-heo .heo-booklist-card__cta {
+                font-size: 0.78rem;
+            }
+
+        }
+
+        #theme-heo .heo-booklist-layout {
+            max-width: 100%;
+        }
+
+        #theme-heo .heo-booklist {
+            width: 100%;
+            max-width: 92rem;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding: 0.5rem 0 1.5rem;
+        }
+
+        #theme-heo .heo-booklist-hero {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        #theme-heo .heo-booklist-hero::before {
+            content: '';
+            position: absolute;
+            inset: -20% auto auto -8%;
+            width: 24rem;
+            height: 24rem;
+            border-radius: 999px;
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0.08) 32%, rgba(59, 130, 246, 0) 72%);
+            filter: blur(8px);
+            z-index: 0;
+        }
+
+        #theme-heo .heo-booklist-hero::after {
+            content: '';
+            position: absolute;
+            right: -8%;
+            bottom: -30%;
+            width: 26rem;
+            height: 26rem;
+            border-radius: 999px;
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.14) 0%, rgba(79, 70, 229, 0.08) 35%, rgba(79, 70, 229, 0) 72%);
+            filter: blur(10px);
+            z-index: 0;
+        }
+
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        #theme-heo .heo-booklist-scroll-hint {
+            display: none;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.74rem;
+            line-height: 1.4;
+            color: rgba(71, 85, 105, 0.72);
+        }
+
+        #theme-heo .heo-booklist-scroll-hint::after {
+            content: '→';
+            font-size: 0.82rem;
+            opacity: 0.72;
+        }
+
+        #theme-heo .heo-booklist-hero .heo-card__body,
+        #theme-heo .heo-booklist-nav .heo-card__body,
+        #theme-heo .heo-booklist-section .heo-card__body,
+        #theme-heo .heo-booklist-empty .heo-card__body {
+            padding: 1.1rem;
+        }
+
+        #theme-heo .heo-booklist-hero__grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(18rem, 0.95fr);
+            gap: 1rem;
+            align-items: stretch;
+        }
+
+        #theme-heo .heo-booklist-hero__intro {
+            min-width: 0;
+        }
+
+        #theme-heo .heo-booklist-hero__aside {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        #theme-heo .heo-booklist-hero__badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 0.28rem 0.65rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #475569;
+            background: rgba(241, 245, 249, 0.88);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+
+        #theme-heo .heo-booklist-hero__title {
+            margin-top: 0.65rem;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            line-height: 1.04;
+            font-weight: 900;
+            color: var(--heo-card-title);
+        }
+
+        #theme-heo .heo-booklist-hero__subtitle {
+            margin-top: 0.55rem;
+            font-size: 0.96rem;
+            line-height: 1.65;
+            color: rgba(226, 232, 240, 0.86);
+            text-shadow: 0 4px 18px rgba(2, 6, 23, 0.22);
+        }
+
+        #theme-heo .heo-booklist-hero__description {
+            margin-top: 0.45rem;
+            max-width: 52rem;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: rgba(226, 232, 240, 0.72);
+            text-shadow: 0 4px 18px rgba(2, 6, 23, 0.18);
+        }
+
+
+        #theme-heo .heo-booklist-hero__runtime-tags {
+            margin-top: 0.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        #theme-heo .heo-booklist-hero__runtime-tag {
+            display: inline-flex;
+            align-items: center;
+            min-height: 1.9rem;
+            padding: 0.38rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            background: rgba(255, 255, 255, 0.72);
+            color: rgba(51, 65, 85, 0.84);
+            font-size: 0.76rem;
+            line-height: 1.4;
+            backdrop-filter: blur(10px);
+        }
+
+        #theme-heo .heo-booklist-hero__runtime-tag--brand {
+            color: #2563eb;
+            background: rgba(239, 246, 255, 0.88);
+            border-color: rgba(59, 130, 246, 0.18);
+        }
+
+        #theme-heo .heo-booklist-hero__runtime-tag--success {
+            color: #047857;
+            background: rgba(236, 253, 245, 0.88);
+            border-color: rgba(16, 185, 129, 0.18);
+        }
+
+        #theme-heo .heo-booklist-hero__runtime-tag--warm {
+            color: #b45309;
+            background: rgba(255, 251, 235, 0.92);
+            border-color: rgba(245, 158, 11, 0.18);
+        }
+
+        #theme-heo .heo-booklist-hero__stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.7rem;
+            margin-top: 0;
+        }
+
+        #theme-heo .heo-booklist-hero__stat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.18rem;
+            padding: 0.8rem 0.85rem;
+            border-radius: 1.05rem;
+            background: rgba(248, 250, 252, 0.92);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+        }
+
+        #theme-heo .heo-booklist-hero__stat-value {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--heo-card-title);
+        }
+
+        #theme-heo .heo-booklist-hero__stat-label,
+        #theme-heo .heo-booklist-section__count,
+        #theme-heo .heo-booklist-featured__meta,
+        #theme-heo .heo-booklist-empty__text {
+            font-size: 0.8rem;
+            color: rgba(71, 85, 105, 0.8);
+        }
+
+        #theme-heo .heo-booklist-hero__highlights {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.7rem;
+        }
+
+        #theme-heo .heo-booklist-hero__highlight {
+            display: flex;
+            flex-direction: column;
+            gap: 0.28rem;
+            justify-content: space-between;
+            min-height: 4.8rem;
+            padding: 0.85rem 0.9rem;
+            border-radius: 1.05rem;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.92));
+        }
+
+        #theme-heo .heo-booklist-hero__highlight-name {
+            font-size: 0.96rem;
+            font-weight: 800;
+            color: var(--heo-card-title);
+        }
+
+        #theme-heo .heo-booklist-hero__highlight-meta,
+        #theme-heo .heo-booklist-nav__summary,
+        #theme-heo .heo-booklist-nav__chip-count {
+            font-size: 0.78rem;
+            color: rgba(71, 85, 105, 0.76);
+        }
+
+        #theme-heo .heo-booklist-section__head {
+            position: relative;
+            padding-right: 11rem;
+            min-height: 4.8rem;
+        }
+
+        #theme-heo .heo-booklist-section__meta {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            justify-content: flex-end;
+            flex-wrap: nowrap;
+        }
+
+        #theme-heo .heo-booklist-section__count,
+        #theme-heo .heo-booklist-section__anchor {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 2rem;
+            padding: 0.4rem 0.78rem;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            background: rgba(248, 250, 252, 0.92);
+            line-height: 1;
+            white-space: nowrap;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+        }
+
+        #theme-heo .heo-booklist-section__count {
+            color: rgba(71, 85, 105, 0.88);
+            font-weight: 700;
+        }
+
+        #theme-heo .heo-booklist-section__anchor {
+            color: rgba(51, 65, 85, 0.92);
+            font-weight: 700;
+        }
+
+        #theme-heo .heo-booklist-nav__header {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 0.8rem;
+            margin-bottom: 0.85rem;
+        }
+
+        #theme-heo .heo-booklist-nav__chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        #theme-heo .heo-booklist-nav__chip,
+        #theme-heo .heo-booklist-card__tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            padding: 0.42rem 0.8rem;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            background: rgba(248, 250, 252, 0.92);
+            color: rgba(51, 65, 85, 0.88);
+            font-size: 0.8rem;
+            transition: all var(--heo-dur-fast) var(--heo-ease);
+        }
+
+        #theme-heo .heo-booklist-nav__chip:hover {
+            transform: translateY(-1px);
+            border-color: rgba(59, 130, 246, 0.28);
+            color: #1d4ed8;
+        }
+
+        #theme-heo .heo-booklist-nav__chip.is-active {
+            border-color: rgba(59, 130, 246, 0.3);
+            background: linear-gradient(180deg, rgba(239, 246, 255, 0.96), rgba(219, 234, 254, 0.92));
+            color: #1d4ed8;
+            box-shadow: 0 12px 24px rgba(59, 130, 246, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+        }
+
+        #theme-heo .heo-booklist-nav__chip.is-active .heo-booklist-nav__chip-count {
+            color: inherit;
+            font-weight: 800;
+        }
+
+        #theme-heo .heo-booklist-featured__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 0.85rem;
+        }
+
+        #theme-heo .heo-booklist-featured__item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1rem 1.05rem;
+            border-radius: 1.4rem;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.92));
+        }
+
+        #theme-heo .heo-booklist-featured__eyebrow {
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            min-height: 1.7rem;
+            padding: 0.2rem 0.58rem;
+            border-radius: 999px;
+            background: rgba(245, 158, 11, 0.14);
+            color: #b45309;
+            border: 1px solid rgba(245, 158, 11, 0.18);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            line-height: 1;
+            text-transform: uppercase;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38);
+        }
+
+        #theme-heo .heo-booklist-featured__name,
+        #theme-heo .heo-booklist-card__title {
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.4;
+            color: var(--heo-card-title);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        #theme-heo .heo-booklist-featured__desc,
+        #theme-heo .heo-booklist-card__summary {
+            font-size: 0.9rem;
+            line-height: 1.75;
+            color: rgba(71, 85, 105, 0.86);
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        #theme-heo .heo-booklist-featured__desc {
+            -webkit-line-clamp: 3;
+        }
+
+        #theme-heo .heo-booklist-featured__footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-top: auto;
+            padding-top: 0.3rem;
+        }
+
+        #theme-heo .heo-booklist-featured__cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 2rem;
+            padding: 0.38rem 0.78rem;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: rgba(248, 250, 252, 0.94);
+            color: rgba(51, 65, 85, 0.92);
+            font-size: 0.8rem;
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        #theme-heo .heo-booklist-section-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        #theme-heo .heo-booklist-section__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1rem;
+        }
+
+        #theme-heo .heo-booklist-card {
+            display: grid;
+            grid-template-columns: 5.5rem minmax(0, 1fr);
+            gap: 0.9rem;
+            align-items: stretch;
+            min-height: 10.4rem;
+            padding: 0.95rem;
+            border-radius: 1.35rem;
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            background: rgba(255, 255, 255, 0.88);
+        }
+
+        #theme-heo .heo-booklist-card__cover-wrap {
+            position: relative;
+            width: 5.5rem;
+            min-height: 7.7rem;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: rgba(226, 232, 240, 0.5);
+        }
+
+        #theme-heo .heo-booklist-card__cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #theme-heo .heo-booklist-card__mobile-title {
+            display: none;
+        }
+
+        #theme-heo .heo-booklist-card__progress-badge {
+            position: absolute;
+            top: 0.42rem;
+            right: 0.42rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 1.2rem;
+            padding: 0.16rem 0.38rem;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.74);
+            color: #fff;
+            font-size: 0.62rem;
+            line-height: 1;
+            font-weight: 700;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
+        }
+
+        #theme-heo .heo-booklist-card__meta {
+            min-width: 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            justify-content: flex-start;
+        }
+
+        #theme-heo .heo-booklist-card__title {
+            min-height: calc(1.4em * 2);
+        }
+
+        #theme-heo .heo-booklist-card__author {
+            font-size: 0.86rem;
+            color: rgba(59, 130, 246, 0.78);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        #theme-heo .heo-booklist-card__summary {
+            -webkit-line-clamp: 2;
+            min-height: calc(1.75em * 2);
+        }
+
+        #theme-heo .heo-booklist-card__footer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            margin-top: auto;
+            padding-top: 0.25rem;
+        }
+
+        html.dark #theme-heo .heo-booklist-hero,
+        html.dark #theme-heo .heo-booklist-nav,
+        html.dark #theme-heo .heo-booklist-section,
+        html.dark #theme-heo .heo-booklist-empty,
+        html.dark #theme-heo .heo-booklist-featured__item,
+        html.dark #theme-heo .heo-booklist-card,
+        html.dark #theme-heo .heo-booklist-hero__highlight {
+            background: linear-gradient(180deg, rgba(24, 26, 33, 0.95), rgba(17, 24, 39, 0.92));
+            border-color: rgba(148, 163, 184, 0.16);
+        }
+
+        html.dark #theme-heo .heo-booklist-hero__badge,
+        html.dark #theme-heo .heo-booklist-hero__stat,
+        html.dark #theme-heo .heo-booklist-nav__chip,
+        html.dark #theme-heo .heo-booklist-card__tag,
+        html.dark #theme-heo .heo-booklist-section__count,
+        html.dark #theme-heo .heo-booklist-section__anchor,
+        html.dark #theme-heo .heo-booklist-featured__cta,
+        html.dark #theme-heo .heo-booklist-hero__intro-note {
+            background: rgba(30, 41, 59, 0.7);
+            border-color: rgba(148, 163, 184, 0.16);
+            color: rgba(226, 232, 240, 0.84);
+        }
+
+        html.dark #theme-heo .heo-booklist-hero__runtime-tag {
+            background: rgba(30, 41, 59, 0.7);
+            border-color: rgba(148, 163, 184, 0.16);
+            color: rgba(226, 232, 240, 0.84);
+        }
+
+        html.dark #theme-heo .heo-booklist-hero__runtime-tag--brand {
+            color: #bfdbfe;
+            background: rgba(30, 64, 175, 0.22);
+            border-color: rgba(96, 165, 250, 0.22);
+        }
+
+        html.dark #theme-heo .heo-booklist-hero__runtime-tag--success {
+            color: #a7f3d0;
+            background: rgba(6, 78, 59, 0.3);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        html.dark #theme-heo .heo-booklist-hero__runtime-tag--warm {
+            color: #fcd34d;
+            background: rgba(120, 53, 15, 0.26);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+        html.dark #theme-heo .heo-booklist-hero__title,
+        html.dark #theme-heo .heo-booklist-featured__name,
+        html.dark #theme-heo .heo-booklist-card__title,
+        html.dark #theme-heo .heo-booklist-hero__highlight-name,
+        html.dark #theme-heo .heo-booklist-hero__stat-value {
+            color: var(--heo-card-title-dark);
+        }
+
+        html.dark #theme-heo .heo-booklist-hero__subtitle,
+        html.dark #theme-heo .heo-booklist-hero__description,
+        html.dark #theme-heo .heo-booklist-featured__desc,
+        html.dark #theme-heo .heo-booklist-card__summary,
+        html.dark #theme-heo .heo-booklist-hero__stat-label,
+        html.dark #theme-heo .heo-booklist-section__count,
+        html.dark #theme-heo .heo-booklist-featured__meta,
+        html.dark #theme-heo .heo-booklist-empty__text,
+        html.dark #theme-heo .heo-booklist-hero__highlight-meta,
+        html.dark #theme-heo .heo-booklist-nav__summary,
+        html.dark #theme-heo .heo-booklist-nav__chip-count,
+        html.dark #theme-heo .heo-booklist-nav__summary-text,
+        html.dark #theme-heo .heo-booklist-card__mobile-title,
+        html.dark #theme-heo .heo-booklist-scroll-hint {
+            color: rgba(226, 232, 240, 0.86);
+        }
+
+        html.dark #theme-heo .heo-booklist-nav__summary-value,
+        html.dark #theme-heo .heo-booklist-section__anchor,
+        html.dark #theme-heo .heo-booklist-section .heo-about-section-heading__title,
+        html.dark #theme-heo .heo-booklist-nav .heo-about-section-heading__title,
+        html.dark #theme-heo .heo-booklist-featured__cta {
+            color: var(--heo-card-title-dark);
+        }
+
+        html.dark #theme-heo .heo-booklist-featured__eyebrow {
+            color: #fbbf24;
+            background: rgba(245, 158, 11, 0.16);
+            border-color: rgba(245, 158, 11, 0.22);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+
+        html.dark #theme-heo .heo-booklist-nav__chip.is-active {
+            border-color: rgba(245, 158, 11, 0.24);
+            background: linear-gradient(180deg, rgba(120, 53, 15, 0.26), rgba(92, 33, 4, 0.2));
+            color: #fde68a;
+            box-shadow: 0 12px 24px rgba(120, 53, 15, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+
+        @media (max-width: 767px) {
+            #theme-heo .heo-booklist-scroll-hint {
+                display: inline-flex;
+            }
+
+            #theme-heo .heo-booklist-hero__grid {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 0.85rem;
+            }
+
+            #theme-heo .heo-booklist-hero__intro,
+            #theme-heo .heo-booklist-hero__aside {
+                min-width: 0;
+            }
+
+            #theme-heo .heo-booklist-hero__stats {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 0.55rem;
+            }
+
+            #theme-heo .heo-booklist-hero__stat {
+                padding: 0.72rem 0.68rem;
+            }
+
+            #theme-heo .heo-booklist-hero__stat-value {
+                font-size: 1.15rem;
+            }
+
+            #theme-heo .heo-booklist-hero__stat-label {
+                font-size: 0.74rem;
+                line-height: 1.35;
+            }
+
+            #theme-heo .heo-booklist-hero__highlights,
+            #theme-heo .heo-booklist-featured__grid {
+                display: grid;
+                grid-auto-flow: column;
+                grid-template-columns: none;
+                overflow-x: auto;
+                overscroll-behavior-x: contain;
+                scrollbar-width: thin;
+                -webkit-overflow-scrolling: touch;
+                align-items: stretch;
+            }
+
+            #theme-heo .heo-booklist-hero__highlights {
+                grid-auto-columns: minmax(8.5rem, 72%);
+                gap: 0.55rem;
+                padding-bottom: 0.15rem;
+            }
+
+            #theme-heo .heo-booklist-featured__grid {
+                grid-auto-columns: minmax(15.5rem, 86%);
+                gap: 0.75rem;
+                padding-bottom: 0.15rem;
+            }
+
+            #theme-heo .heo-booklist-section__head {
+                padding-right: 0;
+                padding-top: 0;
+                min-height: 0;
+            }
+
+            #theme-heo .heo-booklist-section__meta {
+                position: absolute;
+                top: 0;
+                right: 0;
+                z-index: 2;
+                display: inline-flex;
+                margin-top: 0;
+                gap: 0.4rem;
+                justify-content: flex-end;
+                flex-wrap: nowrap;
+            }
+
+            #theme-heo .heo-booklist-section__count,
+            #theme-heo .heo-booklist-section__anchor {
+                min-height: 1.9rem;
+                padding: 0.34rem 0.68rem;
+                box-shadow: none;
+            }
+
+            #theme-heo .heo-booklist-section__grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1rem 0.8rem;
+                padding-bottom: 0;
+                overflow: visible;
+            }
+
+            #theme-heo .heo-booklist-card {
+                display: flex;
+                flex-direction: column;
+                gap: 0.48rem;
+                padding: 0;
+                border: 0;
+                background: transparent;
+                border-radius: 0;
+                box-shadow: none;
+                min-width: 0;
+            }
+
+            #theme-heo .heo-booklist-card::after,
+            #theme-heo .heo-booklist-card__meta,
+            #theme-heo .heo-booklist-card__topline,
+            #theme-heo .heo-booklist-card__title,
+            #theme-heo .heo-booklist-card__author,
+            #theme-heo .heo-booklist-card__summary,
+            #theme-heo .heo-booklist-card__footer,
+            #theme-heo .heo-booklist-card__cta {
+                display: none;
+            }
+
+            #theme-heo .heo-booklist-card__cover-wrap {
+                position: relative;
+                width: 100%;
+                min-height: auto;
+                aspect-ratio: 0.76;
+                border-radius: 1rem;
+                overflow: hidden;
+                background: rgba(226, 232, 240, 0.45);
+                box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+            }
+
+            #theme-heo .heo-booklist-card__cover {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            #theme-heo .heo-booklist-card__mobile-title {
+                display: -webkit-box;
+                font-size: 0.94rem;
+                line-height: 1.42;
+                font-weight: 700;
+                color: var(--heo-card-title);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                white-space: normal;
+                min-height: calc(1.42em * 2);
+            }
+
+            #theme-heo .heo-booklist-card__progress-badge {
+                position: absolute;
+                top: 0.42rem;
+                right: 0.42rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 1.2rem;
+                padding: 0.16rem 0.38rem;
+                border-radius: 999px;
+                background: rgba(15, 23, 42, 0.74);
+                color: #fff;
+                font-size: 0.62rem;
+                line-height: 1;
+                font-weight: 700;
+                backdrop-filter: blur(8px);
+            }
+        }
+
+        @media (max-width: 420px) {
+            #theme-heo .heo-booklist-hero__stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            #theme-heo .heo-booklist-hero__highlights {
+                grid-auto-columns: minmax(8rem, 82%);
+            }
+
+            #theme-heo .heo-booklist-featured__grid {
+                grid-auto-columns: minmax(14.5rem, 92%);
+            }
+
+            #theme-heo .heo-booklist-section__grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.9rem 0.65rem;
+            }
+
+            #theme-heo .heo-booklist-card__mobile-title {
+                font-size: 0.86rem;
+            }
+
+            #theme-heo .heo-booklist-card__progress-badge {
+                font-size: 0.58rem;
+                min-height: 1.08rem;
+                padding: 0.14rem 0.32rem;
+            }
+        }
+
+    `}</style>
   )
 }
 

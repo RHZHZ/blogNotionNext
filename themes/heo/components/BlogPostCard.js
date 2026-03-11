@@ -40,7 +40,7 @@ const BlogPostCard = ({ index, post, showSummary, siteInfo }) => {
             <div
               className={
                 (POST_TWO_COLS ? ' 2xl:w-full 2xl:aspect-[16/8.1]' : '') +
-                ' heo-post-card__cover h-full w-full cursor-pointer select-none overflow-hidden aspect-[16/9.2] md:w-[35%] md:aspect-auto'
+                ' heo-post-card__cover h-full w-full cursor-pointer select-none overflow-hidden aspect-[16/7] md:w-[35%] md:aspect-auto'
               }>
               <LazyImage
                 priority={index === 0}
@@ -54,8 +54,8 @@ const BlogPostCard = ({ index, post, showSummary, siteInfo }) => {
 
         <div
           className={
-            (POST_TWO_COLS ? '2xl:min-h-[9.6rem] 2xl:w-full 2xl:p-4' : '') +
-            ' heo-post-card__content flex min-h-[9.6rem] w-full flex-1 flex-col justify-start p-4 md:h-full md:w-[65%]'
+            (POST_TWO_COLS ? '2xl:min-h-20 2xl:w-full 2xl:p-2' : '') +
+            ' heo-post-card__content flex min-h-20 w-full flex-1 flex-col justify-between  p-2 md:h-full md:w-[65%]'
           }>
           <header className='heo-post-card__header'>
             {post?.category && (
@@ -85,8 +85,9 @@ const BlogPostCard = ({ index, post, showSummary, siteInfo }) => {
           </header>
 
           {(!showPreview || showSummary) && (
-            <main className='heo-post-card__summary replace line-clamp-2 text-sm font-light leading-tight'>
+            <main className='heo-post-card__summary replace line-clamp-2 text-sm font-light leading-tight  flex-shrink-0'>
               {post.summary}
+              {/*留档后续做成可配置的开关2026/3/10-rhz*/}
             </main>
           )}
 
