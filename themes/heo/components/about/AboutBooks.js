@@ -313,13 +313,19 @@ const AboutBooks = ({ bookShelf, recentBookShelf, books, recentBooks, wereadSync
         return
       }
 
-      await loadBooks()
+      setIsAdminAuthorized(true)
+      setCanManualRefresh(true)
+      setIsAuthorizing(false)
+      loadBooks().catch(() => {
+        setRefreshError('管理员授权成功，但最新书单状态刷新失败，请稍后重试。')
+      })
     } catch {
       setRefreshError('管理员授权失败，请稍后再试。')
     } finally {
       setIsAuthorizing(false)
     }
   }
+
 
   const overviewAction = isAdminAuthorized ? (
 
