@@ -265,7 +265,7 @@ const CONFIG = {
     },
     recentBookShelf: {
       title: '我最近在读的书',
-      description: '最近在读这些书，如果你看到了，请催我去读书',
+      description: '最近在读这些书，感觉蛮有意思的',
       linkText: '我的书单',
       link: '/booklist',
       previewLimit: 3
