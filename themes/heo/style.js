@@ -1149,10 +1149,253 @@ const Style = () => {
             opacity: 0.8;
         }
 
-        #theme-heo .heo-post-card__content {
-            position: relative;
-            z-index: 1;
-            color: inherit;
+
+        #theme-heo .heo-hero-slider__nav-btn,
+        #theme-heo .heo-hero-slider__thumb,
+        #theme-heo .heo-hero-books__link,
+        #theme-heo .heo-booklist-nav__chip,
+        #theme-heo .heo-booklist-featured__item,
+        #theme-heo .heo-about-profile-card,
+        #theme-heo .heo-about-icon-card,
+        #theme-heo .heo-about-bookshelf__item,
+        #theme-heo .heo-about-comment-shell__panel,
+        #theme-heo .heo-float-widget-btn,
+        #theme-heo #article-wrapper .heo-article-focus-toggle,
+        #theme-heo #article-wrapper .heo-article-focus-toc-btn {
+            will-change: transform, box-shadow, border-color, background-color, opacity;
+            transform: translate3d(0, 0, 0);
+        }
+
+        #theme-heo .heo-hero-slider__nav-btn,
+        #theme-heo .heo-hero-slider__thumb,
+        #theme-heo .heo-hero-books__link,
+        #theme-heo .heo-booklist-nav__chip,
+        #theme-heo .heo-booklist-featured__item,
+        #theme-heo .heo-about-profile-card,
+        #theme-heo .heo-about-icon-card,
+        #theme-heo .heo-about-bookshelf__item,
+        #theme-heo .heo-about-comment-shell__panel,
+        #theme-heo .heo-float-widget-btn,
+        #theme-heo #article-wrapper .heo-article-focus-toggle,
+        #theme-heo #article-wrapper .heo-article-focus-toc-btn {
+            transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @media (hover: hover) {
+            #theme-heo .heo-hero-slider__nav-btn:hover {
+                transform: translate3d(0, -2px, 0) scale(1.04);
+            }
+
+            #theme-heo .heo-hero-slider__thumb:hover,
+            #theme-heo .heo-hero-slider__thumb.is-active {
+                transform: translate3d(0, -2px, 0) scale(1.01);
+            }
+
+            #theme-heo .heo-hero-books__link:hover {
+                transform: translate3d(0, -2px, 0);
+                box-shadow: 0 14px 28px rgba(79, 70, 229, 0.12);
+            }
+
+            #theme-heo .heo-booklist-nav__chip:hover {
+                transform: translate3d(0, -2px, 0);
+            }
+
+            #theme-heo .heo-booklist-featured__item:hover,
+            #theme-heo .heo-about-profile-card:hover,
+            #theme-heo .heo-about-icon-card:hover,
+            #theme-heo .heo-about-bookshelf__item:hover {
+                transform: translate3d(0, -4px, 0);
+                box-shadow: 0 22px 46px rgba(15, 23, 42, 0.1);
+            }
+
+            #theme-heo .heo-about-comment-shell__panel:hover {
+                transform: translate3d(0, -2px, 0);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.54), 0 18px 40px rgba(15, 23, 42, 0.08);
+            }
+
+            #theme-heo .heo-float-widget-btn:hover {
+                transform: translate3d(0, -2px, 0) scale(1.01);
+            }
+
+            #theme-heo #article-wrapper .heo-article-focus-toggle:hover,
+            #theme-heo #article-wrapper .heo-article-focus-toc-btn:hover {
+                transform: translate3d(0, -2px, 0);
+            }
+        }
+
+        #theme-heo .heo-hero-slider__stage .heo-hero-slider__cover,
+        #theme-heo .heo-about-bookshelf__cover,
+        #theme-heo .heo-post-card__cover img,
+        #theme-heo .heo-booklist-card__cover {
+            transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), filter 320ms cubic-bezier(0.22, 1, 0.36, 1);
+            transform: translate3d(0, 0, 0) scale(1);
+            will-change: transform, filter;
+        }
+
+        @media (hover: hover) {
+            #theme-heo .heo-hero-slider__stage:hover .heo-hero-slider__cover {
+                transform: translate3d(0, -2px, 0) scale(1.03);
+                filter: saturate(1.04) contrast(1.03);
+            }
+
+            #theme-heo .heo-about-bookshelf__item:hover .heo-about-bookshelf__cover,
+            #theme-heo .heo-booklist-card:hover .heo-booklist-card__cover,
+            #theme-heo .heo-card--interactive:hover .heo-post-card__cover img {
+                transform: translate3d(0, -1px, 0) scale(1.035);
+                filter: saturate(1.03) contrast(1.02);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #theme-heo .heo-hero-shell,
+            #theme-heo .heo-hero-slider,
+            #theme-heo .heo-hero-books,
+            #theme-heo .heo-hero-slider::before,
+            #theme-heo .heo-hero-books::before,
+            #theme-heo .heo-hero-slider::after,
+            #theme-heo .heo-hero-slider__overlay,
+            #theme-heo .heo-hero-slider__copy,
+            #theme-heo .heo-hero-slider__badge,
+            #theme-heo .heo-hero-books__head,
+            #theme-heo .heo-hero-books__desc,
+            #theme-heo .heo-hero-books__list {
+                transition: none !important;
+                transform: none !important;
+            }
+        }
+
+        #theme-heo .heo-hero-shell {
+            perspective: 1600px;
+        }
+
+        #theme-heo .heo-hero-slider,
+        #theme-heo .heo-hero-books {
+            transform-style: preserve-3d;
+            transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow var(--heo-dur) var(--heo-ease);
+        }
+
+        #theme-heo .heo-hero-slider::before,
+        #theme-heo .heo-hero-books::before {
+            content: '';
+            position: absolute;
+            inset: auto 10% -14% 10%;
+            height: 22%;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.18), transparent 70%);
+            filter: blur(28px);
+            opacity: 0.38;
+            pointer-events: none;
+            transform: translate3d(0, 10px, -1px) scale(0.92);
+            transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 320ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        #theme-heo .heo-hero-books::before {
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.16), transparent 72%);
+            opacity: 0.32;
+        }
+
+        #theme-heo .heo-hero-slider::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(255, 255, 255, 0.12), transparent 28%, transparent 72%, rgba(255, 255, 255, 0.08));
+            opacity: 0.58;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            transition: opacity 280ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        #theme-heo .heo-hero-slider__stage {
+            overflow: hidden;
+        }
+
+        #theme-heo .heo-hero-slider__overlay {
+            transition: opacity 360ms cubic-bezier(0.22, 1, 0.36, 1), transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+            transform: translate3d(0, 0, 0);
+        }
+
+        #theme-heo .heo-hero-slider__copy,
+        #theme-heo .heo-hero-slider__badge,
+        #theme-heo .heo-hero-books__head,
+        #theme-heo .heo-hero-books__desc,
+        #theme-heo .heo-hero-books__list {
+            transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 260ms cubic-bezier(0.22, 1, 0.36, 1), background 240ms cubic-bezier(0.22, 1, 0.36, 1), border-color 240ms cubic-bezier(0.22, 1, 0.36, 1);
+            transform: translate3d(0, 0, 0);
+        }
+
+        @media (hover: hover) {
+            #theme-heo .heo-hero-slider:hover,
+            #theme-heo .heo-hero-books:hover {
+                transform: translate3d(0, -3px, 0);
+            }
+
+            #theme-heo .heo-hero-slider:hover::before,
+            #theme-heo .heo-hero-books:hover::before {
+                opacity: 0.54;
+                transform: translate3d(0, 2px, -1px) scale(1);
+            }
+
+            #theme-heo .heo-hero-slider:hover::after {
+                opacity: 0.74;
+            }
+
+            #theme-heo .heo-hero-slider:hover .heo-hero-slider__overlay {
+                opacity: 0.92;
+                transform: translate3d(0, -2px, 0);
+            }
+
+            #theme-heo .heo-hero-slider:hover .heo-hero-slider__copy {
+                transform: translate3d(0, -3px, 0);
+            }
+
+            #theme-heo .heo-hero-slider:hover .heo-hero-slider__badge {
+                transform: translate3d(0, -2px, 0);
+                background: rgba(255, 255, 255, 0.18);
+                border-color: rgba(255, 255, 255, 0.28);
+            }
+
+            #theme-heo .heo-hero-books:hover .heo-hero-books__head {
+                transform: translate3d(0, -1px, 0);
+            }
+
+            #theme-heo .heo-hero-books:hover .heo-hero-books__desc {
+                transform: translate3d(0, -2px, 0);
+            }
+
+            #theme-heo .heo-hero-books:hover .heo-hero-books__list {
+                transform: translate3d(0, -3px, 0);
+            }
+        }
+
+        html.dark #theme-heo .heo-hero-slider::before {
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.24), transparent 72%);
+        }
+
+        html.dark #theme-heo .heo-hero-books::before {
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.18), transparent 72%);
+        }
+
+        html.dark #theme-heo .heo-hero-slider::after {
+            background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 26%, transparent 74%, rgba(255, 255, 255, 0.04));
+            opacity: 0.42;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #theme-heo .heo-hero-shell,
+            #theme-heo .heo-hero-slider,
+            #theme-heo .heo-hero-books,
+            #theme-heo .heo-hero-slider::before,
+            #theme-heo .heo-hero-books::before,
+            #theme-heo .heo-hero-slider::after,
+            #theme-heo .heo-hero-slider__overlay,
+            #theme-heo .heo-hero-slider__copy,
+            #theme-heo .heo-hero-slider__badge,
+            #theme-heo .heo-hero-books__head,
+            #theme-heo .heo-hero-books__desc,
+            #theme-heo .heo-hero-books__list {
+                transition: none !important;
+                transform: none !important;
+            }
         }
 
         #theme-heo .heo-post-card__title {
@@ -10126,9 +10369,26 @@ const Style = () => {
             align-items: start;
         }
 
-        #theme-heo .heo-about-article-shell {
+        #theme-heo .heo-about-article-shell,
+        #theme-heo .heo-about-comment-shell {
             min-width: 0;
             align-self: stretch;
+        }
+
+        #theme-heo .heo-about-comment-shell {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #theme-heo .heo-about-comment-shell::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 28%),
+                radial-gradient(circle at left center, rgba(14, 165, 233, 0.08), transparent 30%);
+            pointer-events: none;
+            opacity: 0.9;
         }
 
         #theme-heo .heo-about-feature-card--timeline .heo-about-section-heading {
@@ -10225,6 +10485,31 @@ const Style = () => {
 
         html.dark #theme-heo .heo-about-profile-card__description {
             color: rgba(226, 232, 240, 0.86);
+        }
+
+        html.dark #theme-heo .heo-about-comment-shell__status {
+            border-color: rgba(71, 85, 105, 0.5);
+            background: rgba(15, 23, 42, 0.5);
+            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.2);
+            color: var(--heo-card-text-dark);
+        }
+
+        html.dark #theme-heo .heo-about-comment-shell__status-label {
+            color: #94a3b8;
+        }
+
+        html.dark #theme-heo .heo-about-comment-shell__status-value {
+            color: var(--heo-card-title-dark);
+        }
+
+        html.dark #theme-heo .heo-about-comment-shell__status-desc {
+            color: var(--heo-card-text-dark);
+        }
+
+        html.dark #theme-heo .heo-about-comment-shell__panel {
+            border-color: rgba(71, 85, 105, 0.45);
+            background: rgba(15, 23, 42, 0.42);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
 
         html.dark #theme-heo .heo-about-profile-card--personality {
@@ -10792,14 +11077,17 @@ const Style = () => {
         #theme-heo .heo-about-icon-card__meta {
             font-size: 0.76rem;
         }
+        @media (max-width: 768px) {
+            #theme-heo .heo-about-comment-shell__header {
+                grid-template-columns: 1fr;
+            }
 
-        #theme-heo .heo-about-bookshelf {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-            max-height: none;
-            overflow: visible;
-            padding-right: 0;
+            #theme-heo .heo-about-comment-shell__panel {
+                padding: 0.85rem;
+                border-radius: 1.25rem;
+            }
         }
+
 
         #theme-heo .heo-about-bookshelf__item {
             grid-template-columns: 6.5rem minmax(0, 1fr);

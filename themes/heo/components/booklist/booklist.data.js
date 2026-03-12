@@ -20,7 +20,17 @@ const dedupeByShelfName = sections => {
   })
 }
 
-const createSectionDescription = shelfName => `这里收录来自「${shelfName}」分组的书，保留我愿意公开展示的阅读痕迹。`
+const dedupeBooksInSection = books => {
+  const seen = new Set()
+  return books.filter(book => {
+    const key = normalizeText(book?.bookId || book?.infoId || book?.href || book?.title).toLowerCase()
+    if (!key || seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
+const createSectionDescription = shelfName => `这里收录来自「${shelfName}」分组的书。`
 
 const compareByPreferredOrder = (a, b, orderMap) => {
   const aOrder = orderMap.get(normalizeText(a?.shelfName))
@@ -75,7 +85,7 @@ export const buildBookListSections = ({ shelfPayload, pageConfig }) => {
     .map(item => {
       const shelfName = normalizeText(item?.name)
       const shelfBooks = Array.isArray(item?.bookIds)
-        ? item.bookIds.map(bookId => bookMap.get(normalizeText(bookId))).filter(Boolean)
+        ? dedupeBooksInSection(item.bookIds.map(bookId => bookMap.get(normalizeText(bookId))).filter(Boolean))
         : []
 
       if (!shelfName || !shelfBooks.length) return null
