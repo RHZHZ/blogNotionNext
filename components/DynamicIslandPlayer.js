@@ -1,8 +1,16 @@
 import { siteConfig } from '@/lib/config'
+import { useRouter } from 'next/router'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 const DRAG_STORAGE_KEY = 'dynamic-island-position'
 const DRAG_VIEWPORT_PADDING = 12
+const MOBILE_STACK_GAP = 20
+const MOBILE_TOC_BUTTON_SIZE = 42
+const MOBILE_TOC_BOTTOM_OFFSET = 132
+const MOBILE_PLAYER_COLLAPSED_WIDTH = 64
+const MOBILE_PLAYER_EXPANDED_WIDTH = 320
+const MOBILE_PLAYER_HEIGHT = 64
+const MOBILE_TOC_SAFE_AREA_RIGHT = 16
 
 const getIsDark = () =>
   typeof document !== 'undefined' &&
@@ -19,18 +27,119 @@ const getDefaultPosition = () => {
   }
 }
 
-const clampPosition = (position, size) => {
-  if (typeof window === 'undefined') return position
+const getPlayerSize = expanded => ({
+  width: expanded ? MOBILE_PLAYER_EXPANDED_WIDTH : MOBILE_PLAYER_COLLAPSED_WIDTH,
+  height: MOBILE_PLAYER_HEIGHT
+})
 
-  const width = size?.width || 320
-  const height = size?.height || 64
-  const maxX = Math.max(DRAG_VIEWPORT_PADDING, window.innerWidth - width - DRAG_VIEWPORT_PADDING)
-  const maxY = Math.max(DRAG_VIEWPORT_PADDING, window.innerHeight - height - DRAG_VIEWPORT_PADDING)
+const clampWithinViewport = (position, size) => {
+  const width = size?.width || MOBILE_PLAYER_EXPANDED_WIDTH
+  const height = size?.height || MOBILE_PLAYER_HEIGHT
+  const maxX = Math.max(
+    DRAG_VIEWPORT_PADDING,
+    window.innerWidth - width - DRAG_VIEWPORT_PADDING
+  )
+  const maxY = Math.max(
+    DRAG_VIEWPORT_PADDING,
+    window.innerHeight - height - DRAG_VIEWPORT_PADDING
+  )
 
   return {
-    x: Math.min(Math.max(position?.x ?? DRAG_VIEWPORT_PADDING, DRAG_VIEWPORT_PADDING), maxX),
-    y: Math.min(Math.max(position?.y ?? DRAG_VIEWPORT_PADDING, DRAG_VIEWPORT_PADDING), maxY)
+    x: Math.min(
+      Math.max(position?.x ?? DRAG_VIEWPORT_PADDING, DRAG_VIEWPORT_PADDING),
+      maxX
+    ),
+    y: Math.min(
+      Math.max(position?.y ?? DRAG_VIEWPORT_PADDING, DRAG_VIEWPORT_PADDING),
+      maxY
+    )
   }
+}
+
+const isRectIntersecting = (a, b) =>
+  a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top
+
+const toRect = (position, size) => ({
+  left: position.x,
+  top: position.y,
+  right: position.x + size.width,
+  bottom: position.y + size.height
+})
+
+const resolveSafeAreaCollision = (position, size, safeArea) => {
+  if (!safeArea) return position
+
+  const nextRect = toRect(position, size)
+  if (!isRectIntersecting(nextRect, safeArea)) return position
+
+  const candidates = [
+    {
+      x: position.x,
+      y: safeArea.top - size.height - MOBILE_STACK_GAP
+    },
+    {
+      x: safeArea.left - size.width - MOBILE_STACK_GAP,
+      y: position.y
+    },
+    {
+      x: safeArea.left - size.width - MOBILE_STACK_GAP,
+      y: safeArea.top - size.height - MOBILE_STACK_GAP
+    }
+  ]
+    .map(candidate => clampWithinViewport(candidate, size))
+    .filter(candidate => !isRectIntersecting(toRect(candidate, size), safeArea))
+
+  if (!candidates.length) {
+    return position
+  }
+
+  return candidates.reduce((best, candidate) => {
+    const bestDistance = Math.hypot(best.x - position.x, best.y - position.y)
+    const candidateDistance = Math.hypot(
+      candidate.x - position.x,
+      candidate.y - position.y
+    )
+    return candidateDistance < bestDistance ? candidate : best
+  })
+}
+
+const clampPosition = (position, size, options = {}) => {
+  if (typeof window === 'undefined') return position
+
+  const normalizedSize = {
+    width: size?.width || MOBILE_PLAYER_EXPANDED_WIDTH,
+    height: size?.height || MOBILE_PLAYER_HEIGHT
+  }
+  const viewportClamped = clampWithinViewport(position, normalizedSize)
+
+  return resolveSafeAreaCollision(
+    viewportClamped,
+    normalizedSize,
+    options.safeArea
+  )
+}
+
+const getSnappedPosition = (position, size, options = {}) => {
+  if (typeof window === 'undefined') return position
+
+  const normalizedSize = {
+    width: size?.width || MOBILE_PLAYER_EXPANDED_WIDTH,
+    height: size?.height || MOBILE_PLAYER_HEIGHT
+  }
+  const centerX = (position?.x ?? 0) + normalizedSize.width / 2
+  const snapToRight = centerX >= window.innerWidth / 2
+  const targetX = snapToRight
+    ? window.innerWidth - normalizedSize.width - DRAG_VIEWPORT_PADDING
+    : DRAG_VIEWPORT_PADDING
+
+  return clampPosition(
+    {
+      x: targetX,
+      y: position?.y ?? DRAG_VIEWPORT_PADDING
+    },
+    normalizedSize,
+    options
+  )
 }
 
 const DEFAULT_PLAYER_META = {
@@ -63,6 +172,7 @@ const getPlayerMetaSnapshot = () => {
 }
 
 const DynamicIslandPlayer = ({ className }) => {
+  const router = useRouter()
   const [ap, setAp] = useState(null)
   const [expanded, setExpanded] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -79,6 +189,7 @@ const DynamicIslandPlayer = ({ className }) => {
   const [playerMeta, setPlayerMeta] = useState(DEFAULT_PLAYER_META)
   const [position, setPosition] = useState(() => getDefaultPosition())
   const [isDragging, setIsDragging] = useState(false)
+  const [isTouchDevice, setIsTouchDevice] = useState(false)
   const sourceBadgeVisible = siteConfig(
     'MUSIC_PLAYER_SOURCE_BADGE',
     true
@@ -97,12 +208,41 @@ const DynamicIslandPlayer = ({ className }) => {
   const dragPointerIdRef = useRef(null)
   const positionRef = useRef(getDefaultPosition())
   const draggedRef = useRef(false)
+  const lastDragEndedAtRef = useRef(0)
 
   // 弹幕防重叠：轨道占用时间戳（基于同速移动，需等前一条“头部”领先安全距离后再放入同轨）
   const danmakuLaneUntilRef = useRef([])
   const danmakuHostRef = useRef(null)
 
   const mountedRef = useRef(false)
+
+  const isMobilePostPage =
+    router.pathname.indexOf('/[prefix]') === 0 && typeof window !== 'undefined' && window.innerWidth < 1024
+
+  const getDragConstraintOptions = (size) => {
+    if (typeof window === 'undefined' || !isMobilePostPage) {
+      return {}
+    }
+
+    const safeAreaLeft = Math.max(
+      DRAG_VIEWPORT_PADDING,
+      window.innerWidth - MOBILE_TOC_BUTTON_SIZE - MOBILE_TOC_SAFE_AREA_RIGHT
+    )
+    const safeAreaTop = Math.max(
+      DRAG_VIEWPORT_PADDING,
+      window.innerHeight - MOBILE_TOC_BOTTOM_OFFSET - MOBILE_TOC_BUTTON_SIZE - MOBILE_STACK_GAP
+    )
+
+    return {
+      safeArea: {
+        left: safeAreaLeft,
+        top: safeAreaTop,
+        right: window.innerWidth - DRAG_VIEWPORT_PADDING,
+        bottom: window.innerHeight - DRAG_VIEWPORT_PADDING
+      },
+      size
+    }
+  }
 
   // 弹幕参数（可按需调整）
   const DANMAKU_CONFIG = {
@@ -259,6 +399,21 @@ const DynamicIslandPlayer = ({ className }) => {
       text: `refresh=${forceRefresh} · cache=${cacheActive}/${cacheConfigured}(${cacheFallback}) · rate=${rateActive}/${rateConfigured}(${rateFallback}) · requestId=${playerMeta?.requestId || '-'}`
     }
   }, [playerMeta])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const syncTouchMode = () => {
+      setIsTouchDevice(window.matchMedia('(hover: none), (pointer: coarse)').matches)
+    }
+
+    syncTouchMode()
+    window.addEventListener('resize', syncTouchMode)
+
+    return () => {
+      window.removeEventListener('resize', syncTouchMode)
+    }
+  }, [])
 
   useEffect(() => {
     mountedRef.current = true
@@ -440,9 +595,11 @@ const DynamicIslandPlayer = ({ className }) => {
     if (typeof window === 'undefined') return
 
     const syncPosition = () => {
+      const nextSize = getPlayerSize(expanded)
       const next = clampPosition(
         positionRef.current,
-        islandRef.current?.getBoundingClientRect?.()
+        nextSize,
+        getDragConstraintOptions(nextSize)
       )
       positionRef.current = next
       setPosition(current =>
@@ -457,7 +614,7 @@ const DynamicIslandPlayer = ({ className }) => {
       window.clearTimeout(timer)
       window.removeEventListener('resize', syncPosition)
     }
-  }, [expanded])
+  }, [expanded, router.asPath])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -471,13 +628,14 @@ const DynamicIslandPlayer = ({ className }) => {
         return
       }
 
-      const rect = islandRef.current?.getBoundingClientRect?.()
+      const nextSize = getPlayerSize(expanded)
       const next = clampPosition(
         {
           x: event.clientX - dragOffsetRef.current.x,
           y: event.clientY - dragOffsetRef.current.y
         },
-        rect
+        nextSize,
+        getDragConstraintOptions(nextSize)
       )
 
       if (
@@ -496,6 +654,21 @@ const DynamicIslandPlayer = ({ className }) => {
       setIsDragging(false)
       dragPointerIdRef.current = null
 
+      if (draggedRef.current) {
+        lastDragEndedAtRef.current = Date.now()
+
+        if (isTouchDevice) {
+          const nextSize = getPlayerSize(expanded)
+          const snapped = getSnappedPosition(
+            positionRef.current,
+            nextSize,
+            getDragConstraintOptions(nextSize)
+          )
+          positionRef.current = snapped
+          setPosition(snapped)
+        }
+      }
+
       try {
         localStorage.setItem(DRAG_STORAGE_KEY, JSON.stringify(positionRef.current))
       } catch (e) {
@@ -512,7 +685,23 @@ const DynamicIslandPlayer = ({ className }) => {
       window.removeEventListener('pointerup', finishDrag)
       window.removeEventListener('pointercancel', finishDrag)
     }
-  }, [isDragging])
+  }, [isDragging, isTouchDevice, expanded, router.asPath])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!expanded || !isTouchDevice || isDragging) return
+
+    const handleOutsidePointerDown = event => {
+      if (islandRef.current?.contains(event.target)) return
+      setExpanded(false)
+    }
+
+    document.addEventListener('pointerdown', handleOutsidePointerDown)
+
+    return () => {
+      document.removeEventListener('pointerdown', handleOutsidePointerDown)
+    }
+  }, [expanded, isTouchDevice, isDragging])
 
   const togglePlay = () => {
     if (!ap) return
@@ -546,16 +735,23 @@ const DynamicIslandPlayer = ({ className }) => {
     if (event.button != null && event.button !== 0) return
     if (event.target.closest('button')) return
 
-    const rect = islandRef.current?.getBoundingClientRect?.()
-    if (!rect) return
+    const nextSize = getPlayerSize(expanded)
+    const currentPosition = clampPosition(
+      positionRef.current,
+      nextSize,
+      getDragConstraintOptions(nextSize)
+    )
 
     dragPointerIdRef.current = event.pointerId
     dragOffsetRef.current = {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top
+      x: event.clientX - currentPosition.x,
+      y: event.clientY - currentPosition.y
     }
     draggedRef.current = false
+    positionRef.current = currentPosition
+    setPosition(currentPosition)
     setIsDragging(true)
+    event.currentTarget.setPointerCapture?.(event.pointerId)
   }
 
   const handleContainerClick = () => {
@@ -563,6 +759,14 @@ const DynamicIslandPlayer = ({ className }) => {
       draggedRef.current = false
       return
     }
+
+    if (
+      isTouchDevice &&
+      Date.now() - lastDragEndedAtRef.current < 220
+    ) {
+      return
+    }
+
     setExpanded(v => !v)
   }
 
@@ -625,20 +829,21 @@ const DynamicIslandPlayer = ({ className }) => {
           left: position.x,
           top: position.y,
           zIndex: 200,
+          width: expanded ? MOBILE_PLAYER_EXPANDED_WIDTH : MOBILE_PLAYER_COLLAPSED_WIDTH,
           pointerEvents: 'auto',
           cursor: isDragging ? 'grabbing' : 'grab',
           userSelect: isDragging ? 'none' : 'auto',
           touchAction: 'none'
         }}
-        onMouseEnter={() => !isDragging && setExpanded(true)}
-        onMouseLeave={() => !isDragging && setExpanded(false)}
+        onMouseEnter={() => !isDragging && !isTouchDevice && setExpanded(true)}
+        onMouseLeave={() => !isDragging && !isTouchDevice && setExpanded(false)}
         onPointerDown={handlePointerDown}
         onClick={handleContainerClick}
       >
       <div
         style={{
-          width: expanded ? 320 : 64,
-          height: 64,
+          width: expanded ? MOBILE_PLAYER_EXPANDED_WIDTH : MOBILE_PLAYER_COLLAPSED_WIDTH,
+          height: MOBILE_PLAYER_HEIGHT,
           borderRadius: 9999,
           padding: 8,
           display: 'flex',
@@ -718,13 +923,18 @@ const DynamicIslandPlayer = ({ className }) => {
 
           <button
             type="button"
+            onPointerDown={(e) => {
+              if (isTouchDevice && !expanded) return
+              e.stopPropagation()
+            }}
             onClick={(e) => {
               e.stopPropagation()
               togglePlay()
             }}
             style={{
               position: 'absolute',
-              inset: 0,
+              inset: isTouchDevice && !expanded ? 8 : 0,
+              borderRadius: 9999,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -732,7 +942,8 @@ const DynamicIslandPlayer = ({ className }) => {
               border: 'none',
               cursor: 'pointer',
               color: 'white',
-              transition: 'transform 150ms ease'
+              transition: 'transform 150ms ease',
+              pointerEvents: isTouchDevice && !expanded ? 'none' : 'auto'
             }}
             onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.85)'}
             onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
@@ -861,6 +1072,7 @@ const DynamicIslandPlayer = ({ className }) => {
         >
           <button
             type="button"
+            onPointerDown={(e) => e.stopPropagation()}
             className={`${isDark ? 'di-btn di-btn-dark' : 'di-btn'} ${showLrc ? 'di-btn-active' : ''}`}
             style={iconButtonStyle(isDark)}
             aria-label={showLrc ? 'Hide Lyrics Danmaku' : 'Show Lyrics Danmaku'}
@@ -923,6 +1135,7 @@ const DynamicIslandPlayer = ({ className }) => {
           </button>
           <button
             type="button"
+            onPointerDown={(e) => e.stopPropagation()}
             onClick={next}
             className={isDark ? 'di-btn di-btn-dark' : 'di-btn'}
             style={iconButtonStyle(isDark)}
@@ -1043,10 +1256,9 @@ const iconButtonStyle = (isDark) => ({
   lineHeight: 0,
   fontSize: 0,
   transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-  boxShadow: isDark 
-    ? '0 2px 8px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.1)'
-    : '0 2px 8px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.8)',
-  opacity: 1
+  boxShadow: isDark
+    ? '0 2px 8px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.08)'
+    : '0 2px 8px rgba(0,0,0,0.08), inset 0 1px 1px rgba(255,255,255,0.7)'
 })
 
 export default DynamicIslandPlayer

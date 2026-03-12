@@ -27,7 +27,8 @@ const Header = props => {
   const [compactMobileReadingNav, setCompactMobileReadingNav] = useState(false)
   const [modeToast, setModeToast] = useState({ visible: false, message: '' })
 
-  const { isDarkMode } = useGlobal()
+  const { isDarkMode, isFocusReadingMode } = useGlobal()
+
   const router = useRouter()
   const slideOverRef = useRef()
   const isPostPage = Boolean(post)
@@ -146,9 +147,12 @@ const Header = props => {
     }
   }, [])
 
+  const isPostFocusReading = Boolean(hasPostBg && isFocusReadingMode)
+
   const toastCardClassName = isDarkMode
-    ? 'rounded-2xl border border-white/10 bg-slate-900/82 px-4 py-3 text-sm font-medium text-slate-100 shadow-[0_18px_45px_rgba(15,23,42,0.34)] backdrop-blur-xl'
-    : 'rounded-2xl border border-slate-200/80 bg-white/88 px-4 py-3 text-sm font-medium text-slate-700 shadow-[0_18px_45px_rgba(148,163,184,0.18)] backdrop-blur-xl'
+
+    ? 'rounded-2xl border border-slate-700/80 bg-slate-950/96 px-4 py-3 text-sm font-medium text-slate-50 shadow-[0_20px_48px_rgba(2,6,23,0.5)]'
+    : 'rounded-2xl border border-slate-200 bg-white/98 px-4 py-3 text-sm font-medium text-slate-800 shadow-[0_18px_42px_rgba(148,163,184,0.24)]'
 
   return (
     <>
@@ -165,9 +169,10 @@ const Header = props => {
             ${fixedNav ? 'fixed' : 'relative bg-transparent'} 
             ${fixedNav ? 'fixed' : ''}
             ${hasPostBg ? 'heo-top-nav--post' : 'heo-top-nav--page'}
-            ${navBgWhite ? 'heo-top-nav--floating' : 'heo-top-nav--flat'}
+            ${navBgWhite || isPostFocusReading ? 'heo-top-nav--floating' : 'heo-top-nav--flat'}
             ${compactMobileReadingNav ? 'heo-top-nav--mobile-compact' : ''}
-            ${textWhite ? 'text-white ' : 'text-black dark:text-white'} bg-transparent`}>
+            ${textWhite && !isPostFocusReading ? 'text-white ' : 'text-black dark:text-white'} bg-transparent`}>
+
         <div className='heo-top-nav__inner flex h-full mx-auto items-center max-w-[86rem] px-6'>
           <div className='heo-top-nav__rail heo-top-nav__rail--brand flex items-center justify-start'>
             {/* 左侧logo */}
@@ -248,8 +253,23 @@ const Header = props => {
 
       <div
         className={`pointer-events-none fixed left-1/2 z-40 w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:max-w-md ${modeToast.visible ? 'bottom-5 opacity-100 blur-0 sm:bottom-6' : 'bottom-3 opacity-0 blur-[6px]'}`}>
-        <div className={`${toastCardClassName} transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${modeToast.visible ? 'translate-y-0 scale-100' : 'translate-y-2 scale-[0.985]'}`}>
-          {modeToast.message}
+        <div
+          role='status'
+          aria-live='polite'
+          className={`${toastCardClassName} transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${modeToast.visible ? 'translate-y-0 scale-100' : 'translate-y-2 scale-[0.985]'}`}>
+          <div className='flex items-start gap-3'>
+            <span className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl ${isDarkMode ? 'bg-amber-400/12 text-amber-200 ring-1 ring-amber-300/20' : 'bg-blue-50 text-blue-600 ring-1 ring-blue-100'}`}>
+              <i className='fas fa-sparkles text-sm' aria-hidden='true'></i>
+            </span>
+            <div className='min-w-0 flex-1'>
+              <div className={`text-[0.68rem] font-semibold uppercase tracking-[0.18em] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                阅读模式提示
+              </div>
+              <div className={`mt-1 break-words text-[0.95rem] font-medium leading-6 ${isDarkMode ? 'text-slate-50' : 'text-slate-800'}`}>
+                {modeToast.message}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>

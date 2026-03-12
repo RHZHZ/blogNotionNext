@@ -1,15 +1,22 @@
 import { ArrowSmallRight, ChevronLeft, ChevronRight } from '@/components/HeroIcons'
 import LazyImage from '@/components/LazyImage'
 import SmartLink from '@/components/SmartLink'
+import {
+  fetchBookListPayload,
+  getBookListPayloadBooks,
+  readBookListCache,
+  writeBookListCache
+} from '@/lib/utils/booklist-client'
 import { siteConfig } from '@/lib/config'
 import { useEffect, useMemo, useState } from 'react'
 import CONFIG from '../config'
 
 const DESKTOP_READING_LIMIT = 3
-const MOBILE_READING_LIMIT = 2
+
 
 const Hero = props => {
   const HEO_HERO_ENABLE = siteConfig('HEO_HERO_ENABLE', true, CONFIG)
+  const heroReading = useHeroReadingBooks(DESKTOP_READING_LIMIT)
 
   if (!HEO_HERO_ENABLE) {
     return null
@@ -19,11 +26,12 @@ const Hero = props => {
     <div
       id='hero-wrapper'
       className='recent-top-post-group w-full overflow-hidden select-none px-3 md:px-5 mb-4'>
-      <MobileHero {...props} />
-      <DesktopHero {...props} />
+      <MobileHero {...props} heroReading={heroReading} />
+      <DesktopHero {...props} heroReading={heroReading} />
     </div>
   )
 }
+
 
 function getHeroReadingPreviewConfig() {
   const profile = siteConfig('HEO_ABOUT_PROFILE', {}, CONFIG) || {}
@@ -57,9 +65,13 @@ function normalizeHeroReadingBook(book, index) {
   }
 }
 
+
 function useHeroReadingBooks(limit) {
   const previewConfig = useMemo(() => getHeroReadingPreviewConfig(), [])
-  const initialBooks = previewConfig.fallbackBooks.map(normalizeHeroReadingBook).filter(Boolean).slice(0, limit)
+  const initialBooks = useMemo(
+    () => previewConfig.fallbackBooks.map(normalizeHeroReadingBook).filter(Boolean).slice(0, limit),
+    [limit, previewConfig]
+  )
   const [books, setBooks] = useState(initialBooks)
   const [isLoading, setIsLoading] = useState(!initialBooks.length)
 
@@ -67,39 +79,45 @@ function useHeroReadingBooks(limit) {
     let active = true
 
     async function loadBooks() {
-      if (active) {
+      const cached = readBookListCache()
+      const cachedBooks = getBookListPayloadBooks(cached?.payload)
+        .filter(book => {
+          if (!previewConfig.shelfName) return true
+          return String(book?.shelfName || '').trim() === previewConfig.shelfName
+        })
+        .map(normalizeHeroReadingBook)
+        .filter(Boolean)
+      if (cachedBooks?.length) {
+        setBooks(cachedBooks.slice(0, limit))
+        setIsLoading(false)
+      } else if (active) {
         setIsLoading(true)
       }
 
       try {
-        const response = await fetch('/api/booklist', { cache: 'default' })
-        if (response.status === 304) {
-          if (active) setIsLoading(false)
-          return
-        }
-        if (!response.ok) throw new Error('booklist fetch failed')
-        const result = await response.json()
+        const nextResult = await fetchBookListPayload(cached)
         if (!active) return
 
-        const payloadBooks = Array.isArray(result?.bookList?.books) ? result.bookList.books : []
+        const payloadBooks = getBookListPayloadBooks(nextResult?.payload)
         const filtered = payloadBooks
           .filter(book => {
             if (!previewConfig.shelfName) return true
             return String(book?.shelfName || '').trim() === previewConfig.shelfName
           })
-          .slice(0, limit)
           .map(normalizeHeroReadingBook)
           .filter(Boolean)
 
+        writeBookListCache(nextResult.payload, nextResult.status)
+
         if (filtered.length) {
-          setBooks(filtered)
+          setBooks(filtered.slice(0, limit))
           setIsLoading(false)
           return
         }
       } catch (error) {}
 
       if (!active) return
-      setBooks(initialBooks)
+      setBooks(cachedBooks?.length ? cachedBooks.slice(0, limit) : initialBooks)
       setIsLoading(false)
     }
 
@@ -115,6 +133,7 @@ function useHeroReadingBooks(limit) {
     isLoading
   }
 }
+
 
 
 function getHeroPosts({ latestPosts, allNavPages }) {
@@ -142,17 +161,18 @@ function getHeroPosts({ latestPosts, allNavPages }) {
   return topPosts.length ? topPosts : (latestPosts || sourcePosts).slice(0, 4)
 }
 
-function DesktopHero(props) {
+function DesktopHero({ heroReading, ...props }) {
   const heroPosts = getHeroPosts(props)
   if (!heroPosts.length) return null
 
   return (
     <section className='heo-hero-shell hidden xl:grid max-w-[86rem] mx-auto'>
       <DesktopHeroSlider posts={heroPosts} siteInfo={props.siteInfo} />
-      <DesktopHeroBooks />
+      <DesktopHeroBooks heroReading={heroReading} />
     </section>
   )
 }
+
 
 function DesktopHeroSlider({ posts, siteInfo }) {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -229,8 +249,9 @@ function DesktopHeroSlider({ posts, siteInfo }) {
   )
 }
 
-function DesktopHeroBooks() {
-  const { books, config, isLoading } = useHeroReadingBooks(DESKTOP_READING_LIMIT)
+function DesktopHeroBooks({ heroReading }) {
+  const { books, config, isLoading } = heroReading
+
   const shouldRenderSkeleton = !books.length && isLoading
   const shouldRenderEmpty = !books.length && !isLoading
 
@@ -296,9 +317,10 @@ function DesktopHeroBooks() {
 }
 
 
-function MobileHero(props) {
+function MobileHero({ heroReading, ...props }) {
   const heroPosts = getHeroPosts(props).slice(0, 3)
-  const { books, config, isLoading } = useHeroReadingBooks(MOBILE_READING_LIMIT)
+  const { books, config, isLoading } = heroReading
+
 
   if (!heroPosts.length) return null
 

@@ -18,16 +18,20 @@ import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import { loadWowJS } from '@/lib/plugins/wow'
 import { isBrowser, isAiSummaryEnabled } from '@/lib/utils'
-import { Transition } from '@headlessui/react'
+import { Dialog, Portal, Transition } from '@headlessui/react'
+
 import SmartLink from '@/components/SmartLink'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
+
 import About from './components/About'
 import BlogPostArchive from './components/BlogPostArchive'
 import BlogPostListPage from './components/BlogPostListPage'
 import BlogPostListScroll from './components/BlogPostListScroll'
 import CategoryBar from './components/CategoryBar'
+import Catalog from './components/Catalog'
 import FloatTocButton from './components/FloatTocButton'
+
 import Footer from './components/Footer'
 import Header from './components/Header'
 import Hero from './components/Hero'
@@ -71,17 +75,27 @@ const addFontLinks = () => {
 import AISummary from '@/components/AISummary'
 import ArticleExpirationNotice from '@/components/ArticleExpirationNotice'
 
+
+
+
+const emitModeToast = message => {
+  if (typeof window === 'undefined' || !message) return
+  window.dispatchEvent(new CustomEvent('heo-mode-toast', { detail: { message } }))
+}
+
 /**
  * 基础布局 采用上中下布局，移动端使用顶部侧边导航栏
  * @param props
  * @returns {JSX.Element}
  * @constructor
  */
+
 const LayoutBase = props => {
   const { children, slotTop, className, post } = props
 
   // 全屏模式下的最大宽度
-  const { fullWidth, isDarkMode, isEyeCareMode, eyeCareIntensity } = useGlobal()
+  const { fullWidth, isDarkMode, isEyeCareMode, eyeCareIntensity, isFocusReadingMode } = useGlobal()
+
   const router = useRouter()
 
   const isAboutPage = post?.slug === 'about'
@@ -101,13 +115,18 @@ const LayoutBase = props => {
           <Hero {...props} />
         </>
       ) : null}
-      {fullWidth || useWidePageLayout ? null : <PostHeader {...props} isDarkMode={isDarkMode} />}
+      {fullWidth || useWidePageLayout || isFocusReadingMode ? null : <PostHeader {...props} isDarkMode={isDarkMode} />}
+
     </header>
   )
 
+  const shouldHideSidebarForFocus = post?.type === 'Post' && isFocusReadingMode
+
   // 右侧栏 用户信息+标签列表
   const slotRight =
-    router.route === '/404' || fullWidth || useWidePageLayout ? null : <SideRight {...props} />
+    router.route === '/404' || fullWidth || useWidePageLayout || shouldHideSidebarForFocus ? null : <SideRight {...props} />
+
+
 
   const maxWidth = fullWidth || isBookListPage ? 'max-w-[96rem] mx-auto' : 'max-w-[86rem]' // 普通最大宽度是86rem和顶部菜单栏对齐，留空则与窗口对齐
 
@@ -291,9 +310,11 @@ const LayoutArchive = props => {
  */
 const LayoutSlug = props => {
   const { post, lock, validPassword } = props
-  const { locale, fullWidth } = useGlobal()
+  const { locale, fullWidth, isFocusReadingMode, toggleFocusReadingMode } = useGlobal()
+  const router = useRouter()
 
   const [hasCode, setHasCode] = useState(false)
+  const [focusTocVisible, setFocusTocVisible] = useState(false)
   const hasWWAds = Boolean(siteConfig('AD_WWADS_ID'))
   const isAboutPage = post?.slug === 'about'
 
@@ -301,6 +322,38 @@ const LayoutSlug = props => {
     const hasCode = document.querySelectorAll('[class^="language-"]').length > 0
     setHasCode(hasCode)
   }, [])
+
+  useEffect(() => {
+    if (!isFocusReadingMode || typeof window === 'undefined') return
+
+    const handleKeydown = event => {
+      if (event.key === 'Escape') {
+        setFocusTocVisible(false)
+        toggleFocusReadingMode()
+        emitModeToast('专注阅读已关闭，页面回到默认阅读布局')
+      }
+    }
+
+    window.addEventListener('keydown', handleKeydown)
+    return () => {
+      window.removeEventListener('keydown', handleKeydown)
+    }
+  }, [isFocusReadingMode, toggleFocusReadingMode])
+
+
+
+  const handleToggleFocusReadingMode = () => {
+    const nextStatus = !isFocusReadingMode
+    toggleFocusReadingMode()
+    emitModeToast(nextStatus ? '专注阅读已开启，侧栏先收起来，正文现在会更专心地铺开' : '专注阅读已关闭，页面回到默认阅读布局')
+    if (!nextStatus) {
+      setFocusTocVisible(false)
+    }
+  }
+
+  const isDesktopFocusTocEnabled = Boolean(
+    post?.type === 'Post' && post?.toc?.length > 0 && isFocusReadingMode
+  )
 
   const commentEnable =
     siteConfig('COMMENT_ARTALK_SERVER') ||
@@ -313,7 +366,6 @@ const LayoutSlug = props => {
     siteConfig('COMMENT_GITALK_CLIENT_ID') ||
     siteConfig('COMMENT_WEBMENTION_ENABLE')
 
-  const router = useRouter()
   const waiting404 = siteConfig('POST_WAITING_TIME_FOR_404') * 1000
   useEffect(() => {
     if (router.isFallback || post) {
@@ -339,7 +391,9 @@ const LayoutSlug = props => {
   return (
     <>
       <div
-        className={`article heo-post-shell h-full w-full ${isAboutPage ? 'heo-about-shell xl:max-w-[86rem]' : ''} ${fullWidth ? '' : isAboutPage ? '' : 'xl:max-w-5xl'} ${hasCode ? 'xl:w-[73.15vw]' : ''} ${isAboutPage ? 'bg-transparent border-0 shadow-none hover:shadow-none rounded-none lg:px-0 lg:py-0' : 'bg-white dark:bg-[#18171d] dark:border-gray-600 lg:hover:shadow lg:border rounded-2xl lg:px-2 lg:py-4'}`}>
+        data-heo-focus-reading={isFocusReadingMode ? 'true' : 'false'}
+        className={`article heo-post-shell h-full w-full ${isFocusReadingMode ? 'heo-post-shell--focus-reading' : ''} ${isAboutPage ? 'heo-about-shell xl:max-w-[86rem]' : ''} ${fullWidth ? '' : isAboutPage ? '' : 'xl:max-w-5xl'} ${hasCode ? 'xl:w-[73.15vw]' : ''} ${isAboutPage ? 'bg-transparent border-0 shadow-none hover:shadow-none rounded-none lg:px-0 lg:py-0' : 'bg-white dark:bg-[#18171d] dark:border-gray-600 lg:hover:shadow lg:border rounded-2xl lg:px-2 lg:py-4'}`}>
+
         {/* 文章锁 */}
         {lock && <PostLock validPassword={validPassword} />}
 
@@ -361,7 +415,55 @@ const LayoutSlug = props => {
                   <section
                     className='heo-article-section wow fadeInUp p-5 justify-center mx-auto'
                     data-wow-delay='.2s'>
+                    {post?.type === 'Post' && isFocusReadingMode && (
+                      <div className='heo-focus-reading-intro heo-article-content-width'>
+                        <div className='heo-focus-reading-intro__eyebrow'>Focus Reading</div>
+                        <div className='heo-focus-reading-intro__title'>{post.title}</div>
+                        <div className='heo-focus-reading-intro__meta'>
+                          {post.category ? <span>{post.category}</span> : null}
+                          {post.publishDay ? <span>发布 {post.publishDay}</span> : null}
+                          {post.lastEditedDay ? <span>更新 {post.lastEditedDay}</span> : null}
+                        </div>
+                      </div>
+                    )}
+
+                    {post?.type === 'Post' && (
+                      <div className={`heo-article-toolbar heo-article-content-width ${isFocusReadingMode ? 'is-focus-reading' : ''}`}>
+
+                        <div className='heo-article-toolbar__actions'>
+                          {isDesktopFocusTocEnabled && (
+                            <button
+                              type='button'
+                              onClick={() => setFocusTocVisible(true)}
+                              aria-label='打开专注阅读目录'
+                              title='打开专注阅读目录'
+                              className='heo-article-focus-toc-btn'>
+                              <span className='heo-article-focus-toc-btn__icon' aria-hidden='true'>
+                                <i className='fas fa-list-ul' />
+                              </span>
+                              <span className='heo-article-focus-toc-btn__text'>目录</span>
+                            </button>
+                          )}
+                          <button
+                            type='button'
+                            onClick={handleToggleFocusReadingMode}
+                            aria-pressed={isFocusReadingMode}
+                            aria-label={isFocusReadingMode ? '关闭专注阅读' : '开启专注阅读'}
+                            title={isFocusReadingMode ? '关闭专注阅读' : '开启专注阅读'}
+                            className={`heo-article-focus-toggle ${isFocusReadingMode ? 'is-active' : ''}`}>
+                            <span className='heo-article-focus-toggle__icon' aria-hidden='true'>
+                              <i className={`fas ${isFocusReadingMode ? 'fa-compress-alt' : 'fa-expand-alt'}`} />
+                            </span>
+                            <span className='heo-article-focus-toggle__text'>
+                              {isFocusReadingMode ? '专注中' : '专注阅读'}
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
                     <ArticleExpirationNotice post={post} />
+
                     {isAiSummaryEnabled(post) && (
                       <div className='heo-article-content-width'>
                         <AISummary aiSummary={post.aiSummary} post={post} />
@@ -493,7 +595,90 @@ const LayoutSlug = props => {
       </div>
 
       <FloatTocButton {...props} />
+
+      {isDesktopFocusTocEnabled && (
+        <Portal>
+          <div className='heo-float-toc-anchor--portal fixed bottom-24 right-8 z-[220] hidden lg:block xl:right-10'>
+            <button
+              type='button'
+              onClick={() => setFocusTocVisible(true)}
+              aria-label='打开专注阅读目录'
+              title='打开专注阅读目录'
+              className='heo-float-widget-btn heo-float-widget-btn--portal heo-float-widget-btn--stack'>
+              <span className='heo-float-widget-btn__icon-wrap' aria-hidden='true'>
+                <i className='fas fa-list-ul heo-float-widget-btn__icon' />
+              </span>
+              <span className='heo-float-widget-btn__meta'>目录</span>
+            </button>
+          </div>
+        </Portal>
+      )}
+
+
+
+      {isDesktopFocusTocEnabled && (
+
+        <Transition.Root show={focusTocVisible} as={Fragment}>
+          <Portal>
+            <Dialog as='div' className='relative z-[120] hidden lg:block' onClose={setFocusTocVisible}>
+
+              <Transition.Child
+                as={Fragment}
+                enter='ease-in-out duration-300'
+                enterFrom='opacity-0'
+                enterTo='opacity-100'
+                leave='ease-in-out duration-200'
+                leaveFrom='opacity-100'
+                leaveTo='opacity-0'>
+                <div className='heo-toc-drawer__overlay fixed inset-0' />
+              </Transition.Child>
+
+              <div className='fixed inset-0 overflow-hidden'>
+                <div className='absolute inset-0 overflow-hidden'>
+                  <div className='pointer-events-none fixed inset-y-0 right-0 z-[121] flex max-w-full items-start justify-end px-6 py-24'>
+                    <Transition.Child
+                      as={Fragment}
+                      enter='transform transition ease-[cubic-bezier(0.22,1,0.36,1)] duration-400'
+                      enterFrom='translate-x-6 opacity-0 scale-[0.985]'
+                      enterTo='translate-x-0 opacity-100 scale-100'
+                      leave='transform transition ease-in-out duration-250'
+                      leaveFrom='translate-x-0 opacity-100 scale-100'
+                      leaveTo='translate-x-4 opacity-0 scale-[0.985]'>
+                      <Dialog.Panel className='heo-toc-drawer__panel heo-focus-toc-drawer__panel pointer-events-auto w-full max-w-sm overflow-hidden'>
+                        <div className='heo-toc-drawer__header'>
+                          <div className='flex items-center justify-between gap-3'>
+                            <div>
+                              <div className='heo-toc-drawer__eyebrow'>FOCUS READING</div>
+                              <div className='heo-toc-drawer__title'>快速目录</div>
+                            </div>
+                            <button
+                              type='button'
+                              onClick={() => setFocusTocVisible(false)}
+                              aria-label='关闭专注阅读目录'
+                              title='关闭专注阅读目录'
+                              className='heo-toc-drawer__close'>
+                              <i className='fa-solid fa-xmark text-sm'></i>
+                            </button>
+                          </div>
+                        </div>
+                        <div className='heo-toc-drawer__content'>
+                          <div className='heo-toc-drawer__content-card'>
+                            <div className='dark:text-slate-200'>
+                              <Catalog toc={post.toc} showHeader={false} variant='drawer' />
+                            </div>
+                          </div>
+                        </div>
+                      </Dialog.Panel>
+                    </Transition.Child>
+                  </div>
+                </div>
+              </div>
+            </Dialog>
+          </Portal>
+        </Transition.Root>
+      )}
     </>
+
   )
 }
 

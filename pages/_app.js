@@ -8,7 +8,7 @@ import 'react-notion-x/src/styles.css' // 原版的react-notion-x
 
 import useAdjustStyle from '@/hooks/useAdjustStyle'
 import { GlobalContextProvider } from '@/lib/global'
-import { getBaseLayoutByTheme } from '@/themes/theme'
+import * as ThemeRuntime from '@/themes/theme'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import { getQueryParam } from '../lib/utils'
@@ -45,8 +45,8 @@ const MyApp = ({ Component, pageProps }) => {
   // 整体布局
   const GLayout = useCallback(
     props => {
-      const Layout = getBaseLayoutByTheme(theme)
-      return <Layout {...props} />
+      const Layout = ThemeRuntime.getBaseLayoutByTheme?.(theme)
+      return Layout ? <Layout {...props} /> : <>{props.children}</>
     },
     [theme]
   )

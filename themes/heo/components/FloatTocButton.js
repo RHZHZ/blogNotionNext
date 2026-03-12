@@ -8,6 +8,8 @@ import Catalog from './Catalog'
  */
 export default function FloatTocButton(props) {
   const [tocVisible, changeTocVisible] = useState(false)
+  const [isScrolling, setIsScrolling] = useState(false)
+  const [hasScrolled, setHasScrolled] = useState(false)
   const { post } = props
   const router = useRouter()
 
@@ -23,24 +25,54 @@ export default function FloatTocButton(props) {
     }
   }, [router.events])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    let timer = null
+
+    const syncScrollState = () => {
+      const nextHasScrolled = window.scrollY > 120
+      setHasScrolled(nextHasScrolled)
+      setIsScrolling(true)
+
+      if (timer) window.clearTimeout(timer)
+      timer = window.setTimeout(() => {
+        setIsScrolling(false)
+      }, 180)
+    }
+
+    syncScrollState()
+    window.addEventListener('scroll', syncScrollState, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', syncScrollState)
+      if (timer) window.clearTimeout(timer)
+    }
+  }, [])
+
   if (!post || !post.toc || post.toc.length < 1) {
     return <></>
   }
 
   return (
     <>
-      <div className='fixed bottom-24 right-4 z-30 lg:hidden'>
-        <button
-          type='button'
-          onClick={toggleToc}
-          aria-label='打开文章目录'
-          title='打开文章目录'
-          className='heo-float-widget-btn heo-float-widget-btn--icon-only'>
-          <i className='fas fa-list-ol heo-float-widget-btn__icon' />
-        </button>
-      </div>
+      <Portal>
+        <div
+          className={`heo-float-toc-anchor heo-float-toc-anchor--portal fixed right-4 z-[121] lg:hidden ${hasScrolled ? 'is-active' : ''} ${isScrolling ? 'is-scrolling' : ''}`}>
+          <button
+            type='button'
+            onClick={toggleToc}
+            aria-label='打开文章目录'
+            title='打开文章目录'
+            className='heo-float-widget-btn heo-float-widget-btn--portal heo-float-widget-btn--icon-only'>
+
+            <i className='fas fa-list-ol heo-float-widget-btn__icon' />
+          </button>
+        </div>
+      </Portal>
 
       <Transition.Root show={tocVisible} as={Fragment}>
+
         <Portal>
         <Dialog as='div' className='relative z-[120] lg:hidden' onClose={changeTocVisible}>
           <Transition.Child
