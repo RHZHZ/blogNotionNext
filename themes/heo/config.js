@@ -176,7 +176,7 @@ const CONFIG = {
         type: 'reading',
         eyebrow: '阅读输入',
         title: '微信读书',
-        accent: '阅读时长 1300+',
+        accent: '阅读是一种习惯',
         image: 'https://images.unsplash.com/photo-1579762593175-20226054cad0?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb',
         imageAlt: '微信读书氛围背景',
         description: '长期把微信读书当作日常输入入口，阅读、标注与整理已经成为稳定习惯',
@@ -265,7 +265,7 @@ const CONFIG = {
     },
     recentBookShelf: {
       title: '我最近在读的书',
-      description: '最近在读这些书，如果你看到了，请催我去读书',
+      description: '最近在读这些书，感觉蛮有意思的',
       linkText: '我的书单',
       link: '/booklist',
       previewLimit: 3
