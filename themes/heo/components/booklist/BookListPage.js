@@ -136,7 +136,7 @@ const BookListPage = ({ pageConfig, sections = [], featuredSections = [], otherS
                 <h1 className='heo-booklist-hero__title'>{pageConfig.hero.title}</h1>
                 <div className='heo-booklist-hero__subtitle'>{pageConfig.hero.subtitle}</div>
                 <p className='heo-booklist-hero__description'>{pageConfig.hero.description}</p>
-                <div className='heo-booklist-hero__intro-note'>按微信读书分组整理，先看精选，再顺着 section 慢慢逛。</div>
+                <div className='heo-booklist-hero__intro-note'>按微信读书分组整理，先是精选，再顺着 section 慢慢逛。</div>
                 {runtimeTags.length ? (
                   <div className='heo-booklist-hero__runtime-tags'>
                     {runtimeTags.map(tag => (
@@ -224,9 +224,9 @@ const BookListPage = ({ pageConfig, sections = [], featuredSections = [], otherS
               <AboutSectionHeading
                 eyebrow='Featured Shelves'
                 title='精选分组'
-                description='先看我希望你优先浏览的几组书单，再继续往下翻全部内容。'
+                description='这些分组是我认为值得关注的一些分组，方便快速浏览'
               />
-              <div className='heo-booklist-featured__lead'>这里只留少量重点入口，先帮你收个焦；每张卡都可以直接跳到对应分组。</div>
+              <div className='heo-booklist-featured__lead'>这里只留少量重点入口；点击每张卡都可以直接跳到对应分组。</div>
               {featuredSections.length > 1 ? <div className='heo-booklist-scroll-hint'>左右滑动查看精选分组</div> : null}
               <div className='heo-booklist-featured__grid'>
                 {featuredSections.map((section, index) => (
