@@ -60,6 +60,7 @@ export default async function handler(req, res) {
 
     const data = shouldRefresh ? await syncWereadAboutBooks() : await getPersistedAboutBooks()
     const responseRuntime = shouldRefresh ? await getAboutBooksRuntimeConfig() : runtime
+    const responseData = isAdmin ? data : { ...data, syncDebug: null }
 
     res.setHeader('Cache-Control', 'no-store')
 
@@ -68,8 +69,9 @@ export default async function handler(req, res) {
       ...responseRuntime,
       isAdminAuthorized: isAdmin,
       canManualRefresh: isAdmin && responseRuntime.enabled && responseRuntime.syncCooldownRemainingMs <= 0,
-      ...data
+      ...responseData
     })
+
 
   } catch (error) {
     logger.error('Failed to fetch about books snapshot', {

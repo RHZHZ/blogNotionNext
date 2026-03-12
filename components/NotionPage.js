@@ -29,7 +29,7 @@ export const applyImageGalleryLayoutToArticle = ({ article, width }) => {
       child.classList?.contains('notion-column')
     )
 
-    if (columns.length < 2 || width < 768) return
+    if (columns.length < 2) return
 
     const imageColumns = columns.filter(column =>
       column.querySelector(':scope > figure.notion-asset-wrapper-image')
@@ -39,10 +39,11 @@ export const applyImageGalleryLayoutToArticle = ({ article, width }) => {
 
     const desiredCols = width >= 1440 ? 4 : width >= 1024 ? 3 : 2
     const actualCols = Math.min(desiredCols, imageColumns.length)
+    const galleryGap = width >= 1024 ? '0.75rem' : width >= 768 ? '0.5rem' : '0.45rem'
 
     row.classList.add('heo-image-gallery-row')
     row.style.setProperty('--heo-gallery-cols', String(actualCols))
-    row.style.setProperty('--heo-gallery-gap', width >= 1024 ? '0.75rem' : '0.5rem')
+    row.style.setProperty('--heo-gallery-gap', galleryGap)
   })
 }
 

@@ -34,6 +34,15 @@ const Tabs = ({
     : 'animate__animated animate__jello border-b-2 border-red-600 font-black text-red-600'
   const panelBaseClass = isHeoComment ? 'duration-200' : ''
 
+  const getTabLabel = item => {
+    const explicitLabel = item?.props?.['data-tab-title']
+    if (explicitLabel) return explicitLabel
+    if (typeof item?.key === 'string') {
+      return item.key.replace(/^\.?\$+/, '')
+    }
+    return item?.key ?? ''
+  }
+
   return (
     <div className={`mb-5 duration-200 ${className || ''}`}>
       {!(validChildren.length === 1 && siteConfig('COMMENT_HIDE_SINGLE_TAB')) && (
@@ -46,7 +55,7 @@ const Tabs = ({
                   type='button'
                   className={`${tabItemBaseClass} ${tabItemClassName} ${isActive ? `${activeTabBaseClass} ${activeTabItemClassName}` : ''}`.trim()}
                   onClick={() => setCurrentTab(index)}>
-                  {item.key}
+                  {getTabLabel(item)}
                 </button>
               </li>
             )

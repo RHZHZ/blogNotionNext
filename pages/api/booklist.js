@@ -21,9 +21,11 @@ const buildDebugPayload = (snapshot, bookList) => {
     favoriteShelfNames: Array.isArray(snapshot?.favoriteShelfNames) ? snapshot.favoriteShelfNames : [],
     recentShelfNames: Array.isArray(snapshot?.recentShelfNames) ? snapshot.recentShelfNames : [],
     booksWithEmptyShelfNameCount: booksWithEmptyShelfName.length,
-    emptyShelfNameBookIds: booksWithEmptyShelfName.slice(0, 20).map(book => book?.bookId).filter(Boolean)
+    emptyShelfNameBookIds: booksWithEmptyShelfName.slice(0, 20).map(book => book?.bookId).filter(Boolean),
+    syncDebug: snapshot?.syncDebug || null
   }
 }
+
 
 export default async function handler(req, res) {
   const requestId = createRequestId()

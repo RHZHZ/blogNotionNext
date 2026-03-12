@@ -4656,11 +4656,15 @@ const Style = () => {
 
         #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row {
             margin: 0.1rem 0 calc(var(--heo-article-block-gap) + 0.15rem);
-            padding: 0.55rem;
-            border-radius: 1.45rem;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.86));
-            border: 1px solid rgba(203, 213, 225, 0.8);
-            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+            padding: 0.4rem;
+            border-radius: 1.1rem;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.82));
+            border: 1px solid rgba(203, 213, 225, 0.72);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: var(--heo-gallery-gap, 0.45rem);
         }
 
         html.dark #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row {
@@ -4686,20 +4690,30 @@ const Style = () => {
             background: rgba(255, 255, 255, 0.7);
         }
 
+        #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row > .notion-column {
+            flex: 0 0 calc((100% - (var(--heo-gallery-cols, 2) - 1) * var(--heo-gallery-gap, 0.45rem)) / var(--heo-gallery-cols, 2)) !important;
+            width: calc((100% - (var(--heo-gallery-cols, 2) - 1) * var(--heo-gallery-gap, 0.45rem)) / var(--heo-gallery-cols, 2)) !important;
+            min-width: 0;
+        }
+
+        #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row > .notion-spacer {
+            display: none;
+        }
+
         @media (min-width: 768px) {
             #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row {
-                flex-wrap: wrap;
                 gap: var(--heo-gallery-gap, 0.75rem);
+                padding: 0.55rem;
+                border-radius: 1.45rem;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.86));
+                border-color: rgba(203, 213, 225, 0.8);
+                box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
             }
 
             #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row > .notion-column {
                 flex: 0 0 calc((100% - (var(--heo-gallery-cols, 3) - 1) * var(--heo-gallery-gap, 0.75rem)) / var(--heo-gallery-cols, 3)) !important;
                 width: calc((100% - (var(--heo-gallery-cols, 3) - 1) * var(--heo-gallery-gap, 0.75rem)) / var(--heo-gallery-cols, 3)) !important;
                 min-width: 0;
-            }
-
-            #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row > .notion-spacer {
-                display: none;
             }
         }
 
@@ -4743,6 +4757,56 @@ const Style = () => {
             margin-top: 0.35rem !important;
             padding: 0 0.35rem;
             font-size: 0.8rem !important;
+        }
+
+        @media (max-width: 767px) {
+            #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image {
+                margin: 0.82rem auto calc(var(--heo-article-block-gap) - 0.02rem) !important;
+                border-radius: 1rem;
+                box-shadow: 0 12px 26px rgba(15, 23, 42, 0.07), 0 2px 6px rgba(15, 23, 42, 0.03);
+            }
+
+            #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image img {
+                border-radius: 1rem !important;
+            }
+
+            #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row {
+                flex-direction: row !important;
+                margin: 0.12rem 0 calc(var(--heo-article-block-gap) + 0.08rem);
+            }
+
+            #theme-heo #article-wrapper #notion-article .notion-row.heo-image-gallery-row > .notion-column {
+                width: calc((100% - (var(--heo-gallery-cols, 2) - 1) * var(--heo-gallery-gap, 0.45rem)) / var(--heo-gallery-cols, 2)) !important;
+                flex: 0 0 calc((100% - (var(--heo-gallery-cols, 2) - 1) * var(--heo-gallery-gap, 0.45rem)) / var(--heo-gallery-cols, 2)) !important;
+                display: flex;
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+
+            #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-wrapper-image {
+                margin: 0 !important;
+                border-radius: 0.92rem;
+                box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.03);
+            }
+
+            #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-wrapper-image img {
+                border-radius: 0.92rem !important;
+            }
+
+            #theme-heo #article-wrapper #notion-article .notion-column .notion-asset-caption {
+                margin-top: 0 !important;
+                padding: 0 0.1rem;
+                font-size: 0.74rem !important;
+                line-height: 1.45;
+                text-align: left !important;
+            }
+
+            #theme-heo #article-wrapper #notion-article .notion-asset-caption,
+            #theme-heo #article-wrapper #notion-article .heo-article-caption {
+                margin-top: 0.6rem !important;
+                padding: 0 0.35rem;
+                font-size: 0.78rem !important;
+            }
         }
 
         #theme-heo #article-wrapper #notion-article .notion-asset-wrapper-image > div {

@@ -137,7 +137,7 @@ const Comment = ({
       </div>
     ),
     COMMENT_GISCUS_REPO && (
-      <div key='Giscus'>
+      <div key='Giscus' data-tab-title='评论'>
         <GiscusComponent className='px-2' />
       </div>
     ),
