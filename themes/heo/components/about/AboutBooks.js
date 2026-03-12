@@ -1,3 +1,4 @@
+import { createClientCacheResource } from '@/lib/utils/client-cache-resource'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import LazyImage from '@/components/LazyImage'
 import SmartLink from '@/components/SmartLink'
@@ -19,12 +20,96 @@ const formatCooldown = value => {
   const remainSeconds = seconds % 60
   return remainSeconds ? `${minutes} 分 ${remainSeconds} 秒` : `${minutes} 分钟`
 }
+const formatCacheAge = value => {
+  const seconds = Math.max(0, Math.floor(Number(value || 0) / 1000))
+  if (seconds < 60) return `${seconds} 秒前`
+  const minutes = Math.floor(seconds / 60)
+  const remainSeconds = seconds % 60
+  return remainSeconds ? `${minutes} 分 ${remainSeconds} 秒前` : `${minutes} 分钟前`
+}
+const formatCacheTtl = value => {
+  const seconds = Math.max(0, Math.ceil(Number(value || 0) / 1000))
+  if (!seconds) return '即将过期'
+  if (seconds < 60) return `${seconds} 秒`
+  const minutes = Math.floor(seconds / 60)
+  const remainSeconds = seconds % 60
+  return remainSeconds ? `${minutes} 分 ${remainSeconds} 秒` : `${minutes} 分钟`
+}
 const sourceLabelMap = {
 
   notion: '当前展示：Notion 持久化快照',
   'weread+notion': '当前展示：微信读书已刷新，并同步写入 Notion',
   weread: '当前展示：微信读书实时结果',
   config: '当前展示：本地配置回退'
+}
+
+
+const normalizeSnapshotPayload = payload => ({
+  favoriteBooks: Array.isArray(payload?.favoriteBooks) ? payload.favoriteBooks.map(normalizeBook) : [],
+  recentBooks: Array.isArray(payload?.recentBooks) ? payload.recentBooks.map(normalizeBook) : [],
+  favoriteShelfNames: Array.isArray(payload?.favoriteShelfNames) ? payload.favoriteShelfNames : [],
+  recentShelfNames: Array.isArray(payload?.recentShelfNames) ? payload.recentShelfNames : [],
+  source: payload?.source || 'unknown',
+  persisted: Boolean(payload?.persisted),
+  refreshed: Boolean(payload?.refreshed),
+  canManualRefresh: Boolean(payload?.canManualRefresh),
+  isAdminAuthorized: Boolean(payload?.isAdminAuthorized),
+  syncCooldownRemainingMs: Number(payload?.syncCooldownRemainingMs) || 0,
+  fromCache: Boolean(payload?.fromCache),
+  cacheTimestamp: Number(payload?.cacheTimestamp) || 0,
+  cacheExpiresAt: Number(payload?.cacheExpiresAt) || 0,
+  syncDebug: payload?.syncDebug || null
+})
+
+const aboutBooksCacheResource = createClientCacheResource({
+  cacheKey: 'heo-about-books-cache',
+  cacheTTL: 5 * 60 * 1000,
+  memoryTTL: 8 * 1000,
+  normalize: normalizeSnapshotPayload,
+  onReadStorage: ({ parsed, timestamp, expiresAt }) => ({
+    ...parsed?.payload,
+    fromCache: true,
+    cacheTimestamp: timestamp,
+    cacheExpiresAt: expiresAt
+  }),
+  onWriteStorage: ({ value, timestamp, expiresAt }) => normalizeSnapshotPayload({
+    ...value,
+    cacheTimestamp: timestamp,
+    cacheExpiresAt: expiresAt
+  })
+})
+
+const requestAboutBooks = async ({ refresh = false, shouldForceRefreshOnLoad = false, signal } = {}) => {
+  const query = refresh || shouldForceRefreshOnLoad ? '?refresh=1' : ''
+  const response = await fetch(`/api/about/books${query}`, { signal })
+
+  if (!response.ok) {
+    let errorPayload = null
+    try {
+      errorPayload = await response.json()
+    } catch {}
+
+    const error = new Error(errorPayload?.error || '刷新失败，请稍后再试。')
+    error.status = response.status
+    error.payload = errorPayload
+    throw error
+  }
+
+  const payload = await response.json()
+  return normalizeSnapshotPayload(payload)
+}
+
+const fetchAboutBooks = async ({ refresh = false, shouldForceRefreshOnLoad = false, signal } = {}) => {
+  if (refresh || shouldForceRefreshOnLoad || typeof window === 'undefined') {
+    return aboutBooksCacheResource.fetch({
+      request: () => requestAboutBooks({ refresh, shouldForceRefreshOnLoad, signal }),
+      bypassMemory: true
+    })
+  }
+
+  return aboutBooksCacheResource.fetch({
+    request: () => requestAboutBooks({ signal })
+  })
 }
 
 const normalizeBook = book => ({
@@ -91,59 +176,67 @@ const AboutBooks = ({ bookShelf, recentBookShelf, books, recentBooks, wereadSync
 
   const [isAuthorizing, setIsAuthorizing] = useState(false)
 
+  const applySnapshot = useCallback(nextSnapshot => {
+    if (!nextSnapshot) return
+    setCanManualRefresh(Boolean(nextSnapshot.canManualRefresh))
+    setIsAdminAuthorized(Boolean(nextSnapshot.isAdminAuthorized))
+    setSyncCooldownRemainingMs(Number(nextSnapshot.syncCooldownRemainingMs) || 0)
+    setSnapshot(nextSnapshot)
+  }, [])
+
   const loadBooks = useCallback(
     async ({ refresh = false, signal } = {}) => {
+      const shouldForceRefreshOnLoad = !refresh && Boolean(wereadSync?.refreshOnLoad)
+      const shouldUseCache = !refresh && !shouldForceRefreshOnLoad
+
       try {
         if (refresh) {
           setIsRefreshing(true)
           setRefreshError('')
         }
 
-        const query = refresh || wereadSync?.refreshOnLoad ? '?refresh=1' : ''
-        const response = await fetch(`/api/about/books${query}`, { signal })
-
-        if (!response.ok) {
-          let errorMessage = '刷新失败，请稍后再试。'
-          try {
-            const errorPayload = await response.json()
-            if (Number(errorPayload?.syncCooldownRemainingMs) > 0) {
-              setSyncCooldownRemainingMs(Number(errorPayload.syncCooldownRemainingMs) || 0)
-              errorMessage = `刷新冷却中，请 ${formatCooldown(errorPayload.syncCooldownRemainingMs)} 后再试。`
-            }
-          } catch {}
-          if (refresh) {
-            setRefreshError(errorMessage)
-            await loadBooks({ signal })
+        if (shouldUseCache) {
+          const cached = aboutBooksCacheResource.readStorage()
+          if (cached) {
+            applySnapshot(cached)
           }
-          return
         }
 
-        const payload = await response.json()
-        setCanManualRefresh(Boolean(payload?.canManualRefresh))
-        setIsAdminAuthorized(Boolean(payload?.isAdminAuthorized))
-        setSyncCooldownRemainingMs(Number(payload?.syncCooldownRemainingMs) || 0)
-
-
-        setSnapshot({
-          favoriteBooks: Array.isArray(payload?.favoriteBooks) ? payload.favoriteBooks.map(normalizeBook) : [],
-          recentBooks: Array.isArray(payload?.recentBooks) ? payload.recentBooks.map(normalizeBook) : [],
-          favoriteShelfNames: Array.isArray(payload?.favoriteShelfNames) ? payload.favoriteShelfNames : [],
-          recentShelfNames: Array.isArray(payload?.recentShelfNames) ? payload.recentShelfNames : [],
-          source: payload?.source || 'unknown',
-          persisted: Boolean(payload?.persisted),
-          refreshed: Boolean(payload?.refreshed)
+        const nextSnapshot = await fetchAboutBooks({
+          refresh,
+          shouldForceRefreshOnLoad,
+          signal
         })
+
+        applySnapshot(nextSnapshot)
+        if (!refresh && !shouldForceRefreshOnLoad) {
+          aboutBooksCacheResource.writeStorage(nextSnapshot)
+        }
       } catch (error) {
-        if (error?.name !== 'AbortError' && refresh) {
-          setRefreshError('刷新失败，已自动回退到最近可用快照。')
-          await loadBooks({ signal })
+        if (error?.name === 'AbortError') return
+
+        const cooldownRemainingMs = Number(error?.payload?.syncCooldownRemainingMs) || 0
+        if (cooldownRemainingMs > 0) {
+          setSyncCooldownRemainingMs(cooldownRemainingMs)
+        }
+
+        if (refresh) {
+          const errorMessage = cooldownRemainingMs > 0
+            ? `刷新冷却中，请 ${formatCooldown(cooldownRemainingMs)} 后再试。`
+            : '刷新失败，已自动回退到最近可用快照。'
+          setRefreshError(errorMessage)
+
+          try {
+            const fallbackSnapshot = await fetchAboutBooks({ signal })
+            applySnapshot(fallbackSnapshot)
+            aboutBooksCacheResource.writeStorage(fallbackSnapshot)
+          } catch {}
         }
       } finally {
-
         if (refresh) setIsRefreshing(false)
       }
     },
-    [wereadSync?.refreshOnLoad]
+    [applySnapshot, wereadSync?.refreshOnLoad]
   )
 
   useEffect(() => {
@@ -166,9 +259,31 @@ const AboutBooks = ({ bookShelf, recentBookShelf, books, recentBooks, wereadSync
   const totalBooks = favoriteDisplayBooks.length + recentDisplayBooks.length
   const totalPreviewBooks = favoritePreviewBooks.length + recentPreviewBooks.length
   const cooldownLabel = formatCooldown(syncCooldownRemainingMs)
+  const cacheAgeLabel = snapshot?.fromCache && snapshot?.cacheTimestamp ? formatCacheAge(Date.now() - snapshot.cacheTimestamp) : ''
+  const cacheTtlLabel = snapshot?.fromCache && snapshot?.cacheExpiresAt ? formatCacheTtl(snapshot.cacheExpiresAt - Date.now()) : ''
+  const cacheDebugLabel = snapshot?.fromCache && (cacheAgeLabel || cacheTtlLabel)
+    ? `缓存写入 ${cacheAgeLabel}${cacheTtlLabel ? ` · 剩余 ${cacheTtlLabel}` : ''}`
+    : ''
+  const enrichmentDebugLabel = snapshot?.syncDebug?.detailEnrichment
+    ? [
+        ['最爱', snapshot.syncDebug.detailEnrichment.favorite],
+        ['在读', snapshot.syncDebug.detailEnrichment.recent],
+        ['书单', snapshot.syncDebug.detailEnrichment.bookList]
+      ]
+        .map(([label, stats]) => {
+          const requested = Number(stats?.requestedCount) || 0
+          const enriched = Number(stats?.enrichedCount) || 0
+          const skipped = Number(stats?.skippedCount) || 0
+          if (!requested && !enriched && !skipped) return ''
+          return `${label} ${enriched}/${requested}${skipped > 0 ? `，跳过 ${skipped}` : ''}`
+        })
+        .filter(Boolean)
+        .join(' ｜ ')
+    : ''
   const statusTags = [
 
     { label: sourceLabel, tone: 'neutral' },
+    ...(snapshot?.fromCache ? [{ label: '本地缓存秒开', tone: 'warm' }] : []),
     ...(snapshot?.persisted ? [{ label: '已持久化', tone: 'success' }] : []),
     ...(snapshot?.refreshed ? [{ label: '本次已刷新', tone: 'brand' }] : []),
     ...favoriteShelfNames.map(name => ({ label: `最爱 · ${name}`, tone: 'brand' })),
@@ -218,6 +333,8 @@ const AboutBooks = ({ bookShelf, recentBookShelf, books, recentBooks, wereadSync
       </button>
       <div className='heo-about-bookshelf__status'>
         <span>{syncCooldownRemainingMs > 0 ? `为降低接口风险，当前需等待 ${cooldownLabel} 后才能再次主动刷新。` : '仅本人可用，用于立即同步最新书单快照。'}</span>
+        {cacheDebugLabel ? <span>{cacheDebugLabel}</span> : null}
+        {enrichmentDebugLabel ? <span>{`补齐统计：${enrichmentDebugLabel}`}</span> : null}
         {refreshError ? <span className='heo-about-bookshelf__status-error'>{refreshError}</span> : null}
       </div>
 
@@ -233,6 +350,8 @@ const AboutBooks = ({ bookShelf, recentBookShelf, books, recentBooks, wereadSync
       </button>
       <div className='heo-about-bookshelf__status'>
         <span>仅带 `?aboutAdmin=1` 的本人可见。</span>
+        {cacheDebugLabel ? <span>{cacheDebugLabel}</span> : null}
+        {enrichmentDebugLabel ? <span>{`补齐统计：${enrichmentDebugLabel}`}</span> : null}
         {refreshError ? <span className='heo-about-bookshelf__status-error'>{refreshError}</span> : null}
       </div>
     </div>

@@ -4,14 +4,40 @@ import SmartLink from '@/components/SmartLink'
 import AboutSectionHeading from '../about/AboutSectionHeading'
 
 const normalizeSummary = book => book?.summary || book?.AISummary || book?.intro || ''
+const formatCacheAge = value => {
+  const seconds = Math.max(0, Math.floor(Number(value || 0) / 1000))
+  if (seconds < 60) return `${seconds} 秒前`
+  const minutes = Math.floor(seconds / 60)
+  const remainSeconds = seconds % 60
+  return remainSeconds ? `${minutes} 分 ${remainSeconds} 秒前` : `${minutes} 分钟前`
+}
+const formatCacheTtl = value => {
+  const seconds = Math.max(0, Math.ceil(Number(value || 0) / 1000))
+  if (!seconds) return '即将过期'
+  if (seconds < 60) return `${seconds} 秒`
+  const minutes = Math.floor(seconds / 60)
+  const remainSeconds = seconds % 60
+  return remainSeconds ? `${minutes} 分 ${remainSeconds} 秒` : `${minutes} 分钟`
+}
 const buildRuntimeTags = runtimeStatus => {
   if (!runtimeStatus) return []
+
+  const cacheAgeLabel = runtimeStatus?.fromCache && runtimeStatus?.cacheTimestamp
+    ? formatCacheAge(Date.now() - runtimeStatus.cacheTimestamp)
+    : ''
+  const cacheTtlLabel = runtimeStatus?.fromCache && runtimeStatus?.cacheExpiresAt
+    ? formatCacheTtl(runtimeStatus.cacheExpiresAt - Date.now())
+    : ''
+  const cacheDebugLabel = runtimeStatus?.fromCache && (cacheAgeLabel || cacheTtlLabel)
+    ? `缓存写入 ${cacheAgeLabel}${cacheTtlLabel ? ` · 剩余 ${cacheTtlLabel}` : ''}`
+    : ''
 
   return [
     runtimeStatus?.sourceLabel ? { label: `当前来源：${runtimeStatus.sourceLabel}`, tone: 'neutral' } : null,
     runtimeStatus?.persisted ? { label: '已持久化', tone: 'success' } : null,
     runtimeStatus?.refreshed ? { label: '本次已刷新', tone: 'brand' } : null,
-    runtimeStatus?.fromCache ? { label: '本地缓存秒开', tone: 'warm' } : null
+    runtimeStatus?.fromCache ? { label: '本地缓存秒开', tone: 'warm' } : null,
+    cacheDebugLabel ? { label: cacheDebugLabel, tone: 'neutral' } : null
   ].filter(Boolean)
 }
 
