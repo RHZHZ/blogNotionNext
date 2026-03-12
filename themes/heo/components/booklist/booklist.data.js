@@ -20,7 +20,7 @@ const dedupeByShelfName = sections => {
   })
 }
 
-const createSectionDescription = shelfName => `这里收录来自「${shelfName}」分组的书。`
+const createSectionDescription = shelfName => `这里收录来自「${shelfName}」分组的书，保留我愿意公开展示的阅读痕迹。`
 
 const compareByPreferredOrder = (a, b, orderMap) => {
   const aOrder = orderMap.get(normalizeText(a?.shelfName))
@@ -50,7 +50,7 @@ export const getBookListPageConfig = siteInfo => {
         '这里放的不是完整书库，而是我愿意留下来、也确实想继续回看的那部分阅读记录。',
       description:
         bookList.hero?.description ||
-        '有些书是最近在读，有些书来不及整理，有些是反复重翻，还有些只是某个阶段刚好特别想记下来。总之，先按分组慢慢看。',
+        '有些书是最近在读，有些是反复重翻，还有些只是某个阶段刚好特别想记下来。总之，先按分组慢慢看。',
       icon: bookList.hero?.icon || siteInfo?.icon || ''
     },
     stats: bookList.stats || [],
