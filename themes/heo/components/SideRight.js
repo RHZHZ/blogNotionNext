@@ -101,7 +101,7 @@ export default function SideRight(props) {
               {locale.COMMON.LATEST_POSTS}
             </div>
           </div>
-          <div className='max-h-[20rem] overflow-y-auto pr-1 scroll-hidden'>
+          <div className='max-h-[20rem] overflow-y-auto px-1 py-1 scroll-hidden'>
             <LatestPostsGroupMini {...props} showHeader={false} maxItems={4} />
           </div>
         </Card>
