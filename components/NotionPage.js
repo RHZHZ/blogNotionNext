@@ -24,6 +24,12 @@ export const applyImageGalleryLayoutToArticle = ({ article, width }) => {
     row.classList.remove('heo-image-gallery-row')
     row.style.removeProperty('--heo-gallery-cols')
     row.style.removeProperty('--heo-gallery-gap')
+    delete row.dataset.heoGalleryCount
+    delete row.dataset.heoGalleryCols
+    delete row.dataset.heoGalleryImageCount
+    delete row.dataset.heoGalleryPattern
+    delete row.dataset.heoGalleryMixed
+    delete row.dataset.heoGalleryStackedColumn
 
     const columns = Array.from(row.children).filter(child =>
       child.classList?.contains('notion-column')
@@ -31,19 +37,38 @@ export const applyImageGalleryLayoutToArticle = ({ article, width }) => {
 
     if (columns.length < 2) return
 
-    const imageColumns = columns.filter(column =>
-      column.querySelector(':scope > figure.notion-asset-wrapper-image')
+    const columnImageCounts = columns.map(column =>
+      column.querySelectorAll(':scope > figure.notion-asset-wrapper-image').length
     )
 
-    if (imageColumns.length !== columns.length) return
+    const hasEmptyColumn = columnImageCounts.some(count => count === 0)
+    if (hasEmptyColumn) return
 
+    const totalImages = columnImageCounts.reduce((sum, count) => sum + count, 0)
+    const maxImagesInColumn = Math.max(...columnImageCounts)
+    const stackedColumnIndex = columnImageCounts.findIndex(count => count > 1)
     const desiredCols = width >= 1440 ? 4 : width >= 1024 ? 3 : 2
-    const actualCols = Math.min(desiredCols, imageColumns.length)
+    const actualCols = Math.min(desiredCols, columns.length)
     const galleryGap = width >= 1024 ? '0.75rem' : width >= 768 ? '0.5rem' : '0.45rem'
+    const isMixedStack = stackedColumnIndex !== -1 && columns.length === 2
+    const stackedColumnSide =
+      stackedColumnIndex === -1 ? '' : stackedColumnIndex === 0 ? 'left' : 'right'
 
     row.classList.add('heo-image-gallery-row')
+    row.dataset.heoGalleryCount = String(columns.length)
+    row.dataset.heoGalleryCols = String(actualCols)
+    row.dataset.heoGalleryImageCount = String(totalImages)
+    row.dataset.heoGalleryPattern = isMixedStack ? 'mixed-stack' : 'uniform-grid'
+    row.dataset.heoGalleryMixed = isMixedStack ? 'true' : 'false'
+    row.dataset.heoGalleryStackedColumn = stackedColumnSide
     row.style.setProperty('--heo-gallery-cols', String(actualCols))
     row.style.setProperty('--heo-gallery-gap', galleryGap)
+
+    if (maxImagesInColumn > 1) {
+      row.style.setProperty('--heo-gallery-stack-max', String(maxImagesInColumn))
+    } else {
+      row.style.removeProperty('--heo-gallery-stack-max')
+    }
   })
 }
 
