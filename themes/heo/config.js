@@ -273,8 +273,8 @@ const CONFIG = {
     bookList: {
       pagePath: '/booklist',
       navLabel: '我的书单',
-      featuredShelfNames: ['我的最爱', '最近在读','读完'],
-      sectionOrder: ['我的最爱', '最近在读','读完']
+      featuredShelfNames: ['我的最爱', '最近在读'],
+      sectionOrder: ['我的最爱', '最近在读']
     },
     wereadSync: {
       enabled: true,
