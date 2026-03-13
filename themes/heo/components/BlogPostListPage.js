@@ -19,6 +19,7 @@ const BlogPostListPage = ({ page = 1, posts = [], postCount, siteInfo }) => {
   const totalPage = Math.ceil(postCount / POSTS_PER_PAGE)
   const showPagination = postCount >= POSTS_PER_PAGE
   const POST_TWO_COLS = siteConfig('HEO_HOME_POST_TWO_COLS', true, CONFIG)
+  const showSummary = siteConfig('HEO_POST_LIST_SUMMARY', true, CONFIG)
   if (!posts || posts.length === 0 || page > totalPage) {
     return <BlogPostListEmpty />
   } else {
@@ -32,6 +33,7 @@ const BlogPostListPage = ({ page = 1, posts = [], postCount, siteInfo }) => {
               index={posts.indexOf(post)}
               key={post.id}
               post={post}
+              showSummary={showSummary}
               siteInfo={siteInfo}
             />
           ))}

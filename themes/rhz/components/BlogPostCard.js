@@ -6,6 +6,10 @@ import CONFIG from '../config'
 import TagItemMini from './TagItemMini'
 
 const BlogPostCard = ({ index, post, showSummary, siteInfo }) => {
+  const summaryEnabled =
+    typeof showSummary === 'boolean'
+      ? showSummary
+      : siteConfig('RHZ_POST_LIST_SUMMARY', true, CONFIG)
   const showPreview =
     siteConfig('RHZ_POST_LIST_PREVIEW', null, CONFIG) && post.blockMap
   if (
@@ -84,7 +88,7 @@ const BlogPostCard = ({ index, post, showSummary, siteInfo }) => {
             </SmartLink>
           </header>
 
-          {(!showPreview || showSummary) && (
+          {(!showPreview || summaryEnabled) && summaryEnabled && (
             <main className='rhz-post-card__summary heo-post-card__summary replace line-clamp-2 text-sm font-light leading-tight'>
               {post.summary}
             </main>

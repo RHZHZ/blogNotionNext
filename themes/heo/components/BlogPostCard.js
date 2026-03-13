@@ -6,6 +6,10 @@ import CONFIG from '../config'
 import TagItemMini from './TagItemMini'
 
 const BlogPostCard = ({ index, post, showSummary, siteInfo }) => {
+  const summaryEnabled =
+    typeof showSummary === 'boolean'
+      ? showSummary
+      : siteConfig('HEO_POST_LIST_SUMMARY', true, CONFIG)
   const showPreview =
     siteConfig('HEO_POST_LIST_PREVIEW', null, CONFIG) && post.blockMap
   if (
@@ -84,10 +88,9 @@ const BlogPostCard = ({ index, post, showSummary, siteInfo }) => {
             </SmartLink>
           </header>
 
-          {(!showPreview || showSummary) && (
+          {(!showPreview || summaryEnabled) && summaryEnabled && (
             <main className='heo-post-card__summary replace line-clamp-2 text-sm font-light leading-tight  flex-shrink-0'>
               {post.summary}
-              {/*留档后续做成可配置的开关2026/3/10-rhz*/}
             </main>
           )}
 
