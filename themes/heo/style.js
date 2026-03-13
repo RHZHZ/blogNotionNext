@@ -809,6 +809,7 @@ const Style = () => {
             overflow-y: auto;
             padding: 0.5rem;
             background: rgba(248, 250, 252, 0.94);
+            padding-top: 0.6rem; /* 稍微比 0.5rem 大一点，或者直接用 1rem */
         }
 
         .heo-toc-drawer__content-card {
