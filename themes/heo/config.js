@@ -2,6 +2,10 @@ const CONFIG = {
   HEO_HOME_POST_TWO_COLS: true, // 首页博客两列显示，若为false则只显示一列
   HEO_POST_LIST_SUMMARY: false, // 首页文章卡片是否展示摘要
   HEO_LOADING_COVER: true, // 页面加载的遮罩动画
+  HEO_AMBIENCE_EFFECTS: true, // 全局氛围特效总开关
+  HEO_AMBIENCE_SAKURA: true, // 浅色模式樱花飘落
+  HEO_AMBIENCE_METEOR: true, // 暗色模式低频流星
+
 
   HEO_HOME_BANNER_ENABLE: true,
 
@@ -266,7 +270,7 @@ const CONFIG = {
     },
     recentBookShelf: {
       title: '我最近在读的书',
-      description: '最近在读这些书，如果你看到了，请催我去读书',
+      description: '最近在读这些书，感觉蛮有意思的',
       linkText: '我的书单',
       link: '/booklist',
       previewLimit: 3

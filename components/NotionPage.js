@@ -21,9 +21,14 @@ export const applyImageGalleryLayoutToArticle = ({ article, width }) => {
   const rows = article.querySelectorAll('.notion-row')
 
   rows.forEach(row => {
-    row.classList.remove('heo-image-gallery-row')
+    row.classList.remove('heo-image-gallery-row', 'heo-article-block', 'heo-article-block--gallery')
     row.style.removeProperty('--heo-gallery-cols')
     row.style.removeProperty('--heo-gallery-gap')
+    row.style.removeProperty('--heo-gallery-stack-max')
+    if (row.dataset.heoBlock === 'gallery') {
+      delete row.dataset.heoBlock
+    }
+    delete row.dataset.heoGallery
     delete row.dataset.heoGalleryCount
     delete row.dataset.heoGalleryCols
     delete row.dataset.heoGalleryImageCount
@@ -66,11 +71,10 @@ export const applyImageGalleryLayoutToArticle = ({ article, width }) => {
 
     if (maxImagesInColumn > 1) {
       row.style.setProperty('--heo-gallery-stack-max', String(maxImagesInColumn))
-    } else {
-      row.style.removeProperty('--heo-gallery-stack-max')
     }
   })
 }
+
 
 export const applyArticleMediaDecorations = article => {
   if (!article) return

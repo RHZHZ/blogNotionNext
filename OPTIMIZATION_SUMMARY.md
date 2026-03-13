@@ -60,6 +60,14 @@
 - 优化 Redis 缓存策略
 - 改进内存缓存管理
 
+### 业务缓存补充（书单页 / 关于我页）
+- `booklist` 页增加并统一了客户端轻缓存：`sessionStorage` 5 分钟 TTL + 内存 8 秒 TTL + 并发请求去重。
+- `about` 页的 `AboutBooks` 组件补齐同等级缓存能力，并保留手动刷新、管理员授权、刷新冷却等既有逻辑。
+- 新增通用缓存工厂 `lib/utils/client-cache-resource.js`，统一封装浏览器缓存、内存缓存与并发 promise 复用，减少重复实现。
+- `booklist` 与 `about` 两页均可展示缓存命中状态，并在缓存命中时展示“缓存写入时间 / 剩余 TTL”，便于调试和验证实际命中情况。
+- 服务端微信读书详情富化已收窄到“实际展示书籍”范围，避免 `booklist` 对全量书架做摘要补齐时出现过大的 `requestedCount`。
+- `About` 页在 `?aboutAdmin=1` 的管理视角下新增“补齐统计”可视化，可直接看到 `favorite / recent / bookList` 的 requested、enriched、skipped 情况。
+
 ### 构建优化
 - 启用 SWC 压缩
 - 优化构建性能

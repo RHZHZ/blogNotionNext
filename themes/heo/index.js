@@ -25,6 +25,7 @@ import { useRouter } from 'next/router'
 import { Fragment, useEffect, useState } from 'react'
 
 import About from './components/About'
+import AmbienceEffects from './components/AmbienceEffects'
 import BlogPostArchive from './components/BlogPostArchive'
 import BlogPostListPage from './components/BlogPostListPage'
 import BlogPostListScroll from './components/BlogPostListScroll'
@@ -135,6 +136,10 @@ const LayoutBase = props => {
     CONFIG
   )
   const HEO_LOADING_COVER = siteConfig('HEO_LOADING_COVER', true, CONFIG)
+  const HEO_AMBIENCE_EFFECTS = siteConfig('HEO_AMBIENCE_EFFECTS', true, CONFIG)
+  const shouldShowAmbienceEffects = Boolean(HEO_AMBIENCE_EFFECTS && post?.type !== 'Post')
+
+
 
   // 加载wow动画
   useEffect(() => {
@@ -153,9 +158,12 @@ const LayoutBase = props => {
 
       <Style />
       <div className='heo-eye-care-mask' aria-hidden='true' />
+      {shouldShowAmbienceEffects && <AmbienceEffects />}
+
 
       {/* 顶部嵌入 导航栏，首页放hero，文章页放文章详情 */}
       {headerSlot}
+
 
       {/* 主区块 */}
       <main
