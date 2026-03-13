@@ -104,18 +104,15 @@ export default function PostHeader({ post, siteInfo, isDarkMode }) {
       <div
         style={{ backgroundColor: headerBgColor }}
         className='absolute inset-0 flex items-stretch justify-center overflow-hidden'>
-        <div className='absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),transparent_46%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.22)_58%,rgba(15,23,42,0.38))]' />
+        <div className='absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.34),rgba(15,23,42,0.56)_58%,rgba(15,23,42,0.78))] sm:bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_44%),linear-gradient(180deg,rgba(255,255,255,0.06),rgba(15,23,42,0.2)_56%,rgba(15,23,42,0.36))]' />
 
         {headerImage && (
           <div
             id='post-cover-wrapper'
-            style={{
-              filter: 'blur(10px)'
-            }}
-            className='coverdiv absolute inset-y-0 right-[-8%] w-[88%] opacity-45 scale-105 sm:right-[-4%] sm:w-[78%] sm:opacity-50 lg:right-[-2%] lg:w-[66%] lg:translate-x-12 lg:rotate-3'>
+            className='coverdiv absolute inset-0 cursor-default opacity-16 blur-0 scale-[1.03] sm:inset-y-0 sm:right-[-4%] sm:left-auto sm:w-[78%] sm:opacity-46 sm:blur-[2px] sm:scale-[1.02] lg:right-[-2%] lg:w-[66%] lg:translate-x-12 lg:rotate-3 lg:opacity-45 lg:blur-[6px] lg:scale-105'>
             <LazyImage
               id='post-cover'
-              className='h-full w-full object-cover min-h-[20rem]'
+              className='h-full w-full min-h-[20rem] object-cover object-[64%_center] sm:object-center'
               src={headerImage}
             />
           </div>
@@ -127,7 +124,7 @@ export default function PostHeader({ post, siteInfo, isDarkMode }) {
             className='mx-auto flex w-full max-w-[86rem] px-4 sm:px-6 lg:px-8'>
             <div
               id='post-info'
-              className='w-full max-w-[68rem] rounded-[1.35rem] bg-white/7 p-4 text-white shadow-[0_16px_52px_rgba(15,23,42,0.12)] backdrop-blur-[12px] sm:rounded-[1.55rem] sm:p-4 lg:rounded-[1.75rem] lg:p-6'>
+              className='w-full max-w-[68rem] rounded-[1.35rem] border border-white/10 bg-[rgba(15,23,42,0.22)] p-4 text-white shadow-[0_16px_52px_rgba(15,23,42,0.12)] backdrop-blur-[4px] sm:rounded-[1.55rem] sm:bg-white/8 sm:p-4 sm:backdrop-blur-[6px] lg:rounded-[1.75rem] lg:p-6 lg:backdrop-blur-[12px]'>
 
               <div className='post-info-inner flex flex-col gap-4'>
                 <div className='post-info-head'>

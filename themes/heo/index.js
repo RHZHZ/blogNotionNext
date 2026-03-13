@@ -36,7 +36,6 @@ import Footer from './components/Footer'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import LatestPostsGroup from './components/LatestPostsGroup'
-import { NoticeBar } from './components/NoticeBar'
 import PostAdjacent from './components/PostAdjacent'
 import PostCopyright from './components/PostCopyright'
 import PostHeader from './components/PostHeader'
@@ -108,14 +107,14 @@ const LayoutBase = props => {
       {/* 顶部导航 */}
       <Header {...props} />
 
-      {/* 通知横幅 */}
+      {/* 首页头图区 */}
       {router.route === '/' ? (
         <>
-          <NoticeBar />
           <Hero {...props} />
         </>
       ) : null}
       {fullWidth || useWidePageLayout || isFocusReadingMode ? null : <PostHeader {...props} isDarkMode={isDarkMode} />}
+
 
     </header>
   )
