@@ -168,6 +168,18 @@ describe('components/NotionPage helpers', () => {
     expect(row.style.getPropertyValue('--heo-gallery-stack-max')).toBe('')
   })
 
+  it('removes blank placeholder nodes during article enhancement', () => {
+    const article = createArticleDom()
+    const blank = document.createElement('div')
+    blank.className = 'notion-blank'
+    blank.innerHTML = '&nbsp;'
+    article.appendChild(blank)
+
+    applyArticleReadingEnhancements({ article, width: 1280 })
+
+    expect(article.querySelector('.notion-blank')).toBeNull()
+  })
+
   it('applies reading enhancements through the unified entry', () => {
 
     const article = createArticleDom()

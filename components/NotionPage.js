@@ -79,6 +79,15 @@ export const applyImageGalleryLayoutToArticle = ({ article, width }) => {
 export const applyArticleMediaDecorations = article => {
   if (!article) return
 
+  article.querySelectorAll('.notion-blank').forEach(node => {
+    if (node.children.length > 0) return
+
+    const text = (node.textContent || '').replace(/\u00a0/g, '').trim()
+    if (!text) {
+      node.remove()
+    }
+  })
+
   article.dataset.heoReadingSurface = 'true'
   article.dataset.heoArticleSurface = 'article'
   article.classList.add('heo-article-surface')

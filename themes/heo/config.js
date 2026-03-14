@@ -6,7 +6,7 @@ const CONFIG = {
   HEO_AMBIENCE_SAKURA: true, // 兼容旧配置：浅色模式樱花飘落
   HEO_AMBIENCE_METEOR: true, // 兼容旧配置：暗色模式低频流星
   HEO_AMBIENCE_SEASON_EFFECTS: true, // 季节氛围特效总开关
-  HEO_AMBIENCE_SEASON_MODE: 'auto', // auto / spring / summer / autumn / winter / off
+  HEO_AMBIENCE_SEASON_MODE: 'winter', // auto / spring / summer / autumn / winter / off
   HEO_AMBIENCE_SEASON_SPRING: true, // 春季花瓣与柔光
   HEO_AMBIENCE_SEASON_SUMMER: true, // 夏季萤火与流光
   HEO_AMBIENCE_SEASON_AUTUMN: true, // 秋季落叶与暖调粒子
