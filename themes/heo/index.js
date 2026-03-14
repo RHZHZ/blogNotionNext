@@ -83,6 +83,17 @@ const emitModeToast = message => {
   window.dispatchEvent(new CustomEvent('heo-mode-toast', { detail: { message } }))
 }
 
+const resolveHeoSeason = seasonMode => {
+  if (seasonMode === 'off') return 'none'
+  if (['spring', 'summer', 'autumn', 'winter'].includes(seasonMode)) return seasonMode
+
+  const month = new Date().getMonth() + 1
+  if ([3, 4, 5].includes(month)) return 'spring'
+  if ([6, 7, 8].includes(month)) return 'summer'
+  if ([9, 10, 11].includes(month)) return 'autumn'
+  return 'winter'
+}
+
 /**
  * 基础布局 采用上中下布局，移动端使用顶部侧边导航栏
  * @param props
@@ -137,7 +148,13 @@ const LayoutBase = props => {
   )
   const HEO_LOADING_COVER = siteConfig('HEO_LOADING_COVER', true, CONFIG)
   const HEO_AMBIENCE_EFFECTS = siteConfig('HEO_AMBIENCE_EFFECTS', true, CONFIG)
+  const HEO_AMBIENCE_SEASON_EFFECTS = siteConfig('HEO_AMBIENCE_SEASON_EFFECTS', true, CONFIG)
+  const HEO_AMBIENCE_SEASON_MODE = siteConfig('HEO_AMBIENCE_SEASON_MODE', 'auto', CONFIG)
+  const currentSeason = HEO_AMBIENCE_SEASON_EFFECTS
+    ? resolveHeoSeason(HEO_AMBIENCE_SEASON_MODE)
+    : 'none'
   const shouldShowAmbienceEffects = Boolean(HEO_AMBIENCE_EFFECTS && post?.type !== 'Post')
+
 
 
 
@@ -153,8 +170,10 @@ const LayoutBase = props => {
   return (
     <div
       id='theme-heo'
+      data-heo-season={currentSeason}
       style={{ '--heo-eye-care-intensity': `${eyeCareIntensity / 100}` }}
       className={`${siteConfig('FONT_STYLE')} ${isEyeCareMode ? 'heo-eye-care' : ''} bg-[#f7f9fe] dark:bg-[#18171d] h-full min-h-screen flex flex-col scroll-smooth`}>
+
 
       <Style />
       <div className='heo-eye-care-mask' aria-hidden='true' />

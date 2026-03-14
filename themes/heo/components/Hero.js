@@ -13,10 +13,66 @@ import CONFIG from '../config'
 
 const DESKTOP_READING_LIMIT = 3
 
+const resolveHeroSeason = seasonMode => {
+  if (seasonMode === 'off') return 'none'
+  if (['spring', 'summer', 'autumn', 'winter'].includes(seasonMode)) return seasonMode
+
+  const month = new Date().getMonth() + 1
+  if ([3, 4, 5].includes(month)) return 'spring'
+  if ([6, 7, 8].includes(month)) return 'summer'
+  if ([9, 10, 11].includes(month)) return 'autumn'
+  return 'winter'
+}
+
+const HERO_SEASON_COPY = {
+  spring: {
+    sliderBadge: '春日讯号',
+    sliderEyebrow: 'SPRING NOTES',
+    readingEyebrow: 'Spring Reading',
+    readingTitleFallback: '春日书页',
+    readingDescriptionFallback: '适合把读到的句子慢慢摊开，也适合把新的灵感轻轻记下。'
+  },
+  summer: {
+    sliderBadge: '夏日精选',
+    sliderEyebrow: 'SUMMER WAVES',
+    readingEyebrow: 'Summer Reading',
+    readingTitleFallback: '夏日书架',
+    readingDescriptionFallback: '让阅读和思考保持流动，像风、像光，也像还没停下的好奇心。'
+  },
+  autumn: {
+    sliderBadge: '秋日精选',
+    sliderEyebrow: 'AUTUMN DIGEST',
+    readingEyebrow: 'Autumn Reading',
+    readingTitleFallback: '秋日读札',
+    readingDescriptionFallback: '更适合沉下来读点扎实的内容，把零散感受慢慢收束成判断。'
+  },
+  winter: {
+    sliderBadge: '冬日精选',
+    sliderEyebrow: 'WINTER LOG',
+    readingEyebrow: 'Winter Reading',
+    readingTitleFallback: '冬日夜读',
+    readingDescriptionFallback: '把外界的噪音调低一点，留一块安静区域给阅读、整理和复盘。'
+  },
+  none: {
+    sliderBadge: '精选文章',
+    sliderEyebrow: siteConfig('HEO_HERO_TITLE_4', 'THINKING', CONFIG),
+    readingEyebrow: 'Reading',
+    readingTitleFallback: '我最近在读',
+    readingDescriptionFallback: '这里会放我最近在翻的书，想看完整清单就继续点进去。'
+  }
+}
+
+const getHeroSeasonCopy = season => HERO_SEASON_COPY[season] || HERO_SEASON_COPY.none
+
+
 
 const Hero = props => {
   const HEO_HERO_ENABLE = siteConfig('HEO_HERO_ENABLE', true, CONFIG)
-  const heroReading = useHeroReadingBooks(DESKTOP_READING_LIMIT)
+  const HEO_AMBIENCE_SEASON_EFFECTS = siteConfig('HEO_AMBIENCE_SEASON_EFFECTS', true, CONFIG)
+  const HEO_AMBIENCE_SEASON_MODE = siteConfig('HEO_AMBIENCE_SEASON_MODE', 'auto', CONFIG)
+  const heroSeason = HEO_AMBIENCE_SEASON_EFFECTS ? resolveHeroSeason(HEO_AMBIENCE_SEASON_MODE) : 'none'
+  const seasonCopy = getHeroSeasonCopy(heroSeason)
+  const heroReading = useHeroReadingBooks(DESKTOP_READING_LIMIT, seasonCopy)
 
   if (!HEO_HERO_ENABLE) {
     return null
@@ -26,14 +82,15 @@ const Hero = props => {
     <div
       id='hero-wrapper'
       className='recent-top-post-group w-full overflow-hidden select-none px-3 md:px-5 mb-4'>
-      <MobileHero {...props} heroReading={heroReading} />
-      <DesktopHero {...props} heroReading={heroReading} />
+      <MobileHero {...props} heroReading={heroReading} seasonCopy={seasonCopy} />
+      <DesktopHero {...props} heroReading={heroReading} seasonCopy={seasonCopy} />
     </div>
   )
 }
 
 
-function getHeroReadingPreviewConfig() {
+
+function getHeroReadingPreviewConfig(seasonCopy) {
   const profile = siteConfig('HEO_ABOUT_PROFILE', {}, CONFIG) || {}
   const bookList = profile?.bookList || {}
   const recentBookShelf = profile?.recentBookShelf || {}
@@ -42,8 +99,8 @@ function getHeroReadingPreviewConfig() {
   const fallbackBooks = (recentBooks.length ? recentBooks : favoriteBooks).slice(0, DESKTOP_READING_LIMIT)
 
   return {
-    title: recentBookShelf?.title || '我最近在读',
-    description: recentBookShelf?.description || '这里会放我最近在翻的书，想看完整清单就继续点进去。',
+    title: recentBookShelf?.title || seasonCopy.readingTitleFallback || '我最近在读',
+    description: recentBookShelf?.description || seasonCopy.readingDescriptionFallback || '这里会放我最近在翻的书，想看完整清单就继续点进去。',
     link: recentBookShelf?.link || bookList?.pagePath || '/booklist',
     linkText: recentBookShelf?.linkText || '去看完整书单',
     shelfName: Array.isArray(profile?.wereadSync?.recentShelfNames)
@@ -52,6 +109,7 @@ function getHeroReadingPreviewConfig() {
     fallbackBooks
   }
 }
+
 
 function normalizeHeroReadingBook(book, index) {
   if (!book) return null
@@ -66,8 +124,9 @@ function normalizeHeroReadingBook(book, index) {
 }
 
 
-function useHeroReadingBooks(limit) {
-  const previewConfig = useMemo(() => getHeroReadingPreviewConfig(), [])
+function useHeroReadingBooks(limit, seasonCopy) {
+  const previewConfig = useMemo(() => getHeroReadingPreviewConfig(seasonCopy), [seasonCopy])
+
   const initialBooks = useMemo(
     () => previewConfig.fallbackBooks.map(normalizeHeroReadingBook).filter(Boolean).slice(0, limit),
     [limit, previewConfig]
@@ -161,20 +220,21 @@ function getHeroPosts({ latestPosts, allNavPages }) {
   return topPosts.length ? topPosts : (latestPosts || sourcePosts).slice(0, 4)
 }
 
-function DesktopHero({ heroReading, ...props }) {
+function DesktopHero({ heroReading, seasonCopy, ...props }) {
   const heroPosts = getHeroPosts(props)
   if (!heroPosts.length) return null
 
   return (
     <section className='heo-hero-shell hidden xl:grid max-w-[86rem] mx-auto'>
-      <DesktopHeroSlider posts={heroPosts} siteInfo={props.siteInfo} />
-      <DesktopHeroBooks heroReading={heroReading} />
+      <DesktopHeroSlider posts={heroPosts} siteInfo={props.siteInfo} seasonCopy={seasonCopy} />
+      <DesktopHeroBooks heroReading={heroReading} seasonCopy={seasonCopy} />
     </section>
   )
 }
 
 
-function DesktopHeroSlider({ posts, siteInfo }) {
+function DesktopHeroSlider({ posts, siteInfo, seasonCopy }) {
+
   const [activeIndex, setActiveIndex] = useState(0)
   const activePost = posts[activeIndex] || posts[0]
   const activeCover = activePost?.pageCoverThumbnail || siteInfo?.pageCover
@@ -214,12 +274,13 @@ function DesktopHeroSlider({ posts, siteInfo }) {
         <div className='heo-hero-slider__overlay absolute inset-0' />
         <div className='heo-hero-slider__content relative z-10 flex h-full flex-col justify-between'>
           <div className='heo-hero-slider__top'>
-            <div className='heo-hero-slider__badge'>精选文章</div>
+            <div className='heo-hero-slider__badge'>{seasonCopy.sliderBadge}</div>
           </div>
           <div className='heo-hero-slider__copy'>
             <div className='heo-hero-slider__eyebrow'>
-              {siteConfig('HEO_HERO_TITLE_4', 'THINKING', CONFIG)}
+              {seasonCopy.sliderEyebrow}
             </div>
+
             <h2 className='heo-hero-slider__title line-clamp-2'>
               {activePost?.title || siteConfig('HEO_HERO_TITLE_5', null, CONFIG)}
             </h2>
@@ -249,7 +310,7 @@ function DesktopHeroSlider({ posts, siteInfo }) {
   )
 }
 
-function DesktopHeroBooks({ heroReading }) {
+function DesktopHeroBooks({ heroReading, seasonCopy }) {
   const { books, config, isLoading } = heroReading
 
   const shouldRenderSkeleton = !books.length && isLoading
@@ -259,9 +320,10 @@ function DesktopHeroBooks({ heroReading }) {
     <aside className='heo-hero-books heo-card'>
       <div className='heo-hero-books__head'>
         <div>
-          <div className='heo-hero-books__eyebrow'>Reading</div>
+          <div className='heo-hero-books__eyebrow'>{seasonCopy.readingEyebrow}</div>
           <h3 className='heo-hero-books__title'>{config.title}</h3>
         </div>
+
         <SmartLink href={config.link} className='heo-hero-books__link'>
           <span>{config.linkText}</span>
           <ArrowSmallRight className='w-4 h-4 stroke-2' />
@@ -317,9 +379,10 @@ function DesktopHeroBooks({ heroReading }) {
 }
 
 
-function MobileHero({ heroReading, ...props }) {
+function MobileHero({ heroReading, seasonCopy, ...props }) {
   const heroPosts = getHeroPosts(props).slice(0, 3)
   const { books, config, isLoading } = heroReading
+
 
 
   if (!heroPosts.length) return null
@@ -343,8 +406,9 @@ function MobileHero({ heroReading, ...props }) {
               />
               <div className='heo-mobile-hero__slide-overlay absolute inset-0' />
               <div className='heo-mobile-hero__slide-content relative z-10 flex h-full flex-col justify-between p-5 text-white'>
-                <div className='heo-mobile-hero__slide-badge'>精选推荐</div>
+                <div className='heo-mobile-hero__slide-badge'>{seasonCopy.sliderBadge}</div>
                 <div>
+
                   <div className='heo-mobile-hero__slide-title line-clamp-2 text-2xl font-bold'>
                     {post?.title}
                   </div>
@@ -365,8 +429,9 @@ function MobileHero({ heroReading, ...props }) {
 
           <div className='heo-mobile-reading-entry__head'>
             <div className='heo-mobile-reading-entry__head-main'>
-              <div className='heo-mobile-reading-entry__eyebrow'>Reading</div>
+              <div className='heo-mobile-reading-entry__eyebrow'>{seasonCopy.readingEyebrow}</div>
               <div className='heo-mobile-reading-entry__title line-clamp-2'>{config.title}</div>
+
               {!books.length && !isLoading ? (
                 <div className='heo-mobile-reading-entry__empty-text line-clamp-2'>
                   书单还在整理中，先去书单页看看最近阅读计划。
