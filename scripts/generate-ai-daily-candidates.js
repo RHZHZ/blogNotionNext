@@ -16,6 +16,9 @@ function normalizeDate(date = new Date()) {
     .slice(0, 10)
 }
 
+
+
+
 function slugify(value = '') {
   return String(value)
     .toLowerCase()
@@ -173,24 +176,32 @@ async function main() {
 
   const sourceItems = await loadSourceItems(inputFile)
   const structured = sourceItems.filter(item => item.title && item.url)
-  const { items: filtered, appliedHoursWindow, usedFallbackWindow } = selectCandidateWindow(
+  const parsedInput = JSON.parse(await fs.readFile(inputFile, 'utf8'))
+  const strategy = parsedInput?.strategy || {}
+  const { items: filtered, appliedHoursWindow, usedFallbackWindow, targetDate: strategyDate, timeZone } = selectCandidateWindow(
     structured,
+    strategy,
     hoursWindow,
     fallbackHoursWindow
   )
 
-  if (usedFallbackWindow) {
-    console.log(`⚠️ 最近 ${hoursWindow} 小时内无有效候选，已自动回退到最近 ${fallbackHoursWindow} 小时窗口。`)
+  if (appliedHoursWindow === 'same-day') {
+    console.log(`✅ 已按 ${timeZone} 的 ${strategyDate} 当天条目生成候选池。`)
+  } else if (usedFallbackWindow) {
+    console.log(`⚠️ 当天条目为空，已自动回退到最近 ${fallbackHoursWindow} 小时窗口。`)
+  } else {
+    console.log(`⚠️ 当天条目为空，暂使用最近 ${hoursWindow} 小时窗口。`)
   }
+
 
   const deduped = dedupeItems(filtered)
     .map(item => ({ ...item, score: computeScore(item) }))
     .sort((a, b) => b.score - a.score)
     .slice(0, maxItems)
 
-  const parsedInput = JSON.parse(await fs.readFile(inputFile, 'utf8'))
   const payload = {
-    date: targetDate,
+    date: strategyDate || targetDate,
+
     generatedAt: new Date().toISOString(),
     sourceFile: inputFile,
     totalSourceItems: sourceItems.length,

@@ -31,7 +31,8 @@
     {
       "name": "回退源",
       "priority": 2,
-      "description": "仅当主源当天尚未更新到足够条目时，自动作为补充抓取。",
+      "description": "仅在每天最终发布时刻，若主源当天内容明显缺失，再作为补充抓取。",
+
       "sources": [
         {
           "name": "OpenAI Blog",

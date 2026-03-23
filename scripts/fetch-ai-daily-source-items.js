@@ -115,7 +115,7 @@ function isPublishedOnDateInTimeZone(value, targetDate, timeZone = 'Asia/Shangha
 function shouldUseFallback(primaryItems = [], strategy = {}) {
   const minimumPrimaryItemsToday = Math.max(1, Number(strategy.minimumPrimaryItemsToday || 1))
   const timeZone = strategy.timezone || 'Asia/Shanghai'
-  const fallbackAfterHour = Math.max(0, Math.min(23, Number(strategy.fallbackAfterHour ?? 22)))
+  const fallbackAfterHour = Math.max(0, Math.min(23, Number(strategy.fallbackAfterHour ?? 23)))
   const now = getDatePartsInTimeZone(new Date(), timeZone)
   const todayCount = primaryItems.filter(item => isPublishedOnDateInTimeZone(item.publishedAt, now.date, timeZone)).length
   const reachedFallbackTime = now.hour >= fallbackAfterHour
@@ -132,6 +132,7 @@ function shouldUseFallback(primaryItems = [], strategy = {}) {
     timeZone
   }
 }
+
 
 
 
@@ -333,16 +334,18 @@ async function main() {
   const fallbackDecision = shouldUseFallback(primaryItems, strategy)
   if (fallbackDecision.useFallback && fallbackSources.length > 0) {
     console.log(
-      `⚠️ 主源在 ${fallbackDecision.timeZone} 的 ${fallbackDecision.today} 仅有 ${fallbackDecision.todayCount} 条当日内容，低于阈值 ${fallbackDecision.minimumPrimaryItemsToday}，启用回退源。`
+      `⚠️ 已到 ${fallbackDecision.timeZone} 的 ${fallbackDecision.today} ${fallbackDecision.currentHour}:00 最终发布时间，主源仅有 ${fallbackDecision.todayCount} 条当日内容，低于阈值 ${fallbackDecision.minimumPrimaryItemsToday}，启用回退源补齐。`
     )
+
 
     for (const source of fallbackSources) {
       await fetchAndCollect(source)
     }
   } else if (primarySources.length > 0) {
     console.log(
-      `✅ 主源在 ${fallbackDecision.timeZone} 的 ${fallbackDecision.today} 已有 ${fallbackDecision.todayCount} 条当日内容，继续仅使用主源。`
+      `✅ 主源在 ${fallbackDecision.timeZone} 的 ${fallbackDecision.today} 已有 ${fallbackDecision.todayCount} 条当日内容，本次仅使用主源生成当天完整日报。`
     )
+
   }
 
   for (const source of defaultSources) {
