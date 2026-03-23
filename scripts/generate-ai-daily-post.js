@@ -120,7 +120,8 @@ function injectItemImagesIntoMarkdown(markdown = '', items = []) {
 function buildDefaultMarkdown({ title, items }) {
 
 
-  const topItems = items.slice(0, 6)
+  const topItems = items.slice(0, Math.min(10, Math.max(6, items.length)))
+
   const sourceNames = Array.from(new Set(topItems.map(item => item.source).filter(Boolean)))
   const sections = topItems.map((item, index) => {
     const conclusion = item.summary || '这条动态的信息增量较高，值得优先看完。'
@@ -306,13 +307,14 @@ async function main() {
 
   if (!items.length) {
     const candidateDate = String(candidates.date || targetDate).trim()
-    const alreadyPublishedToday = Boolean(candidates.alreadyPublishedToday)
+    const alreadyPublishedForTargetDate = Boolean(candidates.alreadyPublishedForTargetDate)
     const shouldWaitForPrimary = Boolean(candidates.shouldWaitForPrimary)
-    if (alreadyPublishedToday) {
+    if (alreadyPublishedForTargetDate) {
       await clearGeneratedPostArtifacts(postJsonFile, postMdFile)
       console.log(`✅ 目标日期 ${candidateDate} 的 AI 日报已存在，已清理旧正文产物并跳过本次生成。`)
       return
     }
+
     if (shouldWaitForPrimary) {
       await clearGeneratedPostArtifacts(postJsonFile, postMdFile)
       console.log(`⏳ 目标日期 ${candidateDate} 仍处于主源等待窗口，已清理旧正文产物并跳过本次生成。`)
@@ -342,17 +344,20 @@ async function main() {
       '',
       '写作目标：',
       '1. 不是简单汇总，而是帮读者快速判断今天真正值得看的变化。',
-      '2. 文章必须具备明显的扫读体验：读者应能在 20 秒内看懂今天最值得看的 3-5 个点。',
+      '2. 文章必须具备明显的扫读体验：优先输出 6-10 条，按当天信息密度动态决定；宁可多 1-2 条，也不要为了压缩篇幅漏掉关键事实。',
+
       '3. 风格像个人技术博客，不像门户资讯站，也不像按时间倒序罗列的快讯流。',
       '4. 面向开发者，但也要照顾普通科技读者的理解成本。',
+
       '',
       '结构要求：',
       '1. 仅输出 Markdown。',
       '2. 不要再输出文章总标题，因为页面已有标题。',
       '3. 只使用这些 Markdown 结构：##、###、普通段落、- 无序列表、1. 编号列表、> 引用、--- 分隔线、**加粗**、Markdown 链接。不要使用表格、代码块、HTML、自定义标签。',
-      '4. 必须包含这些二级标题：今日总览、今天最值得看的 5-7 条、开发者视角、今天的判断、RHZ 简评。',
+      '4. 必须包含这些二级标题：今日总览、今天最值得看的 6-10 条、开发者视角、今天的判断、RHZ 简评。',
       '5. 在“今日总览”里，先用 1 段给出今天的主判断，再用 3 条 bullet 写“3 个核心判断”，每条都要短、狠、明确。',
-      '6. 在“今天最值得看的 5-7 条”下面，每条都用三级标题，标题必须是观点句或判断句，禁止直接复述原标题，最好让读者只看标题就知道这条信息为什么重要。',
+      '6. 在“今天最值得看的 6-10 条”下面，每条都用三级标题，标题必须带编号（如“### 1. ……”），并且标题必须是观点句或判断句，禁止直接复述原标题，最好让读者只看标题就知道这条信息为什么重要。',
+
       '7. 每条三级标题下面第一段必须先给一句结论式开场，让读者一眼知道这条为什么值得读。',
 
       '8. 每条内容至少包含四个阅读锚点：一句判断、发生了什么、为什么值得关注、对谁影响更大。',
@@ -378,6 +383,9 @@ async function main() {
       '12. 正文里绝对不要出现“候选池”“素材池”“汇总链接”“内部来源”“系统输入”“提示词”等面向内部流程的措辞，要像作者直接在引用公开信息。',
       '13. 如果需要提到来源，请使用“公开信息显示”“原始来源显示”“相关项目/官方/作者提到”等自然表达；不要写“候选池提到”或“参考来源：候选池汇总链接”。',
       '14. 若某条信息只有聚合站链接而缺少原始项目链接，不要在正文中硬写“汇总链接”，而应改写为自然叙述，或使用更接近原始来源的公开链接。',
+      '15. 除非素材本身明确属于同一件事的多个侧面，否则不要把两个不同候选条目的信息揉进同一小节。',
+      '16. 如果某个候选条目本身是聚合快讯，正文也要尽量交代其中最关键的 1-2 个具体子信息，而不是只写成模糊的“大方向总结”。',
+
 
       '',
       '可参考的 AI 情报素材如下：',

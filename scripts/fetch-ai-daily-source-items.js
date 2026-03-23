@@ -65,6 +65,13 @@ function extractTag(content, tagName) {
   return match ? decodeHtml(match[1]) : ''
 }
 
+function extractRawTag(content, tagName) {
+  const regex = new RegExp(`<${tagName}[^>]*>([\\s\\S]*?)<\\/${tagName}>`, 'i')
+  const match = content.match(regex)
+  return match ? String(match[1] || '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').trim() : ''
+}
+
+
 function extractItemsFromXml(xml = '') {
   const matches = xml.match(/<item\b[\s\S]*?<\/item>/gi) || xml.match(/<entry\b[\s\S]*?<\/entry>/gi) || []
   return matches
@@ -117,15 +124,35 @@ function selectPreferredSourceUrl(aggregateUrl = '', links = []) {
   return candidates[0] || normalizedAggregateUrl
 }
 
-function mapXmlItem(block, source) {
+function stripHtmlTags(value = '') {
+  return String(value || '')
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n')
+    .replace(/<\/li>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function buildBaseXmlItem(block, source) {
+  const title = extractTag(block, 'title')
   const aggregateUrl = extractLink(block)
+  const rawContent = extractRawTag(block, 'content:encoded') || ''
   const content = extractTag(block, 'content:encoded') || ''
   const summary = extractTag(block, 'description') || extractTag(block, 'summary') || extractTag(block, 'content')
   const sourceLinks = extractExternalLinks(block)
   const preferredUrl = selectPreferredSourceUrl(aggregateUrl, sourceLinks)
+  const publishedAt = extractTag(block, 'pubDate') || extractTag(block, 'published') || extractTag(block, 'updated')
 
   return {
-    title: extractTag(block, 'title'),
+    title,
     url: preferredUrl,
     aggregateUrl,
     sourceLinks,
@@ -133,14 +160,89 @@ function mapXmlItem(block, source) {
     source: source.name,
     sourceGroup: source.groupName || '',
     sourceTier: source.tier || '',
-    publishedAt: extractTag(block, 'pubDate') || extractTag(block, 'published') || extractTag(block, 'updated'),
+    publishedAt,
     category: source.category || '',
     summary: summary || content,
     sourceType: source.sourceType || 'unknown',
     credibility: Number(source.credibility || 3),
     developerValue: Number(source.developerValue || 3),
-    industryImpact: Number(source.industryImpact || 3)
+    industryImpact: Number(source.industryImpact || 3),
+    rawContent,
+    rawSummary: summary
   }
+}
+
+
+function extractDaheiaiSubItems(rawContent = '') {
+  const content = String(rawContent || '')
+  if (!content) return []
+
+  const listMatch = content.match(/<ul[^>]*>([\s\S]*?)<\/ul>/i)
+  if (!listMatch?.[1]) return []
+
+  const liMatches = listMatch[1].match(/<li\b[\s\S]*?<\/li>/gi) || []
+  return liMatches
+    .map((liHtml, index) => {
+      const links = extractExternalLinks(liHtml)
+      const sourceUrl = links[0] || ''
+      const sourceNameMatch = liHtml.match(/来源[：:]\s*<a\b[^>]*>([\s\S]*?)<\/a>/i)
+      const sourceName = stripHtmlTags(sourceNameMatch?.[1] || '')
+      const rawTitleMatch = liHtml.match(/<strong[^>]*>([\s\S]*?)<\/strong>/i)
+      const rawTitle = stripHtmlTags(rawTitleMatch?.[1] || '')
+        .replace(/^[-•\d.\s]+/, '')
+        .trim()
+      const bodyHtml = liHtml
+        .replace(/<strong[^>]*>[\s\S]*?<\/strong>/i, ' ')
+        .replace(/<small[\s\S]*?<\/small>/i, ' ')
+      const summary = stripHtmlTags(bodyHtml)
+        .replace(/^[-•\d.\s]+/, '')
+        .replace(/^(来源[：:].*)$/i, '')
+        .replace(/^[-—:：\s]+/, '')
+        .trim()
+      const title = rawTitle || summary
+        .split(/[。！？!?:：]/)
+        .map(part => part.trim())
+        .find(Boolean) || summary.slice(0, 80)
+
+      if (!title || !summary || !sourceUrl) return null
+
+      return {
+        index,
+        title,
+        summary,
+        sourceUrl,
+        sourceName,
+        sourceLinks: links
+      }
+    })
+    .filter(Boolean)
+}
+
+function splitAggregateXmlItem(block, source) {
+  const baseItem = buildBaseXmlItem(block, source)
+  const shouldSplitDaheiai = String(source?.name || '').trim() === '大模型AI'
+  const subItems = shouldSplitDaheiai ? extractDaheiaiSubItems(baseItem.rawContent) : []
+  const { rawContent, rawSummary, ...publicBaseItem } = baseItem
+
+  if (!subItems.length) {
+    return [publicBaseItem]
+  }
+
+  return subItems.map((subItem, index) => ({
+    ...publicBaseItem,
+    title: subItem.title,
+    url: subItem.sourceUrl,
+    sourceLinks: Array.from(new Set([subItem.sourceUrl, ...subItem.sourceLinks])).filter(Boolean),
+    summary: subItem.summary,
+    aggregateTitle: publicBaseItem.title,
+    aggregateIndex: index + 1,
+    aggregateSourceName: subItem.sourceName || ''
+  }))
+}
+
+
+function mapXmlItem(block, source) {
+  return splitAggregateXmlItem(block, source)
 }
 
 function shouldTryFetchLeadImage(url = '') {
@@ -577,7 +679,7 @@ async function loadRssSource(source) {
   }
 
   const xml = await response.text()
-  const items = extractItemsFromXml(xml).map(block => mapXmlItem(block, source))
+  const items = extractItemsFromXml(xml).flatMap(block => mapXmlItem(block, source))
   return enrichItemsWithLeadImages(items)
 }
 
@@ -608,25 +710,22 @@ async function main() {
   const targetDate = REQUESTED_DATE || getDateInTimeZone(new Date(), strategy.timezone || 'Asia/Shanghai')
   const shouldSkipByPublishedCheck = !REQUESTED_DATE
 
-  const alreadyPublishedToday = shouldSkipByPublishedCheck
-
+  const alreadyPublishedForTargetDate = shouldSkipByPublishedCheck
     ? await hasPublishedForDate(targetDate, strategy.timezone || 'Asia/Shanghai').catch(error => {
         console.warn(`  当日发布检查失败，继续执行抓取: ${error.message}`)
         return false
       })
     : false
 
-
-  if (alreadyPublishedToday) {
-    const publishedDateLabel = REQUESTED_DATE || getDateInTimeZone(new Date(), strategy.timezone || 'Asia/Shanghai')
-    console.log(`✅ 目标日期 ${publishedDateLabel} 的 AI 日报已存在，跳过本次抓取。`)
+  if (alreadyPublishedForTargetDate) {
+    console.log(`✅ 目标日期 ${targetDate} 的 AI 日报已存在，跳过本次抓取。`)
     await ensureDir(path.dirname(outputFile))
     await fs.writeFile(
       outputFile,
       JSON.stringify({
         strategy,
         activeSources: [],
-        alreadyPublishedToday: true,
+        alreadyPublishedForTargetDate: true,
         shouldWaitForPrimary: false,
         fallbackDecision: null,
         items: []
@@ -635,6 +734,7 @@ async function main() {
     )
     return
   }
+
 
 
   const primarySources = sources.filter(source => source.role === 'primary')

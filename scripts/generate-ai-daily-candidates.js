@@ -189,11 +189,39 @@ function selectCandidateWindow(items = [], strategy = {}, preferredHours = 24, f
 
 
 
+function getKeywordScore(item) {
+  const text = `${item.title || ''} ${item.summary || ''} ${item.category || ''}`.toLowerCase()
+  if (!text.trim()) return 0
+
+  const positiveRules = [
+    { pattern: /(skill|skills|agent|智能体|工作流|框架|runtime|copaw|langsmith|trace|tracing|评测|可观测|observability)/i, score: 0.24 },
+    { pattern: /(api|sdk|支付|stripe|部署|infra|基础设施|芯片|算力|制造|terafab|starlette|langchain|guardrails)/i, score: 0.2 },
+    { pattern: /(开源|github|架构|飞书|微信|打车|自动驾驶|世界模型|dlss|企业级|企业)/i, score: 0.12 }
+  ]
+
+  const negativeRules = [
+    { pattern: /(引发猜测|see you again very soon|官宣简短动态|社区猜测)/i, score: -0.28 },
+    { pattern: /(体验反馈|用户分享|转发|热议|强大妙用)/i, score: -0.12 }
+  ]
+
+
+  let score = 0
+  for (const rule of positiveRules) {
+    if (rule.pattern.test(text)) score += rule.score
+  }
+  for (const rule of negativeRules) {
+    if (rule.pattern.test(text)) score += rule.score
+  }
+
+  return score
+}
+
 function computeScore(item) {
   const baseScore = item.credibility * 0.35 + item.developerValue * 0.4 + item.industryImpact * 0.25
-  const weightedScore = baseScore + getTierBonus(item) + getSourceTypeBonus(item) + getFreshnessBonus(item) + getGroupPriorityBonus(item)
+  const weightedScore = baseScore + getTierBonus(item) + getSourceTypeBonus(item) + getFreshnessBonus(item) + getGroupPriorityBonus(item) + getKeywordScore(item)
   return Number(weightedScore.toFixed(2))
 }
+
 
 
 
@@ -281,8 +309,9 @@ async function main() {
     appliedHoursWindow,
     usedFallbackWindow,
     totalCandidates: deduped.length,
-    alreadyPublishedToday: Boolean(parsedInput?.alreadyPublishedToday),
+    alreadyPublishedForTargetDate: Boolean(parsedInput?.alreadyPublishedForTargetDate),
     shouldWaitForPrimary: Boolean(parsedInput?.shouldWaitForPrimary),
+
     activeSources: Array.isArray(parsedInput?.activeSources) ? parsedInput.activeSources : [],
     items: deduped
   }
