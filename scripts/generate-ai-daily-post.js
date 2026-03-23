@@ -178,7 +178,11 @@ async function injectItemImagesIntoMarkdown(markdown = '', items = [], publishDa
     const image = await cacheImageToQiniu(matchedItem, originalImage, publishDate)
     const insertAt = start + 1
     const alt = stripMarkdown(matchedItem.title || `AI 情报配图 ${i + 1}`)
-    result.splice(insertAt, 0, `![${alt}](${image || originalImage})`, '')
+      .replace(/[\[\]\r\n]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+    result.splice(insertAt, 0, `![${alt || `AI 情报配图 ${i + 1}`}](${image || originalImage})`, '')
+
     usedItemIds.add(matchedItem.id)
     offset += 2
   }
