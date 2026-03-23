@@ -42,27 +42,76 @@ function extractItemsFromXml(xml = '') {
 
 function extractLink(block = '') {
   const atomLink = block.match(/<link[^>]*href=["']([^"']+)["'][^>]*\/?>/i)
-  if (atomLink?.[1]) return atomLink[1].trim()
+  if (atomLink?.[1]) return decodeHtml(atomLink[1]).trim()
   const rssLink = extractTag(block, 'link')
   return rssLink.trim()
 }
 
+function extractExternalLinks(block = '') {
+  const links = new Set()
+  const hrefRegex = /<a\s[^>]*href=["']([^"']+)["'][^>]*>/gi
+  let match
+
+  while ((match = hrefRegex.exec(block)) !== null) {
+    const url = decodeHtml(match[1] || '').trim()
+    if (!url || !/^https?:\/\//i.test(url)) continue
+    links.add(url)
+  }
+
+  const textUrlRegex = /https?:\/\/[^\s<>")]+/gi
+  while ((match = textUrlRegex.exec(block)) !== null) {
+    const url = decodeHtml(match[0] || '').trim().replace(/[.,]+$/, '')
+    if (!url || !/^https?:\/\//i.test(url)) continue
+    links.add(url)
+  }
+
+  return Array.from(links)
+}
+
+function selectPreferredSourceUrl(aggregateUrl = '', links = []) {
+  const normalizedAggregateUrl = String(aggregateUrl || '').trim()
+  const candidates = links.filter(link => {
+    if (!link) return false
+    if (!/^https?:\/\//i.test(link)) return false
+    if (normalizedAggregateUrl && link === normalizedAggregateUrl) return false
+
+    try {
+      const hostname = new URL(link).hostname.toLowerCase()
+      if (hostname.endsWith('daheiai.com')) return false
+      return true
+    } catch {
+      return false
+    }
+  })
+
+  return candidates[0] || normalizedAggregateUrl
+}
+
 function mapXmlItem(block, source) {
+  const aggregateUrl = extractLink(block)
+  const content = extractTag(block, 'content:encoded') || ''
+  const summary = extractTag(block, 'description') || extractTag(block, 'summary') || extractTag(block, 'content')
+  const sourceLinks = extractExternalLinks(block)
+  const preferredUrl = selectPreferredSourceUrl(aggregateUrl, sourceLinks)
+
   return {
     title: extractTag(block, 'title'),
-    url: extractLink(block),
+    url: preferredUrl,
+    aggregateUrl,
+    sourceLinks,
     source: source.name,
     sourceGroup: source.groupName || '',
     sourceTier: source.tier || '',
     publishedAt: extractTag(block, 'pubDate') || extractTag(block, 'published') || extractTag(block, 'updated'),
     category: source.category || '',
-    summary: extractTag(block, 'description') || extractTag(block, 'summary') || extractTag(block, 'content'),
+    summary: summary || content,
     sourceType: source.sourceType || 'unknown',
     credibility: Number(source.credibility || 3),
     developerValue: Number(source.developerValue || 3),
     industryImpact: Number(source.industryImpact || 3)
   }
 }
+
 
 function normalizeGroupSources(groups = []) {
   return groups

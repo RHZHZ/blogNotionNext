@@ -54,6 +54,8 @@ function normalizeSourceItem(item = {}) {
     title,
     source,
     url,
+    aggregateUrl: String(item.aggregateUrl || '').trim(),
+    sourceLinks: Array.isArray(item.sourceLinks) ? item.sourceLinks.filter(Boolean) : [],
     summary,
     category,
     publishedAt,
@@ -67,6 +69,7 @@ function normalizeSourceItem(item = {}) {
     whyItMatters: String(item.whyItMatters || '').trim()
   }
 }
+
 
 
 function getTierBonus(item) {
