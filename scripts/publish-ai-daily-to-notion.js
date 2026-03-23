@@ -236,10 +236,12 @@ function getDefaultFieldMappings() {
     tags: process.env.AI_DAILY_NOTION_TAGS_PROPERTY || 'tags',
     category: process.env.AI_DAILY_NOTION_CATEGORY_PROPERTY || 'category',
     icon: process.env.AI_DAILY_NOTION_ICON_PROPERTY || 'icon',
+    cover: process.env.AI_DAILY_NOTION_COVER_PROPERTY || 'cover',
     password: process.env.AI_DAILY_NOTION_PASSWORD_PROPERTY || 'password',
     ai_summary: process.env.AI_DAILY_NOTION_AI_SUMMARY_PROPERTY || 'ai_summary'
   }
 }
+
 
 function getPostFieldValues(post) {
   return {
@@ -252,10 +254,12 @@ function getPostFieldValues(post) {
     tags: Array.isArray(post.tags) ? post.tags : [],
     category: post.category || 'AI 情报',
     icon: post.icon || '🤖',
+    cover: post.cover || process.env.AI_DAILY_DEFAULT_COVER || 'https://s41.ax1x.com/2026/03/23/peKAi7T.jpg',
     password: post.password || '',
-    ai_summary: post.ai_summary ?? true
+    ai_summary: post.ai_summary ?? false
   }
 }
+
 
 function buildPropertyValue(property, rawValue) {
   const type = property?.type
@@ -375,11 +379,19 @@ async function main() {
   const databaseId = String(process.env.AI_DAILY_NOTION_DATABASE_ID || '').trim()
   const dryRun = String(process.env.AI_DAILY_DRY_RUN || '').trim() === '1'
 
+  try {
+    await fs.access(postFile)
+  } catch {
+    console.log('⏭️ 本次未生成日报正文，跳过 Notion 发布。')
+    return
+  }
+
   if (!databaseId) {
     throw new Error('缺少 AI_DAILY_NOTION_DATABASE_ID')
   }
 
   const post = await readJson(postFile)
+
   const schema = await getDatabaseSchema(databaseId)
   const properties = buildPropertiesFromSchema(schema, post)
   const children = markdownToBlocks(post.markdown)
@@ -392,8 +404,17 @@ async function main() {
   const payload = {
     parent: { database_id: databaseId },
     properties,
-    children: firstChunk
+    children: firstChunk,
+    ...(post.cover
+      ? {
+          cover: {
+            type: 'external',
+            external: { url: post.cover }
+          }
+        }
+      : {})
   }
+
 
   if (dryRun) {
     console.log('AI_DAILY_DRY_RUN=1，以下为即将写入 Notion 的 payload：')

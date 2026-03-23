@@ -8,6 +8,9 @@ const ROOT = process.cwd()
 
 const DEFAULT_SOURCES_FILE = path.join(ROOT, 'conf', 'ai-daily-sources.json')
 const DEFAULT_OUTPUT_FILE = path.join(ROOT, 'temp', 'ai-daily-source-items.json')
+const NOTION_API_BASE = 'https://api.notion.com/v1'
+const NOTION_VERSION = '2022-06-28'
+
 
 function decodeHtml(value = '') {
   return String(value)
@@ -75,6 +78,63 @@ function normalizeGroupSources(groups = []) {
     })
 }
 
+function getDatePartsInTimeZone(date = new Date(), timeZone = 'Asia/Shanghai') {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    hour12: false
+  })
+
+  const parts = formatter.formatToParts(date)
+  const year = parts.find(part => part.type === 'year')?.value
+  const month = parts.find(part => part.type === 'month')?.value
+  const day = parts.find(part => part.type === 'day')?.value
+  const hour = Number(parts.find(part => part.type === 'hour')?.value || 0)
+
+  return {
+    date: `${year}-${month}-${day}`,
+    hour
+  }
+}
+
+function getDateInTimeZone(date = new Date(), timeZone = 'Asia/Shanghai') {
+  return getDatePartsInTimeZone(date, timeZone).date
+}
+
+
+function isPublishedOnDateInTimeZone(value, targetDate, timeZone = 'Asia/Shanghai') {
+  if (!value) return false
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return false
+  return getDateInTimeZone(date, timeZone) === targetDate
+}
+
+function shouldUseFallback(primaryItems = [], strategy = {}) {
+  const minimumPrimaryItemsToday = Math.max(1, Number(strategy.minimumPrimaryItemsToday || 1))
+  const timeZone = strategy.timezone || 'Asia/Shanghai'
+  const fallbackAfterHour = Math.max(0, Math.min(23, Number(strategy.fallbackAfterHour ?? 22)))
+  const now = getDatePartsInTimeZone(new Date(), timeZone)
+  const todayCount = primaryItems.filter(item => isPublishedOnDateInTimeZone(item.publishedAt, now.date, timeZone)).length
+  const reachedFallbackTime = now.hour >= fallbackAfterHour
+
+  return {
+    useFallback: reachedFallbackTime && todayCount < minimumPrimaryItemsToday,
+    todayCount,
+    minimumPrimaryItemsToday,
+    today: now.date,
+    currentHour: now.hour,
+    fallbackAfterHour,
+    reachedFallbackTime,
+    shouldWaitForPrimary: !reachedFallbackTime && todayCount < minimumPrimaryItemsToday,
+    timeZone
+  }
+}
+
+
+
 
 async function readJson(filePath) {
   const raw = await fs.readFile(filePath, 'utf8')
@@ -85,23 +145,83 @@ async function ensureDir(dirPath) {
   await fs.mkdir(dirPath, { recursive: true })
 }
 
+async function notionRequest(url, options = {}) {
+  const token = String(process.env.NOTION_ACCESS_TOKEN || '').trim()
+  if (!token) {
+    throw new Error('缺少 NOTION_ACCESS_TOKEN')
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Notion-Version': NOTION_VERSION,
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    }
+  })
+
+  const data = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    throw new Error(`Notion 请求失败: ${response.status} ${data?.message || ''}`.trim())
+  }
+
+  return data
+}
+
+async function hasPublishedToday(timeZone = 'Asia/Shanghai') {
+  const token = String(process.env.NOTION_ACCESS_TOKEN || '').trim()
+  const databaseId = String(process.env.AI_DAILY_NOTION_DATABASE_ID || '').trim()
+  if (!token || !databaseId) return false
+
+  const today = getDateInTimeZone(new Date(), timeZone)
+  const slugProperty = process.env.AI_DAILY_NOTION_SLUG_PROPERTY || 'slug'
+  const slug = `daily-ai-news-${today}`
+
+  const data = await notionRequest(`${NOTION_API_BASE}/databases/${databaseId}/query`, {
+    method: 'POST',
+    body: JSON.stringify({
+      page_size: 1,
+      filter: {
+        property: slugProperty,
+        rich_text: {
+          equals: slug
+        }
+      }
+    })
+  })
+
+  return Array.isArray(data?.results) && data.results.length > 0
+}
+
 async function loadSourceConfig(configFile) {
+
   const parsed = await readJson(configFile)
 
   if (Array.isArray(parsed)) {
-    return parsed.filter(source => source && source.enabled !== false)
+    return {
+      strategy: {},
+      sources: parsed.filter(source => source && source.enabled !== false)
+    }
   }
 
   if (Array.isArray(parsed.sources)) {
-    return parsed.sources.filter(source => source && source.enabled !== false)
+    return {
+      strategy: parsed.strategy || {},
+      sources: parsed.sources.filter(source => source && source.enabled !== false)
+    }
   }
 
   if (Array.isArray(parsed.groups)) {
-    return normalizeGroupSources(parsed.groups).filter(source => source && source.enabled !== false)
+    return {
+      strategy: parsed.strategy || {},
+      sources: normalizeGroupSources(parsed.groups).filter(source => source && source.enabled !== false)
+    }
   }
 
   throw new Error('来源配置格式错误：应为数组、sources 数组或 groups 分组结构')
 }
+
 
 
 async function loadJsonSource(source) {
@@ -154,31 +274,100 @@ async function fetchSource(source) {
 async function main() {
   const configFile = process.env.AI_DAILY_SOURCES_CONFIG || DEFAULT_SOURCES_FILE
   const outputFile = process.env.AI_DAILY_SOURCE_FILE || DEFAULT_OUTPUT_FILE
-  const sources = await loadSourceConfig(configFile)
+  const { strategy, sources } = await loadSourceConfig(configFile)
 
   console.log('开始抓取每日 AI 情报来源...')
   console.log(`来源配置: ${configFile}`)
   console.log(`启用来源数: ${sources.length}`)
 
-  const allItems = []
+  const alreadyPublishedToday = await hasPublishedToday(strategy.timezone || 'Asia/Shanghai').catch(error => {
+    console.warn(`  当日发布检查失败，继续执行抓取: ${error.message}`)
+    return false
+  })
 
-  for (const source of sources) {
+  if (alreadyPublishedToday) {
+    console.log('✅ 检测到今日 AI 日报已发布，跳过本次抓取。')
+    await ensureDir(path.dirname(outputFile))
+    await fs.writeFile(
+      outputFile,
+      JSON.stringify({
+        strategy,
+        activeSources: [],
+        alreadyPublishedToday: true,
+        shouldWaitForPrimary: false,
+        fallbackDecision: null,
+        items: []
+      }, null, 2),
+      'utf8'
+    )
+    return
+  }
+
+  const primarySources = sources.filter(source => source.role === 'primary')
+
+  const fallbackSources = sources.filter(source => source.role === 'fallback')
+  const defaultSources = sources.filter(source => !source.role)
+  const allItems = []
+  const activeSourceNames = []
+
+  const fetchAndCollect = async source => {
     try {
       console.log(`- 抓取来源: ${source.name}`)
       const items = await fetchSource(source)
       console.log(`  获取到 ${items.length} 条`)
       allItems.push(...items)
+      activeSourceNames.push(source.name)
+      return items
     } catch (error) {
       console.warn(`  来源抓取失败: ${source.name} - ${error.message}`)
+      return []
     }
   }
 
+  let primaryItems = []
+  for (const source of primarySources) {
+    const items = await fetchAndCollect(source)
+    primaryItems.push(...items)
+  }
+
+  const fallbackDecision = shouldUseFallback(primaryItems, strategy)
+  if (fallbackDecision.useFallback && fallbackSources.length > 0) {
+    console.log(
+      `⚠️ 主源在 ${fallbackDecision.timeZone} 的 ${fallbackDecision.today} 仅有 ${fallbackDecision.todayCount} 条当日内容，低于阈值 ${fallbackDecision.minimumPrimaryItemsToday}，启用回退源。`
+    )
+
+    for (const source of fallbackSources) {
+      await fetchAndCollect(source)
+    }
+  } else if (primarySources.length > 0) {
+    console.log(
+      `✅ 主源在 ${fallbackDecision.timeZone} 的 ${fallbackDecision.today} 已有 ${fallbackDecision.todayCount} 条当日内容，继续仅使用主源。`
+    )
+  }
+
+  for (const source of defaultSources) {
+    await fetchAndCollect(source)
+  }
+
   await ensureDir(path.dirname(outputFile))
-  await fs.writeFile(outputFile, JSON.stringify({ items: allItems }, null, 2), 'utf8')
+  await fs.writeFile(
+    outputFile,
+    JSON.stringify({
+      strategy,
+      activeSources: activeSourceNames,
+      shouldWaitForPrimary: Boolean(fallbackDecision.shouldWaitForPrimary),
+      fallbackDecision,
+      items: allItems
+    }, null, 2),
+    'utf8'
+  )
+
 
   console.log(`✅ 来源抓取完成: ${outputFile}`)
+  console.log(`实际抓取来源数: ${activeSourceNames.length}`)
   console.log(`总条目数: ${allItems.length}`)
 }
+
 
 main().catch(error => {
   console.error('❌ 抓取 AI 情报来源失败:', error.message)

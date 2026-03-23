@@ -25,9 +25,15 @@ function slugify(value = '') {
 }
 
 function toNumber(value, fallback = 0) {
-  const num = Number(value)
+  if (value === undefined || value === null) return fallback
+
+  const normalized = String(value).trim()
+  if (!normalized) return fallback
+
+  const num = Number(normalized)
   return Number.isFinite(num) ? num : fallback
 }
+
 
 function normalizeSourceItem(item = {}) {
   const title = String(item.title || '').trim()
@@ -51,12 +57,14 @@ function normalizeSourceItem(item = {}) {
     sourceType: String(item.sourceType || 'unknown').trim(),
     sourceGroup: String(item.sourceGroup || '').trim(),
     sourceTier: String(item.sourceTier || '').trim(),
+    groupPriority: toNumber(item.groupPriority, 999),
     credibility,
     developerValue,
     industryImpact,
     whyItMatters: String(item.whyItMatters || '').trim()
   }
 }
+
 
 function getTierBonus(item) {
   const tier = String(item.sourceTier || '').toLowerCase()
@@ -86,7 +94,16 @@ function getFreshnessBonus(item) {
   return 0
 }
 
+function getGroupPriorityBonus(item) {
+  const priority = Math.max(1, toNumber(item.groupPriority, 999))
+  if (priority <= 1) return 0.3
+  if (priority <= 2) return 0.15
+  if (priority <= 3) return 0.05
+  return 0
+}
+
 function isRecentWithinHours(item, hours = 24) {
+
   if (!item.publishedAt) return true
   const published = new Date(item.publishedAt)
   if (Number.isNaN(published.getTime())) return true
@@ -106,9 +123,10 @@ function selectCandidateWindow(items, preferredHours, fallbackHours) {
 
 function computeScore(item) {
   const baseScore = item.credibility * 0.35 + item.developerValue * 0.4 + item.industryImpact * 0.25
-  const weightedScore = baseScore + getTierBonus(item) + getSourceTypeBonus(item) + getFreshnessBonus(item)
+  const weightedScore = baseScore + getTierBonus(item) + getSourceTypeBonus(item) + getFreshnessBonus(item) + getGroupPriorityBonus(item)
   return Number(weightedScore.toFixed(2))
 }
+
 
 
 function dedupeItems(items) {
@@ -170,6 +188,7 @@ async function main() {
     .sort((a, b) => b.score - a.score)
     .slice(0, maxItems)
 
+  const parsedInput = JSON.parse(await fs.readFile(inputFile, 'utf8'))
   const payload = {
     date: targetDate,
     generatedAt: new Date().toISOString(),
@@ -178,8 +197,13 @@ async function main() {
     appliedHoursWindow,
     usedFallbackWindow,
     totalCandidates: deduped.length,
+    alreadyPublishedToday: Boolean(parsedInput?.alreadyPublishedToday),
+    shouldWaitForPrimary: Boolean(parsedInput?.shouldWaitForPrimary),
+    activeSources: Array.isArray(parsedInput?.activeSources) ? parsedInput.activeSources : [],
     items: deduped
   }
+
+
 
 
   await ensureDir(path.dirname(outputFile))

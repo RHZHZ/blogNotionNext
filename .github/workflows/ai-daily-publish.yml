@@ -2,8 +2,10 @@ name: AI Daily Publish
 
 on:
   schedule:
-    - cron: '0 1 * * *' # UTC 01:00 = 北京时间 09:00
+    - cron: '0 2,6,10,14 * * *' # 对齐北京时间 10:00 / 14:00 / 18:00 / 22:00；22:00 这次仍无主源更新时才允许回退
   workflow_dispatch:
+
+
 
 jobs:
   publish-ai-daily:

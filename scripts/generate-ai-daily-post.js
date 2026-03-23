@@ -153,8 +153,20 @@ async function main() {
   const items = Array.isArray(candidates.items) ? candidates.items : []
 
   if (!items.length) {
+    const alreadyPublishedToday = Boolean(candidates.alreadyPublishedToday)
+    const shouldWaitForPrimary = Boolean(candidates.shouldWaitForPrimary)
+    if (alreadyPublishedToday) {
+      console.log('✅ 今日 AI 日报已发布，跳过本次正文生成。')
+      return
+    }
+    if (shouldWaitForPrimary) {
+      console.log('⏳ 当前仍处于主源等待窗口，候选池为空，跳过本次日报生成。')
+      return
+    }
     throw new Error('候选池为空，无法生成日报正文')
   }
+
+
 
   const title = `每日 AI 情报｜${candidates.date || targetDate}`
   const slug = `daily-ai-news-${candidates.date || targetDate}`
@@ -213,6 +225,7 @@ async function main() {
   }
 
   const summary = extractSummaryFromMarkdown(markdown) || '今天最值得看的，不是某个模型参数更新，而是 AI 系统开始全面转向可执行、可治理、可持续运行的工程阶段。'
+  const cover = process.env.AI_DAILY_DEFAULT_COVER || 'https://s41.ax1x.com/2026/03/23/peKAi7T.jpg'
   const payload = {
 
     title,
@@ -223,13 +236,15 @@ async function main() {
     category: 'AI 情报',
     type: 'Post',
     icon: '🤖',
+    cover,
     password: '',
-    ai_summary: true,
+    ai_summary: false,
     date: candidates.date || targetDate,
     markdown,
     sourceCount: items.length,
     generatedAt: new Date().toISOString()
   }
+
 
 
   await ensureDir(path.dirname(postJsonFile))

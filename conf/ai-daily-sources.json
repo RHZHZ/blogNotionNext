@@ -1,13 +1,37 @@
 {
   "strategy": {
-    "mode": "lean-default",
-    "description": "面向 RHZ 博客的长期精简来源集：优先官方一手源与开发者价值高的来源，尽量减少媒体噪音。"
+    "mode": "primary-with-fallback",
+    "description": "默认仅使用大模型AI作为主源；北京时间 22:00 前若主源当天还未更新则继续等待，22:00 后才自动启用回退源补足日报候选。",
+    "timezone": "Asia/Shanghai",
+    "minimumPrimaryItemsToday": 1,
+    "fallbackAfterHour": 22
   },
+
   "groups": [
     {
-      "name": "官方核心源",
+      "name": "主源",
       "priority": 1,
-      "description": "长期默认启用的一手来源，优先级最高。",
+      "description": "默认只抓这个主源，用于生成每日 AI 日报。",
+      "sources": [
+        {
+          "name": "大模型AI",
+          "url": "https://news.daheiai.com/rss.php",
+          "type": "rss",
+          "category": "行业 / 快讯",
+          "sourceType": "media",
+          "tier": "core",
+          "role": "primary",
+          "credibility": 4,
+          "developerValue": 4,
+          "industryImpact": 4,
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "name": "回退源",
+      "priority": 2,
+      "description": "仅当主源当天尚未更新到足够条目时，自动作为补充抓取。",
       "sources": [
         {
           "name": "OpenAI Blog",
@@ -16,11 +40,58 @@
           "category": "模型 / 产品",
           "sourceType": "official",
           "tier": "core",
+          "role": "fallback",
           "credibility": 5,
           "developerValue": 5,
           "industryImpact": 5,
           "enabled": true
         },
+        {
+          "name": "Google DeepMind Blog",
+          "url": "https://blog.google/technology/ai/rss/",
+          "type": "rss",
+          "category": "模型 / 研究",
+          "sourceType": "official",
+          "tier": "core",
+          "role": "fallback",
+          "credibility": 5,
+          "developerValue": 4,
+          "industryImpact": 5,
+          "enabled": true
+        },
+        {
+          "name": "LangChain Blog",
+          "url": "https://blog.langchain.dev/rss/",
+          "type": "rss",
+          "category": "Agent / 开发者工具",
+          "sourceType": "official",
+          "tier": "developer",
+          "role": "fallback",
+          "credibility": 4,
+          "developerValue": 5,
+          "industryImpact": 4,
+          "enabled": true
+        },
+        {
+          "name": "GitHub Blog AI",
+          "url": "https://github.blog/tag/ai/feed/",
+          "type": "rss",
+          "category": "开发者工具 / 平台",
+          "sourceType": "official",
+          "tier": "developer",
+          "role": "fallback",
+          "credibility": 4,
+          "developerValue": 4,
+          "industryImpact": 4,
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "name": "可选扩展源",
+      "priority": 3,
+      "description": "只有在你想扩展覆盖面时再手动启用，默认关闭以减少噪音。",
+      "sources": [
         {
           "name": "Anthropic News",
           "url": "https://www.anthropic.com/news/rss.xml",
@@ -34,18 +105,6 @@
           "enabled": false
         },
         {
-          "name": "Google DeepMind Blog",
-          "url": "https://blog.google/technology/ai/rss/",
-          "type": "rss",
-          "category": "模型 / 研究",
-          "sourceType": "official",
-          "tier": "core",
-          "credibility": 5,
-          "developerValue": 4,
-          "industryImpact": 5,
-          "enabled": true
-        },
-        {
           "name": "Hugging Face Blog",
           "url": "https://huggingface.co/blog/feed.xml",
           "type": "rss",
@@ -56,57 +115,7 @@
           "developerValue": 5,
           "industryImpact": 4,
           "enabled": false
-        }
-      ]
-    },
-    {
-      "name": "开发者与开源辅助源",
-      "priority": 2,
-      "description": "更偏开发者工具、Agent 与开源生态，适合作为核心源补充。",
-      "sources": [
-        {
-          "name": "Vercel AI",
-          "url": "https://vercel.com/blog/rss.xml",
-          "type": "rss",
-          "category": "开发者工具 / Agent",
-          "sourceType": "official",
-          "tier": "developer",
-          "credibility": 4,
-          "developerValue": 5,
-          "industryImpact": 4,
-          "enabled": false
         },
-        {
-          "name": "LangChain Blog",
-          "url": "https://blog.langchain.dev/rss/",
-          "type": "rss",
-          "category": "Agent / 开发者工具",
-          "sourceType": "official",
-          "tier": "developer",
-          "credibility": 4,
-          "developerValue": 5,
-          "industryImpact": 4,
-          "enabled": true
-        },
-        {
-          "name": "GitHub Blog AI",
-          "url": "https://github.blog/tag/ai/feed/",
-          "type": "rss",
-          "category": "开发者工具 / 平台",
-          "sourceType": "official",
-          "tier": "developer",
-          "credibility": 4,
-          "developerValue": 4,
-          "industryImpact": 4,
-          "enabled": true
-        }
-      ]
-    },
-    {
-      "name": "可选扩展源",
-      "priority": 3,
-      "description": "只有在你想扩展覆盖面时再手动启用，默认关闭以减少噪音。",
-      "sources": [
         {
           "name": "Meta AI Blog",
           "url": "https://ai.meta.com/blog/rss/",
