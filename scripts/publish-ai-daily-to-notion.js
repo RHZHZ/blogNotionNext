@@ -101,6 +101,16 @@ function markdownToBlocks(markdown) {
   let listType = null
   let paragraphBuffer = []
 
+  const createImageBlock = url => ({
+    object: 'block',
+    type: 'image',
+    image: {
+      type: 'external',
+      external: { url }
+    }
+  })
+
+
 
   const flushParagraph = () => {
     if (!paragraphBuffer.length) return
@@ -217,9 +227,17 @@ function markdownToBlocks(markdown) {
       continue
     }
 
+    const imageMatch = line.match(/^!\[[^\]]*\]\((https?:\/\/[^)]+)\)$/i)
+    if (imageMatch?.[1]) {
+      flushAll()
+      blocks.push(createImageBlock(imageMatch[1]))
+      continue
+    }
+
     flushList()
     paragraphBuffer.push(line)
   }
+
 
   flushAll()
   return blocks

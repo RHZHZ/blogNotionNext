@@ -56,6 +56,7 @@ function normalizeSourceItem(item = {}) {
     url,
     aggregateUrl: String(item.aggregateUrl || '').trim(),
     sourceLinks: Array.isArray(item.sourceLinks) ? item.sourceLinks.filter(Boolean) : [],
+    image: String(item.image || '').trim(),
     summary,
     category,
     publishedAt,
@@ -69,6 +70,7 @@ function normalizeSourceItem(item = {}) {
     whyItMatters: String(item.whyItMatters || '').trim()
   }
 }
+
 
 
 
@@ -108,23 +110,72 @@ function getGroupPriorityBonus(item) {
   return 0
 }
 
-function isRecentWithinHours(item, hours = 24) {
+function getDatePartsInTimeZone(date = new Date(), timeZone = 'Asia/Shanghai') {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  })
 
+  const parts = formatter.formatToParts(date)
+  const year = parts.find(part => part.type === 'year')?.value
+  const month = parts.find(part => part.type === 'month')?.value
+  const day = parts.find(part => part.type === 'day')?.value
+
+  return `${year}-${month}-${day}`
+}
+
+function isPublishedOnDateInTimeZone(value, targetDate, timeZone = 'Asia/Shanghai') {
+  if (!value) return false
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return false
+  return getDatePartsInTimeZone(date, timeZone) === targetDate
+}
+
+function isRecentWithinHours(item, hours = 24) {
   if (!item.publishedAt) return true
   const published = new Date(item.publishedAt)
   if (Number.isNaN(published.getTime())) return true
   return Date.now() - published.getTime() <= hours * 60 * 60 * 1000
 }
 
-function selectCandidateWindow(items, preferredHours, fallbackHours) {
+function selectCandidateWindow(items = [], strategy = {}, preferredHours = 24, fallbackHours = 168) {
+  const timeZone = strategy.timezone || 'Asia/Shanghai'
+  const targetDate = getDatePartsInTimeZone(new Date(), timeZone)
+  const sameDayItems = items.filter(item => isPublishedOnDateInTimeZone(item.publishedAt, targetDate, timeZone))
+
+  if (sameDayItems.length > 0) {
+    return {
+      items: sameDayItems,
+      appliedHoursWindow: 'same-day',
+      usedFallbackWindow: false,
+      targetDate,
+      timeZone
+    }
+  }
+
   const preferred = items.filter(item => isRecentWithinHours(item, preferredHours))
   if (preferred.length > 0) {
-    return { items: preferred, appliedHoursWindow: preferredHours, usedFallbackWindow: false }
+    return {
+      items: preferred,
+      appliedHoursWindow: preferredHours,
+      usedFallbackWindow: false,
+      targetDate,
+      timeZone
+    }
   }
 
   const fallback = items.filter(item => isRecentWithinHours(item, fallbackHours))
-  return { items: fallback, appliedHoursWindow: fallbackHours, usedFallbackWindow: true }
+  return {
+    items: fallback,
+    appliedHoursWindow: fallbackHours,
+    usedFallbackWindow: true,
+    targetDate,
+    timeZone
+  }
 }
+
 
 
 function computeScore(item) {

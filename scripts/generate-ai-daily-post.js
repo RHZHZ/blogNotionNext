@@ -69,7 +69,46 @@ function buildInsightTitle(item = {}, index = 0) {
   return `${index + 1}. 这条动态更值得看的，是它所代表的方向变化`
 }
 
+function injectItemImagesIntoMarkdown(markdown = '', items = []) {
+  const lines = String(markdown || '').replace(/\r\n/g, '\n').split('\n')
+  const headings = []
+
+  for (let index = 0; index < lines.length; index += 1) {
+    if (/^###\s+/.test(lines[index].trim())) {
+      headings.push(index)
+    }
+  }
+
+  if (!headings.length) return markdown
+
+  const result = [...lines]
+  let offset = 0
+  const count = Math.min(headings.length, items.length)
+
+  for (let i = 0; i < count; i += 1) {
+    const item = items[i]
+    const image = String(item?.image || '').trim()
+    if (!image) continue
+
+    const start = headings[i] + offset
+    const nextHeading = i + 1 < headings.length ? headings[i + 1] + offset : result.length
+    const sectionLines = result.slice(start + 1, nextHeading)
+    const alreadyHasImage = sectionLines.some(line => /^!\[[^\]]*\]\((https?:\/\/[^)]+)\)$/.test(line.trim()))
+    if (alreadyHasImage) continue
+
+    const insertAt = start + 1
+    const alt = stripMarkdown(item.title || `AI 情报配图 ${i + 1}`)
+    result.splice(insertAt, 0, `![${alt}](${image})`, '')
+    offset += 2
+  }
+
+  return result.join('\n')
+}
+
+
+
 function buildDefaultMarkdown({ title, items }) {
+
 
   const topItems = items.slice(0, 6)
   const sourceNames = Array.from(new Set(topItems.map(item => item.source).filter(Boolean)))
@@ -245,10 +284,12 @@ async function main() {
       '7. 每条三级标题下面第一段必须先给一句结论式开场，让读者一眼知道这条为什么值得读。',
 
       '8. 每条内容至少包含四个阅读锚点：一句判断、发生了什么、为什么值得关注、对谁影响更大。',
-      '9. 多用短段落，每段尽量不超过 3 行，不要写连续大段文字墙。',
-      '10. 可以用少量 bullet 提取关键信息，让正文兼顾扫读与深读。',
-      '11. 每个大章节之间可以用 --- 分隔，但不要滥用。',
-      '12. 结尾要有总结判断，收住全文。',
+      '9. 如果某条素材提供了 image 字段且是明显可用的文章首图，可以在该条三级标题下插入 1 张 Markdown 图片，增强可读性；没有图片就不要强行补图。',
+      '10. 多用短段落，每段尽量不超过 3 行，不要写连续大段文字墙。',
+      '11. 可以用少量 bullet 提取关键信息，让正文兼顾扫读与深读。',
+      '12. 每个大章节之间可以用 --- 分隔，但不要滥用。',
+      '13. 结尾要有总结判断，收住全文。',
+
       '',
       '内容要求：',
       '1. 优先选择开发者价值高、信息增量大的候选，不要把明显偏泛资讯的内容写成重点。',
@@ -282,7 +323,10 @@ async function main() {
     markdown = buildDefaultMarkdown({ title, date: targetDate, items })
   }
 
+  markdown = injectItemImagesIntoMarkdown(markdown, items)
+
   const summary = extractSummaryFromMarkdown(markdown) || '今天最值得看的，不是某个模型参数更新，而是 AI 系统开始全面转向可执行、可治理、可持续运行的工程阶段。'
+
   const cover = process.env.AI_DAILY_DEFAULT_COVER || 'https://s41.ax1x.com/2026/03/23/peKAi7T.jpg'
   const payload = {
 

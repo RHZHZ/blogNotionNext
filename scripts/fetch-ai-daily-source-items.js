@@ -1,6 +1,8 @@
 const fs = require('fs/promises')
 const path = require('path')
+const crypto = require('crypto')
 const { loadLocalEnv } = require('./load-local-env')
+
 
 loadLocalEnv()
 
@@ -10,6 +12,24 @@ const DEFAULT_SOURCES_FILE = path.join(ROOT, 'conf', 'ai-daily-sources.json')
 const DEFAULT_OUTPUT_FILE = path.join(ROOT, 'temp', 'ai-daily-source-items.json')
 const NOTION_API_BASE = 'https://api.notion.com/v1'
 const NOTION_VERSION = '2022-06-28'
+const QINIU_REGION_UPLOAD_MAP = {
+  z0: 'https://upload.qiniup.com',
+  z1: 'https://up-z1.qiniup.com',
+  z2: 'https://up-z2.qiniup.com',
+  na0: 'https://up-na0.qiniup.com',
+  as0: 'https://up-as0.qiniup.com',
+  'cn-east-2': 'https://up-cn-east-2.qiniup.com'
+}
+const QINIU_ACCESS_KEY = String(process.env.QINIU_ACCESS_KEY || '').trim()
+const QINIU_SECRET_KEY = String(process.env.QINIU_SECRET_KEY || '').trim()
+const QINIU_BUCKET = String(process.env.QINIU_BUCKET || '').trim()
+const QINIU_REGION = String(process.env.QINIU_REGION || '').trim().toLowerCase()
+const QINIU_UPLOAD_URL = String(process.env.QINIU_UPLOAD_URL || QINIU_REGION_UPLOAD_MAP[QINIU_REGION] || '').trim().replace(/\/$/, '')
+const QINIU_PUBLIC_BASE_URL = String(process.env.QINIU_PUBLIC_BASE_URL || '').trim().replace(/\/$/, '')
+const AI_DAILY_IMAGE_QINIU_KEY_PREFIX = String(process.env.AI_DAILY_IMAGE_QINIU_KEY_PREFIX || process.env.QINIU_KEY_PREFIX || 'ai-daily-images')
+  .trim()
+  .replace(/^\/+|\/+$/g, '') || 'ai-daily-images'
+
 
 
 function decodeHtml(value = '') {
@@ -99,6 +119,7 @@ function mapXmlItem(block, source) {
     url: preferredUrl,
     aggregateUrl,
     sourceLinks,
+    image: '',
     source: source.name,
     sourceGroup: source.groupName || '',
     sourceTier: source.tier || '',
@@ -112,8 +133,245 @@ function mapXmlItem(block, source) {
   }
 }
 
+function shouldTryFetchLeadImage(url = '') {
+  if (!url || !/^https?:\/\//i.test(url)) return false
+  try {
+    const { hostname, pathname } = new URL(url)
+    const host = hostname.toLowerCase()
+    if (host.endsWith('x.com') || host.endsWith('twitter.com') || host.endsWith('t.co') || host.endsWith('news.daheiai.com')) {
+      return false
+    }
+
+    if (/\.(jpg|jpeg|png|webp|gif|svg)$/i.test(String(pathname || '').toLowerCase())) {
+      return false
+    }
+
+    return true
+  } catch {
+    return false
+  }
+}
+
+function extractMetaImage(html = '') {
+  const patterns = [
+    /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["'][^>]*>/i,
+    /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["'][^>]*>/i,
+    /<meta[^>]+name=["']twitter:image(?::src)?["'][^>]+content=["']([^"']+)["'][^>]*>/i,
+    /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image(?::src)?["'][^>]*>/i
+  ]
+
+  for (const pattern of patterns) {
+    const match = html.match(pattern)
+    if (match?.[1]) return decodeHtml(match[1]).trim()
+  }
+
+  return ''
+}
+
+function isLikelyDecorativeImage(url = '', context = '') {
+  const normalized = `${url} ${context}`.toLowerCase()
+  if (!normalized) return true
+
+  return [
+    'logo',
+    'icon',
+    'avatar',
+    'favicon',
+    'placeholder',
+    'default',
+    'sprite',
+    'banner',
+    'button',
+    'loading',
+    'thumb',
+    'thumbnail',
+    'site-name',
+    'branding',
+    'wechatqrcode',
+    'qrcode',
+    'qr-code',
+    'qr_'
+  ].some(keyword => normalized.includes(keyword))
+}
+
+
+function extractImageCandidatesFromHtml(html = '') {
+  const candidates = []
+  const imgRegex = /<img\b([^>]*?)src=["']([^"']+)["']([^>]*)>/gi
+  let match
+
+  while ((match = imgRegex.exec(html)) !== null) {
+    const attrs = `${match[1] || ''} ${match[3] || ''}`
+    const src = decodeHtml(match[2] || '').trim()
+    if (!src) continue
+    candidates.push({ src, attrs })
+  }
+
+  return candidates
+}
+
+function extractFirstImageFromHtml(html = '') {
+  const candidates = extractImageCandidatesFromHtml(html)
+  const preferred = candidates.find(candidate => !isLikelyDecorativeImage(candidate.src, candidate.attrs))
+  return preferred?.src || candidates[0]?.src || ''
+}
+
+function resolveUrl(baseUrl = '', target = '') {
+
+  try {
+    return new URL(target, baseUrl).toString()
+  } catch {
+    return ''
+  }
+}
+
+function hasQiniuImageStorageConfigured() {
+  return Boolean(QINIU_ACCESS_KEY && QINIU_SECRET_KEY && QINIU_BUCKET && QINIU_UPLOAD_URL && QINIU_PUBLIC_BASE_URL)
+}
+
+function inferImageExtension(imageUrl = '', contentType = '') {
+  const normalizedType = String(contentType || '').toLowerCase()
+  if (normalizedType.includes('image/webp')) return 'webp'
+  if (normalizedType.includes('image/png')) return 'png'
+  if (normalizedType.includes('image/jpeg')) return 'jpg'
+  if (normalizedType.includes('image/gif')) return 'gif'
+  if (normalizedType.includes('image/svg+xml')) return 'svg'
+
+  try {
+    const pathname = new URL(imageUrl).pathname || ''
+    const matched = pathname.match(/\.([a-z0-9]{2,5})$/i)
+    return matched?.[1]?.toLowerCase() || 'jpg'
+  } catch {
+    return 'jpg'
+  }
+}
+
+function buildQiniuImageObjectKey(item = {}, imageUrl = '', contentType = '') {
+  const datePart = getDateInTimeZone(new Date(), 'Asia/Shanghai')
+  const titleHash = crypto
+    .createHash('md5')
+    .update(`${item.title || ''}|${item.url || ''}|${imageUrl}`)
+    .digest('hex')
+    .slice(0, 16)
+  const ext = inferImageExtension(imageUrl, contentType)
+  return `${AI_DAILY_IMAGE_QINIU_KEY_PREFIX}/${datePart}/${titleHash}.${ext}`
+}
+
+async function uploadBufferToQiniu({ objectKey, buffer, contentType }) {
+  const putPolicy = Buffer.from(
+    JSON.stringify({
+      scope: `${QINIU_BUCKET}:${objectKey}`,
+      deadline: Math.floor(Date.now() / 1000) + 3600
+    })
+  )
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+
+  const encodedSign = crypto
+    .createHmac('sha1', QINIU_SECRET_KEY)
+    .update(putPolicy)
+    .digest('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+
+  const uploadToken = `${QINIU_ACCESS_KEY}:${encodedSign}:${putPolicy}`
+  const formData = new FormData()
+  formData.append('token', uploadToken)
+  formData.append('key', objectKey)
+  formData.append('file', new Blob([buffer], { type: contentType || 'application/octet-stream' }), path.basename(objectKey))
+
+  const response = await fetch(QINIU_UPLOAD_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `UpToken ${uploadToken}`
+    },
+    body: formData
+  })
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => '')
+    throw new Error(`七牛云上传失败: ${response.status} ${body.slice(0, 200)}`.trim())
+  }
+
+  return `${QINIU_PUBLIC_BASE_URL}/${objectKey}`
+}
+
+async function cacheImageToQiniu(item = {}, imageUrl = '') {
+  if (!hasQiniuImageStorageConfigured()) return imageUrl
+  if (!/^https?:\/\//i.test(String(imageUrl || '').trim())) return imageUrl
+  if (String(imageUrl).startsWith(`${QINIU_PUBLIC_BASE_URL}/`)) return imageUrl
+
+  try {
+    const response = await fetch(imageUrl, {
+      headers: {
+        'User-Agent': 'RHZ-AI-Daily-Collector/1.0',
+        Referer: item.url || imageUrl
+      },
+      redirect: 'follow'
+    })
+
+    if (!response.ok) return imageUrl
+    const contentType = String(response.headers.get('content-type') || '').toLowerCase()
+    if (!contentType.startsWith('image/')) return imageUrl
+
+    const arrayBuffer = await response.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+    if (!buffer.length) return imageUrl
+
+    const objectKey = buildQiniuImageObjectKey(item, imageUrl, contentType)
+    return await uploadBufferToQiniu({ objectKey, buffer, contentType })
+  } catch {
+    return imageUrl
+  }
+}
+
+async function fetchLeadImageFromUrl(url = '') {
+
+  if (!shouldTryFetchLeadImage(url)) return ''
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'RHZ-AI-Daily-Collector/1.0'
+      },
+      redirect: 'follow'
+    })
+
+    if (!response.ok) return ''
+
+    const contentType = String(response.headers.get('content-type') || '').toLowerCase()
+    if (!contentType.includes('text/html')) return ''
+
+    const html = await response.text()
+    const candidateImages = [extractMetaImage(html), extractFirstImageFromHtml(html)]
+      .filter(Boolean)
+      .map(image => resolveUrl(response.url || url, image))
+      .filter(image => /^https?:\/\//i.test(image))
+
+    return candidateImages.find(image => !isLikelyDecorativeImage(image)) || ''
+  } catch {
+    return ''
+  }
+}
+
+
+async function enrichItemsWithLeadImages(items = []) {
+  return Promise.all(
+    items.map(async item => {
+      const image = await fetchLeadImageFromUrl(item.url)
+      const cachedImage = image ? await cacheImageToQiniu(item, image) : ''
+      return {
+        ...item,
+        image: cachedImage || image || item.image || ''
+      }
+    })
+  )
+}
+
 
 function normalizeGroupSources(groups = []) {
+
   return groups
     .sort((a, b) => Number(a.priority || 999) - Number(b.priority || 999))
     .flatMap(group => {
@@ -307,8 +565,10 @@ async function loadRssSource(source) {
   }
 
   const xml = await response.text()
-  return extractItemsFromXml(xml).map(block => mapXmlItem(block, source))
+  const items = extractItemsFromXml(xml).map(block => mapXmlItem(block, source))
+  return enrichItemsWithLeadImages(items)
 }
+
 
 async function fetchSource(source) {
   const type = String(source.type || 'rss').toLowerCase()
