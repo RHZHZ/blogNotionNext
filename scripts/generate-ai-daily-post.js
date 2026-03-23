@@ -79,7 +79,15 @@ function buildInsightTitle(item = {}, index = 0) {
   return `${index + 1}. 这条动态更值得看的，是它所代表的方向变化`
 }
 
+function stripAiInsertedImages(markdown = '') {
+  return String(markdown || '')
+    .replace(/^!\[[^\]]*\]\((https?:\/\/[^)]+)\)\s*$/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
 function injectItemImagesIntoMarkdown(markdown = '', items = []) {
+
   const lines = String(markdown || '').replace(/\r\n/g, '\n').split('\n')
   const headings = []
 
@@ -416,9 +424,11 @@ async function main() {
 
 
 
+  markdown = stripAiInsertedImages(markdown)
   markdown = injectItemImagesIntoMarkdown(markdown, items)
 
   const summary = extractSummaryFromMarkdown(markdown) || '今天最值得看的，不是某个模型参数更新，而是 AI 系统开始全面转向可执行、可治理、可持续运行的工程阶段。'
+
 
   const cover = process.env.AI_DAILY_DEFAULT_COVER || 'https://s41.ax1x.com/2026/03/23/peKAi7T.jpg'
   const payload = {
