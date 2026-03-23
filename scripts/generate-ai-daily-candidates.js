@@ -10,7 +10,17 @@ const TEMP_DIR = path.join(ROOT, 'temp')
 const DEFAULT_INPUT = path.join(TEMP_DIR, 'ai-daily-source-items.json')
 const DEFAULT_OUTPUT = path.join(TEMP_DIR, 'ai-daily-candidates.json')
 
+function parseRequestedDate(value = '') {
+  const normalized = String(value || '').trim()
+  if (!normalized) return ''
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized)) {
+    throw new Error('AI_DAILY_DATE 格式错误，应为 YYYY-MM-DD')
+  }
+  return normalized
+}
+
 function normalizeDate(date = new Date()) {
+
   return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
     .toISOString()
     .slice(0, 10)
@@ -140,10 +150,11 @@ function isRecentWithinHours(item, hours = 24) {
   return Date.now() - published.getTime() <= hours * 60 * 60 * 1000
 }
 
-function selectCandidateWindow(items = [], strategy = {}, preferredHours = 24, fallbackHours = 168) {
+function selectCandidateWindow(items = [], strategy = {}, preferredHours = 24, fallbackHours = 168, requestedDate = '') {
   const timeZone = strategy.timezone || 'Asia/Shanghai'
-  const targetDate = getDatePartsInTimeZone(new Date(), timeZone)
+  const targetDate = requestedDate || getDatePartsInTimeZone(new Date(), timeZone)
   const sameDayItems = items.filter(item => isPublishedOnDateInTimeZone(item.publishedAt, targetDate, timeZone))
+
 
   if (sameDayItems.length > 0) {
     return {
@@ -223,10 +234,16 @@ async function main() {
   const maxItems = Math.max(1, toNumber(process.env.AI_DAILY_MAX_CANDIDATES, 12))
   const hoursWindow = Math.max(1, toNumber(process.env.AI_DAILY_HOURS_WINDOW, 24))
   const fallbackHoursWindow = Math.max(hoursWindow, toNumber(process.env.AI_DAILY_FALLBACK_HOURS_WINDOW, 168))
-  const targetDate = normalizeDate()
+  const requestedDate = parseRequestedDate(process.env.AI_DAILY_DATE)
+  const targetDate = requestedDate || normalizeDate()
+
 
   console.log('开始生成每日 AI 情报候选池...')
   console.log(`来源文件: ${inputFile}`)
+  if (requestedDate) {
+    console.log(`指定日期模式: ${requestedDate}`)
+  }
+
 
   const sourceItems = await loadSourceItems(inputFile)
   const structured = sourceItems.filter(item => item.title && item.url)
@@ -236,8 +253,10 @@ async function main() {
     structured,
     strategy,
     hoursWindow,
-    fallbackHoursWindow
+    fallbackHoursWindow,
+    requestedDate
   )
+
 
   if (appliedHoursWindow === 'same-day') {
     console.log(`✅ 已按 ${timeZone} 的 ${strategyDate} 当天条目生成候选池。`)

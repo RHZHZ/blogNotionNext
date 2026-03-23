@@ -11,7 +11,17 @@ const DEFAULT_CANDIDATES_FILE = path.join(TEMP_DIR, 'ai-daily-candidates.json')
 const DEFAULT_POST_JSON = path.join(TEMP_DIR, 'ai-daily-post.json')
 const DEFAULT_POST_MD = path.join(TEMP_DIR, 'ai-daily-post.md')
 
+function parseRequestedDate(value = '') {
+  const normalized = String(value || '').trim()
+  if (!normalized) return ''
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized)) {
+    throw new Error('AI_DAILY_DATE 格式错误，应为 YYYY-MM-DD')
+  }
+  return normalized
+}
+
 function normalizeDate(date = new Date()) {
+
   return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
     .toISOString()
     .slice(0, 10)
@@ -185,7 +195,25 @@ async function readJson(filePath) {
   return JSON.parse(raw)
 }
 
+async function removeFileIfExists(filePath) {
+  try {
+    await fs.unlink(filePath)
+  } catch (error) {
+    if (error?.code !== 'ENOENT') {
+      throw error
+    }
+  }
+}
+
+async function clearGeneratedPostArtifacts(postJsonFile, postMdFile) {
+  await Promise.all([
+    removeFileIfExists(postJsonFile),
+    removeFileIfExists(postMdFile)
+  ])
+}
+
 async function generateWithApi({ apiUrl, apiKey, prompt }) {
+
   const model = process.env.AI_DAILY_MODEL || process.env.AI_SUMMARY_MODEL || 'gpt-5.4'
 
   const response = await fetch(apiUrl, {
@@ -262,27 +290,37 @@ async function main() {
   const candidatesFile = process.env.AI_DAILY_CANDIDATES_FILE || DEFAULT_CANDIDATES_FILE
   const postJsonFile = process.env.AI_DAILY_POST_JSON || DEFAULT_POST_JSON
   const postMdFile = process.env.AI_DAILY_POST_MD || DEFAULT_POST_MD
-  const targetDate = normalizeDate()
+  const requestedDate = parseRequestedDate(process.env.AI_DAILY_DATE)
+  const targetDate = requestedDate || normalizeDate()
+
 
   console.log('开始生成每日 AI 情报正文...')
   console.log(`候选池文件: ${candidatesFile}`)
+  if (requestedDate) {
+    console.log(`指定日期模式: ${requestedDate}`)
+  }
+
 
   const candidates = await readJson(candidatesFile)
   const items = Array.isArray(candidates.items) ? candidates.items : []
 
   if (!items.length) {
+    const candidateDate = String(candidates.date || targetDate).trim()
     const alreadyPublishedToday = Boolean(candidates.alreadyPublishedToday)
     const shouldWaitForPrimary = Boolean(candidates.shouldWaitForPrimary)
     if (alreadyPublishedToday) {
-      console.log('✅ 今日 AI 日报已发布，跳过本次正文生成。')
+      await clearGeneratedPostArtifacts(postJsonFile, postMdFile)
+      console.log(`✅ 目标日期 ${candidateDate} 的 AI 日报已存在，已清理旧正文产物并跳过本次生成。`)
       return
     }
     if (shouldWaitForPrimary) {
-      console.log('⏳ 当前仍处于主源等待窗口，候选池为空，跳过本次日报生成。')
+      await clearGeneratedPostArtifacts(postJsonFile, postMdFile)
+      console.log(`⏳ 目标日期 ${candidateDate} 仍处于主源等待窗口，已清理旧正文产物并跳过本次生成。`)
       return
     }
-    throw new Error('候选池为空，无法生成日报正文')
+    throw new Error(`目标日期 ${candidateDate} 的候选池为空，无法生成日报正文`)
   }
+
 
 
 

@@ -7,10 +7,12 @@ loadLocalEnv()
 const ROOT = process.cwd()
 
 const DEFAULT_POST_JSON = path.join(ROOT, 'temp', 'ai-daily-post.json')
+const DEFAULT_SOURCES_FILE = path.join(ROOT, 'conf', 'ai-daily-sources.json')
 const NOTION_API_BASE = 'https://api.notion.com/v1'
 const NOTION_VERSION = '2022-06-28'
 
 async function readJson(filePath) {
+
   const raw = await fs.readFile(filePath, 'utf8')
   return JSON.parse(raw)
 }
@@ -375,6 +377,37 @@ async function notionRequest(url, options = {}) {
   return data
 }
 
+function getDatePartsInTimeZone(date = new Date(), timeZone = 'Asia/Shanghai') {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    hour12: false
+  })
+
+  const parts = formatter.formatToParts(date)
+  const year = parts.find(part => part.type === 'year')?.value
+  const month = parts.find(part => part.type === 'month')?.value
+  const day = parts.find(part => part.type === 'day')?.value
+  const hour = Number(parts.find(part => part.type === 'hour')?.value || 0)
+
+  return {
+    date: `${year}-${month}-${day}`,
+    hour
+  }
+}
+
+async function loadPublishStrategy(configFile) {
+  try {
+    const parsed = await readJson(configFile)
+    return parsed?.strategy || {}
+  } catch {
+    return {}
+  }
+}
+
 async function getDatabaseSchema(databaseId) {
   const data = await notionRequest(`${NOTION_API_BASE}/databases/${databaseId}`, {
     method: 'GET'
@@ -383,6 +416,7 @@ async function getDatabaseSchema(databaseId) {
 }
 
 async function appendBlocksToPage(pageId, blocks = []) {
+
   const chunks = chunkArray(blocks, 100)
   for (const chunk of chunks) {
     await notionRequest(`${NOTION_API_BASE}/blocks/${pageId}/children`, {
@@ -397,9 +431,19 @@ async function main() {
   const databaseId = String(process.env.AI_DAILY_NOTION_DATABASE_ID || '').trim()
   const dryRun = String(process.env.AI_DAILY_DRY_RUN || '').trim() === '1'
   const allowTemplatePublish = String(process.env.AI_DAILY_ALLOW_TEMPLATE_PUBLISH || '').trim() === '1'
+  const requestedDate = String(process.env.AI_DAILY_DATE || '').trim()
+  const sourcesConfigFile = process.env.AI_DAILY_SOURCES_CONFIG || DEFAULT_SOURCES_FILE
+  const strategy = await loadPublishStrategy(sourcesConfigFile)
+  const timeZone = strategy.timezone || 'Asia/Shanghai'
+  const publishAfterHour = Math.max(0, Math.min(23, Number(strategy.fallbackAfterHour ?? 22)))
 
+  if (requestedDate) {
+    console.log(`指定日期模式: ${requestedDate}`)
+  }
 
   try {
+
+
     await fs.access(postFile)
   } catch {
     console.log('⏭️ 本次未生成日报正文，跳过 Notion 发布。')
@@ -412,7 +456,18 @@ async function main() {
 
   const post = await readJson(postFile)
 
+  const now = getDatePartsInTimeZone(new Date(), timeZone)
+  const postDate = String(post.date || requestedDate || '').trim()
+  const isSameDayPublish = Boolean(postDate) && postDate === now.date
+  const shouldDelayTodayPublish = isSameDayPublish && now.hour < publishAfterHour
+
+  if (shouldDelayTodayPublish) {
+    console.log(`⏭️ 当前为 ${timeZone} 的 ${now.date} ${String(now.hour).padStart(2, '0')}:00，未到 ${publishAfterHour}:00，跳过当天日报的 Notion 正式发布。`)
+    return
+  }
+
   if (post.generationMode === 'template-fallback' && !allowTemplatePublish) {
+
     console.log('⏭️ 检测到本次日报为模板降级稿，默认跳过 Notion 正式发布。')
     if (post.generationWarning) {
       console.log(`降级原因: ${post.generationWarning}`)

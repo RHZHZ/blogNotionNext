@@ -30,9 +30,19 @@ const AI_DAILY_IMAGE_QINIU_KEY_PREFIX = String(process.env.AI_DAILY_IMAGE_QINIU_
   .trim()
   .replace(/^\/+|\/+$/g, '') || 'ai-daily-images'
 
+function parseRequestedDate(value = '') {
+  const normalized = String(value || '').trim()
+  if (!normalized) return ''
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized)) {
+    throw new Error('AI_DAILY_DATE 格式错误，应为 YYYY-MM-DD')
+  }
+  return normalized
+}
 
+const REQUESTED_DATE = parseRequestedDate(process.env.AI_DAILY_DATE)
 
 function decodeHtml(value = '') {
+
   return String(value)
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
     .replace(/<img[^>]*>/gi, ' ')
@@ -247,8 +257,9 @@ function inferImageExtension(imageUrl = '', contentType = '') {
 }
 
 function buildQiniuImageObjectKey(item = {}, imageUrl = '', contentType = '') {
-  const datePart = getDateInTimeZone(new Date(), 'Asia/Shanghai')
+  const datePart = REQUESTED_DATE || getDateInTimeZone(new Date(), 'Asia/Shanghai')
   const titleHash = crypto
+
     .createHash('md5')
     .update(`${item.title || ''}|${item.url || ''}|${imageUrl}`)
     .digest('hex')
@@ -477,14 +488,15 @@ async function notionRequest(url, options = {}) {
   return data
 }
 
-async function hasPublishedToday(timeZone = 'Asia/Shanghai') {
+async function hasPublishedForDate(targetDate, timeZone = 'Asia/Shanghai') {
   const token = String(process.env.NOTION_ACCESS_TOKEN || '').trim()
   const databaseId = String(process.env.AI_DAILY_NOTION_DATABASE_ID || '').trim()
   if (!token || !databaseId) return false
 
-  const today = getDateInTimeZone(new Date(), timeZone)
+  const normalizedTargetDate = String(targetDate || '').trim() || getDateInTimeZone(new Date(), timeZone)
   const slugProperty = process.env.AI_DAILY_NOTION_SLUG_PROPERTY || 'slug'
-  const slug = `daily-ai-news-${today}`
+  const slug = `daily-ai-news-${normalizedTargetDate}`
+
 
   const data = await notionRequest(`${NOTION_API_BASE}/databases/${databaseId}/query`, {
     method: 'POST',
@@ -589,14 +601,25 @@ async function main() {
   console.log('开始抓取每日 AI 情报来源...')
   console.log(`来源配置: ${configFile}`)
   console.log(`启用来源数: ${sources.length}`)
+  if (REQUESTED_DATE) {
+    console.log(`指定日期模式: ${REQUESTED_DATE}`)
+  }
 
-  const alreadyPublishedToday = await hasPublishedToday(strategy.timezone || 'Asia/Shanghai').catch(error => {
-    console.warn(`  当日发布检查失败，继续执行抓取: ${error.message}`)
-    return false
-  })
+  const targetDate = REQUESTED_DATE || getDateInTimeZone(new Date(), strategy.timezone || 'Asia/Shanghai')
+  const shouldSkipByPublishedCheck = !REQUESTED_DATE
+
+  const alreadyPublishedToday = shouldSkipByPublishedCheck
+
+    ? await hasPublishedForDate(targetDate, strategy.timezone || 'Asia/Shanghai').catch(error => {
+        console.warn(`  当日发布检查失败，继续执行抓取: ${error.message}`)
+        return false
+      })
+    : false
+
 
   if (alreadyPublishedToday) {
-    console.log('✅ 检测到今日 AI 日报已发布，跳过本次抓取。')
+    const publishedDateLabel = REQUESTED_DATE || getDateInTimeZone(new Date(), strategy.timezone || 'Asia/Shanghai')
+    console.log(`✅ 目标日期 ${publishedDateLabel} 的 AI 日报已存在，跳过本次抓取。`)
     await ensureDir(path.dirname(outputFile))
     await fs.writeFile(
       outputFile,
@@ -612,6 +635,7 @@ async function main() {
     )
     return
   }
+
 
   const primarySources = sources.filter(source => source.role === 'primary')
 
