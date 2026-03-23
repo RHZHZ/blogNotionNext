@@ -77,8 +77,10 @@ function buildDefaultMarkdown({ title, items }) {
     const conclusion = item.summary || '这条动态的信息增量较高，值得优先看完。'
     const whyItMatters = item.whyItMatters || '它真正值得关注的地方，不在于“又多了一条新闻”，而在于它反映了产品、模型或开发工具链正在发生的实际变化。'
     const impact = item.category || '模型、产品与开发者工具'
+    const insightTitle = buildInsightTitle(item, index)
     return [
-      `### ${index + 1}. ${item.title}`,
+      `### ${insightTitle}`,
+
       '',
       `**先说判断：** ${conclusion}`,
       '',
@@ -283,7 +285,7 @@ async function main() {
     title,
     slug,
     summary,
-    tags: ['AI', '日报', '人工智能'],
+    tags: ['AI', '日报', '人工智能', '推荐'],
     status: 'Published',
     category: 'AI 情报',
     type: 'Post',
