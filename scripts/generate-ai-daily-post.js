@@ -314,14 +314,19 @@ async function main() {
     ].join('\n')
 
     console.log('检测到 AI 接口配置，尝试生成正式日报内容...')
-    markdown = await generateWithApi({ apiUrl, apiKey, prompt })
+    try {
+      markdown = await generateWithApi({ apiUrl, apiKey, prompt })
+    } catch (error) {
+      console.warn(`⚠️ AI 接口生成失败，将自动回退到本地模板：${error.message}`)
+    }
   }
 
 
   if (!markdown) {
-    console.log('未配置 AI 接口或 AI 返回为空，使用本地模板生成日报草稿。')
+    console.log('未配置 AI 接口、AI 返回为空或接口异常，使用本地模板生成日报草稿。')
     markdown = buildDefaultMarkdown({ title, date: targetDate, items })
   }
+
 
   markdown = injectItemImagesIntoMarkdown(markdown, items)
 
