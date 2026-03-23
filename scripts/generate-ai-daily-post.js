@@ -228,7 +228,37 @@ async function generateWithApi({ apiUrl, apiKey, prompt }) {
   return data?.choices?.[0]?.message?.content?.trim() || ''
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+async function generateWithRetry({ apiUrl, apiKey, prompt }) {
+  const maxAttempts = Math.max(1, Number(process.env.AI_DAILY_GENERATE_MAX_RETRIES || 3))
+  const retryDelayMs = Math.max(0, Number(process.env.AI_DAILY_GENERATE_RETRY_DELAY_MS || 120000))
+  let lastError = null
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      if (attempt > 1) {
+        console.log(`🔁 正在进行第 ${attempt}/${maxAttempts} 次 AI 正文生成尝试...`)
+      }
+      return await generateWithApi({ apiUrl, apiKey, prompt })
+    } catch (error) {
+      lastError = error
+      const isLastAttempt = attempt >= maxAttempts
+      console.warn(`⚠️ 第 ${attempt}/${maxAttempts} 次 AI 正文生成失败：${error.message}`)
+      if (!isLastAttempt && retryDelayMs > 0) {
+        console.log(`⏳ ${retryDelayMs}ms 后重试 AI 正文生成...`)
+        await sleep(retryDelayMs)
+      }
+    }
+  }
+
+  throw lastError || new Error('AI 正文生成失败，且未捕获到具体错误')
+}
+
 async function main() {
+
   const candidatesFile = process.env.AI_DAILY_CANDIDATES_FILE || DEFAULT_CANDIDATES_FILE
   const postJsonFile = process.env.AI_DAILY_POST_JSON || DEFAULT_POST_JSON
   const postMdFile = process.env.AI_DAILY_POST_MD || DEFAULT_POST_MD
@@ -315,9 +345,14 @@ async function main() {
 
     console.log('检测到 AI 接口配置，尝试生成正式日报内容...')
     try {
-      markdown = await generateWithApi({ apiUrl, apiKey, prompt })
+      markdown = await generateWithRetry({ apiUrl, apiKey, prompt })
+      if (markdown) {
+        generationMode = 'ai'
+        generationStatus = 'success'
+      }
     } catch (error) {
-      console.warn(`⚠️ AI 接口生成失败，将自动回退到本地模板：${error.message}`)
+      generationWarning = String(error.message || '').trim()
+      console.warn(`⚠️ AI 接口多次重试后仍失败，将生成模板降级稿但默认不发布：${generationWarning}`)
     }
   }
 
@@ -325,7 +360,10 @@ async function main() {
   if (!markdown) {
     console.log('未配置 AI 接口、AI 返回为空或接口异常，使用本地模板生成日报草稿。')
     markdown = buildDefaultMarkdown({ title, date: targetDate, items })
+    generationMode = 'template-fallback'
+    generationStatus = apiUrl && apiKey ? 'fallback_after_retry' : 'fallback_no_api'
   }
+
 
 
   markdown = injectItemImagesIntoMarkdown(markdown, items)
@@ -349,8 +387,12 @@ async function main() {
     date: candidates.date || targetDate,
     markdown,
     sourceCount: items.length,
+    generationMode,
+    generationStatus,
+    generationWarning,
     generatedAt: new Date().toISOString()
   }
+
 
 
 

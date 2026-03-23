@@ -396,6 +396,8 @@ async function main() {
   const postFile = process.env.AI_DAILY_POST_JSON || DEFAULT_POST_JSON
   const databaseId = String(process.env.AI_DAILY_NOTION_DATABASE_ID || '').trim()
   const dryRun = String(process.env.AI_DAILY_DRY_RUN || '').trim() === '1'
+  const allowTemplatePublish = String(process.env.AI_DAILY_ALLOW_TEMPLATE_PUBLISH || '').trim() === '1'
+
 
   try {
     await fs.access(postFile)
@@ -410,7 +412,17 @@ async function main() {
 
   const post = await readJson(postFile)
 
+  if (post.generationMode === 'template-fallback' && !allowTemplatePublish) {
+    console.log('⏭️ 检测到本次日报为模板降级稿，默认跳过 Notion 正式发布。')
+    if (post.generationWarning) {
+      console.log(`降级原因: ${post.generationWarning}`)
+    }
+    console.log('如需强制发布模板降级稿，请设置 AI_DAILY_ALLOW_TEMPLATE_PUBLISH=1 后重试。')
+    return
+  }
+
   const schema = await getDatabaseSchema(databaseId)
+
   const properties = buildPropertiesFromSchema(schema, post)
   const children = markdownToBlocks(post.markdown)
 
