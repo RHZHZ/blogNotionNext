@@ -92,7 +92,12 @@ async function uploadBufferToQiniu({ objectKey, buffer, contentType }) {
 }
 
 async function cacheImageToQiniu(item = {}, imageUrl = '', date = '') {
-  if (!hasQiniuImageStorageConfigured()) return imageUrl
+  const title = String(item?.title || '未命名条目').trim()
+
+  if (!hasQiniuImageStorageConfigured()) {
+    console.log(`🟡 七牛云未配置，正文图片保留原图：${title}`)
+    return imageUrl
+  }
   if (!/^https?:\/\//i.test(String(imageUrl || '').trim())) return imageUrl
   if (String(imageUrl).startsWith(`${QINIU_PUBLIC_BASE_URL}/`)) return imageUrl
 
@@ -105,20 +110,33 @@ async function cacheImageToQiniu(item = {}, imageUrl = '', date = '') {
       redirect: 'follow'
     })
 
-    if (!response.ok) return imageUrl
+    if (!response.ok) {
+      console.warn(`🟠 图片抓取失败，保留原图：${title} (${response.status})`)
+      return imageUrl
+    }
     const contentType = String(response.headers.get('content-type') || '').toLowerCase()
-    if (!contentType.startsWith('image/')) return imageUrl
+    if (!contentType.startsWith('image/')) {
+      console.warn(`🟠 图片内容类型异常，保留原图：${title} (${contentType || 'unknown'})`)
+      return imageUrl
+    }
 
     const arrayBuffer = await response.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
-    if (!buffer.length) return imageUrl
+    if (!buffer.length) {
+      console.warn(`🟠 图片内容为空，保留原图：${title}`)
+      return imageUrl
+    }
 
     const objectKey = buildQiniuImageObjectKey(item, imageUrl, contentType, date)
-    return await uploadBufferToQiniu({ objectKey, buffer, contentType })
-  } catch {
+    const cachedUrl = await uploadBufferToQiniu({ objectKey, buffer, contentType })
+    console.log(`🟢 七牛云缓存成功：${title} -> ${cachedUrl}`)
+    return cachedUrl
+  } catch (error) {
+    console.warn(`🟠 七牛云缓存失败，保留原图：${title} (${String(error?.message || error || 'unknown error')})`)
     return imageUrl
   }
 }
+
 
 module.exports = {
   hasQiniuImageStorageConfigured,

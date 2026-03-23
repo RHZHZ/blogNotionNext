@@ -1,10 +1,12 @@
 const fs = require('fs/promises')
 const path = require('path')
 const { loadLocalEnv } = require('./load-local-env')
-const { cacheImageToQiniu } = require('./qiniu-image-cache')
 
 
 loadLocalEnv()
+
+const { cacheImageToQiniu } = require('./qiniu-image-cache')
+
 
 const ROOT = process.cwd()
 
