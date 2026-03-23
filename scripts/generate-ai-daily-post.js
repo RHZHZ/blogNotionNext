@@ -289,8 +289,12 @@ async function main() {
   const title = `每日 AI 情报｜${candidates.date || targetDate}`
   const slug = `daily-ai-news-${candidates.date || targetDate}`
   let markdown = ''
+  let generationMode = 'template'
+  let generationStatus = 'fallback'
+  let generationWarning = ''
 
   const apiUrl = process.env.AI_DAILY_API || process.env.AI_SUMMARY_API || ''
+
   const apiKey = process.env.AI_DAILY_KEY || process.env.AI_SUMMARY_KEY || ''
 
   if (apiUrl && apiKey) {
