@@ -1,6 +1,8 @@
 const fs = require('fs/promises')
 const path = require('path')
 const { loadLocalEnv } = require('./load-local-env')
+const { cacheImageToQiniu } = require('./qiniu-image-cache')
+
 
 loadLocalEnv()
 
@@ -81,13 +83,70 @@ function buildInsightTitle(item = {}, index = 0) {
 
 function stripAiInsertedImages(markdown = '') {
   return String(markdown || '')
-    .replace(/^!\[[^\]]*\]\((https?:\/\/[^)]+)\)\s*$/gm, '')
+    .replace(/^!\[.*\]\((https?:\/\/[^)]+)\)\s*$/gm, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim()
 }
 
-function injectItemImagesIntoMarkdown(markdown = '', items = []) {
+function normalizeForMatch(value = '') {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/\[[^\]]+\]/g, ' ')
+    .replace(/https?:\/\/\S+/g, ' ')
+    .replace(/[“”"'‘’《》【】\[\](){}:：,，.。!！?？、\-_/]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
 
+function buildItemMatchTokens(item = {}) {
+  const values = [item.title, item.summary, item.source, item.category]
+  const tokenSet = new Set()
+
+  for (const value of values) {
+    const normalized = normalizeForMatch(stripMarkdown(value || ''))
+    if (!normalized) continue
+
+    for (const token of normalized.split(' ')) {
+      if (token.length >= 4) tokenSet.add(token)
+    }
+  }
+
+  return Array.from(tokenSet)
+}
+
+function findBestImageItemForSection(sectionText = '', items = [], usedItemIds = new Set()) {
+  const normalizedSection = normalizeForMatch(stripMarkdown(sectionText || ''))
+  if (!normalizedSection) return null
+
+  let bestItem = null
+  let bestScore = 0
+
+  for (const item of items) {
+    const image = String(item?.image || '').trim()
+    if (!image || usedItemIds.has(item.id)) continue
+
+    const title = normalizeForMatch(stripMarkdown(item.title || ''))
+    const summary = normalizeForMatch(stripMarkdown(item.summary || ''))
+    const tokens = buildItemMatchTokens(item)
+
+    let score = 0
+    if (title && normalizedSection.includes(title)) score += 12
+    if (summary && (normalizedSection.includes(summary) || summary.includes(normalizedSection))) score += 8
+
+    for (const token of tokens) {
+      if (normalizedSection.includes(token)) score += token.length >= 8 ? 2 : 1
+    }
+
+    if (score > bestScore) {
+      bestScore = score
+      bestItem = item
+    }
+  }
+
+  return bestScore >= 2 ? bestItem : null
+}
+
+async function injectItemImagesIntoMarkdown(markdown = '', items = [], publishDate = '') {
   const lines = String(markdown || '').replace(/\r\n/g, '\n').split('\n')
   const headings = []
 
@@ -100,28 +159,32 @@ function injectItemImagesIntoMarkdown(markdown = '', items = []) {
   if (!headings.length) return markdown
 
   const result = [...lines]
+  const usedItemIds = new Set()
   let offset = 0
-  const count = Math.min(headings.length, items.length)
 
-  for (let i = 0; i < count; i += 1) {
-    const item = items[i]
-    const image = String(item?.image || '').trim()
-    if (!image) continue
-
+  for (let i = 0; i < headings.length; i += 1) {
     const start = headings[i] + offset
     const nextHeading = i + 1 < headings.length ? headings[i + 1] + offset : result.length
-    const sectionLines = result.slice(start + 1, nextHeading)
-    const alreadyHasImage = sectionLines.some(line => /^!\[[^\]]*\]\((https?:\/\/[^)]+)\)$/.test(line.trim()))
+    const sectionLines = result.slice(start, nextHeading)
+    const alreadyHasImage = sectionLines.slice(1).some(line => /^!\[[^\]]*\]\((https?:\/\/[^)]+)\)$/.test(line.trim()))
     if (alreadyHasImage) continue
 
+    const matchedItem = findBestImageItemForSection(sectionLines.join('\n'), items, usedItemIds)
+    const originalImage = String(matchedItem?.image || '').trim()
+    if (!originalImage) continue
+
+    const image = await cacheImageToQiniu(matchedItem, originalImage, publishDate)
     const insertAt = start + 1
-    const alt = stripMarkdown(item.title || `AI 情报配图 ${i + 1}`)
-    result.splice(insertAt, 0, `![${alt}](${image})`, '')
+    const alt = stripMarkdown(matchedItem.title || `AI 情报配图 ${i + 1}`)
+    result.splice(insertAt, 0, `![${alt}](${image || originalImage})`, '')
+    usedItemIds.add(matchedItem.id)
     offset += 2
   }
 
   return result.join('\n')
 }
+
+
 
 
 
@@ -425,9 +488,10 @@ async function main() {
 
 
   markdown = stripAiInsertedImages(markdown)
-  markdown = injectItemImagesIntoMarkdown(markdown, items)
+  markdown = await injectItemImagesIntoMarkdown(markdown, items, candidates.date || targetDate)
 
   const summary = extractSummaryFromMarkdown(markdown) || '今天最值得看的，不是某个模型参数更新，而是 AI 系统开始全面转向可执行、可治理、可持续运行的工程阶段。'
+
 
 
   const cover = process.env.AI_DAILY_DEFAULT_COVER || 'https://s41.ax1x.com/2026/03/23/peKAi7T.jpg'
