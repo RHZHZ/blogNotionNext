@@ -1,0 +1,43 @@
+{
+  "items": [
+    {
+      "title": "OpenAI 发布新一代 Agent 工作流能力",
+      "url": "https://example.com/openai-agent-update",
+      "source": "OpenAI Blog",
+      "publishedAt": "2026-03-23T06:30:00Z",
+      "category": "Agent / 开发者工具",
+      "summary": "官方公布新的 Agent 工作流能力，重点增强多步骤任务编排与工具调用能力。",
+      "sourceType": "official",
+      "credibility": 5,
+      "developerValue": 5,
+      "industryImpact": 5,
+      "whyItMatters": "这类更新通常会直接影响开发者工作流设计，也会改变 Agent 产品的落地方式。"
+    },
+    {
+      "title": "Anthropic 更新 Claude API 工具调用能力",
+      "url": "https://example.com/anthropic-tool-use",
+      "source": "Anthropic News",
+      "publishedAt": "2026-03-23T04:10:00Z",
+      "category": "模型 / API",
+      "summary": "Claude API 在工具调用与结构化输出方面出现新进展。",
+      "sourceType": "official",
+      "credibility": 5,
+      "developerValue": 4,
+      "industryImpact": 4,
+      "whyItMatters": "API 能力变化通常比概念消息更值得开发者关注，因为它会直接影响接入成本与可实现性。"
+    },
+    {
+      "title": "Hugging Face 上线新开源多模态模型",
+      "url": "https://example.com/hf-multimodal-model",
+      "source": "Hugging Face",
+      "publishedAt": "2026-03-22T20:00:00Z",
+      "category": "开源 / 多模态",
+      "summary": "一款新的开源多模态模型发布，并附带推理与微调示例。",
+      "sourceType": "official",
+      "credibility": 4,
+      "developerValue": 4,
+      "industryImpact": 3,
+      "whyItMatters": "开源模型能否快速提供示例与可复现路径，决定了它是否会真正进入开发者视野。"
+    }
+  ]
+}

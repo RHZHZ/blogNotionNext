@@ -1468,6 +1468,98 @@ const Style = () => {
             mix-blend-mode: soft-light;
         }
 
+        #theme-heo[data-heo-season="spring"] #category-bar {
+            --heo-category-bar-bg: linear-gradient(135deg, rgba(255, 248, 252, 0.9), rgba(247, 252, 249, 0.82));
+            --heo-category-bar-border: rgba(244, 163, 189, 0.3);
+            --heo-category-chip-hover-border: rgba(244, 163, 189, 0.34);
+            --heo-category-chip-selected-bg: linear-gradient(135deg, rgba(251, 207, 232, 0.4), rgba(187, 247, 208, 0.32));
+            --heo-category-chip-selected-border: rgba(244, 163, 189, 0.42);
+            --heo-category-chip-selected-text: rgba(157, 23, 77, 0.96);
+            --heo-category-chip-selected-shadow: 0 14px 28px rgba(244, 163, 189, 0.16);
+            --heo-category-action-hover-border: rgba(244, 163, 189, 0.34);
+            --heo-category-action-hover-text: rgba(157, 23, 77, 0.96);
+        }
+
+        #theme-heo[data-heo-season="summer"] #category-bar {
+            --heo-category-bar-bg: linear-gradient(135deg, rgba(244, 253, 255, 0.9), rgba(236, 253, 245, 0.82));
+            --heo-category-bar-border: rgba(34, 211, 238, 0.28);
+            --heo-category-chip-hover-border: rgba(34, 211, 238, 0.34);
+            --heo-category-chip-selected-bg: linear-gradient(135deg, rgba(186, 230, 253, 0.38), rgba(167, 243, 208, 0.32));
+            --heo-category-chip-selected-border: rgba(34, 211, 238, 0.38);
+            --heo-category-chip-selected-text: rgba(14, 116, 144, 0.96);
+            --heo-category-chip-selected-shadow: 0 14px 28px rgba(34, 211, 238, 0.16);
+            --heo-category-action-hover-border: rgba(34, 211, 238, 0.32);
+            --heo-category-action-hover-text: rgba(14, 116, 144, 0.96);
+        }
+
+        #theme-heo[data-heo-season="autumn"] #category-bar {
+            --heo-category-bar-bg: linear-gradient(135deg, rgba(255, 250, 241, 0.92), rgba(255, 244, 230, 0.84));
+            --heo-category-bar-border: rgba(249, 115, 22, 0.3);
+            --heo-category-chip-hover-border: rgba(249, 115, 22, 0.34);
+            --heo-category-chip-selected-bg: linear-gradient(135deg, rgba(254, 215, 170, 0.42), rgba(253, 230, 138, 0.3));
+            --heo-category-chip-selected-border: rgba(249, 115, 22, 0.4);
+            --heo-category-chip-selected-text: rgba(194, 65, 12, 0.96);
+            --heo-category-chip-selected-shadow: 0 14px 28px rgba(249, 115, 22, 0.16);
+            --heo-category-action-hover-border: rgba(249, 115, 22, 0.34);
+            --heo-category-action-hover-text: rgba(194, 65, 12, 0.96);
+        }
+
+        #theme-heo[data-heo-season="winter"] #category-bar {
+            --heo-category-bar-bg: linear-gradient(135deg, rgba(248, 251, 255, 0.9), rgba(241, 245, 249, 0.84));
+            --heo-category-bar-border: rgba(148, 163, 184, 0.32);
+            --heo-category-chip-hover-border: rgba(148, 163, 184, 0.34);
+            --heo-category-chip-selected-bg: linear-gradient(135deg, rgba(219, 234, 254, 0.42), rgba(224, 242, 254, 0.3));
+            --heo-category-chip-selected-border: rgba(148, 163, 184, 0.4);
+            --heo-category-chip-selected-text: rgba(51, 65, 85, 0.96);
+            --heo-category-chip-selected-shadow: 0 14px 28px rgba(148, 163, 184, 0.15);
+            --heo-category-action-hover-border: rgba(148, 163, 184, 0.34);
+            --heo-category-action-hover-text: rgba(51, 65, 85, 0.94);
+        }
+
+        html.dark #theme-heo[data-heo-season="spring"] #category-bar {
+            --heo-category-bar-bg: linear-gradient(135deg, rgba(49, 24, 40, 0.88), rgba(20, 33, 29, 0.8));
+            --heo-category-bar-border: rgba(244, 163, 189, 0.24);
+            --heo-category-chip-hover-border: rgba(244, 163, 189, 0.26);
+            --heo-category-chip-selected-bg: linear-gradient(135deg, rgba(136, 19, 55, 0.34), rgba(21, 128, 61, 0.22));
+            --heo-category-chip-selected-border: rgba(244, 163, 189, 0.3);
+            --heo-category-chip-selected-text: rgba(255, 228, 240, 0.96);
+            --heo-category-action-hover-border: rgba(244, 163, 189, 0.24);
+            --heo-category-action-hover-text: rgba(255, 228, 240, 0.96);
+        }
+
+        html.dark #theme-heo[data-heo-season="summer"] #category-bar {
+            --heo-category-bar-bg: linear-gradient(135deg, rgba(8, 47, 73, 0.86), rgba(15, 23, 42, 0.8));
+            --heo-category-bar-border: rgba(34, 211, 238, 0.24);
+            --heo-category-chip-hover-border: rgba(34, 211, 238, 0.26);
+            --heo-category-chip-selected-bg: linear-gradient(135deg, rgba(8, 145, 178, 0.28), rgba(13, 148, 136, 0.24));
+            --heo-category-chip-selected-border: rgba(34, 211, 238, 0.3);
+            --heo-category-chip-selected-text: rgba(224, 242, 254, 0.96);
+            --heo-category-action-hover-border: rgba(34, 211, 238, 0.24);
+            --heo-category-action-hover-text: rgba(224, 242, 254, 0.96);
+        }
+
+        html.dark #theme-heo[data-heo-season="autumn"] #category-bar {
+            --heo-category-bar-bg: linear-gradient(135deg, rgba(68, 39, 23, 0.88), rgba(41, 37, 36, 0.82));
+            --heo-category-bar-border: rgba(249, 115, 22, 0.24);
+            --heo-category-chip-hover-border: rgba(249, 115, 22, 0.28);
+            --heo-category-chip-selected-bg: linear-gradient(135deg, rgba(154, 52, 18, 0.34), rgba(180, 83, 9, 0.24));
+            --heo-category-chip-selected-border: rgba(249, 115, 22, 0.3);
+            --heo-category-chip-selected-text: rgba(255, 237, 213, 0.96);
+            --heo-category-action-hover-border: rgba(249, 115, 22, 0.26);
+            --heo-category-action-hover-text: rgba(255, 237, 213, 0.96);
+        }
+
+        html.dark #theme-heo[data-heo-season="winter"] #category-bar {
+            --heo-category-bar-bg: linear-gradient(135deg, rgba(30, 41, 59, 0.88), rgba(15, 23, 42, 0.82));
+            --heo-category-bar-border: rgba(148, 163, 184, 0.22);
+            --heo-category-chip-hover-border: rgba(191, 219, 254, 0.24);
+            --heo-category-chip-selected-bg: linear-gradient(135deg, rgba(51, 65, 85, 0.36), rgba(37, 99, 235, 0.18));
+            --heo-category-chip-selected-border: rgba(191, 219, 254, 0.26);
+            --heo-category-chip-selected-text: rgba(239, 246, 255, 0.96);
+            --heo-category-action-hover-border: rgba(191, 219, 254, 0.22);
+            --heo-category-action-hover-text: rgba(239, 246, 255, 0.96);
+        }
+
         body {
             background-color: #f7f9fe;
             background-image: radial-gradient(rgba(60, 132, 246, 0.03) 1px, transparent 0);

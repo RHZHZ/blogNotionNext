@@ -47,7 +47,13 @@
     "validate": "npm run health-check",
     "final-validation": "node scripts/final-validation.js",
     "test:booklist": "node scripts/test-booklist-api.js",
-    "archive-audio-notion": "node scripts/archive-audio-to-notion-standalone.js"
+    "archive-audio-notion": "node scripts/archive-audio-to-notion-standalone.js",
+    "ai-daily:fetch": "node scripts/fetch-ai-daily-source-items.js",
+    "ai-daily:candidates": "node scripts/generate-ai-daily-candidates.js",
+    "ai-daily:post": "node scripts/generate-ai-daily-post.js",
+    "ai-daily:publish": "node scripts/publish-ai-daily-to-notion.js",
+    "ai-daily:dry-run": "cross-env AI_DAILY_DRY_RUN=1 npm run ai-daily:run",
+    "ai-daily:run": "npm run ai-daily:fetch && npm run ai-daily:candidates && npm run ai-daily:post && npm run ai-daily:publish"
   },
   "dependencies": {
     "@clerk/localizations": "^3.17.1",

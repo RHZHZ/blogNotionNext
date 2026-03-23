@@ -1,0 +1,168 @@
+{
+  "strategy": {
+    "mode": "lean-default",
+    "description": "面向 RHZ 博客的长期精简来源集：优先官方一手源与开发者价值高的来源，尽量减少媒体噪音。"
+  },
+  "groups": [
+    {
+      "name": "官方核心源",
+      "priority": 1,
+      "description": "长期默认启用的一手来源，优先级最高。",
+      "sources": [
+        {
+          "name": "OpenAI Blog",
+          "url": "https://openai.com/news/rss.xml",
+          "type": "rss",
+          "category": "模型 / 产品",
+          "sourceType": "official",
+          "tier": "core",
+          "credibility": 5,
+          "developerValue": 5,
+          "industryImpact": 5,
+          "enabled": true
+        },
+        {
+          "name": "Anthropic News",
+          "url": "https://www.anthropic.com/news/rss.xml",
+          "type": "rss",
+          "category": "模型 / API",
+          "sourceType": "official",
+          "tier": "core",
+          "credibility": 5,
+          "developerValue": 5,
+          "industryImpact": 5,
+          "enabled": false
+        },
+        {
+          "name": "Google DeepMind Blog",
+          "url": "https://blog.google/technology/ai/rss/",
+          "type": "rss",
+          "category": "模型 / 研究",
+          "sourceType": "official",
+          "tier": "core",
+          "credibility": 5,
+          "developerValue": 4,
+          "industryImpact": 5,
+          "enabled": true
+        },
+        {
+          "name": "Hugging Face Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "type": "rss",
+          "category": "开源 / 模型",
+          "sourceType": "official",
+          "tier": "core",
+          "credibility": 4,
+          "developerValue": 5,
+          "industryImpact": 4,
+          "enabled": false
+        }
+      ]
+    },
+    {
+      "name": "开发者与开源辅助源",
+      "priority": 2,
+      "description": "更偏开发者工具、Agent 与开源生态，适合作为核心源补充。",
+      "sources": [
+        {
+          "name": "Vercel AI",
+          "url": "https://vercel.com/blog/rss.xml",
+          "type": "rss",
+          "category": "开发者工具 / Agent",
+          "sourceType": "official",
+          "tier": "developer",
+          "credibility": 4,
+          "developerValue": 5,
+          "industryImpact": 4,
+          "enabled": false
+        },
+        {
+          "name": "LangChain Blog",
+          "url": "https://blog.langchain.dev/rss/",
+          "type": "rss",
+          "category": "Agent / 开发者工具",
+          "sourceType": "official",
+          "tier": "developer",
+          "credibility": 4,
+          "developerValue": 5,
+          "industryImpact": 4,
+          "enabled": true
+        },
+        {
+          "name": "GitHub Blog AI",
+          "url": "https://github.blog/tag/ai/feed/",
+          "type": "rss",
+          "category": "开发者工具 / 平台",
+          "sourceType": "official",
+          "tier": "developer",
+          "credibility": 4,
+          "developerValue": 4,
+          "industryImpact": 4,
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "name": "可选扩展源",
+      "priority": 3,
+      "description": "只有在你想扩展覆盖面时再手动启用，默认关闭以减少噪音。",
+      "sources": [
+        {
+          "name": "Meta AI Blog",
+          "url": "https://ai.meta.com/blog/rss/",
+          "type": "rss",
+          "category": "模型 / 研究",
+          "sourceType": "official",
+          "tier": "core",
+          "credibility": 5,
+          "developerValue": 4,
+          "industryImpact": 5,
+          "enabled": false
+        },
+        {
+          "name": "TechCrunch AI",
+          "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+          "type": "rss",
+          "category": "行业 / 媒体",
+          "sourceType": "media",
+          "tier": "media",
+          "credibility": 4,
+          "developerValue": 3,
+          "industryImpact": 4,
+          "enabled": false
+        },
+        {
+          "name": "The Verge AI",
+          "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+          "type": "rss",
+          "category": "行业 / 媒体",
+          "sourceType": "media",
+          "tier": "media",
+          "credibility": 4,
+          "developerValue": 3,
+          "industryImpact": 4,
+          "enabled": false
+        }
+      ]
+    },
+    {
+      "name": "本地调试与实验源",
+      "priority": 9,
+      "description": "仅用于本地验证或临时接入，不建议长期默认启用。",
+      "sources": [
+        {
+          "name": "本地 JSON 示例",
+          "url": "./temp/ai-daily-source-items.sample.json",
+          "type": "json",
+          "category": "示例",
+          "sourceType": "local",
+          "tier": "debug",
+          "credibility": 3,
+          "developerValue": 3,
+          "industryImpact": 3,
+          "enabled": false
+        }
+      ]
+    }
+  ]
+}

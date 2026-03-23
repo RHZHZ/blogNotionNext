@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="5" failures="0" errors="0" time="1.391">
-  <testsuite name="components/NotionPage helpers" errors="0" failures="0" skipped="0" timestamp="2026-03-13T16:48:51" time="0.663" tests="5">
-    <testcase classname="components/NotionPage helpers adds heo media markers without breaking gallery structure" name="components/NotionPage helpers adds heo media markers without breaking gallery structure" time="0.024">
+<testsuites name="jest tests" tests="6" failures="0" errors="0" time="1.041">
+  <testsuite name="components/NotionPage helpers" errors="0" failures="0" skipped="0" timestamp="2026-03-14T07:20:02" time="0.557" tests="6">
+    <testcase classname="components/NotionPage helpers adds heo media markers without breaking gallery structure" name="components/NotionPage helpers adds heo media markers without breaking gallery structure" time="0.022">
     </testcase>
-    <testcase classname="components/NotionPage helpers enables two-column gallery layout on mobile widths" name="components/NotionPage helpers enables two-column gallery layout on mobile widths" time="0.005">
+    <testcase classname="components/NotionPage helpers enables two-column gallery layout on mobile widths" name="components/NotionPage helpers enables two-column gallery layout on mobile widths" time="0.007">
     </testcase>
     <testcase classname="components/NotionPage helpers marks mixed-stack gallery metadata correctly" name="components/NotionPage helpers marks mixed-stack gallery metadata correctly" time="0.003">
     </testcase>
     <testcase classname="components/NotionPage helpers cleans stale gallery metadata when row no longer qualifies" name="components/NotionPage helpers cleans stale gallery metadata when row no longer qualifies" time="0.006">
     </testcase>
-    <testcase classname="components/NotionPage helpers applies reading enhancements through the unified entry" name="components/NotionPage helpers applies reading enhancements through the unified entry" time="0.005">
+    <testcase classname="components/NotionPage helpers removes blank placeholder nodes during article enhancement" name="components/NotionPage helpers removes blank placeholder nodes during article enhancement" time="0.004">
+    </testcase>
+    <testcase classname="components/NotionPage helpers applies reading enhancements through the unified entry" name="components/NotionPage helpers applies reading enhancements through the unified entry" time="0.003">
     </testcase>
   </testsuite>
 </testsuites>

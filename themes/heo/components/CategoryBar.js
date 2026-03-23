@@ -88,7 +88,16 @@ export default function CategoryBar(props) {
         </button>
         <SmartLink
           href='/category'
-          className='inline-flex h-9 items-center rounded-[1.1rem] px-2.5 text-sm font-semibold whitespace-nowrap text-slate-800 transition-colors duration-200 hover:text-slate-600 dark:text-slate-100 dark:hover:text-slate-200'>
+          style={{
+            borderColor: 'var(--heo-category-action-border)',
+            background: 'var(--heo-category-action-bg)',
+            color: 'var(--heo-category-action-text)',
+            boxShadow: '0 10px 24px rgba(15, 23, 42, 0.06)',
+            backdropFilter: 'saturate(170%) blur(16px)',
+            WebkitBackdropFilter: 'saturate(170%) blur(16px)'
+          }}
+          className='inline-flex h-9 items-center rounded-[1.1rem] border px-2.5 text-sm font-semibold whitespace-nowrap transition-colors duration-200'>
+
           {locale.MENU.CATEGORY}
         </SmartLink>
       </div>
@@ -121,6 +130,20 @@ const MenuItem = ({ href, name }) => {
   return (
     <SmartLink
       href={href}
+      style={{
+        borderColor: selected
+          ? 'var(--heo-category-chip-selected-border)'
+          : 'var(--heo-category-chip-border)',
+        background: selected
+          ? 'var(--heo-category-chip-selected-bg)'
+          : 'var(--heo-category-chip-bg)',
+        color: selected
+          ? 'var(--heo-category-chip-selected-text)'
+          : 'var(--heo-category-chip-text)',
+        boxShadow: selected
+          ? 'var(--heo-category-chip-selected-shadow)'
+          : 'inset 0 1px 0 rgba(255, 255, 255, 0.66)'
+      }}
       className={`category-bar-item inline-flex flex-shrink-0 items-center rounded-xl border px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 ${
         selected ? 'selected' : ''
       }`}>
