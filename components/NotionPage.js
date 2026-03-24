@@ -285,7 +285,7 @@ const NotionPage = ({ post, className }) => {
     <div
       id='notion-article'
       data-heo-reading-surface='true'
-      className={`mx-auto overflow-hidden ${className || ''}`}>
+      className={`mx-auto overflow-visible ${className || ''}`}>
       {post?.blockMap?.block ? (
         <NotionRenderer
           recordMap={post?.blockMap}

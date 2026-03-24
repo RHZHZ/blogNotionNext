@@ -178,12 +178,12 @@ const InlineIslandAudio = (props) => {
 
   if (isPodcast) {
     return (
-      <section className='my-4'>
+      <section className='my-4 px-1 sm:px-0'>
         <div
-          className={`group relative overflow-hidden rounded-[1.35rem] border backdrop-blur-sm transition-all duration-300 ${
+          className={`group relative rounded-[1.35rem] border backdrop-blur-sm transition-all duration-300 ${
             isDark
-              ? 'border-white/8 bg-[rgba(15,23,42,0.72)] shadow-[0_16px_34px_rgba(2,6,23,0.24)]'
-              : 'border-white/70 bg-[rgba(255,255,255,0.82)] shadow-[0_14px_30px_rgba(15,23,42,0.08)]'
+              ? 'border-white/12 bg-[rgba(15,23,42,0.56)] shadow-[0_8px_22px_rgba(2,6,23,0.18)] ring-1 ring-inset ring-white/6'
+              : 'border-slate-200/90 bg-[rgba(255,255,255,0.9)] shadow-[0_6px_18px_rgba(15,23,42,0.05)] ring-1 ring-inset ring-white/70'
           } ${isAvailable ? 'cursor-pointer hover:-translate-y-[1px]' : 'cursor-not-allowed opacity-70'}`}
           onClick={handlePlay}
           role='button'
@@ -196,7 +196,7 @@ const InlineIslandAudio = (props) => {
             }
           }}
         >
-          <div className={`absolute inset-0 opacity-70 ${isDark ? 'bg-[radial-gradient(circle_at_top_left,rgba(96,165,250,0.12),transparent_38%)]' : 'bg-[radial-gradient(circle_at_top_left,rgba(96,165,250,0.08),transparent_38%)]'}`} />
+          <div className={`pointer-events-none absolute inset-0 rounded-[inherit] opacity-70 ${isDark ? 'bg-[radial-gradient(circle_at_top_left,rgba(96,165,250,0.08),transparent_42%)]' : 'bg-[radial-gradient(circle_at_top_left,rgba(96,165,250,0.05),transparent_42%)]'}`} />
 
           <div className='relative flex items-center gap-3 px-3.5 py-3 sm:gap-4 sm:px-4'>
             <div className='relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl ring-1 ring-black/5 dark:ring-white/10 sm:h-16 sm:w-16'>
@@ -224,11 +224,11 @@ const InlineIslandAudio = (props) => {
 
             <div className='min-w-0 flex-1'>
               <div className='flex items-center gap-2'>
-                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-[0.14em] ${isDark ? 'bg-white/10 text-white/72' : 'bg-slate-100 text-slate-500'}`}>
+                <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-[0.14em] ${isDark ? 'border-white/10 bg-white/6 text-white/72' : 'border-slate-200 bg-slate-50 text-slate-500'}`}>
                   PODCAST
                 </span>
                 {isPlaying ? (
-                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${isDark ? 'bg-emerald-400/10 text-emerald-200' : 'bg-emerald-100 text-emerald-700'}`}>
+                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${isDark ? 'bg-emerald-400/10 text-emerald-200' : 'bg-emerald-50 text-emerald-700'}`}>
                     播放中
                   </span>
                 ) : null}
@@ -253,8 +253,8 @@ const InlineIslandAudio = (props) => {
               }}
               className={`shrink-0 rounded-full border px-3.5 py-2 text-xs font-semibold transition duration-200 sm:px-4 ${
                 isDark
-                  ? 'border-white/12 bg-white/6 text-white/88 hover:bg-white/10'
-                  : 'border-slate-300/90 bg-white/86 text-slate-700 hover:bg-white'
+                  ? 'border-white/14 bg-white/7 text-white/88 hover:bg-white/12'
+                  : 'border-slate-300 bg-white/92 text-slate-700 hover:bg-white'
               }`}
             >
               {isPlaying ? '暂停' : '收听'}
