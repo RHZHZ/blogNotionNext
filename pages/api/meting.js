@@ -415,6 +415,8 @@ function applyAudioMetaToTrack(track, candidate, audioMetaMaps) {
       sourceUrl: audioMetaEntry.sourceAudioUrl || audioMetaEntry.rawUrl || normalizedTrack.meta?.sourceUrl || normalizedTrack.url || '',
       playlistOrder: audioMetaEntry.playlistOrder ?? normalizedTrack.meta?.playlistOrder ?? candidate?.meta?.playlistOrder ?? null,
       originalIndex: normalizedTrack.meta?.originalIndex ?? candidate?.meta?.originalIndex ?? null,
+      isPodcast: Boolean(audioMetaEntry.isPodcast),
+      pcDescription: audioMetaEntry.pcDescription || '',
       audioArchive: {
         matched: true,
         by: audioMetaEntry.trackId ? 'trackId' : 'audioKey',

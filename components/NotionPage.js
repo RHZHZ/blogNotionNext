@@ -317,10 +317,25 @@ const normalizeArticleAudioKey = url => {
   }
 }
 
+const buildArticleAudioKeyVariants = rawValue => {
+  const normalized = normalizeArticleAudioKey(rawValue)
+  if (!normalized) return []
+
+  const variants = new Set([normalized])
+  const withoutExt = normalized.replace(/\.[a-z0-9]{1,8}$/i, '')
+  if (withoutExt && withoutExt !== normalized) {
+    variants.add(withoutExt)
+  }
+
+  return Array.from(variants)
+}
+
 const resolveArticleAudioMeta = ({ metaMap, audioKey }) => {
   if (!metaMap || !audioKey) return null
 
-  return metaMap[audioKey] || metaMap?.byAudioKey?.[audioKey] || null
+  return buildArticleAudioKeyVariants(audioKey)
+    .map(key => metaMap[key] || metaMap?.byAudioKey?.[key] || null)
+    .find(Boolean) || null
 }
 
 const logArticleAudioMetaFallback = ({ reason, audioKey, url }) => {
@@ -365,6 +380,26 @@ const fetchArticleAudioMetaMap = async ARTICLE_META_ENABLE => {
 const mountInlineIslandAudio = ({ block, audioTag, url, meta }) => {
   if (!block || !audioTag || !url) return
 
+  if (typeof window !== 'undefined' && meta?.isPodcast) {
+    const detail = {
+      url,
+      resolvedUrl: meta.archivedAudioUrl || meta.rawUrl || url,
+      title: meta.name || getArticleAudioDefaultTitle(block),
+      artist: meta.artist || '',
+      cover: meta.cover || '',
+      description: meta.pcDescription || '',
+      lrc: meta.lrc || '',
+      isPodcast: true
+    }
+
+    window.__HEO_LAST_PODCAST_META__ = detail
+    window.dispatchEvent(
+      new CustomEvent('heo-podcast-meta-ready', {
+        detail
+      })
+    )
+  }
+
   const existingContainer = block.querySelector(':scope > [data-inline-island-audio="true"]')
   if (existingContainer?.dataset?.mounted === 'true') {
     block.classList.add('island-converted')
@@ -398,6 +433,8 @@ const mountInlineIslandAudio = ({ block, audioTag, url, meta }) => {
       cover={meta.cover}
       lrc={meta.lrc}
       album={meta.album}
+      isPodcast={Boolean(meta.isPodcast)}
+      description={meta.pcDescription || ''}
     />
   )
 }

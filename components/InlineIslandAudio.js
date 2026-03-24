@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 const DEFAULT_TITLE = '文章音频'
 const DEFAULT_ARTIST = 'RHZ'
 const DEFAULT_COVER = '/avatar.png'
+const DEFAULT_PODCAST_DESCRIPTION = '这篇文章提供了可直接收听的播客版本。'
 
 const normalizeText = value => {
   if (typeof value !== 'string') return ''
@@ -32,7 +33,9 @@ const InlineIslandAudio = (props) => {
     title: propsTitle,
     artist: propsArtist,
     cover: propsCover,
-    lrc: propsLrc
+    lrc: propsLrc,
+    isPodcast = false,
+    description: propsDescription = ''
   } = props
 
   const [isPlaying, setIsPlaying] = useState(false)
@@ -56,6 +59,10 @@ const InlineIslandAudio = (props) => {
     [propsCover]
   )
   const lrc = useMemo(() => normalizeText(propsLrc), [propsLrc])
+  const description = useMemo(
+    () => normalizeText(propsDescription) || DEFAULT_PODCAST_DESCRIPTION,
+    [propsDescription]
+  )
   const isAvailable = Boolean(source)
 
   useEffect(() => {
@@ -130,7 +137,7 @@ const InlineIslandAudio = (props) => {
   }, [source])
 
   const handlePlay = e => {
-    e.preventDefault()
+    e?.preventDefault?.()
     const ap = window.__APPLAYER__
     const audios = ap?.list?.audios || []
 
@@ -155,13 +162,114 @@ const InlineIslandAudio = (props) => {
           artist,
           url: source,
           cover,
-          lrc
+          lrc,
+          meta: {
+            isPodcast,
+            pcDescription: description || '',
+            sourceUrl: source
+          }
         }
       ])
       ap.list.switch(audios.length)
     }
 
     ap.play()
+  }
+
+  if (isPodcast) {
+    return (
+      <section className='my-4'>
+        <div
+          className={`group relative overflow-hidden rounded-[1.35rem] border backdrop-blur-sm transition-all duration-300 ${
+            isDark
+              ? 'border-white/8 bg-[rgba(15,23,42,0.72)] shadow-[0_16px_34px_rgba(2,6,23,0.24)]'
+              : 'border-white/70 bg-[rgba(255,255,255,0.82)] shadow-[0_14px_30px_rgba(15,23,42,0.08)]'
+          } ${isAvailable ? 'cursor-pointer hover:-translate-y-[1px]' : 'cursor-not-allowed opacity-70'}`}
+          onClick={handlePlay}
+          role='button'
+          tabIndex={isAvailable ? 0 : -1}
+          aria-disabled={!isAvailable}
+          onKeyDown={e => {
+            if (!isAvailable) return
+            if (e.key === 'Enter' || e.key === ' ') {
+              handlePlay(e)
+            }
+          }}
+        >
+          <div className={`absolute inset-0 opacity-70 ${isDark ? 'bg-[radial-gradient(circle_at_top_left,rgba(96,165,250,0.12),transparent_38%)]' : 'bg-[radial-gradient(circle_at_top_left,rgba(96,165,250,0.08),transparent_38%)]'}`} />
+
+          <div className='relative flex items-center gap-3 px-3.5 py-3 sm:gap-4 sm:px-4'>
+            <div className='relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl ring-1 ring-black/5 dark:ring-white/10 sm:h-16 sm:w-16'>
+              <div
+                className={`h-full w-full bg-cover bg-center transition duration-500 ${isPlaying ? 'scale-[1.04]' : 'scale-100'}`}
+                style={{ backgroundImage: `url(${cover})` }}
+              />
+              <div className='absolute inset-0 bg-black/10' />
+              {isPlaying ? (
+                <div className='absolute inset-x-0 bottom-1.5 flex justify-center gap-0.5'>
+                  {[1, 2, 3].map((item, index) => (
+                    <span
+                      key={`${item}-${index}`}
+                      className='block w-0.5 rounded-full bg-white/90'
+                      style={{
+                        height: `${7 + item * 2}px`,
+                        animation: 'podcastWave 0.72s ease-in-out infinite alternate',
+                        animationDelay: `${index * 0.12}s`
+                      }}
+                    />
+                  ))}
+                </div>
+              ) : null}
+            </div>
+
+            <div className='min-w-0 flex-1'>
+              <div className='flex items-center gap-2'>
+                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-[0.14em] ${isDark ? 'bg-white/10 text-white/72' : 'bg-slate-100 text-slate-500'}`}>
+                  PODCAST
+                </span>
+                {isPlaying ? (
+                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${isDark ? 'bg-emerald-400/10 text-emerald-200' : 'bg-emerald-100 text-emerald-700'}`}>
+                    播放中
+                  </span>
+                ) : null}
+              </div>
+
+              <div className={`mt-1 truncate text-[1.05rem] font-semibold ${isDark ? 'text-white/92' : 'text-slate-800'}`}>
+                {title}
+              </div>
+              <div className={`mt-0.5 truncate text-xs ${isDark ? 'text-white/48' : 'text-slate-500'}`}>
+                {artist}
+              </div>
+              <p className={`mt-1 line-clamp-1 text-[13px] ${isDark ? 'text-white/60' : 'text-slate-500'}`}>
+                {description}
+              </p>
+            </div>
+
+            <button
+              type='button'
+              onClick={e => {
+                e.stopPropagation()
+                handlePlay(e)
+              }}
+              className={`shrink-0 rounded-full border px-3.5 py-2 text-xs font-semibold transition duration-200 sm:px-4 ${
+                isDark
+                  ? 'border-white/12 bg-white/6 text-white/88 hover:bg-white/10'
+                  : 'border-slate-300/90 bg-white/86 text-slate-700 hover:bg-white'
+              }`}
+            >
+              {isPlaying ? '暂停' : '收听'}
+            </button>
+          </div>
+        </div>
+
+        <style jsx>{`
+          @keyframes podcastWave {
+            from { transform: scaleY(0.4); opacity: 0.72; }
+            to { transform: scaleY(1); opacity: 1; }
+          }
+        `}</style>
+      </section>
+    )
   }
 
   return (
@@ -222,7 +330,7 @@ const InlineIslandAudio = (props) => {
 
         {isPlaying && (
           <div className='flex gap-0.5 items-center pr-4 h-4 overflow-hidden self-center'>
-            {[1, 2, 3, 2, 1].map((h, i) => (
+            {[1, 2, 3, 2, 1].map((_, i) => (
               <div
                 key={i}
                 className='w-0.5 bg-blue-400'

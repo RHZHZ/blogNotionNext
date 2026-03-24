@@ -9,6 +9,7 @@ import { formatDateFmt } from '@/lib/utils/formatDate'
 import SmartLink from '@/components/SmartLink'
 import WavesArea from './WavesArea'
 
+
 /**
  * 文章页头
  * @param {*} param0
@@ -205,7 +206,9 @@ export default function PostHeader({ post, siteInfo, isDarkMode }) {
                   </section>
                 </div>
 
+
               </div>
+
             </div>
           </div>
         </div>

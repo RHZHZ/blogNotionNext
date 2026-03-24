@@ -1,0 +1,92 @@
+{
+  "type": "database-detail",
+  "label": "audioMetaDb",
+  "id": "3049daca95bb806889ffe623a8e74e5c",
+  "ok": true,
+  "status": 200,
+  "title": "AudioMeta",
+  "properties": [
+    "SourceAudioUrl",
+    "AudioKey",
+    "trackId",
+    "PCDescription",
+    "Artist",
+    "Name",
+    "Cover",
+    "IsPodcast",
+    "Enabled",
+    "Lyrics",
+    "名称"
+  ]
+}
+{
+  "type": "database-detail",
+  "label": "archiveDb",
+  "id": "31c9daca95bb8046b6c4fff7964ead2d",
+  "ok": true,
+  "status": 200,
+  "title": "ArchiveDB",
+  "properties": [
+    "StorageKey",
+    "StorageProvider",
+    "LastError",
+    "SourceType",
+    "TrackId",
+    "PlaylistOrder",
+    "lrc",
+    "InGlobalPlayer",
+    "SourceAudioUrl",
+    "ArchivedAt",
+    "cover",
+    "AudioKey",
+    "Artist",
+    "ArchivedAudioUrl",
+    "AudioOrigin",
+    "ArchiveStatus",
+    "Enabled",
+    "Name"
+  ]
+}
+{
+  "type": "isPodcast-query",
+  "id": "3049daca95bb806889ffe623a8e74e5c",
+  "ok": true,
+  "status": 200,
+  "resultCount": 2,
+  "samples": [
+    {
+      "pageId": "32d9daca-95bb-80ea-ba73-f5c772c8037b",
+      "propertyNames": [
+        "SourceAudioUrl",
+        "AudioKey",
+        "trackId",
+        "PCDescription",
+        "Artist",
+        "Name",
+        "Cover",
+        "IsPodcast",
+        "Enabled",
+        "Lyrics",
+        "名称"
+      ],
+      "name": ""
+    },
+    {
+      "pageId": "32d9daca-95bb-80f8-9ef7-e4556c873ad0",
+      "propertyNames": [
+        "SourceAudioUrl",
+        "AudioKey",
+        "trackId",
+        "PCDescription",
+        "Artist",
+        "Name",
+        "Cover",
+        "IsPodcast",
+        "Enabled",
+        "Lyrics",
+        "名称"
+      ],
+      "name": ""
+    }
+  ]
+}
