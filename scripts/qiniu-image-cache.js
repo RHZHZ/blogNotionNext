@@ -31,6 +31,8 @@ function inferImageExtension(imageUrl = '', contentType = '') {
   if (normalizedType.includes('image/gif')) return 'gif'
   if (normalizedType.includes('image/svg+xml')) return 'svg'
 
+  if (String(imageUrl || '').startsWith('data:image/svg+xml')) return 'svg'
+
   try {
     const pathname = new URL(imageUrl).pathname || ''
     const matched = pathname.match(/\.([a-z0-9]{2,5})$/i)
@@ -39,6 +41,7 @@ function inferImageExtension(imageUrl = '', contentType = '') {
     return 'jpg'
   }
 }
+
 
 function buildQiniuImageObjectKey(item = {}, imageUrl = '', contentType = '', date = '') {
   const datePart = String(date || '').trim() || new Date().toISOString().slice(0, 10)
@@ -51,7 +54,76 @@ function buildQiniuImageObjectKey(item = {}, imageUrl = '', contentType = '', da
   return `${AI_DAILY_IMAGE_QINIU_KEY_PREFIX}/${datePart}/${titleHash}.${ext}`
 }
 
+function base64UrlEncode(value = '') {
+  return Buffer.from(String(value || ''))
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+}
+
+function signQiniuValue(value = '') {
+  return crypto
+    .createHmac('sha1', QINIU_SECRET_KEY)
+    .update(value)
+    .digest('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+}
+
+function buildQiniuManagementToken(requestPath = '', requestBody = '') {
+  const signingStr = `${requestPath}\n${requestBody || ''}`
+  return `${QINIU_ACCESS_KEY}:${signQiniuValue(signingStr)}`
+}
+
+
+function buildQiniuPublicUrl(objectKey = '') {
+  return `${QINIU_PUBLIC_BASE_URL}/${String(objectKey || '').replace(/^\/+/, '')}`
+}
+
+function escapeXml(value = '') {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function buildWatermarkedSvgImage(dataUrl = '') {
+  const safeDataUrl = escapeXml(dataUrl)
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" rx="32" fill="#0f172a"/>
+  <image href="${safeDataUrl}" x="0" y="0" width="1200" height="630" preserveAspectRatio="xMidYMid slice"/>
+  <rect x="44" y="548" width="1112" height="52" rx="18" fill="rgba(15,23,42,0.72)" stroke="rgba(255,255,255,0.16)"/>
+  <text x="72" y="581" fill="#F8FAFC" font-size="22" font-weight="700">blog: rhzhz.cn</text>
+  <text x="370" y="581" fill="#BFDBFE" font-size="22" font-weight="600">公众号 RHZZZ</text>
+  <text x="646" y="581" fill="#E5E7EB" font-size="20">关注 RHZZZ，持续获取每日 AI 情报</text>
+</svg>`
+}
+
+async function doesQiniuObjectExist(objectKey = '') {
+
+  const encodedEntryUri = base64UrlEncode(`${QINIU_BUCKET}:${objectKey}`)
+  const requestPath = `/stat/${encodedEntryUri}`
+  const accessToken = buildQiniuManagementToken(requestPath)
+  const response = await fetch(`https://rs.qiniuapi.com${requestPath}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `QBox ${accessToken}`
+    }
+  })
+
+  if (response.ok) return true
+  if (response.status === 612) return false
+
+  const body = await response.text().catch(() => '')
+  throw new Error(`七牛云资源检查失败: ${response.status} ${body.slice(0, 200)}`.trim())
+}
+
+
 async function uploadBufferToQiniu({ objectKey, buffer, contentType }) {
+
   const putPolicy = Buffer.from(
     JSON.stringify({
       scope: `${QINIU_BUCKET}:${objectKey}`,
@@ -98,44 +170,79 @@ async function cacheImageToQiniu(item = {}, imageUrl = '', date = '') {
     console.log(`🟡 七牛云未配置，正文图片保留原图：${title}`)
     return imageUrl
   }
-  if (!/^https?:\/\//i.test(String(imageUrl || '').trim())) return imageUrl
   if (String(imageUrl).startsWith(`${QINIU_PUBLIC_BASE_URL}/`)) return imageUrl
 
   try {
-    const response = await fetch(imageUrl, {
-      headers: {
-        'User-Agent': 'RHZ-AI-Daily-Collector/1.0',
-        Referer: item.url || imageUrl
-      },
-      redirect: 'follow'
-    })
+    let contentType = ''
+    let buffer = Buffer.alloc(0)
 
-    if (!response.ok) {
-      console.warn(`🟠 图片抓取失败，保留原图：${title} (${response.status})`)
-      return imageUrl
-    }
-    const contentType = String(response.headers.get('content-type') || '').toLowerCase()
-    if (!contentType.startsWith('image/')) {
-      console.warn(`🟠 图片内容类型异常，保留原图：${title} (${contentType || 'unknown'})`)
-      return imageUrl
+    if (String(imageUrl || '').startsWith('data:image/svg+xml')) {
+      const raw = String(imageUrl).slice('data:image/svg+xml;charset=utf-8,'.length)
+      contentType = 'image/svg+xml'
+      buffer = Buffer.from(decodeURIComponent(raw), 'utf8')
+    } else {
+      if (!/^https?:\/\//i.test(String(imageUrl || '').trim())) return imageUrl
+
+      const response = await fetch(imageUrl, {
+        headers: {
+          'User-Agent': 'RHZ-AI-Daily-Collector/1.0',
+          Referer: item.url || imageUrl
+        },
+        redirect: 'follow'
+      })
+
+      if (!response.ok) {
+        console.warn(`🟠 图片抓取失败，保留原图：${title} (${response.status})`)
+        return imageUrl
+      }
+      contentType = String(response.headers.get('content-type') || '').toLowerCase()
+      if (!contentType.startsWith('image/')) {
+        console.warn(`🟠 图片内容类型异常，保留原图：${title} (${contentType || 'unknown'})`)
+        return imageUrl
+      }
+
+      const arrayBuffer = await response.arrayBuffer()
+      buffer = Buffer.from(arrayBuffer)
+      if (contentType.startsWith('image/')) {
+        const dataUrl = `data:${contentType};base64,${buffer.toString('base64')}`
+        const watermarkedSvg = buildWatermarkedSvgImage(dataUrl)
+        buffer = Buffer.from(watermarkedSvg, 'utf8')
+        contentType = 'image/svg+xml'
+      }
     }
 
-    const arrayBuffer = await response.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
     if (!buffer.length) {
+
       console.warn(`🟠 图片内容为空，保留原图：${title}`)
       return imageUrl
     }
 
     const objectKey = buildQiniuImageObjectKey(item, imageUrl, contentType, date)
+    const publicUrl = buildQiniuPublicUrl(objectKey)
+    let alreadyExists = false
+
+    try {
+      alreadyExists = await doesQiniuObjectExist(objectKey)
+    } catch (error) {
+      console.warn(`🟠 七牛云资源检查失败，转为继续上传：${title} (${String(error?.message || error || 'unknown error')})`)
+    }
+
+    if (alreadyExists) {
+      console.log(`🔁 七牛云已存在，跳过上传：${title} -> ${publicUrl}`)
+      return publicUrl
+    }
+
     const cachedUrl = await uploadBufferToQiniu({ objectKey, buffer, contentType })
+
     console.log(`🟢 七牛云缓存成功：${title} -> ${cachedUrl}`)
     return cachedUrl
+
   } catch (error) {
     console.warn(`🟠 七牛云缓存失败，保留原图：${title} (${String(error?.message || error || 'unknown error')})`)
     return imageUrl
   }
 }
+
 
 
 module.exports = {

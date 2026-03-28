@@ -88,12 +88,16 @@ function extractExternalLinks(block = '') {
   return Array.from(links)
 }
 
-function selectPreferredSourceUrl(aggregateUrl = '', links = []) {
+function getCandidateSourceUrls(primaryUrl = '', aggregateUrl = '', links = []) {
+  const normalizedPrimaryUrl = String(primaryUrl || '').trim()
   const normalizedAggregateUrl = String(aggregateUrl || '').trim()
-  const candidates = links.filter(link => {
-    if (!link) return false
+  const rawCandidates = [normalizedPrimaryUrl, ...links, normalizedAggregateUrl].filter(Boolean)
+  const seen = new Set()
+
+  const normalized = rawCandidates.filter(link => {
+    if (!link || seen.has(link)) return false
+    seen.add(link)
     if (!/^https?:\/\//i.test(link)) return false
-    if (normalizedAggregateUrl && link === normalizedAggregateUrl) return false
 
     try {
       const hostname = new URL(link).hostname.toLowerCase()
@@ -104,8 +108,24 @@ function selectPreferredSourceUrl(aggregateUrl = '', links = []) {
     }
   })
 
-  return candidates[0] || normalizedAggregateUrl
+  const scoreHost = link => {
+    try {
+      const host = new URL(link).hostname.toLowerCase()
+      if (host.endsWith('x.com') || host.endsWith('twitter.com') || host.endsWith('t.co')) return 5
+      if (host.endsWith('mp.weixin.qq.com')) return 3
+      return 0
+    } catch {
+      return 10
+    }
+  }
+
+  return normalized.sort((a, b) => scoreHost(a) - scoreHost(b))
 }
+
+function selectPreferredSourceUrl(aggregateUrl = '', links = []) {
+  return getCandidateSourceUrls('', aggregateUrl, links)[0] || String(aggregateUrl || '').trim()
+}
+
 
 function stripHtmlTags(value = '') {
   return String(value || '')
@@ -139,7 +159,9 @@ function buildBaseXmlItem(block, source) {
     url: preferredUrl,
     aggregateUrl,
     sourceLinks,
+    imageSourceCandidates: getCandidateSourceUrls(preferredUrl, aggregateUrl, sourceLinks),
     image: '',
+
     source: source.name,
     sourceGroup: source.groupName || '',
     sourceTier: source.tier || '',
@@ -205,23 +227,32 @@ function splitAggregateXmlItem(block, source) {
   const baseItem = buildBaseXmlItem(block, source)
   const shouldSplitDaheiai = String(source?.name || '').trim() === '大模型AI'
   const subItems = shouldSplitDaheiai ? extractDaheiaiSubItems(baseItem.rawContent) : []
-  const { rawContent, rawSummary, ...publicBaseItem } = baseItem
+  const { rawContent, rawSummary, imageSourceCandidates, sourceLinks, ...publicBaseItem } = baseItem
 
   if (!subItems.length) {
-    return [publicBaseItem]
+    return [{
+      ...publicBaseItem,
+      sourceLinks,
+      imageSourceCandidates
+    }]
   }
 
-  return subItems.map((subItem, index) => ({
-    ...publicBaseItem,
-    title: subItem.title,
-    url: subItem.sourceUrl,
-    sourceLinks: Array.from(new Set([subItem.sourceUrl, ...subItem.sourceLinks])).filter(Boolean),
-    summary: subItem.summary,
-    aggregateTitle: publicBaseItem.title,
-    aggregateIndex: index + 1,
-    aggregateSourceName: subItem.sourceName || ''
-  }))
+  return subItems.map((subItem, index) => {
+    const itemSourceLinks = Array.from(new Set([subItem.sourceUrl, ...subItem.sourceLinks])).filter(Boolean)
+    return {
+      ...publicBaseItem,
+      title: subItem.title,
+      url: subItem.sourceUrl,
+      sourceLinks: itemSourceLinks,
+      imageSourceCandidates: getCandidateSourceUrls(subItem.sourceUrl, baseItem.aggregateUrl, itemSourceLinks),
+      summary: subItem.summary,
+      aggregateTitle: publicBaseItem.title,
+      aggregateIndex: index + 1,
+      aggregateSourceName: subItem.sourceName || ''
+    }
+  })
 }
+
 
 
 function mapXmlItem(block, source) {
@@ -233,9 +264,10 @@ function shouldTryFetchLeadImage(url = '') {
   try {
     const { hostname, pathname } = new URL(url)
     const host = hostname.toLowerCase()
-    if (host.endsWith('x.com') || host.endsWith('twitter.com') || host.endsWith('t.co') || host.endsWith('news.daheiai.com')) {
+    if (host.endsWith('x.com') || host.endsWith('twitter.com') || host.endsWith('news.daheiai.com')) {
       return false
     }
+
 
     if (/\.(jpg|jpeg|png|webp|gif|svg)$/i.test(String(pathname || '').toLowerCase())) {
       return false
@@ -320,13 +352,32 @@ function resolveUrl(baseUrl = '', target = '') {
   }
 }
 
-async function fetchLeadImageFromUrl(url = '') {
+function buildGitHubPreviewImageUrl(url = '') {
+  try {
+    const parsed = new URL(url)
+    const host = parsed.hostname.toLowerCase()
+    if (host !== 'github.com' && host !== 'www.github.com') return ''
 
+    const parts = parsed.pathname.split('/').filter(Boolean)
+    if (parts.length < 2) return ''
 
-  if (!shouldTryFetchLeadImage(url)) return ''
+    const owner = parts[0]
+    const repo = parts[1]
+    if (!owner || !repo) return ''
+
+    return `https://opengraph.githubassets.com/1/${owner}/${repo}`
+  } catch {
+    return ''
+  }
+}
+
+async function resolveRedirectTarget(url = '') {
+
+  if (!url || !/^https?:\/\//i.test(url)) return ''
 
   try {
     const response = await fetch(url, {
+      method: 'GET',
       headers: {
         'User-Agent': 'RHZ-AI-Daily-Collector/1.0'
       },
@@ -334,27 +385,84 @@ async function fetchLeadImageFromUrl(url = '') {
     })
 
     if (!response.ok) return ''
-
-    const contentType = String(response.headers.get('content-type') || '').toLowerCase()
-    if (!contentType.includes('text/html')) return ''
-
-    const html = await response.text()
-    const candidateImages = [extractMetaImage(html), extractFirstImageFromHtml(html)]
-      .filter(Boolean)
-      .map(image => resolveUrl(response.url || url, image))
-      .filter(image => /^https?:\/\//i.test(image))
-
-    return candidateImages.find(image => !isLikelyDecorativeImage(image)) || ''
+    return String(response.url || '').trim()
   } catch {
     return ''
   }
 }
 
+async function expandCandidateUrls(url = '') {
+  const normalized = String(url || '').trim()
+  if (!normalized) return []
+
+  const results = [normalized]
+
+  try {
+    const host = new URL(normalized).hostname.toLowerCase()
+    if (host.endsWith('t.co')) {
+      const resolved = await resolveRedirectTarget(normalized)
+      if (resolved && resolved !== normalized) results.unshift(resolved)
+    }
+  } catch {
+    return results
+  }
+
+  return Array.from(new Set(results)).filter(Boolean)
+}
+
+async function fetchLeadImageFromUrl(url = '') {
+  const candidateUrls = await expandCandidateUrls(url)
+
+  for (const candidateUrl of candidateUrls) {
+    const githubPreview = buildGitHubPreviewImageUrl(candidateUrl)
+    if (githubPreview) return githubPreview
+    if (!shouldTryFetchLeadImage(candidateUrl)) continue
+
+    try {
+      const response = await fetch(candidateUrl, {
+        headers: {
+          'User-Agent': 'RHZ-AI-Daily-Collector/1.0'
+        },
+        redirect: 'follow'
+      })
+
+      if (!response.ok) continue
+
+      const contentType = String(response.headers.get('content-type') || '').toLowerCase()
+      if (!contentType.includes('text/html')) continue
+
+      const html = await response.text()
+      const candidateImages = [extractMetaImage(html), extractFirstImageFromHtml(html)]
+        .filter(Boolean)
+        .map(image => resolveUrl(response.url || candidateUrl, image))
+        .filter(image => /^https?:\/\//i.test(image))
+
+      const matchedImage = candidateImages.find(image => !isLikelyDecorativeImage(image)) || ''
+      if (matchedImage) return matchedImage
+    } catch {
+      continue
+    }
+  }
+
+  return ''
+}
+
+
 
 async function enrichItemsWithLeadImages(items = []) {
+
   return Promise.all(
     items.map(async item => {
-      const image = await fetchLeadImageFromUrl(item.url)
+      const candidates = Array.isArray(item.imageSourceCandidates) && item.imageSourceCandidates.length
+        ? item.imageSourceCandidates
+        : [item.url, ...(Array.isArray(item.sourceLinks) ? item.sourceLinks : [])].filter(Boolean)
+
+      let image = ''
+      for (const candidateUrl of candidates) {
+        image = await fetchLeadImageFromUrl(candidateUrl)
+        if (image) break
+      }
+
       return {
         ...item,
         image: image || item.image || ''
@@ -363,6 +471,7 @@ async function enrichItemsWithLeadImages(items = []) {
     })
   )
 }
+
 
 
 function normalizeGroupSources(groups = []) {

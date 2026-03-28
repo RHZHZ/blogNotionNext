@@ -109,46 +109,328 @@ function buildItemMatchTokens(item = {}) {
     if (!normalized) continue
 
     for (const token of normalized.split(' ')) {
-      if (token.length >= 4) tokenSet.add(token)
+      if (token.length >= 2) tokenSet.add(token)
     }
   }
 
   return Array.from(tokenSet)
 }
 
-function findBestImageItemForSection(sectionText = '', items = [], usedItemIds = new Set()) {
-  const normalizedSection = normalizeForMatch(stripMarkdown(sectionText || ''))
-  if (!normalizedSection) return null
+const GENERIC_MATCH_TOKENS = new Set([
+  'agent', 'ai', 'cli', 'mcp', 'prompt', 'hub', 'google', 'openai', 'langchain', 'langsmith',
+  '开发者', '工具', '产品', '能力', '平台', '系统', '团队', '工作流', '发布', '环境', '模型', '今天'
+])
 
-  let bestItem = null
-  let bestScore = 0
+function extractNamedEntities(value = '') {
 
-  for (const item of items) {
-    const image = String(item?.image || '').trim()
-    if (!image || usedItemIds.has(item.id)) continue
+  const text = stripMarkdown(value || '')
+  const entitySet = new Set()
+  const patterns = [
+    /[A-Za-z][A-Za-z0-9.+-]{1,}/g,
+    /[\u4e00-\u9fa5A-Za-z0-9]{2,}(?:Agent|agent|CLI|MCP|Prompt|Hub|OpenAI|Google|LangChain|LangSmith|CodePilot|Feishu|DingTalk|飞书|钉钉|谷歌|快手|KAT|OpenClaw)/g,
+    /[\u4e00-\u9fa5]{2,8}/g
+  ]
 
-    const title = normalizeForMatch(stripMarkdown(item.title || ''))
-    const summary = normalizeForMatch(stripMarkdown(item.summary || ''))
-    const tokens = buildItemMatchTokens(item)
-
-    let score = 0
-    if (title && normalizedSection.includes(title)) score += 12
-    if (summary && (normalizedSection.includes(summary) || summary.includes(normalizedSection))) score += 8
-
-    for (const token of tokens) {
-      if (normalizedSection.includes(token)) score += token.length >= 8 ? 2 : 1
-    }
-
-    if (score > bestScore) {
-      bestScore = score
-      bestItem = item
+  for (const pattern of patterns) {
+    const matches = text.match(pattern) || []
+    for (const match of matches) {
+      const normalized = normalizeForMatch(match)
+      if (!normalized || normalized.length < 2) continue
+      entitySet.add(normalized)
     }
   }
 
-  return bestScore >= 2 ? bestItem : null
+  return Array.from(entitySet).filter(token => token.length >= 2)
+}
+
+function extractUrlsFromText(value = '') {
+  return String(value || '').match(/https?:\/\/[^\s)\]]+/g) || []
+}
+
+function tokenizeUrl(url = '') {
+  const tokenSet = new Set()
+  const normalizedUrl = String(url || '').trim()
+  if (!normalizedUrl) return []
+
+  try {
+    const parsed = new URL(normalizedUrl)
+    const hostParts = parsed.hostname.toLowerCase().split('.').filter(Boolean)
+    const pathParts = parsed.pathname.split('/').filter(Boolean)
+    const searchParts = Array.from(parsed.searchParams.values())
+    const rawParts = [...hostParts, ...pathParts, ...searchParts]
+
+    for (const part of rawParts) {
+      for (const token of normalizeForMatch(part).split(' ')) {
+        if (token.length >= 2) tokenSet.add(token)
+      }
+    }
+  } catch {
+    for (const token of normalizeForMatch(normalizedUrl).split(' ')) {
+      if (token.length >= 2) tokenSet.add(token)
+    }
+  }
+
+  return Array.from(tokenSet)
+}
+
+function buildSectionMatchContext(sectionText = '') {
+  const lines = String(sectionText || '').replace(/\r\n/g, '\n').split('\n')
+  const headingText = stripMarkdown((lines.find(line => /^###\s+/.test(line.trim())) || '').replace(/^###\s+/, ''))
+  const introText = stripMarkdown(lines.slice(1, 6).join(' '))
+  const cleanText = stripMarkdown(sectionText || '')
+  const normalizedText = normalizeForMatch(cleanText)
+  const normalizedHeading = normalizeForMatch(headingText)
+  const normalizedIntro = normalizeForMatch(introText)
+  const urls = extractUrlsFromText(sectionText)
+  const urlTokens = new Set(urls.flatMap(url => tokenizeUrl(url)))
+  const entities = new Set([
+    ...extractNamedEntities(headingText),
+    ...extractNamedEntities(introText)
+  ])
+
+  return {
+    normalizedText,
+    normalizedHeading,
+    normalizedIntro,
+    urls,
+    urlTokens,
+    entities
+  }
+}
+
+
+function scoreItemForSection(sectionContext = {}, item = {}) {
+  const image = String(item?.image || '').trim()
+  if (!image) return { score: -1, reasons: [] }
+
+  const titleText = stripMarkdown(item.title || '')
+  const summaryText = stripMarkdown(item.summary || '')
+  const title = normalizeForMatch(titleText)
+  const summary = normalizeForMatch(summaryText)
+  const itemTokens = buildItemMatchTokens(item).filter(token => !GENERIC_MATCH_TOKENS.has(token))
+  const itemEntities = new Set([
+    ...extractNamedEntities(titleText),
+    ...extractNamedEntities(summaryText),
+    ...extractNamedEntities(item.source || ''),
+    ...extractNamedEntities(item.category || '')
+  ])
+  const itemUrls = [item.url, ...(Array.isArray(item.sourceLinks) ? item.sourceLinks : [])].filter(Boolean)
+  const itemUrlTokens = new Set(itemUrls.flatMap(url => tokenizeUrl(url)).filter(token => !GENERIC_MATCH_TOKENS.has(token)))
+
+  let score = 0
+  const reasons = []
+
+  if (title && sectionContext.normalizedHeading.includes(title)) {
+    score += 28
+    reasons.push('title-heading-exact')
+  } else if (title && sectionContext.normalizedText.includes(title)) {
+    score += 12
+    reasons.push('title-exact')
+  }
+
+  if (summary && sectionContext.normalizedIntro && (sectionContext.normalizedIntro.includes(summary) || summary.includes(sectionContext.normalizedIntro))) {
+    score += 8
+    reasons.push('summary-intro')
+  }
+
+  for (const entity of itemEntities) {
+    if (!entity || entity.length < 2) continue
+    if (sectionContext.entities.has(entity)) {
+      const weight = entity.length >= 6 ? 8 : 6
+      score += weight
+      reasons.push(`entity:${entity}`)
+    }
+  }
+
+  for (const token of itemTokens) {
+    if (!token || token.length < 3) continue
+    if (sectionContext.normalizedHeading.includes(token)) {
+      score += token.length >= 6 ? 7 : 5
+      reasons.push(`heading-token:${token}`)
+    } else if (sectionContext.normalizedIntro.includes(token)) {
+      score += token.length >= 6 ? 4 : 3
+      reasons.push(`intro-token:${token}`)
+    }
+  }
+
+  for (const token of itemUrlTokens) {
+    if (!token || token.length < 2) continue
+    if (sectionContext.urlTokens.has(token)) {
+      score += token.length >= 6 ? 10 : 8
+      reasons.push(`url:${token}`)
+    }
+  }
+
+  if (sectionContext.urls.some(url => itemUrls.includes(url))) {
+    score += 24
+    reasons.push('url-exact')
+  }
+
+  return { score, reasons }
+}
+
+
+function findBestImageItemForSection(sectionText = '', items = [], usedItemIds = new Set()) {
+  const sectionContext = buildSectionMatchContext(sectionText)
+  if (!sectionContext.normalizedText) return { item: null, score: 0, reasons: [] }
+
+  let bestItem = null
+  let bestScore = 0
+  let bestReasons = []
+
+  for (const item of items) {
+    if (usedItemIds.has(item.id)) continue
+
+    const { score, reasons } = scoreItemForSection(sectionContext, item)
+    if (score > bestScore) {
+      bestScore = score
+      bestItem = item
+      bestReasons = reasons
+    }
+  }
+
+  return {
+    item: bestScore >= 4 ? bestItem : null,
+    score: bestScore,
+    reasons: bestReasons
+  }
+}
+
+
+function normalizeImageUrlForDedup(url = '') {
+  const normalized = String(url || '').trim()
+  if (!normalized) return ''
+
+  if (normalized.startsWith('data:image/svg+xml')) {
+    return normalized.slice(0, 240)
+  }
+
+  try {
+    const parsed = new URL(normalized)
+    parsed.hash = ''
+    const removableParams = [
+      'w',
+      'width',
+      'h',
+      'height',
+      'fit',
+      'crop',
+      'quality',
+      'q',
+      'format',
+      'fm',
+      'auto',
+      'ixlib',
+      'ixid',
+      'updatedAt',
+      'ver'
+    ]
+    for (const key of removableParams) {
+      parsed.searchParams.delete(key)
+    }
+    return parsed.toString()
+  } catch {
+    return normalized
+  }
+}
+
+function escapeXml(value = '') {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function wrapSvgText(text = '', maxCharsPerLine = 18, maxLines = 3) {
+  const normalized = stripMarkdown(text || '').replace(/\s+/g, ' ').trim()
+  if (!normalized) return []
+
+  const chars = Array.from(normalized)
+  const lines = []
+  let current = ''
+
+  for (const char of chars) {
+    current += char
+    if (current.length >= maxCharsPerLine) {
+      lines.push(current)
+      current = ''
+      if (lines.length >= maxLines) break
+    }
+  }
+
+  if (current && lines.length < maxLines) lines.push(current)
+  if (lines.length === maxLines && chars.length > lines.join('').length) {
+    lines[maxLines - 1] = `${lines[maxLines - 1].slice(0, Math.max(0, maxCharsPerLine - 1))}…`
+  }
+
+  return lines
+}
+
+function buildFallbackCardImage(item = {}, index = 0, publishDate = '') {
+  const category = escapeXml(item.category || 'AI 日报')
+  const dateText = escapeXml(publishDate || '')
+  const lines = wrapSvgText(item.title || `AI 情报配图 ${index + 1}`)
+  const titleLines = lines.length ? lines : [`AI 情报配图 ${index + 1}`]
+  const titleSvg = titleLines
+    .map((line, lineIndex) => `<text x="72" y="${156 + lineIndex * 54}" fill="#F8FAFC" font-size="36" font-weight="700">${escapeXml(line)}</text>`)
+    .join('')
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="55%" stop-color="#111827" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" rx="36" fill="url(#bg)"/>
+  <circle cx="1040" cy="110" r="160" fill="rgba(255,255,255,0.08)"/>
+  <circle cx="980" cy="520" r="220" fill="rgba(59,130,246,0.18)"/>
+  <rect x="72" y="76" width="172" height="44" rx="22" fill="rgba(255,255,255,0.14)"/>
+  <text x="100" y="105" fill="#BFDBFE" font-size="24" font-weight="600">AI 日报</text>
+  <text x="72" y="420" fill="#93C5FD" font-size="26" font-weight="600">${category}</text>
+  <text x="72" y="468" fill="#CBD5E1" font-size="22">${dateText}</text>
+  ${titleSvg}
+  <rect x="56" y="548" width="1088" height="54" rx="18" fill="rgba(15,23,42,0.72)" stroke="rgba(255,255,255,0.12)"/>
+  <text x="84" y="582" fill="#E2E8F0" font-size="22" font-weight="700">blog: rhzhz.cn</text>
+  <text x="386" y="582" fill="#BFDBFE" font-size="22" font-weight="600">公众号 RHZZZ</text>
+  <text x="664" y="582" fill="#E5E7EB" font-size="20">关注 RHZZZ，持续获取每日 AI 情报</text>
+</svg>`
+
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
+}
+
+function buildItemSectionMarker(item = {}) {
+  return `[[ITEM_ID:${String(item.id || '').trim()}]]`
+}
+
+function annotateItemsForGeneration(items = []) {
+  return items.map((item, index) => ({
+    ...item,
+    sectionMarker: buildItemSectionMarker(item),
+    sectionIndex: index + 1
+  }))
+}
+
+function stripSectionMarkers(markdown = '') {
+  return String(markdown || '')
+    .replace(/^\[\[ITEM_ID:[^\]]+\]\]\s*$/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
+function findItemBySectionMarker(sectionText = '', items = []) {
+  const markerMatch = String(sectionText || '').match(/\[\[ITEM_ID:([^\]]+)\]\]/)
+  if (!markerMatch?.[1]) return null
+  const itemId = markerMatch[1].trim()
+  return items.find(item => String(item?.id || '').trim() === itemId) || null
 }
 
 async function injectItemImagesIntoMarkdown(markdown = '', items = [], publishDate = '') {
+
+
   const lines = String(markdown || '').replace(/\r\n/g, '\n').split('\n')
   const headings = []
 
@@ -162,6 +444,7 @@ async function injectItemImagesIntoMarkdown(markdown = '', items = [], publishDa
 
   const result = [...lines]
   const usedItemIds = new Set()
+  const usedImages = new Set()
   let offset = 0
 
   for (let i = 0; i < headings.length; i += 1) {
@@ -171,24 +454,64 @@ async function injectItemImagesIntoMarkdown(markdown = '', items = [], publishDa
     const alreadyHasImage = sectionLines.slice(1).some(line => /^!\[[^\]]*\]\((https?:\/\/[^)]+)\)$/.test(line.trim()))
     if (alreadyHasImage) continue
 
-    const matchedItem = findBestImageItemForSection(sectionLines.join('\n'), items, usedItemIds)
-    const originalImage = String(matchedItem?.image || '').trim()
-    if (!originalImage) continue
+    const sectionText = sectionLines.join('\n')
+    const markerMatchedItem = findItemBySectionMarker(sectionText, items)
+    const matchResult = markerMatchedItem
+      ? { item: markerMatchedItem, score: 999, reasons: ['marker'] }
+      : findBestImageItemForSection(sectionText, items, usedItemIds)
+    const matchedItem = matchResult.item
+    const fallbackItem = markerMatchedItem || matchResult.score >= 4 ? null : items.find(item => {
+      const image = String(item?.image || '').trim() || buildFallbackCardImage(item, i, publishDate)
+      if (!image) return false
+      return !usedItemIds.has(item.id)
+    })
+    const selectedItem = matchedItem || fallbackItem
 
-    const image = await cacheImageToQiniu(matchedItem, originalImage, publishDate)
+    if (!selectedItem) continue
+
+    const matchedIndex = items.findIndex(item => item?.id === selectedItem.id)
+
+    const preferredItems = [selectedItem, ...items.slice(0, matchedIndex), ...items.slice(matchedIndex + 1)]
+    const dedupedItem = preferredItems.find(item => {
+      const image = String(item?.image || '').trim() || buildFallbackCardImage(item, i, publishDate)
+      if (!image) return false
+      if (usedItemIds.has(item.id)) return false
+      const dedupKey = normalizeImageUrlForDedup(image)
+      if (!dedupKey || usedImages.has(dedupKey)) return false
+      const itemMatch = scoreItemForSection(buildSectionMatchContext(sectionText), item)
+      return item.id === selectedItem.id || itemMatch.score >= 4
+    })
+
+    const chosenItem = dedupedItem || selectedItem
+
+
+    const originalImage = String(chosenItem?.image || '').trim() || buildFallbackCardImage(chosenItem, i, publishDate)
+    const imageDedupKey = normalizeImageUrlForDedup(originalImage)
+    if (!originalImage || (imageDedupKey && usedImages.has(imageDedupKey))) continue
+
+    const image = await cacheImageToQiniu(chosenItem, originalImage, publishDate)
+    const isFallbackCard = originalImage.startsWith('data:image/svg+xml')
+    const finalImage = isFallbackCard && image.startsWith('data:image/svg+xml') ? '' : (image || originalImage)
+    if (!finalImage) continue
+
+    const finalDedupKey = normalizeImageUrlForDedup(finalImage)
     const insertAt = start + 1
-    const alt = stripMarkdown(matchedItem.title || `AI 情报配图 ${i + 1}`)
+    const alt = stripMarkdown(chosenItem.title || `AI 情报配图 ${i + 1}`)
       .replace(/[\[\]\r\n]+/g, ' ')
       .replace(/\s+/g, ' ')
       .trim()
-    result.splice(insertAt, 0, `![${alt || `AI 情报配图 ${i + 1}`}](${image || originalImage})`, '')
+    result.splice(insertAt, 0, `![${alt || `AI 情报配图 ${i + 1}`}](${finalImage})`, '')
 
-    usedItemIds.add(matchedItem.id)
+
+    usedItemIds.add(chosenItem.id)
+    if (finalDedupKey) usedImages.add(finalDedupKey)
     offset += 2
   }
 
-  return result.join('\n')
+  return stripSectionMarkers(result.join('\n'))
 }
+
+
 
 
 
@@ -405,7 +728,9 @@ async function main() {
 
   const title = `每日 AI 情报｜${candidates.date || targetDate}`
   const slug = `daily-ai-news-${candidates.date || targetDate}`
+  const annotatedItems = annotateItemsForGeneration(items)
   let markdown = ''
+
   let generationMode = 'template'
   let generationStatus = 'fallback'
   let generationWarning = ''
@@ -434,8 +759,10 @@ async function main() {
       '4. 必须包含这些二级标题：今日总览、今天最值得看的 6-10 条、开发者视角、今天的判断、RHZ 简评。',
       '5. 在“今日总览”里，先用 1 段给出今天的主判断，再用 3 条 bullet 写“3 个核心判断”，每条都要短、狠、明确。',
       '6. 在“今天最值得看的 6-10 条”下面，每条都用三级标题，标题必须带编号（如“### 1. ……”），并且标题必须是观点句或判断句，禁止直接复述原标题，最好让读者只看标题就知道这条信息为什么重要。',
+      '6.1 每个三级标题下一行，必须单独保留该条素材自带的 sectionMarker，原样输出且不要改写、不要删除，例如 [[ITEM_ID:xxx]]。',
 
       '7. 每条三级标题下面第一段必须先给一句结论式开场，让读者一眼知道这条为什么值得读。',
+
 
       '8. 每条内容至少包含四个阅读锚点：一句判断、发生了什么、为什么值得关注、对谁影响更大。',
       '9. 如果某条素材提供了 image 字段且是明显可用的文章首图，可以在该条三级标题下插入 1 张 Markdown 图片，增强可读性；没有图片就不要强行补图。',
@@ -466,7 +793,8 @@ async function main() {
 
       '',
       '可参考的 AI 情报素材如下：',
-      JSON.stringify(items, null, 2)
+      JSON.stringify(annotatedItems, null, 2)
+
 
     ].join('\n')
 
@@ -486,7 +814,8 @@ async function main() {
 
   if (!markdown) {
     console.log('未配置 AI 接口、AI 返回为空或接口异常，使用本地模板生成日报草稿。')
-    markdown = buildDefaultMarkdown({ title, date: targetDate, items })
+    markdown = buildDefaultMarkdown({ title, date: targetDate, items: annotatedItems })
+
     generationMode = 'template-fallback'
     generationStatus = apiUrl && apiKey ? 'fallback_after_retry' : 'fallback_no_api'
   }
@@ -494,7 +823,8 @@ async function main() {
 
 
   markdown = stripAiInsertedImages(markdown)
-  markdown = await injectItemImagesIntoMarkdown(markdown, items, candidates.date || targetDate)
+  markdown = await injectItemImagesIntoMarkdown(markdown, annotatedItems, candidates.date || targetDate)
+
 
   const summary = extractSummaryFromMarkdown(markdown) || '今天最值得看的，不是某个模型参数更新，而是 AI 系统开始全面转向可执行、可治理、可持续运行的工程阶段。'
 

@@ -1,11 +1,11 @@
 {
-  "date": "2026-03-23",
-  "generatedAt": "2026-03-23T18:20:29.980Z",
-  "sourceFile": "c:\\Users\\RHZ\\Downloads\\blogNext\\temp\\ai-daily-source-items.json",
-  "totalSourceItems": 98,
+  "date": "2026-03-29",
+  "generatedAt": "2026-03-28T16:19:51.382Z",
+  "sourceFile": "C:\\Users\\RHZ\\Downloads\\blogNext\\temp\\ai-daily-source-items.json",
+  "totalSourceItems": 134,
   "appliedHoursWindow": "same-day",
   "usedFallbackWindow": false,
-  "totalCandidates": 12,
+  "totalCandidates": 6,
   "alreadyPublishedForTargetDate": false,
   "shouldWaitForPrimary": false,
   "activeSources": [
@@ -13,18 +13,18 @@
   ],
   "items": [
     {
-      "id": "产品工具-langchain与nvidia合作推出企业级智能体ai平台-大模型ai-mon-23-mar-2026-04-00-50-0800",
-      "title": "[产品工具] LangChain与NVIDIA合作推出企业级智能体AI平台",
+      "id": "产品工具-飞书开源cli工具-ai智能体可批量调用所有功能-大模型ai-sun-29-mar-2026-00-00-55-0800",
+      "title": "[产品工具] 飞书开源CLI工具，AI智能体可批量调用所有功能",
       "source": "大模型AI",
-      "url": "https://x.com/LangChain/status/2035772503457480923",
-      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-23_0400",
+      "url": "https://x.com/oran_ge/status/2037877505135407556",
+      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-29_0000",
       "sourceLinks": [
-        "https://x.com/LangChain/status/2035772503457480923"
+        "https://x.com/oran_ge/status/2037877505135407556"
       ],
       "image": "",
-      "summary": "在GTC大会上，LangChain宣布推出企业级智能体AI平台，深度集成NVIDIA的Nemotron 3模型、NIM微服务和NeMo Guardrails，旨在构建安全、可扩展的智能体应用。",
+      "summary": "飞书官方开源了专为AI智能体设计的CLI工具，开放了日历、文档、消息等全部能力。用户通过一句话指令即可让Agent完成日程查询、文档创建等任务，批量操作效率提升显著。项目地址：https://x.com/oran_ge/status/2037877505135407556",
       "category": "行业 / 快讯",
-      "publishedAt": "Mon, 23 Mar 2026 04:00:50 +0800",
+      "publishedAt": "Sun, 29 Mar 2026 00:00:55 +0800",
       "sourceType": "media",
       "sourceGroup": "主源",
       "sourceTier": "core",
@@ -33,21 +33,21 @@
       "developerValue": 4,
       "industryImpact": 4,
       "whyItMatters": "",
-      "score": 5.16
+      "score": 5.11
     },
     {
-      "id": "行业资讯-langchain为初创公司提供1万美元langsmith积分-大模型ai-mon-23-mar-2026-16-01-04-0800",
-      "title": "[行业资讯] LangChain为初创公司提供1万美元LangSmith积分",
+      "id": "模型动态-matthew-berman发布-最佳模型分级列表-大模型ai-sun-29-mar-2026-00-00-55-0800",
+      "title": "[模型动态] Matthew Berman发布“最佳模型分级列表”",
       "source": "大模型AI",
-      "url": "https://x.com/LangChain/status/2035958717003534520",
-      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-23_1601",
+      "url": "https://www.youtube.com/shorts/3M7jTPLf86w",
+      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-29_0000",
       "sourceLinks": [
-        "https://x.com/LangChain/status/2035958717003534520"
+        "https://www.youtube.com/shorts/3M7jTPLf86w"
       ],
       "image": "",
-      "summary": "LangChain宣布为符合条件的初创公司提供价值1万美元的LangSmith积分，旨在帮助开发者优化和修复其AI智能体，属于重要的商业支持计划。",
+      "summary": "Matthew Berman发布了一个最佳模型分级列表，对各类模型进行评测和对比。这类内容为AI从业者选择和使用模型提供了直接的实用参考。视频链接：https://www.youtube.com/shorts/3M7jTPLf86w",
       "category": "行业 / 快讯",
-      "publishedAt": "Mon, 23 Mar 2026 16:01:04 +0800",
+      "publishedAt": "Sun, 29 Mar 2026 00:00:55 +0800",
       "sourceType": "media",
       "sourceGroup": "主源",
       "sourceTier": "core",
@@ -56,22 +56,21 @@
       "developerValue": 4,
       "industryImpact": 4,
       "whyItMatters": "",
-      "score": 5.09
+      "score": 4.99
     },
     {
-      "id": "技巧教程-开发者分享使用claude-skills探索starlette-1-0的经验-大模型ai-mon-23-mar-2026-12-01-09-0800",
-      "title": "[技巧教程] 开发者分享使用Claude Skills探索Starlette 1.0的经验",
+      "id": "行业资讯-cognition-labs讨论ai智能体向-主动式工程-转变-大模型ai-sun-29-mar-2026-00-00-55-0800",
+      "title": "[行业资讯] Cognition Labs讨论AI智能体向“主动式工程”转变",
       "source": "大模型AI",
-      "url": "https://x.com/simonw/status/2035872409421770901",
-      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-23_1201",
+      "url": "https://x.com/cognition/status/2037915112988639585",
+      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-29_0000",
       "sourceLinks": [
-        "https://x.com/simonw/status/2035872409421770901",
-        "https://simonwillison.net/2026/Mar/22/starlette/#atom-everything"
+        "https://x.com/cognition/status/2037915112988639585"
       ],
       "image": "",
-      "summary": "开发者Simon Willison分享了利用Claude Skills来探索Python异步Web框架Starlette 1.0版本中破坏性变更的经验。这为AI辅助编程和框架升级提供了具体案例。文章链接：https://simonwillison.net/2026/Mar/22/starlette/#atom-everything",
+      "summary": "Cognition Labs（Devin开发者）的Russell Kaplan讨论了AI智能体开始自主工作的趋势，标志着向主动式工程的转变。这反映了AI应用前沿的重要发展方向。",
       "category": "行业 / 快讯",
-      "publishedAt": "Mon, 23 Mar 2026 12:01:09 +0800",
+      "publishedAt": "Sun, 29 Mar 2026 00:00:55 +0800",
       "sourceType": "media",
       "sourceGroup": "主源",
       "sourceTier": "core",
@@ -80,21 +79,21 @@
       "developerValue": 4,
       "industryImpact": 4,
       "whyItMatters": "",
-      "score": 5.04
+      "score": 4.99
     },
     {
-      "id": "产品工具-字节跳动开源龙虾架构-内置技能并原生适配飞书-大模型ai-mon-23-mar-2026-20-01-04-0800",
-      "title": "[产品工具] 字节跳动开源龙虾架构，内置技能并原生适配飞书",
+      "id": "行业资讯-趋境科技发布ataas平台-打造日均万亿产能-token工厂-大模型ai-sun-29-mar-2026-00-00-55-0800",
+      "title": "[行业资讯] 趋境科技发布ATaaS平台，打造日均万亿产能“Token工厂”",
       "source": "大模型AI",
-      "url": "https://www.qbitai.com/2026/03/391361.html",
-      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-23_2001",
+      "url": "https://www.qbitai.com/2026/03/392988.html",
+      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-29_0000",
       "sourceLinks": [
-        "https://www.qbitai.com/2026/03/391361.html"
+        "https://www.qbitai.com/2026/03/392988.html"
       ],
-      "image": "https://i.qbitai.com/wp-content/uploads/2026/03/653276525bbe769e28ea6d652bf27db6.png",
-      "summary": "字节跳动开源龙虾架构，在GitHub上获得超过3.5万星标。该架构内置多种Skill（技能），并原生适配飞书，支持按需扩展。",
+      "image": "https://i.qbitai.com/wp-content/uploads/2026/03/4cffc69a86dc0aab0d51a280c7e48a7a.jpeg",
+      "summary": "趋境科技发布ATaaS平台，旨在打造日均万亿产能的“Token工厂”。该平台由郑纬民院士领衔解读，涉及AI基础设施和算力服务的新趋势。报道链接：https://www.qbitai.com/2026/03/392988.html",
       "category": "行业 / 快讯",
-      "publishedAt": "Mon, 23 Mar 2026 20:01:04 +0800",
+      "publishedAt": "Sun, 29 Mar 2026 00:00:55 +0800",
       "sourceType": "media",
       "sourceGroup": "主源",
       "sourceTier": "core",
@@ -103,44 +102,21 @@
       "developerValue": 4,
       "industryImpact": 4,
       "whyItMatters": "",
-      "score": 5.01
+      "score": 4.95
     },
     {
-      "id": "技巧教程-用户警告-不要使用claude连接微信-大模型ai-mon-23-mar-2026-04-00-50-0800",
-      "title": "[技巧教程] 用户警告：不要使用Claude连接微信",
+      "id": "行业资讯-minimax联合创始人将在humanx2026分享通用智能构建经验-大模型ai-sun-29-mar-2026-00-00-55-0800",
+      "title": "[行业资讯] MiniMax联合创始人将在HumanX2026分享通用智能构建经验",
       "source": "大模型AI",
-      "url": "https://x.com/xiaohu/status/2035708831628694005",
-      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-23_0400",
+      "url": "https://x.com/MiniMax_AI/status/2037580375053201525",
+      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-29_0000",
       "sourceLinks": [
-        "https://x.com/xiaohu/status/2035708831628694005"
-      ],
-      "image": "",
-      "summary": "用户小互发出警告，提醒不要使用Claude连接微信，否则可能会被封号。这为尝试将AI智能体接入微信生态的用户提供了重要的风险提示。",
-      "category": "行业 / 快讯",
-      "publishedAt": "Mon, 23 Mar 2026 04:00:50 +0800",
-      "sourceType": "media",
-      "sourceGroup": "主源",
-      "sourceTier": "core",
-      "groupPriority": 999,
-      "credibility": 4,
-      "developerValue": 4,
-      "industryImpact": 4,
-      "whyItMatters": "",
-      "score": 4.96
-    },
-    {
-      "id": "技巧教程-通义实验室发布copaw本地智能体生态深度解析视频-大模型ai-mon-23-mar-2026-16-01-04-0800",
-      "title": "[技巧教程] 通义实验室发布CoPaw本地智能体生态深度解析视频",
-      "source": "大模型AI",
-      "url": "https://x.com/Ali_TongyiLab/status/2035923299251957831",
-      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-23_1601",
-      "sourceLinks": [
-        "https://x.com/Ali_TongyiLab/status/2035923299251957831"
+        "https://x.com/MiniMax_AI/status/2037580375053201525"
       ],
       "image": "",
-      "summary": "通义实验室发布视频，全面解析如何构建本地优先的智能体生态系统CoPaw。内容涵盖从背景故事、设置、特色功能到未来路线图和安全性的完整介绍。视频链接：https://x.com/Ali_TongyiLab/status/2035923299251957831",
+      "summary": "MiniMax联合创始人兼总裁Yeyi Yun将在HumanX2026大会上分享公司如何大规模构建涵盖文本、视频、语音和音频的通用智能。",
       "category": "行业 / 快讯",
-      "publishedAt": "Mon, 23 Mar 2026 16:01:04 +0800",
+      "publishedAt": "Sun, 29 Mar 2026 00:00:55 +0800",
       "sourceType": "media",
       "sourceGroup": "主源",
       "sourceTier": "core",
@@ -149,21 +125,21 @@
       "developerValue": 4,
       "industryImpact": 4,
       "whyItMatters": "",
-      "score": 4.89
+      "score": 4.75
     },
     {
-      "id": "产品工具-kimi-api支付系统迁移至stripe-大模型ai-mon-23-mar-2026-16-01-04-0800",
-      "title": "[产品工具] Kimi API支付系统迁移至Stripe",
+      "id": "技巧教程-用户分享启用chrome竖向标签栏的实用技巧-大模型ai-sun-29-mar-2026-00-00-55-0800",
+      "title": "[技巧教程] 用户分享启用Chrome竖向标签栏的实用技巧",
       "source": "大模型AI",
-      "url": "https://x.com/Kimi_Moonshot/status/2035971296165802198",
-      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-23_1601",
+      "url": "https://x.com/op7418/status/2037570241144967222",
+      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-29_0000",
       "sourceLinks": [
-        "https://x.com/Kimi_Moonshot/status/2035971296165802198"
+        "https://x.com/op7418/status/2037570241144967222"
       ],
       "image": "",
-      "summary": "Kimi宣布将API支付系统迁移至Stripe，以提供更好的税务支持和自动开票功能。用户首次充值需重新输入卡片信息，这是一次性的安全验证。",
+      "summary": "用户分享了启用谷歌Chrome竖向标签栏的实用技巧。只需在地址栏输入特定命令并重启浏览器，即可将标签页移到侧边，提升浏览效率。启用方式：chrome://flags/#vertical-tabs",
       "category": "行业 / 快讯",
-      "publishedAt": "Mon, 23 Mar 2026 16:01:04 +0800",
+      "publishedAt": "Sun, 29 Mar 2026 00:00:55 +0800",
       "sourceType": "media",
       "sourceGroup": "主源",
       "sourceTier": "core",
@@ -172,125 +148,7 @@
       "developerValue": 4,
       "industryImpact": 4,
       "whyItMatters": "",
-      "score": 4.85
-    },
-    {
-      "id": "技巧教程-开发者分享多个实用claude-skill链接-大模型ai-mon-23-mar-2026-08-00-43-0800",
-      "title": "[技巧教程] 开发者分享多个实用Claude Skill链接",
-      "source": "大模型AI",
-      "url": "https://x.com/vista8/status/2035588915139399771",
-      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-23_0800",
-      "sourceLinks": [
-        "https://x.com/vista8/status/2035588915139399771",
-        "https://t.co/PY1BppBiS3",
-        "https://t.co/vJWsVbvw2u",
-        "https://t.co/krdtlax54e"
-      ],
-      "image": "",
-      "summary": "用户分享了多个实用的Claude Skill链接，包括飞书Skill、网页转Markdown工具以及Lenny的产品经理宝典Skill，方便用户直接使用。链接：https://t.co/PY1BppBiS3, https://t.co/vJWsVbvw2u, https://t.co/krdtlax54e",
-      "category": "行业 / 快讯",
-      "publishedAt": "Mon, 23 Mar 2026 08:00:43 +0800",
-      "sourceType": "media",
-      "sourceGroup": "主源",
-      "sourceTier": "core",
-      "groupPriority": 999,
-      "credibility": 4,
-      "developerValue": 4,
-      "industryImpact": 4,
-      "whyItMatters": "",
-      "score": 4.84
-    },
-    {
-      "id": "产品工具-llamaparse发布智能体技能-可解析复杂pdf-大模型ai-mon-23-mar-2026-04-00-50-0800",
-      "title": "[产品工具] LlamaParse发布智能体技能，可解析复杂PDF",
-      "source": "大模型AI",
-      "url": "https://x.com/jerryjliu0/status/2035764914300854753",
-      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-23_0400",
-      "sourceLinks": [
-        "https://x.com/jerryjliu0/status/2035764914300854753"
-      ],
-      "image": "",
-      "summary": "Jerry Liu发布LlamaParse智能体技能，利用视觉语言模型（VLM）使智能体能解析包含密集表格、未标记图表和手写内容的复杂PDF。该技能可通过Vercel工具一键安装。",
-      "category": "行业 / 快讯",
-      "publishedAt": "Mon, 23 Mar 2026 04:00:50 +0800",
-      "sourceType": "media",
-      "sourceGroup": "主源",
-      "sourceTier": "core",
-      "groupPriority": 999,
-      "credibility": 4,
-      "developerValue": 4,
-      "industryImpact": 4,
-      "whyItMatters": "",
-      "score": 4.84
-    },
-    {
-      "id": "技巧教程-andrej-karpathy演示用openclaw智能体短信控制智能家居-大模型ai-mon-23-mar-2026-04-00-50-0800",
-      "title": "[技巧教程] Andrej Karpathy演示用OpenClaw智能体短信控制智能家居",
-      "source": "大模型AI",
-      "url": "https://x.com/venturetwins/status/2035773250261930015",
-      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-23_0400",
-      "sourceLinks": [
-        "https://x.com/venturetwins/status/2035773250261930015"
-      ],
-      "image": "",
-      "summary": "Andrej Karpathy演示使用OpenClaw智能体通过短信控制家庭设备，如音乐、灯光和安防系统。该智能体能自动发现网络中的硬件，展示了无需编码的智能家居自动化潜力。",
-      "category": "行业 / 快讯",
-      "publishedAt": "Mon, 23 Mar 2026 04:00:50 +0800",
-      "sourceType": "media",
-      "sourceGroup": "主源",
-      "sourceTier": "core",
-      "groupPriority": 999,
-      "credibility": 4,
-      "developerValue": 4,
-      "industryImpact": 4,
-      "whyItMatters": "",
-      "score": 4.84
-    },
-    {
-      "id": "硬件动态-马斯克启动terafab项目-整合芯片设计与制造-大模型ai-mon-23-mar-2026-12-01-09-0800",
-      "title": "[硬件动态] 马斯克启动Terafab项目，整合芯片设计与制造",
-      "source": "大模型AI",
-      "url": "https://www.qbitai.com/2026/03/391045.html",
-      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-23_1201",
-      "sourceLinks": [
-        "https://www.qbitai.com/2026/03/391045.html"
-      ],
-      "image": "https://i.qbitai.com/wp-content/uploads/2026/03/535313c28cbc1e59a78f23624e154532.webp",
-      "summary": "马斯克旗下公司启动Terafab项目，旨在整合芯片设计与制造能力，目标是将算力与产能大幅提升。这涉及AI基础设施的核心硬件领域，可能影响未来算力供应格局。",
-      "category": "行业 / 快讯",
-      "publishedAt": "Mon, 23 Mar 2026 12:01:09 +0800",
-      "sourceType": "media",
-      "sourceGroup": "主源",
-      "sourceTier": "core",
-      "groupPriority": 999,
-      "credibility": 4,
-      "developerValue": 4,
-      "industryImpact": 4,
-      "whyItMatters": "",
-      "score": 4.8
-    },
-    {
-      "id": "产品工具-用户详评微信龙虾clawbot优缺点-大模型ai-mon-23-mar-2026-00-00-39-0800",
-      "title": "[产品工具] 用户详评微信龙虾clawbot优缺点",
-      "source": "大模型AI",
-      "url": "https://x.com/vista8/status/2035588381426757983",
-      "aggregateUrl": "https://news.daheiai.com/realtime.php?file=quick_2026-03-23_0000",
-      "sourceLinks": [
-        "https://x.com/vista8/status/2035588381426757983"
-      ],
-      "image": "",
-      "summary": "用户分享了对微信龙虾clawbot的真实使用体验。优点包括离用户近、支持语音输入；缺点则集中在仅支持手机端、Bug多、不支持流式输出和Markdown支持差。用户还分享了自写Skill以增强实用性。",
-      "category": "行业 / 快讯",
-      "publishedAt": "Mon, 23 Mar 2026 00:00:39 +0800",
-      "sourceType": "media",
-      "sourceGroup": "主源",
-      "sourceTier": "core",
-      "groupPriority": 999,
-      "credibility": 4,
-      "developerValue": 4,
-      "industryImpact": 4,
-      "whyItMatters": "",
-      "score": 4.79
+      "score": 4.63
     }
   ]
 }
