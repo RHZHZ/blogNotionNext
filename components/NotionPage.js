@@ -4,7 +4,7 @@ import { isBrowser, loadExternalResource } from '@/lib/utils'
 import mediumZoom from '@fisch0920/medium-zoom'
 import 'katex/dist/katex.min.css'
 import dynamic from 'next/dynamic'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { NotionRenderer } from 'react-notion-x'
 import InlineIslandAudio from '@/components/InlineIslandAudio'
 import ReactDOM from 'react-dom/client'
@@ -132,6 +132,45 @@ export const applyArticleReadingEnhancements = ({ article, width }) => {
   applyArticleMediaDecorations(article)
 }
 
+
+const sanitizeRecordMapForRenderer = recordMap => {
+  if (!recordMap?.block || typeof recordMap.block !== 'object') {
+    return recordMap
+  }
+
+  const sanitizedBlock = {}
+
+  Object.entries(recordMap.block).forEach(([key, entry]) => {
+    if (!key || key === 'undefined' || key === 'null') return
+    if (!entry?.value) return
+
+    const blockValue = {
+      ...entry.value,
+      id: String(entry.value.id || key),
+      parent_id:
+        entry.value.parent_id === undefined || entry.value.parent_id === null
+          ? ''
+          : String(entry.value.parent_id)
+    }
+
+    if (Array.isArray(blockValue.content)) {
+      blockValue.content = blockValue.content
+        .filter(id => id !== undefined && id !== null && id !== 'undefined' && id !== 'null')
+        .map(id => String(id))
+    }
+
+    sanitizedBlock[String(key)] = {
+      ...entry,
+      value: blockValue
+    }
+  })
+
+  return {
+    ...recordMap,
+    block: sanitizedBlock
+  }
+}
+
 const NotionPage = ({ post, className }) => {
   // 是否关闭数据库和画册的点击跳转
   const POST_DISABLE_GALLERY_CLICK = siteConfig('POST_DISABLE_GALLERY_CLICK')
@@ -152,6 +191,10 @@ const NotionPage = ({ post, className }) => {
 
   const zoomRef = useRef(zoom ? zoom.clone() : null)
   const IMAGE_ZOOM_IN_WIDTH = siteConfig('IMAGE_ZOOM_IN_WIDTH', 1200)
+  const sanitizedRecordMap = useMemo(
+    () => sanitizeRecordMapForRenderer(post?.blockMap),
+    [post?.blockMap]
+  )
 
   // 灵动岛音频转换逻辑
   useEffect(() => {
@@ -286,9 +329,9 @@ const NotionPage = ({ post, className }) => {
       id='notion-article'
       data-heo-reading-surface='true'
       className={`mx-auto overflow-visible ${className || ''}`}>
-      {post?.blockMap?.block ? (
+      {sanitizedRecordMap?.block ? (
         <NotionRenderer
-          recordMap={post?.blockMap}
+          recordMap={sanitizedRecordMap}
           mapPageUrl={mapPageUrl}
           mapImageUrl={mapImgUrl}
           components={{

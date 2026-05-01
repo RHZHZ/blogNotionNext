@@ -1,13 +1,13 @@
 import { FaJava, FaGuitar } from 'react-icons/fa'
 import {
-  SiAdobepremierepro,
-  SiCss3,
+  SiPremierleague,
+  SiCss,
   SiCplusplus,
-  SiFlstudio,
   SiHtml5,
   SiOpenai,
   SiPython,
-  SiVuedotjs
+  SiVuedotjs,
+  SiAudiotechnica
 } from 'react-icons/si'
 import AboutSectionHeading from './AboutSectionHeading'
 
@@ -15,12 +15,12 @@ const skillIconMap = {
   Java: FaJava,
   Python: SiPython,
   AI: SiOpenai,
-  PR: SiAdobepremierepro,
+  PR: SiPremierleague,
   Vue: SiVuedotjs,
   HTML: SiHtml5,
-  CSS: SiCss3,
+  CSS: SiCss,
   'C++': SiCplusplus,
-  'FL Studio': SiFlstudio,
+  'FL Studio': SiAudiotechnica,
   吉他: FaGuitar
 }
 

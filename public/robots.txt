@@ -32,10 +32,10 @@
     Crawl-delay: 1
   
     # 主域名 (百度专用)
-    Host: http://www.rhzhz.cn
+    Host: https://rhzhz.cn
   
     # 站点地图
-    Sitemap: http://www.rhzhz.cn/sitemap.xml
-    Sitemap: http://www.rhzhz.cn/sitemap.xml
+    Sitemap: https://rhzhz.cn/sitemap.xml
+    Sitemap: https://rhzhz.cn/sitemap.xml
   
     
