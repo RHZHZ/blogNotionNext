@@ -1,8 +1,10 @@
 import {
   applyArticleMediaDecorations,
   applyArticleReadingEnhancements,
-  applyImageGalleryLayoutToArticle
+  applyImageGalleryLayoutToArticle,
+  sanitizeRecordMapForRenderer
 } from '@/components/NotionPage'
+
 
 
 jest.mock('next/dynamic', () => () => {
@@ -180,7 +182,30 @@ describe('components/NotionPage helpers', () => {
     expect(article.querySelector('.notion-blank')).toBeNull()
   })
 
+  it('sanitizes toggle children ids for renderer', () => {
+    const recordMap = {
+      block: {
+        toggle1: {
+          value: {
+            id: 'toggle1',
+            type: 'toggle',
+            parent_id: null,
+            content: ['child-a', null, 'undefined'],
+            children: ['child-a', undefined, 123, 'null']
+          }
+        }
+      }
+    }
+
+    const sanitized = sanitizeRecordMapForRenderer(recordMap)
+
+    expect(sanitized.block.toggle1.value.parent_id).toBe('')
+    expect(sanitized.block.toggle1.value.content).toEqual(['child-a'])
+    expect(sanitized.block.toggle1.value.children).toEqual(['child-a', '123'])
+  })
+
   it('applies reading enhancements through the unified entry', () => {
+
 
     const article = createArticleDom()
 

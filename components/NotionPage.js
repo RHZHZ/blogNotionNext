@@ -133,7 +133,7 @@ export const applyArticleReadingEnhancements = ({ article, width }) => {
 }
 
 
-const sanitizeRecordMapForRenderer = recordMap => {
+export const sanitizeRecordMapForRenderer = recordMap => {
   if (!recordMap?.block || typeof recordMap.block !== 'object') {
     return recordMap
   }
@@ -155,6 +155,12 @@ const sanitizeRecordMapForRenderer = recordMap => {
 
     if (Array.isArray(blockValue.content)) {
       blockValue.content = blockValue.content
+        .filter(id => id !== undefined && id !== null && id !== 'undefined' && id !== 'null')
+        .map(id => String(id))
+    }
+
+    if (Array.isArray(blockValue.children)) {
+      blockValue.children = blockValue.children
         .filter(id => id !== undefined && id !== null && id !== 'undefined' && id !== 'null')
         .map(id => String(id))
     }
